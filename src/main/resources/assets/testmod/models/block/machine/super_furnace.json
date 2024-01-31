@@ -1,0 +1,6 @@
+{
+    "parent": "testmod:block/machine/controller",
+    "textures": {
+        "front": "testmod:block/machine/furnace/front"
+    }
+}

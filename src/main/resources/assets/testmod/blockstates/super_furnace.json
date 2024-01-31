@@ -1,0 +1,35 @@
+{
+    "variants": {
+        "facing=north,is_formed=false": { 
+            "model": "testmod:block/machine/super_furnace" 
+        },
+        "facing=east,is_formed=false": { 
+            "model": "testmod:block/machine/super_furnace",
+            "y": 90
+        },
+        "facing=south,is_formed=false": { 
+            "model": "testmod:block/machine/super_furnace",
+            "y": 180
+        },
+        "facing=west,is_formed=false": { 
+            "model": "testmod:block/machine/super_furnace",
+            "y": 270
+        },
+        "facing=north,is_formed=true": { 
+            "model": "testmod:block/multiblock/super_furnace" 
+        },
+        "facing=east,is_formed=true": { 
+            "model": "testmod:block/multiblock/super_furnace",
+            "y": 90
+        },
+        "facing=south,is_formed=true": { 
+            "model": "testmod:block/multiblock/super_furnace",
+            "y": 180 
+        },
+        "facing=west,is_formed=true": { 
+            "model": "testmod:block/multiblock/super_furnace",
+            "y": 270 
+        }
+    }
+}
+  

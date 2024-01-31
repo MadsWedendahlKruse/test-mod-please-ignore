@@ -1,0 +1,9 @@
+{
+    "parent": "testmod:block/machine/base",
+    "textures": {
+        "top": "testmod:block/machine/frame/advanced",
+        "side": "testmod:block/machine/frame/advanced",
+        "back": "testmod:block/machine/frame/advanced",
+        "bottom": "testmod:block/machine/frame/advanced"
+    }
+}

@@ -1,0 +1,24 @@
+{
+    "layers": [
+        [
+            " b ",
+            "bbb",
+            " b "
+        ],
+        [
+            " X ",
+            "aaa",
+            " a "
+        ],
+        [
+            " b ",
+            "bbb",
+            " b "
+        ]
+    ],
+    "key": {
+        "X": "testmod:super_assembler",
+        "b": "testmod:machine_frame_basic",
+        "a": "testmod:machine_frame_advanced"
+    }
+}

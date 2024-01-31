@@ -1,0 +1,24 @@
+{
+    "layers": [
+        [
+            "bbb",
+            "bbb",
+            "bbb"
+        ],
+        [
+            "r r",
+            "rXr",
+            "rrr"
+        ],
+        [
+            "bbb",
+            "bbb",
+            "bbb"
+        ]
+    ],
+    "key": {
+        "X": "testmod:super_furnace",
+        "b": "testmod:machine_frame_basic",
+        "r": "testmod:machine_frame_reinforced"
+    }
+}

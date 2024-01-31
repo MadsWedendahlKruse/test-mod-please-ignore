@@ -1,0 +1,26 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"north": "testmod:block/machine/assembler/front",
+		"east": "testmod:block/machine/side",
+		"south": "testmod:block/machine/side",
+		"west": "testmod:block/machine/side",
+		"up": "testmod:block/machine/top",
+		"down": "testmod:block/machine/bottom",
+		"particle": "testmod:block/machine/frame/basic"
+	},
+	"elements": [
+		{
+			"from": [-16, -16, -16],
+			"to": [32, 32, 32],
+			"faces": {
+				"north": {"uv": [0, 0, 16, 16], "texture": "north"},
+				"east": {"uv": [0, 0, 16, 16], "texture": "east"},
+				"south": {"uv": [0, 0, 16, 16], "texture": "south"},
+				"west": {"uv": [0, 0, 16, 16], "texture": "west"},
+				"up": {"uv": [0, 0, 16, 16], "texture": "up"},
+				"down": {"uv": [0, 0, 16, 16], "texture": "down"}
+			}
+		}
+	]
+}

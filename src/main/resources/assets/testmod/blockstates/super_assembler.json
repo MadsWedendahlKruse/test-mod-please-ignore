@@ -1,0 +1,35 @@
+{
+    "variants": {
+        "facing=north,is_formed=false": { 
+            "model": "testmod:block/machine/super_assembler" 
+        },
+        "facing=east,is_formed=false": { 
+            "model": "testmod:block/machine/super_assembler",
+            "y": 90
+        },
+        "facing=south,is_formed=false": { 
+            "model": "testmod:block/machine/super_assembler",
+            "y": 180
+        },
+        "facing=west,is_formed=false": { 
+            "model": "testmod:block/machine/super_assembler",
+            "y": 270
+        },
+        "facing=north,is_formed=true": { 
+            "model": "testmod:block/multiblock/super_assembler" 
+        },
+        "facing=east,is_formed=true": { 
+            "model": "testmod:block/multiblock/super_assembler",
+            "y": 90
+        },
+        "facing=south,is_formed=true": { 
+            "model": "testmod:block/multiblock/super_assembler",
+            "y": 180 
+        },
+        "facing=west,is_formed=true": { 
+            "model": "testmod:block/multiblock/super_assembler",
+            "y": 270 
+        }
+    }
+}
+  
