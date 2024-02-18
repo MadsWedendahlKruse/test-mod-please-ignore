@@ -47,12 +47,13 @@ public class BlueprintRegistry {
 
     /**
      * Register a blueprint.
+     * The blueprint will be accessible by its name after it is registered, e.g.
+     * BlueprintRegistry.getInstance().getBlueprint("super_assembler");
      * 
-     * @param name The name of the blueprint to register.
      * @param blueprint The blueprint to register.
      */
-    public void registerBlueprint(String name, MultiBlockBlueprint blueprint) {
-        blueprints.put(name, blueprint);
+    public void registerBlueprint(MultiBlockBlueprint blueprint) {
+        blueprints.put(blueprint.getName(), blueprint);
     }
 
     /**
@@ -64,8 +65,8 @@ public class BlueprintRegistry {
         ResourceLocation location = new ResourceLocation(
             TestMod.MODID, "blueprints/" + name + ".json");
         // Print the location for debugging.
-        System.out.println(location);
-        System.out.println(location.getPath());
+        TestMod.LOGGER.info(location.toString());
+        TestMod.LOGGER.info(location.getPath());
     }
 
     public void load() {
