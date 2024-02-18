@@ -27,3 +27,4 @@ repo
 java_pid21216.hprof
 .vscode/settings.json
 *.hprof
+src/generated/resources/.cache
