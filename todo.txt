@@ -1,3 +1,12 @@
+NOTES
+Is the Wrenchable interface necessary?
+Right now there's some problem with the "sides", so when breaking the multiblock with the
+wrench the particles don't get spawned because we only run onWrenched on the server side
+
+---
+
+
+TODO LIST
 - Figure out what multiblocks the mod should have
     - Furnace
     - Crusher

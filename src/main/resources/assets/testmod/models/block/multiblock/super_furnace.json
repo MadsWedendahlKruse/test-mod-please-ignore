@@ -1,7 +1,7 @@
 {
     "loader": "neoforge:obj",
     "flip_v": true,
-    "model": "testmod:models/block/multiblock/3x3cube.obj",
+    "model": "testmod:models/block/multiblock/super_furnace.obj",
     "textures": {
         "front": "testmod:block/machine/assembler/front",
         "side": "testmod:block/machine/side",

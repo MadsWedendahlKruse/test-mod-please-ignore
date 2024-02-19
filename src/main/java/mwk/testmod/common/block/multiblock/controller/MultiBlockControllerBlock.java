@@ -1,17 +1,21 @@
 package mwk.testmod.common.block.multiblock.controller;
 
-import org.slf4j.Logger;
+import java.util.ArrayList;
 
-import com.mojang.logging.LogUtils;
-
+import mwk.testmod.TestMod;
+import mwk.testmod.client.HologramRenderer;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
+import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint.BlueprintCheckResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -25,8 +29,6 @@ import net.minecraft.world.phys.BlockHitResult;
  * The controller block of a multiblock structure.
  */
 public class MultiBlockControllerBlock extends MultiBlockPartBlock {
-    
-    private static final Logger LOGGER = LogUtils.getLogger();
 
     // The direction the controller block is facing.
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
@@ -36,9 +38,7 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
 
     public MultiBlockControllerBlock(Properties properties) {
         super(properties);
-        registerDefaultState(defaultBlockState()
-            .setValue(FACING, Direction.NORTH)
-        );
+        registerDefaultState(defaultBlockState().setValue(FACING, Direction.NORTH));
     }
 
     @Override
@@ -50,14 +50,13 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         // Set the direction the controller block is facing.
-        return defaultBlockState().setValue(FACING, 
-            context.getHorizontalDirection().getOpposite());
+        return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
     /**
-     * Set the blueprint for the multiblock structure.
-     * This has to be done outside the constructor because the blueprint requires the 
-     * controller block to be initialized. Otherwise we would have a circular dependency.
+     * Set the blueprint for the multiblock structure. This has to be done outside the constructor
+     * because the blueprint requires the controller block to be initialized. Otherwise we would
+     * have a circular dependency.
      * 
      * @param blueprint The blueprint for the multiblock structure.
      */
@@ -66,17 +65,29 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
     }
 
     /**
+     * @return The blueprint for the multiblock structure.
+     */
+    public MultiBlockBlueprint getBlueprint() {
+        return blueprint;
+    }
+
+    /**
      * Set the formed state of the multiblock structure.
      * 
      * @param level The level.
      * @param controllerPos The position of the controller block.
      * @param controllerState The state of the controller block.
-     * @param isFormed Whether or not the multiblock structure is formed.
+     * @param isFormed The desired formed state of the multiblock structure.
+     * @param checkBlueprint Whether or not to check if the multiblock structure matches the
+     *        blueprint. When a block in the multiblock structure is broken, the block might already
+     *        be gone before we get to this method. In that case we don't want to check the
+     *        blueprint, because it will fail, and instead we want to ensure that the multiblock
+     *        structure is unformed.
      * @return Whether or not the multiblock structure is formed.
      */
-    public boolean setMultiblockFormed(Level level, BlockPos controllerPos, 
-        BlockState controllerState, boolean isFormed) {
-        System.out.println("setMultiblockFormed");
+    public boolean setMultiblockFormed(Level level, BlockPos controllerPos,
+            BlockState controllerState, boolean isFormed, boolean checkBlueprint) {
+        TestMod.LOGGER.debug("setMultiblockFormed");
         // Get the positions of the blocks in the blueprint.
         BlockPos[] positions = blueprint.getRotatedPositions(controllerState.getValue(FACING));
         // Check that the blocks are not already in the correct state.
@@ -86,8 +97,8 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
             BlockState blockState = level.getBlockState(blockPos);
             if (blockState.getBlock() instanceof MultiBlockPartBlock) {
                 if (blockState.getValue(IS_FORMED) == isFormed) {
-                    System.out.println("Block.is_formed @ " + blockPos + " is already " + 
-                        isFormed);
+                    TestMod.LOGGER
+                            .info("Block.is_formed @ " + blockPos + " is already " + isFormed);
                     return false;
                 }
             }
@@ -98,21 +109,23 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
             // If the block is the controller block, we don't want to set the controller
             // position to itself. This is to avoid infinite recursion when use is called.
             if (blockPos.equals(controllerPos)) {
-                this.setFormed(level, blockPos, controllerState, isFormed, null);
+                this.setPartFormed(level, blockPos, controllerState, isFormed, null);
                 continue;
             }
             BlockState blockState = level.getBlockState(blockPos);
-            // Not sure if this check will ever fail
             if (blockState.getBlock() instanceof MultiBlockPartBlock) {
-                ((MultiBlockPartBlock) blockState.getBlock()).setFormed(
-                    level, blockPos, blockState, isFormed, controllerPos);
+                ((MultiBlockPartBlock) blockState.getBlock()).setPartFormed(level, blockPos,
+                        blockState, isFormed, controllerPos);
             } else {
-                System.out.println("Block @ " + blockPos + " is " + blockState.getBlock() + 
-                    ", but expected instanceof MultiBlockPartBlock");
-                return false;
+                if (checkBlueprint) {
+                    TestMod.LOGGER.debug("Block @ " + blockPos + " is " + blockState.getBlock()
+                            + ", but expected instanceof MultiBlockPartBlock");
+                    return false;
+                }
+                continue;
             }
         }
-        System.out.println("successfully set multiblock formed to " + isFormed);
+        TestMod.LOGGER.debug("successfully set multiblock formed to " + isFormed);
         return true;
     }
 
@@ -122,36 +135,124 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
      * @param level The level.
      * @param controllerPos The position of the controller block.
      * @param controllerState The state of the controller block.
+     * @param checkBlueprint Whether or not to check if the multiblock structure matches the
+     *        blueprint.
      * @return Whether or not the multiblock structure was toggled.
      */
-    public boolean toggleMultiblock(Level level, BlockPos controllerPos, 
-        BlockState controllerState) {
-        return setMultiblockFormed(level, controllerPos, controllerState, 
-            !controllerState.getValue(IS_FORMED));
-    }   
+    public boolean toggleMultiblock(Level level, BlockPos controllerPos,
+            BlockState controllerState) {
+        return setMultiblockFormed(level, controllerPos, controllerState,
+                !controllerState.getValue(IS_FORMED), true);
+    }
 
     @Override
-    public InteractionResult use(
-        BlockState state, Level level, BlockPos pos, Player player, 
-        InteractionHand hand, BlockHitResult hit) {
-        // Check if the player is holding a wrench (TEMP: stick instead).
-        if (player.getItemInHand(hand).getItem() == Items.STICK) {
-            // Check if the blueprint has been set correctly.
-            if (blueprint == null) {
-                // TODO: Exception?
-                LOGGER.error("Blueprint has not been set!");
+    public boolean onWrenched(BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand) {
+        TestMod.LOGGER.debug("MultiBlockControllerBlock::onWrenched");
+        // TODO: Presumably this is only called when the player has a wrench in their
+        // hand, so maybe we don't have to check if the player is holding a wrench?
+        // Check if the blueprint has been set correctly.
+        if (blueprint == null) {
+            // TODO: Exception?
+            TestMod.LOGGER.error("Blueprint has not been set!");
+            return false;
+        }
+        // Check if the mutliblock structure can be formed.
+        if (blueprint.isValid(level, pos, state)) {
+            // TODO: Print in chat?
+            // Toggle the multiblock structure.
+            if (toggleMultiblock(level, pos, state)) {
+                return true;
+            }
+        } else {
+            // Toggle blueprint hologram.
+            if (level.isClientSide() && !state.getValue(IS_FORMED)) {
+                HologramRenderer.toggleController(level, pos);
+            }
+            return true;
+        }
+        return super.onWrenched(state, level, pos, player, hand);
+    }
+
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState,
+            boolean movedByPiston) {
+        TestMod.LOGGER.debug("MultiBlockControllerBlock::onRemove");
+        // TODO: This doesn't do anything if we also check for client side
+        // Does onRemove only run on the server side?
+        if (HologramRenderer.isCurrentController(pos)) {
+            HologramRenderer.clearController();
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, BlockHitResult hit) {
+        // Right clicking with a wrench is handled in onWrenched.
+        if (player.getItemInHand(hand).getItem() == TestMod.WRENCH_ITEM.get()) {
+            return InteractionResult.PASS;
+        }
+        // Explain to the player how to view the blueprint.
+        if (!HologramRenderer.isCurrentController(pos) && !state.getValue(IS_FORMED)) {
+            player.displayClientMessage(
+                    Component.translatable("info.testmod.controller.blueprint.show"), true);
+            return InteractionResult.SUCCESS;
+        }
+        // Check if the player has any of the missing blocks in the blueprint in their
+        // inventory. If they do, remove the block from their inventory and place it in
+        // the world.
+        // Maybe we only want to do this if the corresponding blueprint hologram is
+        // visible? Otherwise it might be confusing to the player.
+        if (HologramRenderer.isCurrentController(pos) && !state.getValue(IS_FORMED)) {
+            Inventory inventory = player.getInventory();
+            // Get the indices of the missing blocks in the blueprint.
+            BlueprintCheckResult result = blueprint.check(level, pos, state);
+            if (result.isValid()) {
+                player.displayClientMessage(
+                        Component.translatable("info.testmod.controller.blueprint.complete"), true);
                 return InteractionResult.FAIL;
             }
-            // Check if the mutliblock structure can be formed.
-            if (blueprint.isValid(level, pos, state)) {
-                // TODO: Print in chat?
-                // Toggle the multiblock structure.
-                if (toggleMultiblock(level, pos, state)) {
-                    return InteractionResult.SUCCESS;
+            ArrayList<Integer> missingBlockIndices = result.getMissingBlockIndices();
+            BlockState[] states = blueprint.getStates();
+            BlockPos[] positions = blueprint.getRotatedPositions(state.getValue(FACING));
+            // Flag to check if the player has any of the missing blocks in their inventory.
+            boolean playerHasBlock = false;
+            for (int i : missingBlockIndices) {
+                BlockState blueprintState = states[i];
+                BlockPos posititon = pos.offset(positions[i]);
+                ItemStack stack = blueprint.getItemStack(i);
+                TestMod.LOGGER.debug(
+                        "Block " + blueprintState.getBlock() + " @ " + posititon + " is missing");
+                // Check if the player has any of the missing blocks in their inventory.
+                int itemIndex = inventory.findSlotMatchingItem(stack);
+                if (itemIndex != -1) {
+                    playerHasBlock = true;
+                    // Sanity check that we're not overwriting a block that's already there.
+                    if (!level.getBlockState(posititon).isAir()) {
+                        player.displayClientMessage(
+                                Component.translatable("info.testmod.controller.blueprint.blocked"),
+                                true);
+                        return InteractionResult.SUCCESS;
+                    }
+                    TestMod.LOGGER.debug("Player has " + stack);
+                    // Simulate the block being placed by the player. This handles playing the sound
+                    // and removing the item from the player's inventory.
+                    if (inventory.getItem(itemIndex).getItem() instanceof BlockItem blockItem) {
+                        BlockHitResult hitResult = new BlockHitResult(hit.getLocation(),
+                                hit.getDirection(), posititon, hit.isInside());
+                        BlockPlaceContext context =
+                                new BlockPlaceContext(player, hand, stack, hitResult);
+                        return blockItem.place(context);
+                    }
                 }
-            } else {
-                // TODO: Print in chat?
-                return InteractionResult.FAIL;
+            }
+            // Notify the player if they don't have any of the missing blocks in their inventory.
+            if (!playerHasBlock) {
+                player.displayClientMessage(Component.translatable(
+                        "info.testmod.controller.blueprint.insufficient_blocks"), true);
+                // TODO: Not sure if we want to return SUCCESS here?
+                return InteractionResult.SUCCESS;
             }
         }
         return super.use(state, level, pos, player, hand, hit);

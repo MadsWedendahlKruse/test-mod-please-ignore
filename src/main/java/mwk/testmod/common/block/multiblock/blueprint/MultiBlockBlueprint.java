@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
+import javax.annotation.Nullable;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -20,6 +20,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Rotation;
@@ -228,7 +229,6 @@ public class MultiBlockBlueprint {
             data.positions = new BlockPos[positions.size()];
             positions.toArray(data.positions);
         } catch (IOException e) {
-            // TODO: Propoer loggging.
             TestMod.LOGGER.info("Failed to read file: " + location + ", " + e.getMessage());
         }
         return data;
@@ -247,7 +247,6 @@ public class MultiBlockBlueprint {
             BlueprintData data = parseJson(resourceManager, location);
             return new MultiBlockBlueprint(data);
         } catch (Exception e) {
-            // TODO: Proper logging.
             TestMod.LOGGER.info("Failed to load blueprint: " + location + ", " + e.getMessage());
         }
         return null;
@@ -289,30 +288,30 @@ public class MultiBlockBlueprint {
      * the blocks in the blueprint that are empty or have the wrong block.
      */
     public static class BlueprintCheckResult {
-        private final ArrayList<Integer> emptyBlockIndices;
+        private final ArrayList<Integer> missingBlockIndices;
         private final ArrayList<Integer> wrongBlockIndices;
 
         public BlueprintCheckResult() {
-            this.emptyBlockIndices = new ArrayList<Integer>();
+            this.missingBlockIndices = new ArrayList<Integer>();
             this.wrongBlockIndices = new ArrayList<Integer>();
         }
 
-        public BlueprintCheckResult(ArrayList<Integer> emptyBlockIndices,
+        public BlueprintCheckResult(ArrayList<Integer> missingBlockIndices,
                 ArrayList<Integer> wrongBlockIndices) {
-            this.emptyBlockIndices = emptyBlockIndices;
+            this.missingBlockIndices = missingBlockIndices;
             this.wrongBlockIndices = wrongBlockIndices;
         }
 
-        public final ArrayList<Integer> getEmptyBlockIndices() {
-            return emptyBlockIndices;
+        public final ArrayList<Integer> getMissingBlockIndices() {
+            return missingBlockIndices;
         }
 
         public final ArrayList<Integer> getWrongBlockIndices() {
             return wrongBlockIndices;
         }
 
-        public boolean isEmpty() {
-            return emptyBlockIndices.isEmpty() && wrongBlockIndices.isEmpty();
+        public boolean isValid() {
+            return missingBlockIndices.isEmpty() && wrongBlockIndices.isEmpty();
         }
     }
 
@@ -326,10 +325,12 @@ public class MultiBlockBlueprint {
      */
     public BlueprintCheckResult check(Level level, BlockPos controllerPos,
             BlockState controllerState) {
-        ArrayList<Integer> emptyBlockIndices = new ArrayList<Integer>();
+        ArrayList<Integer> missingBlockIndices = new ArrayList<Integer>();
         ArrayList<Integer> wrongBlockIndices = new ArrayList<Integer>();
         // Check if the block at the controller position is the correct block.
         if (controllerState.getBlock() != this.controller) {
+            // TODO: This will resolve in a valid blueprint check result. Maybe we should
+            // do something else...
             return new BlueprintCheckResult();
         }
         // Rotate the positions based on the facing of the controller block.
@@ -340,17 +341,16 @@ public class MultiBlockBlueprint {
             BlockPos blueprintPos = rotatedPositions[i];
             BlockState blueprintState = this.states[i];
             BlockState blockState = level.getBlockState(controllerPos.offset(blueprintPos));
-            // Check if the block at the position is empty.
-            if (blockState.isAir()) {
-                emptyBlockIndices.add(i);
-            }
             // Check if the block at the position is the correct block.
-            else if (blockState.getBlock() != blueprintState.getBlock()) {
-                wrongBlockIndices.add(i);
-                continue;
+            if (blockState.getBlock() != blueprintState.getBlock()) {
+                // Check if the block at the position is empty.
+                if (!blockState.isAir()) {
+                    wrongBlockIndices.add(i);
+                }
+                missingBlockIndices.add(i);
             }
         }
-        return new BlueprintCheckResult(emptyBlockIndices, wrongBlockIndices);
+        return new BlueprintCheckResult(missingBlockIndices, wrongBlockIndices);
     }
 
     /**
@@ -363,7 +363,7 @@ public class MultiBlockBlueprint {
      * @return Whether or not the multiblock structure is valid.
      */
     public boolean isValid(Level level, BlockPos controllerPos, BlockState controllerState) {
-        return check(level, controllerPos, controllerState).isEmpty();
+        return check(level, controllerPos, controllerState).isValid();
     }
 
     /**
@@ -379,4 +379,78 @@ public class MultiBlockBlueprint {
     public final BlockState[] getStates() {
         return this.states;
     }
+
+    /**
+     * @return An ItemStack of the block at the given index in the blueprint.
+     */
+    public ItemStack getItemStack(int index) {
+        return new ItemStack(this.states[index].getBlock());
+    }
+
+    /**
+     * Aggregates item stacks corresponding to specific block indices within a blueprint, merging
+     * duplicate items into single stacks with adjusted quantities. This method is useful for
+     * consolidating individual block items into a compact list of item stacks, where each stack
+     * represents a unique item type and its total quantity based on the provided block indices.
+     * This can be particularly beneficial for inventory management or for displaying a summary of
+     * required materials.
+     * 
+     * @param indices An array of indices within the blueprint representing specific blocks to be
+     *        consolidated.
+     * @param level The level the controller block is in. This is used to differentiate between
+     *        missing blocks and incorrect blocks. If null the blocks in the blueprint (missing)
+     *        will be used, otherwise the blocks in the level (incorrect) will be used.
+     * @param controllerPos The position of the controller block.
+     * @param facing The direction the controller block is facing.
+     * @return A list of {@link ItemStack}s, where each stack represents a unique item type and its
+     *         aggregate quantity from the specified block indices. Stacks are merged based on item
+     *         type.
+     */
+    public ArrayList<ItemStack> getCombinedItemStacks(ArrayList<Integer> indices,
+            @Nullable Level level, @Nullable BlockPos controllerPos, @Nullable Direction facing) {
+        ArrayList<ItemStack> combinedStacks = new ArrayList<>();
+        BlockPos[] rotatedPositions = null;
+        if (facing != null) {
+            rotatedPositions = getRotatedPositions(facing);
+        }
+        for (int index : indices) {
+            ItemStack newItemStack = ItemStack.EMPTY;
+            if (level == null || controllerPos == null) {
+                newItemStack = getItemStack(index);
+            } else if (rotatedPositions != null) {
+                BlockState state =
+                        level.getBlockState(controllerPos.offset(rotatedPositions[index]));
+                newItemStack = new ItemStack(state.getBlock());
+            }
+            boolean merged = false;
+            for (ItemStack existingStack : combinedStacks) {
+                if (ItemStack.isSameItem(newItemStack, existingStack)) {
+                    existingStack.grow(1);
+                    merged = true;
+                    break;
+                }
+            }
+            if (!merged) {
+                combinedStacks.add(newItemStack.copy());
+            }
+        }
+        return combinedStacks;
+    }
+
+    /**
+     * Aggregates item stacks corresponding to specific block indices within a blueprint, merging
+     * duplicate items into single stacks with adjusted quantities. This method is used for
+     * displaying a summary of required materials. See
+     * {@link #getCombinedItemStacks(ArrayList, Level, BlockPos, Direction)} for more information.
+     * 
+     * @param indices An array of indices within the blueprint representing specific blocks to be
+     *        consolidated.
+     * @return A list of {@link ItemStack}s, where each stack represents a unique item type and its
+     *         aggregate quantity from the specified block indices. Stacks are merged based on item
+     *         type.
+     */
+    public ArrayList<ItemStack> getCombinedItemStacks(ArrayList<Integer> indices) {
+        return getCombinedItemStacks(indices, null, null, null);
+    }
+
 }

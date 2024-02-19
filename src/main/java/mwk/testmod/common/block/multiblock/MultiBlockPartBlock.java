@@ -2,7 +2,9 @@ package mwk.testmod.common.block.multiblock;
 
 import java.util.Random;
 
+import mwk.testmod.TestMod;
 import mwk.testmod.common.block.multiblock.controller.MultiBlockControllerBlock;
+import mwk.testmod.common.item.Wrenchable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -13,23 +15,20 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 
 /**
  * A block that is part of a multiblock structure.
  */
-public class MultiBlockPartBlock extends Block implements EntityBlock {
-   
+public class MultiBlockPartBlock extends Block implements EntityBlock, Wrenchable {
+
     // Whether or not the block is part of a formed multiblock structure.
     public static final BooleanProperty IS_FORMED = BooleanProperty.create("is_formed");
     // The number of particles to spawn when forming or unforming the multiblock structure.
@@ -41,14 +40,8 @@ public class MultiBlockPartBlock extends Block implements EntityBlock {
 
     public MultiBlockPartBlock(Properties properties) {
         // TODO: Not sure if noOcculsion is the best way to do this.
-        super(properties
-            .noOcclusion()
-            .destroyTime(10.0f)
-            .explosionResistance(10.0f)
-            .sound(SoundType.METAL));
-        registerDefaultState(stateDefinition.any()
-            .setValue(IS_FORMED, false)
-        );
+        super(properties.noOcclusion());
+        registerDefaultState(stateDefinition.any().setValue(IS_FORMED, false));
     }
 
     @Override
@@ -62,14 +55,6 @@ public class MultiBlockPartBlock extends Block implements EntityBlock {
             return true;
         }
         return super.propagatesSkylightDown(pState, pLevel, pPos);
-    }
-
-    @Override
-    public float getShadeBrightness(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
-        // if (pState.getValue(IS_FORMED)) {
-        //     return 1.0f;
-        // }
-        return super.getShadeBrightness(pState, pLevel, pPos);
     }
 
     @Override
@@ -139,16 +124,10 @@ public class MultiBlockPartBlock extends Block implements EntityBlock {
     private void spawnMultiBlockParticles(Level level, BlockPos pos, boolean isFormed) {
         for (int i = 0; i < NUM_PARTICLES; i++) {
             double[] position = getRandomSurfacePosition(pos, 0.075);
-            SimpleParticleType particleType = isFormed ? 
-                ParticleTypes.HAPPY_VILLAGER : ParticleTypes.CRIT;
-            level.addParticle(
-                particleType,
-                position[0],
-                position[1],
-                position[2],
-                0.0f,
-                0.0f,
-                0.0f);
+            SimpleParticleType particleType =
+                    isFormed ? ParticleTypes.HAPPY_VILLAGER : ParticleTypes.CRIT;
+            level.addParticle(particleType, position[0], position[1], position[2], 0.0f, 0.0f,
+                    0.0f);
         }
     }
 
@@ -161,43 +140,41 @@ public class MultiBlockPartBlock extends Block implements EntityBlock {
      */
     private void playMultiBlockSound(Level level, BlockPos pos, boolean isFormed) {
         SoundEvent soundEvent = isFormed ? SoundEvents.ANVIL_USE : SoundEvents.ANVIL_DESTROY;
-        level.playLocalSound(
-            pos.getX() + 0.5,
-            pos.getY() + 0.5,
-            pos.getZ() + 0.5,
-            soundEvent,
-            SoundSource.BLOCKS,
-            0.1f,
-            0.8f,
-            false);
+        level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, soundEvent,
+                SoundSource.BLOCKS, 0.1f, 0.8f, false);
     }
 
     /**
-     * Set the formed state of the block.
+     * Set the formed state of the multi block part.
      * 
-     * @param level The level the block is in.
-     * @param pos The position of the block.
-     * @param state The state of the block.
+     * @param level The level the multi block part is in.
+     * @param pos The position of the multi block part.
+     * @param state The state of the multi block part.
      * @param isFormed The value of the formed state.
-     * @param controllerPos The position of the controller block.
+     * @param controllerPos The position of the controller multi block part.
      */
-    public void setFormed(Level level, BlockPos pos, BlockState state, boolean isFormed,
-        BlockPos controllerPos) {
+    public void setPartFormed(Level level, BlockPos pos, BlockState state, boolean isFormed,
+            BlockPos controllerPos) {
+        // Update block state on both sides
         level.setBlockAndUpdate(pos, state.setValue(IS_FORMED, isFormed));
-        BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity instanceof MultiBlockPartBlockEntity) {
-            ((MultiBlockPartBlockEntity) blockEntity).setControllerPos(controllerPos);
-        }
-        if (level.isClientSide()) {
+        if (!level.isClientSide()) {
+            // Update block entity on server side
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof MultiBlockPartBlockEntity) {
+                ((MultiBlockPartBlockEntity) blockEntity).setControllerPos(controllerPos);
+            }
+        } else {
+            // Spawn particles on client side
             // TODO: Consider only spanwing particles on the faces that are exposed to air.
             // I'm not sure if this is a premature optimization.
             spawnMultiBlockParticles(level, pos, isFormed);
             // TODO: Volume doesn't seem to work, disable for now to avoid destroying my ears.
             // playMultiBlockSound(level, pos, isFormed);
+
         }
     }
 
-    /** 
+    /**
      * Get the position of the multilblock controller.
      * 
      * @param level The level the multiblock part is in.
@@ -212,34 +189,42 @@ public class MultiBlockPartBlock extends Block implements EntityBlock {
         return null;
     }
 
-    /**
-     * Unform the multiblock structure.
-     * 
-     * @param level The level the multiblock part is in.
-     * @param partPos The position of the multiblock part.
-     */
-    private void unformMultiBlock(Level level, BlockPos partPos) {
-        System.out.println("unformMultiBlock");
-        BlockPos controllerPos = getControllerPos(level, partPos);
-        if (controllerPos != null) {
-            BlockState controllerState = level.getBlockState(controllerPos);
-            if (controllerState.getBlock() instanceof MultiBlockControllerBlock) {
-                ((MultiBlockControllerBlock) controllerState.getBlock()).setMultiblockFormed(
-                    level, controllerPos, controllerState, false);
-            }
-        }
-    }
-
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, 
-        InteractionHand hand, BlockHitResult hit) {   
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState,
+            boolean movedByPiston) {
+        TestMod.LOGGER.debug("MultiBlockPartBlock::onRemove");
+        TestMod.LOGGER.debug("state = " + state);
+        TestMod.LOGGER.debug("state @ " + pos + " = " + level.getBlockState(pos));
+        TestMod.LOGGER.debug("newState = " + newState);
+        TestMod.LOGGER.debug("blockEntity @ " + pos + " = " + level.getBlockEntity(pos));
+        // If any of the blocks in the multiblock are removed while the multiblock is
+        // formed we have to unform it
         if (state.getValue(IS_FORMED)) {
             BlockPos controllerPos = getControllerPos(level, pos);
             if (controllerPos != null) {
                 BlockState controllerState = level.getBlockState(controllerPos);
                 if (controllerState.getBlock() instanceof MultiBlockControllerBlock) {
-                    return ((MultiBlockControllerBlock) controllerState.getBlock()).use(
-                        controllerState, level, controllerPos, player, hand, hit);
+                    ((MultiBlockControllerBlock) controllerState.getBlock()).setMultiblockFormed(
+                            level, controllerPos, controllerState, false, false);
+                }
+            }
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, BlockHitResult hit) {
+        TestMod.LOGGER.debug("MultiBlockPartBlock::use");
+        // If the multiblock structure is formed, propagate the use event to the
+        // multiblock controller.
+        if (state.getValue(IS_FORMED)) {
+            BlockPos controllerPos = getControllerPos(level, pos);
+            if (controllerPos != null) {
+                BlockState controllerState = level.getBlockState(controllerPos);
+                if (controllerState.getBlock() instanceof MultiBlockControllerBlock) {
+                    return ((MultiBlockControllerBlock) controllerState.getBlock())
+                            .use(controllerState, level, controllerPos, player, hand, hit);
                 }
             }
         }
@@ -247,20 +232,24 @@ public class MultiBlockPartBlock extends Block implements EntityBlock {
     }
 
     @Override
-    public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest,
-            FluidState fluid) {
-        System.out.println("onDestroyedByPlayer");
-        if (state.getValue(IS_FORMED)) {
-            unformMultiBlock(level, pos);
+    public boolean onWrenched(BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand) {
+        // Check if the super onWrenched method does anything.
+        if (Wrenchable.super.onWrenched(state, level, pos, player, hand)) {
+            return true;
         }
-        return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
-    }
-
-    @Override
-    public void onBlockExploded(BlockState state, Level level, BlockPos pos, Explosion explosion) {
+        // If not, and the multiblock structure is formed, propagate the wrenched
+        // event to the multiblock controller.
         if (state.getValue(IS_FORMED)) {
-            unformMultiBlock(level, pos);
+            BlockPos controllerPos = getControllerPos(level, pos);
+            if (controllerPos != null) {
+                BlockState controllerState = level.getBlockState(controllerPos);
+                if (controllerState.getBlock() instanceof MultiBlockControllerBlock) {
+                    return ((MultiBlockControllerBlock) controllerState.getBlock())
+                            .onWrenched(controllerState, level, controllerPos, player, hand);
+                }
+            }
         }
-        super.onBlockExploded(state, level, pos, explosion);
+        return false;
     }
 }
