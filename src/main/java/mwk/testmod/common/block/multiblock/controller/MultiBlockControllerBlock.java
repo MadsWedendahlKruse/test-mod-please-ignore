@@ -3,10 +3,11 @@ package mwk.testmod.common.block.multiblock.controller;
 import java.util.ArrayList;
 
 import mwk.testmod.TestMod;
-import mwk.testmod.client.HologramRenderer;
+import mwk.testmod.client.hologram.HologramRenderer;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
+import mwk.testmod.common.block.multiblock.blueprint.BlueprintBlockInfo;
+import mwk.testmod.common.block.multiblock.blueprint.BlueprintState;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
-import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint.BlueprintCheckResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -88,12 +89,11 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
     public boolean setMultiblockFormed(Level level, BlockPos controllerPos,
             BlockState controllerState, boolean isFormed, boolean checkBlueprint) {
         TestMod.LOGGER.debug("setMultiblockFormed");
-        // Get the positions of the blocks in the blueprint.
-        BlockPos[] positions = blueprint.getRotatedPositions(controllerState.getValue(FACING));
+        BlockPos[] positions =
+                blueprint.getAbsolutePositions(controllerPos, controllerState.getValue(FACING));
         // Check that the blocks are not already in the correct state.
         // This would imply that they are part of a different multiblock structure.
-        for (BlockPos position : positions) {
-            BlockPos blockPos = controllerPos.offset(position);
+        for (BlockPos blockPos : positions) {
             BlockState blockState = level.getBlockState(blockPos);
             if (blockState.getBlock() instanceof MultiBlockPartBlock) {
                 if (blockState.getValue(IS_FORMED) == isFormed) {
@@ -104,8 +104,7 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
             }
         }
         // Set the formed state of the blocks.
-        for (BlockPos position : positions) {
-            BlockPos blockPos = controllerPos.offset(position);
+        for (BlockPos blockPos : positions) {
             // If the block is the controller block, we don't want to set the controller
             // position to itself. This is to avoid infinite recursion when use is called.
             if (blockPos.equals(controllerPos)) {
@@ -158,7 +157,7 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
             return false;
         }
         // Check if the mutliblock structure can be formed.
-        if (blueprint.isValid(level, pos, state)) {
+        if (blueprint.isComplete(level, pos)) {
             // TODO: Print in chat?
             // Toggle the multiblock structure.
             if (toggleMultiblock(level, pos, state)) {
@@ -167,7 +166,7 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
         } else {
             // Toggle blueprint hologram.
             if (level.isClientSide() && !state.getValue(IS_FORMED)) {
-                HologramRenderer.toggleController(level, pos);
+                HologramRenderer.getInstance().toggleController(level, pos);
             }
             return true;
         }
@@ -180,8 +179,8 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
         TestMod.LOGGER.debug("MultiBlockControllerBlock::onRemove");
         // TODO: This doesn't do anything if we also check for client side
         // Does onRemove only run on the server side?
-        if (HologramRenderer.isCurrentController(pos)) {
-            HologramRenderer.clearController();
+        if (HologramRenderer.getInstance().isCurrentController(pos)) {
+            HologramRenderer.getInstance().clearController();
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
@@ -194,7 +193,8 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
             return InteractionResult.PASS;
         }
         // Explain to the player how to view the blueprint.
-        if (!HologramRenderer.isCurrentController(pos) && !state.getValue(IS_FORMED)) {
+        if (!HologramRenderer.getInstance().isCurrentController(pos)
+                && !state.getValue(IS_FORMED)) {
             player.displayClientMessage(
                     Component.translatable("info.testmod.controller.blueprint.show"), true);
             return InteractionResult.SUCCESS;
@@ -204,45 +204,43 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
         // the world.
         // Maybe we only want to do this if the corresponding blueprint hologram is
         // visible? Otherwise it might be confusing to the player.
-        if (HologramRenderer.isCurrentController(pos) && !state.getValue(IS_FORMED)) {
+        if (HologramRenderer.getInstance().isCurrentController(pos) && !state.getValue(IS_FORMED)) {
             Inventory inventory = player.getInventory();
-            // Get the indices of the missing blocks in the blueprint.
-            BlueprintCheckResult result = blueprint.check(level, pos, state);
-            if (result.isValid()) {
+            // Get the missing blocks in the blueprint.
+            BlueprintState blueprintState = blueprint.getState(level, pos);
+            if (blueprintState.isComplete()) {
                 player.displayClientMessage(
                         Component.translatable("info.testmod.controller.blueprint.complete"), true);
                 return InteractionResult.FAIL;
             }
-            ArrayList<Integer> missingBlockIndices = result.getMissingBlockIndices();
-            BlockState[] states = blueprint.getStates();
-            BlockPos[] positions = blueprint.getRotatedPositions(state.getValue(FACING));
             // Flag to check if the player has any of the missing blocks in their inventory.
             boolean playerHasBlock = false;
-            for (int i : missingBlockIndices) {
-                BlockState blueprintState = states[i];
-                BlockPos posititon = pos.offset(positions[i]);
-                ItemStack stack = blueprint.getItemStack(i);
-                TestMod.LOGGER.debug(
-                        "Block " + blueprintState.getBlock() + " @ " + posititon + " is missing");
+            for (BlueprintBlockInfo blockInfo : blueprintState.getMissingBlocks()) {
+                BlockPos blockInfoPos = blockInfo.getAbsolutePosition(pos, state.getValue(FACING));
+                ItemStack stack = blockInfo.getExpectedItemStack();
                 // Check if the player has any of the missing blocks in their inventory.
                 int itemIndex = inventory.findSlotMatchingItem(stack);
                 if (itemIndex != -1) {
                     playerHasBlock = true;
                     // Sanity check that we're not overwriting a block that's already there.
-                    if (!level.getBlockState(posititon).isAir()) {
+                    if (!level.getBlockState(blockInfoPos).isAir()) {
                         player.displayClientMessage(
                                 Component.translatable("info.testmod.controller.blueprint.blocked"),
                                 true);
                         return InteractionResult.SUCCESS;
                     }
-                    TestMod.LOGGER.debug("Player has " + stack);
                     // Simulate the block being placed by the player. This handles playing the sound
                     // and removing the item from the player's inventory.
                     if (inventory.getItem(itemIndex).getItem() instanceof BlockItem blockItem) {
                         BlockHitResult hitResult = new BlockHitResult(hit.getLocation(),
-                                hit.getDirection(), posititon, hit.isInside());
+                                hit.getDirection(), blockInfoPos, hit.isInside());
                         BlockPlaceContext context =
                                 new BlockPlaceContext(player, hand, stack, hitResult);
+                        // Notify the blueprint hologram that a block has been placed.
+                        // Would be cool if this happened automatically. but
+                        // BlockEvent.EntityPlaceEvent only gets fired when an entity
+                        // places a block, and there's not another alternative.
+                        TestMod.ClientForgeEvents.checkHologramUpdate(blockInfoPos);
                         return blockItem.place(context);
                     }
                 }

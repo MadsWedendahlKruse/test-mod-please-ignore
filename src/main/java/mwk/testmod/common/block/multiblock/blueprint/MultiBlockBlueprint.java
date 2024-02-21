@@ -7,7 +7,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nullable;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -20,11 +19,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 
 /**
  * A blueprint for a multiblock structure.
@@ -36,10 +35,8 @@ public class MultiBlockBlueprint {
     private String name;
     // The controller block of the multiblock structure.
     private MultiBlockControllerBlock controller;
-    // The positions of the blocks that make up the multiblock structure.
-    private BlockPos[] positions;
-    // The blockstates of the blocks that make up the multiblock structure.
-    private BlockState[] states;
+    // The blocks that make up the multiblock structure.
+    BlueprintBlockInfo[] blocks;
     // Corners of the bounding box of the multiblock structure.
     private BlockPos minCorner;
     private BlockPos maxCorner;
@@ -50,8 +47,7 @@ public class MultiBlockBlueprint {
     private static class BlueprintData {
         public String name;
         public MultiBlockControllerBlock controller;
-        public BlockPos[] positions;
-        public BlockState[] states;
+        public BlueprintBlockInfo[] blocks;
     }
 
     /**
@@ -59,10 +55,7 @@ public class MultiBlockBlueprint {
      * {@link #create(String, MultiBlockControllerBlock, BlockPos[], BlockState[])}.
      */
     private MultiBlockBlueprint(String name, MultiBlockControllerBlock controller,
-            BlockPos[] positions, BlockState[] states) {
-        if (positions.length != states.length) {
-            throw new IllegalArgumentException("Positions and states must be the same length.");
-        }
+            BlueprintBlockInfo[] blocks) {
         this.name = name;
         this.controller = controller;
         // TODO: Pretty inefficient way to do this.
@@ -70,7 +63,8 @@ public class MultiBlockBlueprint {
         this.minCorner = new BlockPos(0, 0, 0);
         this.maxCorner = new BlockPos(0, 0, 0);
         // Iterate through the positions and update the corners.
-        for (BlockPos pos : positions) {
+        for (BlueprintBlockInfo blockInfo : blocks) {
+            BlockPos pos = blockInfo.getRelativePosition();
             // Update the min corner.
             if (pos.getX() < this.minCorner.getX()) {
                 this.minCorner = this.minCorner.offset(pos.getX(), 0, 0);
@@ -92,8 +86,7 @@ public class MultiBlockBlueprint {
                 this.maxCorner = this.maxCorner.offset(0, 0, pos.getZ());
             }
         }
-        this.positions = positions;
-        this.states = states;
+        this.blocks = blocks;
         controller.setBlueprint(this);
     }
 
@@ -103,7 +96,7 @@ public class MultiBlockBlueprint {
      * @param data The blueprint data object to construct the blueprint from.
      */
     private MultiBlockBlueprint(BlueprintData data) {
-        this(data.name, data.controller, data.positions, data.states);
+        this(data.name, data.controller, data.blocks);
     }
 
     /**
@@ -112,16 +105,14 @@ public class MultiBlockBlueprint {
      * @param name The name of the multiblock structure.
      * @param controller The controller block of the multiblock structure. The controller block, and
      *        by extension the blueprint, is assumed to be facing north.
-     * @param positions The positions of the blocks that make up the multiblock structure. The
-     *        positions must be relative to the controller block.
-     * @param states The blockstates of the blocks that make up the multiblock structure. The states
-     *        must be in the same order as the positions.
+     * @param blocks The blocks that make up the multiblock structure. The positions are relative to
+     *        the controller block.
      * @return The new multiblock blueprint.
      * @throws IllegalArgumentException If the positions and states are not the same length.
      */
     public static MultiBlockBlueprint create(String name, MultiBlockControllerBlock controller,
-            BlockPos[] positions, BlockState[] states) {
-        return new MultiBlockBlueprint(name, controller, positions, states);
+            BlueprintBlockInfo[] blocks) {
+        return new MultiBlockBlueprint(name, controller, blocks);
     }
 
     /**
@@ -198,13 +189,13 @@ public class MultiBlockBlueprint {
                 blockIdMap.put(symbol, blockIdentifier);
             }
             // Convert the block keys to block states.
-            data.states = new BlockState[blockKeys.size()];
+            BlockState[] states = new BlockState[blockKeys.size()];
             boolean foundController = false;
             for (int i = 0; i < blockKeys.size(); i++) {
                 char symbol = blockKeys.get(i);
                 String blockIdentifier = blockIdMap.get(symbol);
                 Block block = BuiltInRegistries.BLOCK.get(new ResourceLocation(blockIdentifier));
-                data.states[i] = block.defaultBlockState();
+                states[i] = block.defaultBlockState();
                 // TODO: Maybe this will give a false positive if the block has another
                 // boolean property. Alternatively we could check if the block is an
                 // instance of MultiBlockPartBlock.
@@ -226,8 +217,10 @@ public class MultiBlockBlueprint {
             if (!foundController) {
                 throw new IllegalArgumentException("Blueprint JSON must have a controller block.");
             }
-            data.positions = new BlockPos[positions.size()];
-            positions.toArray(data.positions);
+            data.blocks = new BlueprintBlockInfo[positions.size()];
+            for (int i = 0; i < positions.size(); i++) {
+                data.blocks[i] = new BlueprintBlockInfo(positions.get(i), states[i]);
+            }
         } catch (IOException e) {
             TestMod.LOGGER.info("Failed to read file: " + location + ", " + e.getMessage());
         }
@@ -252,15 +245,57 @@ public class MultiBlockBlueprint {
         return null;
     }
 
+    public final BlockPos[] getAbsolutePositions(BlockPos controllerPos, Direction direction) {
+        BlockPos[] positions = new BlockPos[this.blocks.length];
+        for (int i = 0; i < this.blocks.length; i++) {
+            positions[i] = this.blocks[i].getAbsolutePosition(controllerPos, direction);
+        }
+        return positions;
+    }
+
     /**
-     * Get the rotated positions of the blocks that make up the multiblock structure based on the
-     * facing of the controller block.
+     * Get the state of the multiblock structure associated with the controller block at the given
+     * position. This creates a new blueprint state object. If you want to update an existing
+     * blueprint state object, use {@link BlueprintState#update()}.
      * 
-     * @param direction The direction the controller block is facing.
-     * @return The rotated positions of the blocks that make up the multiblock structure.
+     * @param level The level the controller block is in.
+     * @param controllerPos The position of the controller block.
+     * @return The state of the multiblock structure.
      */
-    public final BlockPos[] getRotatedPositions(Direction direction) {
-        BlockPos[] rotatedPositions = new BlockPos[this.positions.length];
+    public BlueprintState getState(Level level, BlockPos controllerPos) {
+        return new BlueprintState(this, level, controllerPos);
+    }
+
+    /**
+     * Check if the multiblock structure associated with the controller block at the given position
+     * is complete.
+     * 
+     * @param level The level the controller block is in.
+     * @param controllerPos The position of the controller block.
+     * @return Whether the multiblock structure is complete.
+     */
+    public boolean isComplete(Level level, BlockPos controllerPos) {
+        return getState(level, controllerPos).isComplete();
+    }
+
+    /**
+     * @return The name of the multiblock structure.
+     */
+    public String getName() {
+        return this.name;
+    }
+
+    /**
+     * @return The blocks that make up the multiblock structure.
+     */
+    public final BlueprintBlockInfo[] getBlocks() {
+        return this.blocks;
+    }
+
+    /**
+     * @return The AABB of the multiblock structure.
+     */
+    public final AABB getAABB(BlockPos controllerPos, Direction direction) {
         Rotation rotation;
         switch (direction) {
             case SOUTH:
@@ -272,185 +307,12 @@ public class MultiBlockBlueprint {
             case WEST:
                 rotation = Rotation.COUNTERCLOCKWISE_90;
                 break;
-            case NORTH:
             default:
                 rotation = Rotation.NONE;
                 break;
         }
-        for (int i = 0; i < this.positions.length; i++) {
-            rotatedPositions[i] = this.positions[i].rotate(rotation);
-        }
-        return rotatedPositions;
+        BlockPos minCorner = this.minCorner.rotate(rotation);
+        BlockPos maxCorner = this.maxCorner.rotate(rotation);
+        return AABB.encapsulatingFullBlocks(minCorner, maxCorner).move(controllerPos);
     }
-
-    /**
-     * A helper class to hold the result of a blueprint check. The result contains the indices of
-     * the blocks in the blueprint that are empty or have the wrong block.
-     */
-    public static class BlueprintCheckResult {
-        private final ArrayList<Integer> missingBlockIndices;
-        private final ArrayList<Integer> wrongBlockIndices;
-
-        public BlueprintCheckResult() {
-            this.missingBlockIndices = new ArrayList<Integer>();
-            this.wrongBlockIndices = new ArrayList<Integer>();
-        }
-
-        public BlueprintCheckResult(ArrayList<Integer> missingBlockIndices,
-                ArrayList<Integer> wrongBlockIndices) {
-            this.missingBlockIndices = missingBlockIndices;
-            this.wrongBlockIndices = wrongBlockIndices;
-        }
-
-        public final ArrayList<Integer> getMissingBlockIndices() {
-            return missingBlockIndices;
-        }
-
-        public final ArrayList<Integer> getWrongBlockIndices() {
-            return wrongBlockIndices;
-        }
-
-        public boolean isValid() {
-            return missingBlockIndices.isEmpty() && wrongBlockIndices.isEmpty();
-        }
-    }
-
-    /**
-     * Check and return the blocks in the blueprint that are empty or have the wrong block.
-     * 
-     * @param level The level the controller block is in.
-     * @param controllerPos The position of the controller block.
-     * @param controllerState The state of the controller block.
-     * @return The result of the blueprint check. See {@link BlueprintCheckResult}.
-     */
-    public BlueprintCheckResult check(Level level, BlockPos controllerPos,
-            BlockState controllerState) {
-        ArrayList<Integer> missingBlockIndices = new ArrayList<Integer>();
-        ArrayList<Integer> wrongBlockIndices = new ArrayList<Integer>();
-        // Check if the block at the controller position is the correct block.
-        if (controllerState.getBlock() != this.controller) {
-            // TODO: This will resolve in a valid blueprint check result. Maybe we should
-            // do something else...
-            return new BlueprintCheckResult();
-        }
-        // Rotate the positions based on the facing of the controller block.
-        BlockPos[] rotatedPositions =
-                getRotatedPositions(controllerState.getValue(MultiBlockControllerBlock.FACING));
-        // Check if the blocks are in the correct positions.
-        for (int i = 0; i < rotatedPositions.length; i++) {
-            BlockPos blueprintPos = rotatedPositions[i];
-            BlockState blueprintState = this.states[i];
-            BlockState blockState = level.getBlockState(controllerPos.offset(blueprintPos));
-            // Check if the block at the position is the correct block.
-            if (blockState.getBlock() != blueprintState.getBlock()) {
-                // Check if the block at the position is empty.
-                if (!blockState.isAir()) {
-                    wrongBlockIndices.add(i);
-                }
-                missingBlockIndices.add(i);
-            }
-        }
-        return new BlueprintCheckResult(missingBlockIndices, wrongBlockIndices);
-    }
-
-    /**
-     * Check if the blueprint for the multiblock structure associated with the controller block at
-     * the given position is valid.
-     * 
-     * @param level The level the controller block is in.
-     * @param controllerPos The position of the controller block.
-     * @param controllerState The state of the controller block.
-     * @return Whether or not the multiblock structure is valid.
-     */
-    public boolean isValid(Level level, BlockPos controllerPos, BlockState controllerState) {
-        return check(level, controllerPos, controllerState).isValid();
-    }
-
-    /**
-     * @return The name of the multiblock structure.
-     */
-    public String getName() {
-        return this.name;
-    }
-
-    /**
-     * @return The blockstates of the blocks that make up the multiblock structure.
-     */
-    public final BlockState[] getStates() {
-        return this.states;
-    }
-
-    /**
-     * @return An ItemStack of the block at the given index in the blueprint.
-     */
-    public ItemStack getItemStack(int index) {
-        return new ItemStack(this.states[index].getBlock());
-    }
-
-    /**
-     * Aggregates item stacks corresponding to specific block indices within a blueprint, merging
-     * duplicate items into single stacks with adjusted quantities. This method is useful for
-     * consolidating individual block items into a compact list of item stacks, where each stack
-     * represents a unique item type and its total quantity based on the provided block indices.
-     * This can be particularly beneficial for inventory management or for displaying a summary of
-     * required materials.
-     * 
-     * @param indices An array of indices within the blueprint representing specific blocks to be
-     *        consolidated.
-     * @param level The level the controller block is in. This is used to differentiate between
-     *        missing blocks and incorrect blocks. If null the blocks in the blueprint (missing)
-     *        will be used, otherwise the blocks in the level (incorrect) will be used.
-     * @param controllerPos The position of the controller block.
-     * @param facing The direction the controller block is facing.
-     * @return A list of {@link ItemStack}s, where each stack represents a unique item type and its
-     *         aggregate quantity from the specified block indices. Stacks are merged based on item
-     *         type.
-     */
-    public ArrayList<ItemStack> getCombinedItemStacks(ArrayList<Integer> indices,
-            @Nullable Level level, @Nullable BlockPos controllerPos, @Nullable Direction facing) {
-        ArrayList<ItemStack> combinedStacks = new ArrayList<>();
-        BlockPos[] rotatedPositions = null;
-        if (facing != null) {
-            rotatedPositions = getRotatedPositions(facing);
-        }
-        for (int index : indices) {
-            ItemStack newItemStack = ItemStack.EMPTY;
-            if (level == null || controllerPos == null) {
-                newItemStack = getItemStack(index);
-            } else if (rotatedPositions != null) {
-                BlockState state =
-                        level.getBlockState(controllerPos.offset(rotatedPositions[index]));
-                newItemStack = new ItemStack(state.getBlock());
-            }
-            boolean merged = false;
-            for (ItemStack existingStack : combinedStacks) {
-                if (ItemStack.isSameItem(newItemStack, existingStack)) {
-                    existingStack.grow(1);
-                    merged = true;
-                    break;
-                }
-            }
-            if (!merged) {
-                combinedStacks.add(newItemStack.copy());
-            }
-        }
-        return combinedStacks;
-    }
-
-    /**
-     * Aggregates item stacks corresponding to specific block indices within a blueprint, merging
-     * duplicate items into single stacks with adjusted quantities. This method is used for
-     * displaying a summary of required materials. See
-     * {@link #getCombinedItemStacks(ArrayList, Level, BlockPos, Direction)} for more information.
-     * 
-     * @param indices An array of indices within the blueprint representing specific blocks to be
-     *        consolidated.
-     * @return A list of {@link ItemStack}s, where each stack represents a unique item type and its
-     *         aggregate quantity from the specified block indices. Stacks are merged based on item
-     *         type.
-     */
-    public ArrayList<ItemStack> getCombinedItemStacks(ArrayList<Integer> indices) {
-        return getCombinedItemStacks(indices, null, null, null);
-    }
-
 }

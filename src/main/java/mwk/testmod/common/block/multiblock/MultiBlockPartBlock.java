@@ -141,7 +141,7 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, Wrenchabl
     private void playMultiBlockSound(Level level, BlockPos pos, boolean isFormed) {
         SoundEvent soundEvent = isFormed ? SoundEvents.ANVIL_USE : SoundEvents.ANVIL_DESTROY;
         level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, soundEvent,
-                SoundSource.BLOCKS, 0.1f, 0.8f, false);
+                SoundSource.BLOCKS, 0.5f, 0.8f, false);
     }
 
     /**
@@ -168,9 +168,10 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, Wrenchabl
             // TODO: Consider only spanwing particles on the faces that are exposed to air.
             // I'm not sure if this is a premature optimization.
             spawnMultiBlockParticles(level, pos, isFormed);
-            // TODO: Volume doesn't seem to work, disable for now to avoid destroying my ears.
-            // playMultiBlockSound(level, pos, isFormed);
-
+            // Only play the sound for the controller, otherwise we get a sound from each block
+            if (state.getBlock() instanceof MultiBlockControllerBlock) {
+                playMultiBlockSound(level, pos, isFormed);
+            }
         }
     }
 
