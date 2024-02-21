@@ -57,7 +57,7 @@ public class HologramRenderer {
     }
 
     public void onRenderLevelStage(RenderLevelStageEvent event) {
-        if (blueprintState == null) {
+        if (controllerPos == null) {
             return;
         }
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS) {
@@ -198,9 +198,10 @@ public class HologramRenderer {
      */
     public void clearController() {
         TestMod.LOGGER.debug("HologramRenderer::clearController");
+        blueprint = null;
+        blueprintState = null;
         level = null;
         controllerPos = null;
-        blueprint = null;
         facing = null;
     }
 
