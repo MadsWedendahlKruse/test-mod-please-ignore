@@ -1,10 +1,10 @@
 package mwk.testmod.common.block.multiblock;
 
 import java.util.Random;
-
 import mwk.testmod.TestMod;
 import mwk.testmod.common.block.multiblock.controller.MultiBlockControllerBlock;
 import mwk.testmod.common.item.Wrenchable;
+import mwk.testmod.init.registries.TestModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -139,9 +139,10 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, Wrenchabl
      * @param isFormed Whether or not the multiblock structure is formed.
      */
     private void playMultiBlockSound(Level level, BlockPos pos, boolean isFormed) {
-        SoundEvent soundEvent = isFormed ? SoundEvents.ANVIL_USE : SoundEvents.ANVIL_DESTROY;
+        SoundEvent soundEvent =
+                isFormed ? TestModSounds.MULTI_BLOCK_FORM.get() : SoundEvents.ANVIL_DESTROY;
         level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, soundEvent,
-                SoundSource.BLOCKS, 0.5f, 0.8f, false);
+                SoundSource.BLOCKS, 0.8F, 1.0F, false);
     }
 
     /**
@@ -201,6 +202,14 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, Wrenchabl
         // If any of the blocks in the multiblock are removed while the multiblock is
         // formed we have to unform it
         if (state.getValue(IS_FORMED)) {
+            // Check if the old state is from the controller
+            // When the controller is broken the block state according to the level is
+            // already the new state, so the below attempt to unform will fail
+            if (state.getBlock() instanceof MultiBlockControllerBlock controller) {
+                controller.setMultiblockFormed(level, pos, state, false, false);
+                return;
+            }
+            // If it's not, we have to find the controller and unform it
             BlockPos controllerPos = getControllerPos(level, pos);
             if (controllerPos != null) {
                 BlockState controllerState = level.getBlockState(controllerPos);
@@ -221,7 +230,8 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, Wrenchabl
         // multiblock controller.
         if (state.getValue(IS_FORMED)) {
             BlockPos controllerPos = getControllerPos(level, pos);
-            if (controllerPos != null) {
+            // Make sure it's not already the controller
+            if (controllerPos != null && !controllerPos.equals(pos)) {
                 BlockState controllerState = level.getBlockState(controllerPos);
                 if (controllerState.getBlock() instanceof MultiBlockControllerBlock) {
                     return ((MultiBlockControllerBlock) controllerState.getBlock())
@@ -243,7 +253,7 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, Wrenchabl
         // event to the multiblock controller.
         if (state.getValue(IS_FORMED)) {
             BlockPos controllerPos = getControllerPos(level, pos);
-            if (controllerPos != null) {
+            if (controllerPos != null && !controllerPos.equals(pos)) {
                 BlockState controllerState = level.getBlockState(controllerPos);
                 if (controllerState.getBlock() instanceof MultiBlockControllerBlock) {
                     return ((MultiBlockControllerBlock) controllerState.getBlock())

@@ -1,0 +1,9 @@
+{
+    "block.multiblock_form": {
+        "category": "block",
+        "sounds": [
+            "testmod:block/multiblock/form"
+        ],
+        "subtitle": "subtitles.testmod.block.multiblock_form"
+    }
+}

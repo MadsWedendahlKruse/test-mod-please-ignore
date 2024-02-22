@@ -1,13 +1,12 @@
 package mwk.testmod.common.block.multiblock.controller;
 
-import java.util.ArrayList;
-
 import mwk.testmod.TestMod;
 import mwk.testmod.client.hologram.HologramRenderer;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintBlockInfo;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintState;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
+import mwk.testmod.init.registries.TestModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -105,12 +104,6 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
         }
         // Set the formed state of the blocks.
         for (BlockPos blockPos : positions) {
-            // If the block is the controller block, we don't want to set the controller
-            // position to itself. This is to avoid infinite recursion when use is called.
-            if (blockPos.equals(controllerPos)) {
-                this.setPartFormed(level, blockPos, controllerState, isFormed, null);
-                continue;
-            }
             BlockState blockState = level.getBlockState(blockPos);
             if (blockState.getBlock() instanceof MultiBlockPartBlock) {
                 ((MultiBlockPartBlock) blockState.getBlock()).setPartFormed(level, blockPos,
@@ -147,30 +140,27 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
     @Override
     public boolean onWrenched(BlockState state, Level level, BlockPos pos, Player player,
             InteractionHand hand) {
-        TestMod.LOGGER.debug("MultiBlockControllerBlock::onWrenched");
+        if (super.onWrenched(state, level, pos, player, hand)) {
+            return true;
+        }
         // TODO: Presumably this is only called when the player has a wrench in their
         // hand, so maybe we don't have to check if the player is holding a wrench?
-        // Check if the blueprint has been set correctly.
         if (blueprint == null) {
             // TODO: Exception?
             TestMod.LOGGER.error("Blueprint has not been set!");
             return false;
         }
-        // Check if the mutliblock structure can be formed.
         if (blueprint.isComplete(level, pos)) {
-            // TODO: Print in chat?
-            // Toggle the multiblock structure.
             if (toggleMultiblock(level, pos, state)) {
                 return true;
             }
         } else {
-            // Toggle blueprint hologram.
-            if (level.isClientSide() && !state.getValue(IS_FORMED)) {
+            if (!state.getValue(IS_FORMED)) {
                 HologramRenderer.getInstance().toggleController(level, pos);
             }
             return true;
         }
-        return super.onWrenched(state, level, pos, player, hand);
+        return false;
     }
 
     @Override
@@ -185,11 +175,62 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
+    private InteractionResult attemptBuildMultiBlock(BlockState state, Level level, BlockPos pos,
+            Player player, InteractionHand hand, BlockHitResult hit) {
+        Inventory inventory = player.getInventory();
+        BlueprintState blueprintState = blueprint.getState(level, pos);
+        if (blueprintState.isComplete()) {
+            player.displayClientMessage(
+                    Component.translatable("info.testmod.controller.blueprint.complete"), true);
+            return InteractionResult.FAIL;
+        }
+        boolean playerHasMissingBlock = false;
+        for (BlueprintBlockInfo blockInfo : blueprintState.getMissingBlocks()) {
+            BlockPos blockInfoPos = blockInfo.getAbsolutePosition(pos, state.getValue(FACING));
+            ItemStack stack = blockInfo.getExpectedItemStack();
+            int itemIndex = inventory.findSlotMatchingItem(stack);
+            if (itemIndex != -1) {
+                playerHasMissingBlock = true;
+                // Sanity check that we're not overwriting a block that's already there.
+                if (!level.getBlockState(blockInfoPos).isAir()) {
+                    player.displayClientMessage(
+                            Component.translatable("info.testmod.controller.blueprint.blocked"),
+                            true);
+                    return InteractionResult.SUCCESS;
+                }
+                // Simulate the block being placed by the player. This handles playing the sound
+                // and removing the item from the player's inventory.
+                if (inventory.getItem(itemIndex).getItem() instanceof BlockItem blockItem) {
+                    BlockHitResult hitResult = new BlockHitResult(hit.getLocation(),
+                            hit.getDirection(), blockInfoPos, hit.isInside());
+                    BlockPlaceContext context =
+                            new BlockPlaceContext(player, hand, stack, hitResult);
+                    // Notify the blueprint hologram that a block has been placed.
+                    // Would be cool if this happened automatically. but
+                    // BlockEvent.EntityPlaceEvent only gets fired when an entity
+                    // places a block, and there's not another alternative.
+                    TestMod.ClientForgeEvents.checkHologramUpdate(blockInfoPos);
+                    return blockItem.place(context);
+                }
+            }
+        }
+        // Notify the player if they don't have any of the missing blocks in their inventory.
+        if (!playerHasMissingBlock) {
+            player.displayClientMessage(
+                    Component.translatable("info.testmod.controller.blueprint.insufficient_blocks"),
+                    true);
+            // TODO: Not sure if we want to return SUCCESS here?
+            return InteractionResult.SUCCESS;
+        }
+        return InteractionResult.SUCCESS;
+    }
+
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
             InteractionHand hand, BlockHitResult hit) {
-        // Right clicking with a wrench is handled in onWrenched.
-        if (player.getItemInHand(hand).getItem() == TestMod.WRENCH_ITEM.get()) {
+        // Right clicking with a wrench is handled by Wrenchable#onWrenched.
+        // (so skip it here)
+        if (player.getItemInHand(hand).getItem() == TestModItems.WRENCH_ITEM.get()) {
             return InteractionResult.PASS;
         }
         // Explain to the player how to view the blueprint.
@@ -199,59 +240,8 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
                     Component.translatable("info.testmod.controller.blueprint.show"), true);
             return InteractionResult.SUCCESS;
         }
-        // Check if the player has any of the missing blocks in the blueprint in their
-        // inventory. If they do, remove the block from their inventory and place it in
-        // the world.
-        // Maybe we only want to do this if the corresponding blueprint hologram is
-        // visible? Otherwise it might be confusing to the player.
         if (HologramRenderer.getInstance().isCurrentController(pos) && !state.getValue(IS_FORMED)) {
-            Inventory inventory = player.getInventory();
-            // Get the missing blocks in the blueprint.
-            BlueprintState blueprintState = blueprint.getState(level, pos);
-            if (blueprintState.isComplete()) {
-                player.displayClientMessage(
-                        Component.translatable("info.testmod.controller.blueprint.complete"), true);
-                return InteractionResult.FAIL;
-            }
-            // Flag to check if the player has any of the missing blocks in their inventory.
-            boolean playerHasBlock = false;
-            for (BlueprintBlockInfo blockInfo : blueprintState.getMissingBlocks()) {
-                BlockPos blockInfoPos = blockInfo.getAbsolutePosition(pos, state.getValue(FACING));
-                ItemStack stack = blockInfo.getExpectedItemStack();
-                // Check if the player has any of the missing blocks in their inventory.
-                int itemIndex = inventory.findSlotMatchingItem(stack);
-                if (itemIndex != -1) {
-                    playerHasBlock = true;
-                    // Sanity check that we're not overwriting a block that's already there.
-                    if (!level.getBlockState(blockInfoPos).isAir()) {
-                        player.displayClientMessage(
-                                Component.translatable("info.testmod.controller.blueprint.blocked"),
-                                true);
-                        return InteractionResult.SUCCESS;
-                    }
-                    // Simulate the block being placed by the player. This handles playing the sound
-                    // and removing the item from the player's inventory.
-                    if (inventory.getItem(itemIndex).getItem() instanceof BlockItem blockItem) {
-                        BlockHitResult hitResult = new BlockHitResult(hit.getLocation(),
-                                hit.getDirection(), blockInfoPos, hit.isInside());
-                        BlockPlaceContext context =
-                                new BlockPlaceContext(player, hand, stack, hitResult);
-                        // Notify the blueprint hologram that a block has been placed.
-                        // Would be cool if this happened automatically. but
-                        // BlockEvent.EntityPlaceEvent only gets fired when an entity
-                        // places a block, and there's not another alternative.
-                        TestMod.ClientForgeEvents.checkHologramUpdate(blockInfoPos);
-                        return blockItem.place(context);
-                    }
-                }
-            }
-            // Notify the player if they don't have any of the missing blocks in their inventory.
-            if (!playerHasBlock) {
-                player.displayClientMessage(Component.translatable(
-                        "info.testmod.controller.blueprint.insufficient_blocks"), true);
-                // TODO: Not sure if we want to return SUCCESS here?
-                return InteractionResult.SUCCESS;
-            }
+            return attemptBuildMultiBlock(state, level, pos, player, hand, hit);
         }
         return super.use(state, level, pos, player, hand, hit);
     }

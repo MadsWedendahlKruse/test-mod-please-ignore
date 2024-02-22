@@ -4,9 +4,9 @@ import java.util.Collection;
 import javax.annotation.Nullable;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import mwk.testmod.TestMod;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintBlockInfo;
 import mwk.testmod.common.block.multiblock.controller.MultiBlockControllerBlock;
+import mwk.testmod.init.registries.TestModBlocks;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -54,7 +54,7 @@ public class HologramBlockRenderer {
             }
             blockState = state;
         } else {
-            blockState = TestMod.HOLOGRAM_BLOCK.get().defaultBlockState();
+            blockState = TestModBlocks.HOLOGRAM_BLOCK.get().defaultBlockState();
         }
         poseStack.pushPose();
         poseStack.translate(position.getX(), position.getY(), position.getZ());

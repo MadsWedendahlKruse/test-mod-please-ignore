@@ -4,9 +4,9 @@ import java.util.Collection;
 import javax.annotation.Nullable;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import mwk.testmod.TestMod;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintBlockInfo;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintState;
+import mwk.testmod.init.registries.TestModItems;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -157,7 +157,7 @@ public class HologramItemRenderer {
             // Since we've rotated around the y-axis, the translations along the x and z axes are
             // now POSITIVE instead of the usual NEGATIVE. This is a bit annoying, and I'm not sure
             // if it's worth the hassle. On the other hand it works *shrug*
-            renderItemStack(poseStack, new ItemStack(TestMod.WRENCH_ITEM.get()), 0.5F, -0.65F,
+            renderItemStack(poseStack, new ItemStack(TestModItems.WRENCH_ITEM.get()), 0.5F, -0.65F,
                     0.25F, HologramConfig.WHITE, 0.5F, 0.5F, ItemDisplayContext.GUI, null,
                     ItemStackTextRenderType.NONE, true);
         }
