@@ -206,6 +206,18 @@ public class HologramRenderer {
     }
 
     /**
+     * Clear the controller for which to render the hologram if the given position is the current
+     * controller.
+     * 
+     * @param pos the position to check
+     */
+    public void clearIfCurrentController(BlockPos pos) {
+        if (isCurrentController(pos)) {
+            clearController();
+        }
+    }
+
+    /**
      * Toggle the controller for which to render the hologram. If the given position is the current
      * controller, clear the controller. Otherwise, set the controller.
      * 

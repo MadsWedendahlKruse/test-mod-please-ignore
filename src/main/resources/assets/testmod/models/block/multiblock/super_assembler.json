@@ -3,6 +3,6 @@
     "flip_v": true,
     "model": "testmod:models/block/multiblock/test_machine.obj",
     "textures": {
-        "particle": "minecraft:block/dirt"
+        "particle": "testmod:block/machine/frame/test7"
     }
 }

@@ -17,6 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -152,6 +153,7 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
         }
         if (blueprint.isComplete(level, pos)) {
             if (toggleMultiblock(level, pos, state)) {
+                HologramRenderer.getInstance().clearIfCurrentController(pos);
                 return true;
             }
         } else {
@@ -200,17 +202,21 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
                 }
                 // Simulate the block being placed by the player. This handles playing the sound
                 // and removing the item from the player's inventory.
-                if (inventory.getItem(itemIndex).getItem() instanceof BlockItem blockItem) {
+                ItemStack itemStack = inventory.getItem(itemIndex);
+                if (itemStack.getItem() instanceof BlockItem blockItem) {
                     BlockHitResult hitResult = new BlockHitResult(hit.getLocation(),
                             hit.getDirection(), blockInfoPos, hit.isInside());
-                    BlockPlaceContext context =
-                            new BlockPlaceContext(player, hand, stack, hitResult);
-                    // Notify the blueprint hologram that a block has been placed.
-                    // Would be cool if this happened automatically. but
-                    // BlockEvent.EntityPlaceEvent only gets fired when an entity
-                    // places a block, and there's not another alternative.
-                    TestMod.ClientForgeEvents.checkHologramUpdate(blockInfoPos);
-                    return blockItem.place(context);
+                    UseOnContext context =
+                            new UseOnContext(level, player, hand, itemStack, hitResult);
+                    InteractionResult result = blockItem.useOn(context);
+                    if (result != InteractionResult.FAIL) {
+                        // Notify the blueprint hologram that a block has been placed.
+                        // Would be cool if this happened automatically. but
+                        // BlockEvent.EntityPlaceEvent only gets fired when an entity
+                        // places a block, and there's not another alternative.
+                        TestMod.ClientForgeEvents.checkHologramUpdate(blockInfoPos);
+                    }
+                    return result;
                 }
             }
         }
