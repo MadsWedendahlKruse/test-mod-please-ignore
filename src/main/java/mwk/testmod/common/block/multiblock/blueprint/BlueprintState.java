@@ -1,7 +1,6 @@
 package mwk.testmod.common.block.multiblock.blueprint;
 
 import java.util.ArrayList;
-import mwk.testmod.common.block.multiblock.controller.MultiBlockControllerBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -20,12 +19,12 @@ public class BlueprintState {
     private ArrayList<BlueprintBlockInfo> missingBlocks;
     private ArrayList<BlueprintBlockInfo> incorrectBlocks;
 
-    public BlueprintState(MultiBlockBlueprint blueprint, Level level, BlockPos controllerPos) {
+    public BlueprintState(MultiBlockBlueprint blueprint, Level level, BlockPos controllerPos,
+            Direction controllerFacing) {
         this.blueprint = blueprint;
         this.level = level;
         this.controllerPos = controllerPos;
-        this.controllerFacing =
-                level.getBlockState(controllerPos).getValue(MultiBlockControllerBlock.FACING);
+        this.controllerFacing = controllerFacing;
 
         emptyBlocks = new ArrayList<>();
         missingBlocks = new ArrayList<>();

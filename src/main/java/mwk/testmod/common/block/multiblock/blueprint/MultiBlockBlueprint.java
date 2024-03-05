@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Nullable;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -31,12 +32,11 @@ import net.minecraft.world.phys.AABB;
 public class MultiBlockBlueprint {
 
     // The name of the multiblock structure.
-    // TODO: Is this necessary?
     private String name;
     // The controller block of the multiblock structure.
     private MultiBlockControllerBlock controller;
     // The blocks that make up the multiblock structure.
-    BlueprintBlockInfo[] blocks;
+    private BlueprintBlockInfo[] blocks;
     // Corners of the bounding box of the multiblock structure.
     private BlockPos minCorner;
     private BlockPos maxCorner;
@@ -57,36 +57,28 @@ public class MultiBlockBlueprint {
     private MultiBlockBlueprint(String name, MultiBlockControllerBlock controller,
             BlueprintBlockInfo[] blocks) {
         this.name = name;
-        this.controller = controller;
-        // TODO: Pretty inefficient way to do this.
-        // Initialize the corners to the controller position.
-        this.minCorner = new BlockPos(0, 0, 0);
-        this.maxCorner = new BlockPos(0, 0, 0);
-        // Iterate through the positions and update the corners.
+        // Initialize the corners to extreme values to ensure they get updated.
+        int minX = Integer.MAX_VALUE;
+        int minY = Integer.MAX_VALUE;
+        int minZ = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE;
+        int maxY = Integer.MIN_VALUE;
+        int maxZ = Integer.MIN_VALUE;
+        // Iterate through the block positions to find the min and max values.
         for (BlueprintBlockInfo blockInfo : blocks) {
             BlockPos pos = blockInfo.getRelativePosition();
-            // Update the min corner.
-            if (pos.getX() < this.minCorner.getX()) {
-                this.minCorner = this.minCorner.offset(pos.getX(), 0, 0);
-            }
-            if (pos.getY() < this.minCorner.getY()) {
-                this.minCorner = this.minCorner.offset(0, pos.getY(), 0);
-            }
-            if (pos.getZ() < this.minCorner.getZ()) {
-                this.minCorner = this.minCorner.offset(0, 0, pos.getZ());
-            }
-            // Update the max corner.
-            if (pos.getX() > this.maxCorner.getX()) {
-                this.maxCorner = this.maxCorner.offset(pos.getX(), 0, 0);
-            }
-            if (pos.getY() > this.maxCorner.getY()) {
-                this.maxCorner = this.maxCorner.offset(0, pos.getY(), 0);
-            }
-            if (pos.getZ() > this.maxCorner.getZ()) {
-                this.maxCorner = this.maxCorner.offset(0, 0, pos.getZ());
-            }
+            minX = Math.min(minX, pos.getX());
+            minY = Math.min(minY, pos.getY());
+            minZ = Math.min(minZ, pos.getZ());
+            maxX = Math.max(maxX, pos.getX());
+            maxY = Math.max(maxY, pos.getY());
+            maxZ = Math.max(maxZ, pos.getZ());
         }
+        // Set the min and max corners based on the calculated values.
+        this.minCorner = new BlockPos(minX, minY, minZ);
+        this.maxCorner = new BlockPos(maxX, maxY, maxZ);
         this.blocks = blocks;
+        this.controller = controller;
         controller.setBlueprint(this);
     }
 
@@ -108,7 +100,6 @@ public class MultiBlockBlueprint {
      * @param blocks The blocks that make up the multiblock structure. The positions are relative to
      *        the controller block.
      * @return The new multiblock blueprint.
-     * @throws IllegalArgumentException If the positions and states are not the same length.
      */
     public static MultiBlockBlueprint create(String name, MultiBlockControllerBlock controller,
             BlueprintBlockInfo[] blocks) {
@@ -131,6 +122,7 @@ public class MultiBlockBlueprint {
         // before the last period.
         String name = location.getPath();
         name = name.substring(name.lastIndexOf("/") + 1, name.lastIndexOf("."));
+        name = "multiblock." + TestMod.MODID + "." + name;
         data.name = name;
         try (InputStream stream = resourceManager.open(location)) {
             JsonElement jsonElement =
@@ -245,7 +237,14 @@ public class MultiBlockBlueprint {
         return null;
     }
 
-    public final BlockPos[] getAbsolutePositions(BlockPos controllerPos, Direction direction) {
+    /**
+     * Get the absolute positions of the blocks that make up the multiblock structure.
+     * 
+     * @param controllerPos The position of the controller block.
+     * @param direction The direction the controller block is facing.
+     * @return The absolute positions of the blocks.
+     */
+    public BlockPos[] getAbsolutePositions(BlockPos controllerPos, Direction direction) {
         BlockPos[] positions = new BlockPos[this.blocks.length];
         for (int i = 0; i < this.blocks.length; i++) {
             positions[i] = this.blocks[i].getAbsolutePosition(controllerPos, direction);
@@ -260,10 +259,34 @@ public class MultiBlockBlueprint {
      * 
      * @param level The level the controller block is in.
      * @param controllerPos The position of the controller block.
+     * @param controllerFacing The direction the controller block is facing.
      * @return The state of the multiblock structure.
      */
+    public BlueprintState getState(Level level, BlockPos controllerPos,
+            Direction controllerFacing) {
+        if (level == null) {
+            throw new IllegalArgumentException("Level cannot be null.");
+        }
+        if (controllerPos == null) {
+            throw new IllegalArgumentException("Controller position cannot be null.");
+        }
+        if (controllerFacing == null) {
+            throw new IllegalArgumentException("Controller facing cannot be null.");
+        }
+        return new BlueprintState(this, level, controllerPos, controllerFacing);
+    }
+
+    /**
+     * Get the state of the multiblock structure associated with the controller block at the given
+     * position. See {@link #getState(Level, BlockPos, Direction)}.
+     */
     public BlueprintState getState(Level level, BlockPos controllerPos) {
-        return new BlueprintState(this, level, controllerPos);
+        BlockState state = level.getBlockState(controllerPos);
+        if (!(state.getBlock() instanceof MultiBlockControllerBlock)) {
+            throw new IllegalArgumentException("Block at controller position is not a controller.");
+        }
+        Direction direction = state.getValue(MultiBlockControllerBlock.FACING);
+        return getState(level, controllerPos, direction);
     }
 
     /**
@@ -288,14 +311,24 @@ public class MultiBlockBlueprint {
     /**
      * @return The blocks that make up the multiblock structure.
      */
-    public final BlueprintBlockInfo[] getBlocks() {
+    public BlueprintBlockInfo[] getBlocks() {
         return this.blocks;
     }
 
     /**
+     * @return The controller block of the multiblock structure.
+     */
+    public MultiBlockControllerBlock getController() {
+        return this.controller;
+    }
+
+    /**
+     * @param controllerPos The position of the controller block. If null the relative position is
+     *        returned. If not null the absolute position is returned.
+     * @param direction The direction the controller block is facing.
      * @return The AABB of the multiblock structure.
      */
-    public final AABB getAABB(BlockPos controllerPos, Direction direction) {
+    public AABB getAABB(@Nullable BlockPos controllerPos, Direction direction) {
         Rotation rotation;
         switch (direction) {
             case SOUTH:
@@ -313,6 +346,19 @@ public class MultiBlockBlueprint {
         }
         BlockPos minCorner = this.minCorner.rotate(rotation);
         BlockPos maxCorner = this.maxCorner.rotate(rotation);
-        return AABB.encapsulatingFullBlocks(minCorner, maxCorner).move(controllerPos);
+        AABB aabb = AABB.encapsulatingFullBlocks(minCorner, maxCorner);
+        if (controllerPos != null) {
+            aabb = aabb.move(controllerPos);
+        }
+        return aabb;
+    }
+
+    /**
+     * @return The AABB of the multiblock structure. All positions are relative to the controller
+     *         block and the controller block is assumed to be facing north. For an absolute AABB
+     *         use {@link #getAABB(BlockPos, Direction)}.
+     */
+    public AABB getAABB() {
+        return getAABB(null, Direction.NORTH);
     }
 }

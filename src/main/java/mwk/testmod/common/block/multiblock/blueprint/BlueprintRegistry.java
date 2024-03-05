@@ -43,6 +43,13 @@ public class BlueprintRegistry {
     }
 
     /**
+     * @return an unmodifiable map of all registered blueprints.
+     */
+    public Map<String, MultiBlockBlueprint> getBlueprints() {
+        return Map.copyOf(blueprints);
+    }
+
+    /**
      * Register a blueprint. The blueprint will be accessible by its name after it is registered,
      * e.g. BlueprintRegistry.getInstance().getBlueprint("super_assembler");
      * 

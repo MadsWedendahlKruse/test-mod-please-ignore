@@ -1,6 +1,12 @@
 {
     "variants": {
-        "": {
+        "color=cyan": {
+            "model": "testmod:block/hologram"
+        },
+        "color=red": {
+            "model": "testmod:block/hologram"
+        },
+        "color=green": {
             "model": "testmod:block/hologram"
         }
     }

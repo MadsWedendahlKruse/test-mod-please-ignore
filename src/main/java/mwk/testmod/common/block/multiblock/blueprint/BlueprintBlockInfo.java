@@ -2,6 +2,8 @@ package mwk.testmod.common.block.multiblock.blueprint;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
@@ -84,6 +86,11 @@ public class BlueprintBlockInfo {
     }
 
     public boolean isBlockIncorrect() {
+        if (actualState != null && actualState.getBlock() instanceof MultiBlockPartBlock) {
+            if (actualState.getValue(MultiBlockPartBlock.IS_FORMED)) {
+                return true;
+            }
+        }
         return isBlockMissing() && !isBlockEmpty();
     }
 
@@ -117,5 +124,10 @@ public class BlueprintBlockInfo {
             }
         }
         return itemStacks;
+    }
+
+    public static ArrayList<ItemStack> getItemStacks(BlueprintBlockInfo[] blocks,
+            boolean actualItemStack) {
+        return getItemStacks(List.of(blocks), actualItemStack);
     }
 }

@@ -1,7 +1,10 @@
 package mwk.testmod.common.block.multiblock.controller;
 
 import mwk.testmod.TestMod;
+import mwk.testmod.client.events.HologramClientEvents;
 import mwk.testmod.client.hologram.HologramRenderer;
+import mwk.testmod.client.hologram.events.ClearIfCurrentEvent;
+import mwk.testmod.client.hologram.events.WrenchEvent;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintBlockInfo;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintState;
@@ -50,7 +53,6 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        // Set the direction the controller block is facing.
         return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
@@ -153,12 +155,15 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
         }
         if (blueprint.isComplete(level, pos)) {
             if (toggleMultiblock(level, pos, state)) {
-                HologramRenderer.getInstance().clearIfCurrentController(pos);
+                if (level.isClientSide()) {
+                    HologramRenderer.getInstance().setEvent(
+                            new ClearIfCurrentEvent(blueprint, pos, state.getValue(FACING)));
+                }
                 return true;
             }
         } else {
-            if (!state.getValue(IS_FORMED)) {
-                HologramRenderer.getInstance().toggleController(level, pos);
+            if (!state.getValue(IS_FORMED) && level.isClientSide()) {
+                HologramRenderer.getInstance().setEvent(new WrenchEvent(level, pos));
             }
             return true;
         }
@@ -171,12 +176,16 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
         TestMod.LOGGER.debug("MultiBlockControllerBlock::onRemove");
         // TODO: This doesn't do anything if we also check for client side
         // Does onRemove only run on the server side?
-        if (HologramRenderer.getInstance().isCurrentController(pos)) {
-            HologramRenderer.getInstance().clearController();
-        }
+        HologramRenderer.getInstance()
+                .setEvent(new ClearIfCurrentEvent(blueprint, pos, state.getValue(FACING)));
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
+    /**
+     * Attempt to build the multiblock structure. This method is called when the player right clicks
+     * the controller block without a wrench in their hand. This method checks if the player has the
+     * required blocks in their inventory and if so, places them in the world.
+     */
     private InteractionResult attemptBuildMultiBlock(BlockState state, Level level, BlockPos pos,
             Player player, InteractionHand hand, BlockHitResult hit) {
         Inventory inventory = player.getInventory();
@@ -211,10 +220,10 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
                     InteractionResult result = blockItem.useOn(context);
                     if (result != InteractionResult.FAIL) {
                         // Notify the blueprint hologram that a block has been placed.
-                        // Would be cool if this happened automatically. but
+                        // Would be cool if this happened automatically, but
                         // BlockEvent.EntityPlaceEvent only gets fired when an entity
                         // places a block, and there's not another alternative.
-                        TestMod.ClientForgeEvents.checkHologramUpdate(blockInfoPos);
+                        HologramClientEvents.checkHologramUpdate(blockInfoPos);
                     }
                     return result;
                 }
@@ -240,14 +249,17 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
             return InteractionResult.PASS;
         }
         // Explain to the player how to view the blueprint.
-        if (!HologramRenderer.getInstance().isCurrentController(pos)
-                && !state.getValue(IS_FORMED)) {
-            player.displayClientMessage(
-                    Component.translatable("info.testmod.controller.blueprint.show"), true);
-            return InteractionResult.SUCCESS;
-        }
-        if (HologramRenderer.getInstance().isCurrentController(pos) && !state.getValue(IS_FORMED)) {
-            return attemptBuildMultiBlock(state, level, pos, player, hand, hit);
+        boolean isCurrentBlueprint = HologramRenderer.getInstance().isCurrentBlueprint(pos,
+                blueprint, state.getValue(FACING));
+        boolean isFormed = state.getValue(IS_FORMED);
+        if (!isFormed) {
+            if (!isCurrentBlueprint) {
+                player.displayClientMessage(
+                        Component.translatable("info.testmod.controller.blueprint.help"), true);
+                return InteractionResult.SUCCESS;
+            } else {
+                return attemptBuildMultiBlock(state, level, pos, player, hand, hit);
+            }
         }
         return super.use(state, level, pos, player, hand, hit);
     }

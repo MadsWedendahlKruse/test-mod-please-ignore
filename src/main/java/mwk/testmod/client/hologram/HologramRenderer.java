@@ -1,13 +1,17 @@
 package mwk.testmod.client.hologram;
 
 import org.joml.Quaternionf;
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import mwk.testmod.TestMod;
+import mwk.testmod.client.animations.dynamic.DynamicAnimationAngle;
+import mwk.testmod.client.animations.dynamic.DynamicAnimationVector;
+import mwk.testmod.client.hologram.components.HologramBlockRenderer;
+import mwk.testmod.client.hologram.components.HologramGeometryRenderer;
+import mwk.testmod.client.hologram.components.HologramItemRenderer;
+import mwk.testmod.client.hologram.components.HologramTextRenderer;
+import mwk.testmod.client.hologram.events.HologramEvent;
+import mwk.testmod.common.block.multiblock.HologramBlock.HologramColor;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintState;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
-import mwk.testmod.common.block.multiblock.controller.MultiBlockControllerBlock;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -17,8 +21,6 @@ import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -28,11 +30,20 @@ public class HologramRenderer {
     private BlueprintState blueprintState;
     private BlockPos controllerPos;
     private Direction facing;
-    private Level level;
+    boolean locked = false;
 
     private HologramBlockRenderer hologramBlockRenderer;
     private HologramItemRenderer hologramItemRenderer;
     private HologramTextRenderer hologramTextRenderer;
+    private HologramGeometryRenderer hologramGeometryRenderer;
+
+    private HologramEvent latestEvent;
+
+    private DynamicAnimationVector moveAnimation;
+    private static final float HOLOGRAM_MOVE_SPEED = 10.0F; // [m/s]
+
+    private DynamicAnimationAngle rotateAnimation;
+    private static final float HOLOGRAM_ROTATE_SPEED = (float) Math.PI * 4; // [rad/s]
 
     private static HologramRenderer instance;
 
@@ -45,7 +56,7 @@ public class HologramRenderer {
         return instance;
     }
 
-    public void setup() {
+    public void init() {
         Minecraft minecraft = Minecraft.getInstance();
         BlockRenderDispatcher blockRenderer = minecraft.getBlockRenderer();
         BufferSource bufferSource = minecraft.renderBuffers().bufferSource();
@@ -54,6 +65,19 @@ public class HologramRenderer {
         hologramItemRenderer = new HologramItemRenderer(itemRenderer, bufferSource);
         Font font = minecraft.font;
         hologramTextRenderer = new HologramTextRenderer(font, bufferSource);
+        hologramGeometryRenderer = new HologramGeometryRenderer(bufferSource);
+
+        moveAnimation = new DynamicAnimationVector(HOLOGRAM_MOVE_SPEED);
+        rotateAnimation = new DynamicAnimationAngle(HOLOGRAM_ROTATE_SPEED);
+    }
+
+    public void setEvent(HologramEvent event) {
+        event.apply(this);
+        latestEvent = event;
+    }
+
+    public HologramEvent getLatestEvent() {
+        return latestEvent;
     }
 
     public void onRenderLevelStage(RenderLevelStageEvent event) {
@@ -61,53 +85,16 @@ public class HologramRenderer {
             return;
         }
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS) {
-            renderBlueprintHologram(Minecraft.getInstance(), event, level, controllerPos, blueprint,
+            renderBlueprintHologram(Minecraft.getInstance(), event, controllerPos, blueprint,
                     facing);
         }
     }
 
-    /**
-     * Push the pose of the top left corner on a given face of the block at the given position. This
-     * assumes the last pose is at the bottom north west corner of the controller.
-     * 
-     * @param poseStack the pose stack
-     * @param pos the position of the block relative to the controller. If null the pose is not
-     *        translated
-     * @param facing the face to get the pose for
-     */
-    private void pushTopLeftPose(PoseStack poseStack, BlockPos pos, Direction face) {
-        poseStack.pushPose();
-        if (pos != null) {
-            // Move to bottom north west corner of the block
-            poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
-        }
-        // Move to top north east corner of the block
-        poseStack.translate(1.0F, 1.0F, 0.0F);
-        // Rotate to the correct face
-        double angle = 0.0;
-        switch (facing) {
-            case SOUTH:
-                angle = Math.PI;
-                break;
-            case EAST:
-                angle = -Math.PI / 2.0;
-                break;
-            case WEST:
-                angle = Math.PI / 2.0;
-                break;
-            case NORTH:
-            default:
-                break;
-        }
-        Quaternionf q = new Quaternionf(0.0F, (float) Math.sin(angle / 2.0F), 0.0F,
-                (float) Math.cos(angle / 2.0F));
-        // Rotate around the center of the block
-        poseStack.rotateAround(q, -0.5F, -0.5F, 0.5F);
-    }
-
     private void renderBlueprintHologram(Minecraft minecraft, RenderLevelStageEvent event,
-            Level level, BlockPos controllerPos, MultiBlockBlueprint blueprint, Direction facing) {
+            BlockPos controllerPos, MultiBlockBlueprint blueprint, Direction facing) {
         hologramBlockRenderer.updateAnimation();
+        moveAnimation.update();
+        rotateAnimation.update();
 
         PoseStack poseStack = event.getPoseStack();
         // Push once to save the origin
@@ -115,125 +102,121 @@ public class HologramRenderer {
         // Translate to the render position
         Camera camera = event.getCamera();
         Vec3 camPos = camera.getPosition();
-        poseStack.translate(-camPos.x + controllerPos.getX(), -camPos.y + controllerPos.getY(),
-                -camPos.z + controllerPos.getZ());
+        Vec3 renderPos = moveAnimation.getValue();
+        poseStack.translate(renderPos.x - camPos.x, renderPos.y - camPos.y, renderPos.z - camPos.z);
 
-        // Set the render state
-        RenderSystem.enableBlend();
-        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA,
-                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        // Rotate the hologram to the correct facing
+        float rotation = rotateAnimation.getValue();
+        // Rotate around the center of the block
+        poseStack.rotateAround(new Quaternionf().rotationY(rotation), 0.5F, 0.5F, 0.5F);
 
         // Render the overlay on the incorrect blocks
         hologramBlockRenderer.renderHologramBlockOverlays(poseStack,
-                blueprintState.getIncorrectBlocks(), facing, HologramConfig.RED, true, false);
+                blueprintState.getIncorrectBlocks(), HologramColor.RED, true);
         // Render the hologram of the empty blocks
         hologramBlockRenderer.renderHologramBlocks(poseStack, blueprintState.getEmptyBlocks(),
-                facing, HologramConfig.WHITE, true, true);
+                true);
         // Render the overlay on the empty blocks
         hologramBlockRenderer.renderHologramBlockOverlays(poseStack,
-                blueprintState.getEmptyBlocks(), facing, HologramConfig.CYAN, true, true);
-        // Render the overlay on the controller so the player can see which one it is
-        // TODO: Different way to highlight the controller. Right now it looks like it's also a
-        // hologram, which it isn't necessarily
-        float[] controllerColor =
-                blueprintState.isComplete() ? HologramConfig.GREEN : HologramConfig.YELLOW;
-        hologramBlockRenderer.renderHologramBlock(poseStack, new BlockPos(0, 0, 0), null, facing,
-                controllerColor, true, false);
-        // Reset shader color after rendering the hologram
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+                blueprintState.getEmptyBlocks(), HologramColor.CYAN, true);
 
-        pushTopLeftPose(poseStack, null, facing);
+        // Render the outline on the controller so the player can see which one it is
+        HologramColor outlineColor = blueprintState.isComplete() ? HologramColor.GREEN
+                : blueprintState.getIncorrectBlocks().isEmpty() ? HologramColor.CYAN
+                        : HologramColor.RED;
+        AABB aabb = blueprint.getAABB();
+        hologramGeometryRenderer.drawAABB(poseStack, aabb, outlineColor.getFloatColor(), 1.0F);
+        hologramGeometryRenderer.drawBlockOutline(poseStack, outlineColor.getFloatColor(), 1.0F);
+        // TODO: Unfinished attempt to draw the hologram with a projection
+        // Vec3 lookDir = minecraft.player.getLookAngle();
+        // Vec3 camPosRelative =
+        // camPos.subtract(controllerPos.getX(), controllerPos.getY(), controllerPos.getZ());
+        // Vector3f upDirF = camera.getUpVector();
+        // Vec3 upDir = new Vec3(upDirF.x(), upDirF.y(), upDirF.z());
+        // hologramGeometryRenderer.drawAABBWithProjection(poseStack, aabb, outlineColor, 1.0F,
+        // camPosRelative, lookDir, upDir);
+
+        // Move to top left corner of the controller block
+        poseStack.translate(1.0F, 1.0F, 0.0F);
         hologramItemRenderer.renderBlueprintStatus(poseStack, hologramTextRenderer, blueprintState);
-        // Pop the top left pose pushed during pushTopLeftPose
-        poseStack.popPose();
 
-        // Reset the render state
-        RenderSystem.disableBlend();
-        // Pop the origin
         poseStack.popPose();
-        // Reset shader color
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+    }
+
+    private float getRotation(Direction facing) {
+        switch (facing) {
+            case EAST:
+                return -(float) Math.PI / 2.0F;
+            case WEST:
+                return (float) Math.PI / 2.0F;
+            case SOUTH:
+                return (float) Math.PI;
+            case NORTH:
+            default:
+                return 0.0F;
+        }
+    }
+
+    public boolean isCurrentBlueprint(BlockPos controllerPos, MultiBlockBlueprint blueprint,
+            Direction facing) {
+        return this.controllerPos != null && this.controllerPos.equals(controllerPos)
+                && this.blueprint.equals(blueprint) && this.facing.equals(facing);
     }
 
     /**
-     * Set the controller for which to render the hologram.
+     * Set the hologram to render the given blueprint.
      * 
-     * @param level the level the controller is in
-     * @param pos the position of the controller
+     * @param controllerPos the position of the controller
+     * @param blueprint the blueprint to render
+     * @param blueprintState the state of the blueprint
+     * @param facing the direction the blueprint should be rendered in
+     * @param animatePopIn whether to animate the hologram popping in
+     * @param animateMove whether to animate the hologram moving to the new position
      */
-    public void setController(Level level, BlockPos pos) {
-        // Only modify the renderer on the client side
-        if (!level.isClientSide()) {
+    public void setHologramBlueprint(BlockPos controllerPos, MultiBlockBlueprint blueprint,
+            BlueprintState blueprintState, Direction facing, boolean animatePopIn,
+            boolean animateMove) {
+        if (isCurrentBlueprint(controllerPos, blueprint, facing)) {
             return;
         }
-        TestMod.LOGGER.debug("HologramRenderer::setController");
-        BlockState state = level.getBlockState(pos);
-        if (state.getBlock() instanceof MultiBlockControllerBlock controller) {
-            TestMod.LOGGER.debug("Setting controller: " + controller + " @ " + pos);
-            this.level = level;
-            controllerPos = pos;
-            blueprint = controller.getBlueprint();
-            blueprintState = blueprint.getState(level, pos);
-            facing = state.getValue(MultiBlockControllerBlock.FACING);
+        this.controllerPos = controllerPos;
+        this.blueprint = blueprint;
+        this.blueprintState = blueprintState;
+        this.facing = facing;
+        setLocked(false);
+        updateBlueprintState();
+        if (controllerPos == null || facing == null) {
+            moveAnimation.reset();
+            rotateAnimation.reset();
+            return;
+        }
+        if (animatePopIn) {
             hologramBlockRenderer.startAnimation();
-            updateBlueprintState();
         }
-    }
-
-    /**
-     * Check if the given position is the current controller for which to render the hologram.
-     * 
-     * @param pos the position to check
-     */
-    public boolean isCurrentController(BlockPos pos) {
-        TestMod.LOGGER.debug("HologramRenderer::isCurrentController");
-        TestMod.LOGGER.debug("pos: " + pos);
-        TestMod.LOGGER.debug("controllerPos: " + controllerPos);
-        return controllerPos != null && controllerPos.equals(pos);
-    }
-
-    /**
-     * Clear the controller for which to render the hologram. This is used when the multiblock
-     * structure is formed or when the controller is destroyed.
-     */
-    public void clearController() {
-        TestMod.LOGGER.debug("HologramRenderer::clearController");
-        blueprint = null;
-        blueprintState = null;
-        level = null;
-        controllerPos = null;
-        facing = null;
-    }
-
-    /**
-     * Clear the controller for which to render the hologram if the given position is the current
-     * controller.
-     * 
-     * @param pos the position to check
-     */
-    public void clearIfCurrentController(BlockPos pos) {
-        if (isCurrentController(pos)) {
-            clearController();
-        }
-    }
-
-    /**
-     * Toggle the controller for which to render the hologram. If the given position is the current
-     * controller, clear the controller. Otherwise, set the controller.
-     * 
-     * @param level the level the controller is in
-     * @param pos the position of the controller
-     */
-    public void toggleController(Level level, BlockPos pos) {
-        // Only modify the renderer on the client side
-        if (!level.isClientSide()) {
-            return;
-        }
-        if (isCurrentController(pos)) {
-            clearController();
+        Vec3 targetPos = new Vec3(controllerPos.getX(), controllerPos.getY(), controllerPos.getZ());
+        moveAnimation.setTargetValue(targetPos);
+        float targetRotation = getRotation(facing);
+        rotateAnimation.setTargetValue(targetRotation);
+        if (animateMove) {
+            moveAnimation.start();
+            if (!moveAnimation.startValueSet()) {
+                moveAnimation.setStartValue(targetPos);
+            }
+            rotateAnimation.start();
+            if (!rotateAnimation.startValueSet()) {
+                rotateAnimation.setStartValue(targetRotation);
+            }
         } else {
-            setController(level, pos);
+            moveAnimation.stop();
+            rotateAnimation.stop();
         }
+    }
+
+    /**
+     * Clear the hologram so it doesn't render anything.
+     */
+    public void clearHologram() {
+        setHologramBlueprint(null, null, null, null, false, false);
     }
 
     /**
@@ -254,5 +237,13 @@ public class HologramRenderer {
             return;
         }
         blueprintState.update();
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
+    public boolean isLocked() {
+        return locked;
     }
 }

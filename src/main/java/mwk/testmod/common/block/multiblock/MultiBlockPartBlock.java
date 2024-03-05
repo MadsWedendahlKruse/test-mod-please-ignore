@@ -195,6 +195,7 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, Wrenchabl
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState,
             boolean movedByPiston) {
         TestMod.LOGGER.debug("MultiBlockPartBlock::onRemove");
+        TestMod.LOGGER.debug("client = " + level.isClientSide());
         TestMod.LOGGER.debug("state = " + state);
         TestMod.LOGGER.debug("state @ " + pos + " = " + level.getBlockState(pos));
         TestMod.LOGGER.debug("newState = " + newState);

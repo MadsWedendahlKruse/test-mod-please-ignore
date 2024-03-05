@@ -1,9 +1,10 @@
-package mwk.testmod.client.hologram;
+package mwk.testmod.client.hologram.components;
 
 import org.joml.Quaternionf;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Font.DisplayMode;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.network.chat.Component;
 
@@ -12,8 +13,8 @@ public class HologramTextRenderer {
     private static final float HOLOGRAM_TEXT_SCALE = 0.01F;
     private static final float HOLOGRAM_TEXT_Z_OFFSET = -0.1F;
     // Text is for some reason rendered upside down by default
-    private static final Quaternionf HOLOGRAM_TEXT_ROTATION = new Quaternionf(0.0F, 0.0F,
-            (float) Math.sin(Math.PI / 2.0F), (float) Math.cos(Math.PI / 2.0F));
+    private static final Quaternionf HOLOGRAM_TEXT_ROTATION =
+            new Quaternionf().rotationZ((float) Math.PI);
     private static final int TEXT_WHITE = 16777215;
 
     private Font font;
@@ -31,7 +32,7 @@ public class HologramTextRenderer {
         poseStack.scale(HOLOGRAM_TEXT_SCALE, HOLOGRAM_TEXT_SCALE, HOLOGRAM_TEXT_SCALE);
         poseStack.mulPose(HOLOGRAM_TEXT_ROTATION);
         font.drawInBatch(component, 0, 0, textColor, false, poseStack.last().pose(), bufferSource,
-                DisplayMode.SEE_THROUGH, 0, HologramConfig.PACKED_LIGHT_COORDS);
+                DisplayMode.SEE_THROUGH, 0, LightTexture.FULL_BRIGHT);
         poseStack.popPose();
     }
 

@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import com.google.common.base.Predicate;
 import com.mojang.logging.LogUtils;
 import mwk.testmod.client.hologram.HologramRenderer;
+import mwk.testmod.common.block.multiblock.HologramBlockColor;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintRegistry;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
 import mwk.testmod.init.registries.TestModBlockEntities;
@@ -13,7 +14,6 @@ import mwk.testmod.init.registries.TestModCreativeTabs;
 import mwk.testmod.init.registries.TestModItems;
 import mwk.testmod.init.registries.TestModSounds;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
@@ -28,10 +28,9 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -126,36 +125,18 @@ public class TestMod {
 			// Some client setup code
 			LOGGER.info("HELLO FROM CLIENT SETUP");
 			LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
-			HologramRenderer.getInstance().setup();
+			HologramRenderer.getInstance().init();
+		}
+
+		@SubscribeEvent
+		public static void onRegisterColorHandlersEvent(RegisterColorHandlersEvent.Block event) {
+			event.register(new HologramBlockColor(), TestModBlocks.HOLOGRAM_BLOCK.get());
 		}
 	}
 
-	// TODO: Not sure if this is the best way to do this
-	@Mod.EventBusSubscriber(modid = TestMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE,
-			value = Dist.CLIENT)
-	public static class ClientForgeEvents {
+	// @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE,
+	// value = Dist.CLIENT)
+	// public static class ClientForgeEvents {
 
-		@SubscribeEvent
-		public static void onRenderLevelStage(RenderLevelStageEvent event) {
-			HologramRenderer.getInstance().onRenderLevelStage(event);
-		}
-
-		public static void checkHologramUpdate(BlockPos pos) {
-			HologramRenderer hologram = HologramRenderer.getInstance();
-			if (hologram.isInsideHologram(pos)) {
-				hologram.updateBlueprintState();
-			}
-		}
-
-		@SubscribeEvent
-		public static void onBlockPlaced(BlockEvent.EntityPlaceEvent event) {
-			// TODO: This doesn't fire when the blueprint is automatically placed
-			checkHologramUpdate(event.getPos());
-		}
-
-		@SubscribeEvent
-		public static void onBlockBroken(BlockEvent.BreakEvent event) {
-			checkHologramUpdate(event.getPos());
-		}
-	}
+	// }
 }
