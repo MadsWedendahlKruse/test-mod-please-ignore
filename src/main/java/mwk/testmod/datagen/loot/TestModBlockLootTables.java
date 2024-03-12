@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import mwk.testmod.init.registries.TestModBlocks;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
@@ -24,6 +25,9 @@ public class TestModBlockLootTables extends BlockLootSubProvider {
         this.dropSelf(TestModBlocks.MACHINE_FRAME_ADVANCED_BLOCK.get());
         this.dropSelf(TestModBlocks.SUPER_FURNACE_BLOCK.get());
         this.dropSelf(TestModBlocks.SUPER_ASSEMBLER_BLOCK.get());
+
+        // this.dropSelf(TestModBlocks.HOLOGRAM_BLOCK.get());
+        this.dropOther(TestModBlocks.HOLOGRAM_BLOCK.get(), ItemStack.EMPTY.getItem());
     }
 
     @Override

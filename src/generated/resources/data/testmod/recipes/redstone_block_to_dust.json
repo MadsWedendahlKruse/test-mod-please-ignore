@@ -1,0 +1,10 @@
+{
+  "type": "testmod:crusher",
+  "input": {
+    "item": "minecraft:redstone_block"
+  },
+  "output": {
+    "count": 9,
+    "item": "minecraft:redstone"
+  }
+}

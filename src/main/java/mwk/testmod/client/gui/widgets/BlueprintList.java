@@ -5,6 +5,7 @@ import java.util.Collection;
 import mwk.testmod.TestMod;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintRegistry;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
+import mwk.testmod.datagen.TestModLanguageProvider;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractScrollWidget;
 import net.minecraft.client.gui.components.Button;
@@ -37,7 +38,9 @@ public class BlueprintList extends AbstractScrollWidget {
         super(x, y, width - SCROLL_BAR_WIDTH, height, message);
         this.padding = padding;
         this.spacing = spacing;
-        addBlueprintButton(Component.translatable("button.testmod.hologram_projector.none"), "");
+        addBlueprintButton(
+                Component.translatable(TestModLanguageProvider.KEY_WIDGET_HOLOGRAM_PROJECTOR_NONE),
+                "");
         Collection<MultiBlockBlueprint> blueprints =
                 BlueprintRegistry.getInstance().getBlueprints().values();
         // TEMP

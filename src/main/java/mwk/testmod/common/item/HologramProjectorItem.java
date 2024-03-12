@@ -1,9 +1,10 @@
 package mwk.testmod.common.item;
 
 import mwk.testmod.TestMod;
-import mwk.testmod.client.gui.HologramProjectorScreen;
+import mwk.testmod.client.gui.screen.HologramProjectorScreen;
 import mwk.testmod.client.hologram.HologramRenderer;
 import mwk.testmod.client.hologram.events.ProjectorEvent;
+import mwk.testmod.datagen.TestModLanguageProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -45,17 +46,20 @@ public class HologramProjectorItem extends Item {
                 boolean locked = renderer.isLocked();
                 renderer.setLocked(!locked);
                 if (locked) {
-                    player.displayClientMessage(Component.translatable(
-                            "info.testmod.hologram_projector.blueprint.unlocked"), true);
+                    player.displayClientMessage(
+                            Component.translatable(
+                                    TestModLanguageProvider.KEY_INFO_HOLOGRAM_PROJECTOR_UNLOCKED),
+                            true);
                 } else {
-                    player.displayClientMessage(Component.translatable(
-                            "info.testmod.hologram_projector.blueprint.locked"), true);
+                    player.displayClientMessage(
+                            Component.translatable(
+                                    TestModLanguageProvider.KEY_INFO_HOLOGRAM_PROJECTOR_LOCKED),
+                            true);
                 }
                 return InteractionResultHolder.success(player.getItemInHand(hand));
             } else {
-                player.displayClientMessage(
-                        Component.translatable("info.testmod.hologram_projector.blueprint.help"),
-                        true);
+                player.displayClientMessage(Component.translatable(
+                        TestModLanguageProvider.KEY_INFO_HOLOGRAM_PROJECTOR_HELP), true);
             }
         }
         return super.use(level, player, hand);

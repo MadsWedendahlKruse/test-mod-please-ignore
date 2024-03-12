@@ -7,6 +7,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintBlockInfo;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintState;
+import mwk.testmod.datagen.TestModLanguageProvider;
 import mwk.testmod.init.registries.TestModItems;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
@@ -131,11 +132,13 @@ public class HologramItemRenderer {
             Collection<ItemStack> missingBlockStacks =
                     BlueprintBlockInfo.getItemStacks(blueprintState.getMissingBlocks(), false);
             if (!missingBlockStacks.isEmpty()) {
-                height += renderItemStackList(poseStack, missingBlockStacks, 0, height, 0,
-                        HOLOGRAM_COLOR_WHITE, textRenderer, ItemStackTextRenderType.COUNT_AND_NAME,
-                        Component.translatable(
-                                "info.testmod.controller.blueprint.hologram.missing_blocks"),
-                        true);
+                height +=
+                        renderItemStackList(poseStack, missingBlockStacks, 0, height, 0,
+                                HOLOGRAM_COLOR_WHITE, textRenderer,
+                                ItemStackTextRenderType.COUNT_AND_NAME,
+                                Component.translatable(
+                                        TestModLanguageProvider.KEY_INFO_CONTROLLER_MISSING_BLOCKS),
+                                true);
             }
             Collection<ItemStack> incorrectBlockStacks =
                     BlueprintBlockInfo.getItemStacks(blueprintState.getIncorrectBlocks(), true);
@@ -143,14 +146,15 @@ public class HologramItemRenderer {
                 height += renderItemStackList(poseStack, incorrectBlockStacks, 0, height, 0,
                         HOLOGRAM_COLOR_WHITE, textRenderer, ItemStackTextRenderType.COUNT_AND_NAME,
                         Component.translatable(
-                                "info.testmod.controller.blueprint.hologram.incorrect_blocks"),
+                                TestModLanguageProvider.KEY_INFO_CONTROLLER_INCORRECT_BLOCKS),
                         true);
             }
         } else {
             textRenderer.renderTextList(poseStack, new Component[] {
-                    Component.translatable("info.testmod.controller.blueprint.hologram.complete"),
                     Component.translatable(
-                            "info.testmod.controller.blueprint.hologram.right_click_me")},
+                            TestModLanguageProvider.KEY_INFO_CONTROLLER_HOLOGRAM_COMPLETE),
+                    Component.translatable(
+                            TestModLanguageProvider.KEY_INFO_CONTROLLER_HOLOGRAM_RIGHT_CLICK_ME)},
                     0, height, 0, LIST_ELEMENT_HEIGHT);
             // Delay popping until after all text is rendered
             poseStack.popPose();

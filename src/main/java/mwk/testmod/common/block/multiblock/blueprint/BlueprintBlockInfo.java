@@ -87,7 +87,7 @@ public class BlueprintBlockInfo {
 
     public boolean isBlockIncorrect() {
         if (actualState != null && actualState.getBlock() instanceof MultiBlockPartBlock) {
-            if (actualState.getValue(MultiBlockPartBlock.IS_FORMED)) {
+            if (actualState.getValue(MultiBlockPartBlock.FORMED)) {
                 return true;
             }
         }

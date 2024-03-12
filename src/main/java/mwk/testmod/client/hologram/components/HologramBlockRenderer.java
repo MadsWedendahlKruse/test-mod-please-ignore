@@ -3,7 +3,8 @@ package mwk.testmod.client.hologram.components;
 import java.util.Collection;
 import javax.annotation.Nullable;
 import com.mojang.blaze3d.vertex.PoseStack;
-import mwk.testmod.client.animations.fixed.FixedAnimationFloat;
+
+import mwk.testmod.client.animations.FixedAnimationFloat;
 import mwk.testmod.common.block.multiblock.HologramBlock;
 import mwk.testmod.common.block.multiblock.HologramBlock.HologramColor;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintBlockInfo;

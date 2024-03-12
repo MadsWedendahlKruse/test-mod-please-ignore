@@ -1,6 +1,6 @@
 {
   "variants": {
-    "is_formed=false": { "model": "testmod:block/frame/machine_frame_basic" },
-    "is_formed=true": { "model": "testmod:block/empty" }
+    "formed=false": { "model": "testmod:block/frame/machine_frame_basic" },
+    "formed=true": { "model": "testmod:block/empty" }
   }
 }

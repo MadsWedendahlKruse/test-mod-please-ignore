@@ -1,9 +1,9 @@
 package mwk.testmod.client.hologram.events;
 
 import mwk.testmod.client.hologram.HologramRenderer;
+import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintState;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
-import mwk.testmod.common.block.multiblock.controller.MultiBlockControllerBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;

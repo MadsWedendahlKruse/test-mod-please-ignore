@@ -13,8 +13,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import mwk.testmod.TestMod;
+import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
-import mwk.testmod.common.block.multiblock.controller.MultiBlockControllerBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -191,9 +191,9 @@ public class MultiBlockBlueprint {
                 // TODO: Maybe this will give a false positive if the block has another
                 // boolean property. Alternatively we could check if the block is an
                 // instance of MultiBlockPartBlock.
-                if (!block.defaultBlockState().hasProperty(MultiBlockPartBlock.IS_FORMED)) {
+                if (!block.defaultBlockState().hasProperty(MultiBlockPartBlock.FORMED)) {
                     throw new IllegalArgumentException("Block with identifier " + blockIdentifier
-                            + " does not have the " + "property \"is_formed\".");
+                            + " does not have the " + "property \"formed\".");
                 }
                 // Check if the block is the controller block.
                 if (block instanceof MultiBlockControllerBlock) {

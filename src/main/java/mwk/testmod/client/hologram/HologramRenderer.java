@@ -2,8 +2,9 @@ package mwk.testmod.client.hologram;
 
 import org.joml.Quaternionf;
 import com.mojang.blaze3d.vertex.PoseStack;
-import mwk.testmod.client.animations.dynamic.DynamicAnimationAngle;
-import mwk.testmod.client.animations.dynamic.DynamicAnimationVector;
+
+import mwk.testmod.client.animations.DynamicAnimationAngle;
+import mwk.testmod.client.animations.DynamicAnimationVector;
 import mwk.testmod.client.hologram.components.HologramBlockRenderer;
 import mwk.testmod.client.hologram.components.HologramGeometryRenderer;
 import mwk.testmod.client.hologram.components.HologramItemRenderer;

@@ -1,6 +1,7 @@
 package mwk.testmod.common.item;
 
 import mwk.testmod.TestMod;
+import mwk.testmod.common.block.interfaces.IWrenchable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -40,9 +41,9 @@ public class WrenchItem extends Item {
         BlockState state = level.getBlockState(pos);
         Player player = context.getPlayer();
         InteractionHand hand = context.getHand();
-        if (state.getBlock() instanceof Wrenchable) {
+        if (state.getBlock() instanceof IWrenchable) {
             TestMod.LOGGER.debug("Wrenching " + state.getBlock() + " @ " + pos);
-            Wrenchable block = (Wrenchable) level.getBlockState(pos).getBlock();
+            IWrenchable block = (IWrenchable) level.getBlockState(pos).getBlock();
             if (block.onWrenched(state, level, pos, player, hand)) {
                 return InteractionResult.SUCCESS;
             }

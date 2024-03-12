@@ -1,8 +1,9 @@
 package mwk.testmod.init.registries;
 
 import mwk.testmod.TestMod;
-import mwk.testmod.common.block.multiblock.MultiBlockPartBlockEntity;
+import mwk.testmod.common.block.entity.SuperFurnaceBlockEntity;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
+import mwk.testmod.common.block.multiblock.entity.MultiBlockPartBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -24,6 +25,11 @@ public class TestModBlockEntities {
 									.filter(block -> block instanceof MultiBlockPartBlock)
 									.toArray(Block[]::new))
 							.build(null));
+
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SuperFurnaceBlockEntity>> SUPER_FURNACE_BLOCK_ENTITY_TYPE =
+			BLOCK_ENTITY_TYPES.register("super_furnace", () -> BlockEntityType.Builder
+					.of(SuperFurnaceBlockEntity::new, TestModBlocks.SUPER_FURNACE_BLOCK.get())
+					.build(null));
 
 	public static void register(IEventBus modEventBus) {
 		BLOCK_ENTITY_TYPES.register(modEventBus);

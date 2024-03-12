@@ -4,6 +4,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import com.google.common.base.Predicate;
 import com.mojang.logging.LogUtils;
+import mwk.testmod.client.gui.screen.SuperFurnaceScreen;
 import mwk.testmod.client.hologram.HologramRenderer;
 import mwk.testmod.common.block.multiblock.HologramBlockColor;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintRegistry;
@@ -12,8 +13,11 @@ import mwk.testmod.init.registries.TestModBlockEntities;
 import mwk.testmod.init.registries.TestModBlocks;
 import mwk.testmod.init.registries.TestModCreativeTabs;
 import mwk.testmod.init.registries.TestModItems;
+import mwk.testmod.init.registries.TestModMenus;
+import mwk.testmod.init.registries.TestModRecipes;
 import mwk.testmod.init.registries.TestModSounds;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
@@ -28,6 +32,8 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
@@ -57,6 +63,8 @@ public class TestMod {
 		TestModItems.register(modEventBus);
 		TestModCreativeTabs.register(modEventBus);
 		TestModSounds.register(modEventBus);
+		TestModMenus.register(modEventBus);
+		TestModRecipes.register(modEventBus);
 
 		// Register ourselves for server and other game events we are interested in.
 		// Note that this is necessary if and only if we want *this* class (testmod) to
@@ -66,22 +74,23 @@ public class TestMod {
 
 		// Register the item to a creative tab
 		modEventBus.addListener(this::addCreative);
+		modEventBus.addListener(this::registerCapabilities);
 
 		// Register our mod's ModConfigSpec so that FML can create and load the config file
 		// for us
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, TestModConfig.SPEC);
 	}
 
 	private void commonSetup(final FMLCommonSetupEvent event) {
 		// Some common setup code
 		LOGGER.info("HELLO FROM COMMON SETUP");
 
-		if (Config.logDirtBlock)
+		if (TestModConfig.logDirtBlock)
 			LOGGER.info("DIRT BLOCK >> {}", BuiltInRegistries.BLOCK.getKey(Blocks.DIRT));
 
-		LOGGER.info(Config.magicNumberIntroduction + Config.magicNumber);
+		LOGGER.info(TestModConfig.magicNumberIntroduction + TestModConfig.magicNumber);
 
-		Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
+		TestModConfig.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
 	}
 
 	// Add the example block item to the building blocks tab
@@ -89,6 +98,22 @@ public class TestMod {
 		if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
 			// event.accept(EXAMPLE_BLOCK_ITEM);
 		}
+	}
+
+	private void registerCapabilities(RegisterCapabilitiesEvent event) {
+		// TODO: This seems like a quite cumbersome way to register capabilities
+		event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
+				TestModBlockEntities.MULTI_BLOCK_PART_BLOCK_ENTITY_TYPE.get(),
+				(entity, direction) -> entity.getEnergyHandler());
+		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
+				TestModBlockEntities.MULTI_BLOCK_PART_BLOCK_ENTITY_TYPE.get(),
+				(entity, direction) -> entity.getItemHandler());
+		event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
+				TestModBlockEntities.SUPER_FURNACE_BLOCK_ENTITY_TYPE.get(),
+				(entity, direction) -> entity.getEnergyHandler());
+		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
+				TestModBlockEntities.SUPER_FURNACE_BLOCK_ENTITY_TYPE.get(),
+				(entity, direction) -> entity.getItemHandler());
 	}
 
 	// You can use SubscribeEvent and let the Event Bus discover methods to call
@@ -126,6 +151,12 @@ public class TestMod {
 			LOGGER.info("HELLO FROM CLIENT SETUP");
 			LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
 			HologramRenderer.getInstance().init();
+
+			// TODO: McJty's tutorial uses enqueueWork here, but I don't know why
+			event.enqueueWork(() -> {
+				MenuScreens.register(TestModMenus.SUPER_FURNACE_MENU.get(),
+						SuperFurnaceScreen::new);
+			});
 		}
 
 		@SubscribeEvent

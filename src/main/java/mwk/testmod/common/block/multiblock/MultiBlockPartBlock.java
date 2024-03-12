@@ -2,8 +2,8 @@ package mwk.testmod.common.block.multiblock;
 
 import java.util.Random;
 import mwk.testmod.TestMod;
-import mwk.testmod.common.block.multiblock.controller.MultiBlockControllerBlock;
-import mwk.testmod.common.item.Wrenchable;
+import mwk.testmod.common.block.interfaces.IWrenchable;
+import mwk.testmod.common.block.multiblock.entity.MultiBlockPartBlockEntity;
 import mwk.testmod.init.registries.TestModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -27,10 +27,10 @@ import net.minecraft.world.phys.BlockHitResult;
 /**
  * A block that is part of a multiblock structure.
  */
-public class MultiBlockPartBlock extends Block implements EntityBlock, Wrenchable {
+public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchable {
 
     // Whether or not the block is part of a formed multiblock structure.
-    public static final BooleanProperty IS_FORMED = BooleanProperty.create("is_formed");
+    public static final BooleanProperty FORMED = BooleanProperty.create("formed");
     // The number of particles to spawn when forming or unforming the multiblock structure.
     private static final int NUM_PARTICLES = 10;
 
@@ -41,17 +41,17 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, Wrenchabl
     public MultiBlockPartBlock(Properties properties) {
         // TODO: Not sure if noOcculsion is the best way to do this.
         super(properties.noOcclusion());
-        registerDefaultState(stateDefinition.any().setValue(IS_FORMED, false));
+        registerDefaultState(stateDefinition.any().setValue(FORMED, false));
     }
 
     @Override
     protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-        builder.add(IS_FORMED);
+        builder.add(FORMED);
     }
 
     @Override
     public boolean propagatesSkylightDown(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
-        if (pState.getValue(IS_FORMED)) {
+        if (pState.getValue(FORMED)) {
             return true;
         }
         return super.propagatesSkylightDown(pState, pLevel, pPos);
@@ -157,7 +157,7 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, Wrenchabl
     public void setPartFormed(Level level, BlockPos pos, BlockState state, boolean isFormed,
             BlockPos controllerPos) {
         // Update block state on both sides
-        level.setBlockAndUpdate(pos, state.setValue(IS_FORMED, isFormed));
+        level.setBlockAndUpdate(pos, state.setValue(FORMED, isFormed));
         if (!level.isClientSide()) {
             // Update block entity on server side
             BlockEntity blockEntity = level.getBlockEntity(pos);
@@ -202,7 +202,7 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, Wrenchabl
         TestMod.LOGGER.debug("blockEntity @ " + pos + " = " + level.getBlockEntity(pos));
         // If any of the blocks in the multiblock are removed while the multiblock is
         // formed we have to unform it
-        if (state.getValue(IS_FORMED)) {
+        if (state.getValue(FORMED)) {
             // Check if the old state is from the controller
             // When the controller is broken the block state according to the level is
             // already the new state, so the below attempt to unform will fail
@@ -229,14 +229,14 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, Wrenchabl
         TestMod.LOGGER.debug("MultiBlockPartBlock::use");
         // If the multiblock structure is formed, propagate the use event to the
         // multiblock controller.
-        if (state.getValue(IS_FORMED)) {
+        if (state.getValue(FORMED)) {
             BlockPos controllerPos = getControllerPos(level, pos);
             // Make sure it's not already the controller
             if (controllerPos != null && !controllerPos.equals(pos)) {
                 BlockState controllerState = level.getBlockState(controllerPos);
-                if (controllerState.getBlock() instanceof MultiBlockControllerBlock) {
-                    return ((MultiBlockControllerBlock) controllerState.getBlock())
-                            .use(controllerState, level, controllerPos, player, hand, hit);
+                if (controllerState.getBlock() instanceof MultiBlockControllerBlock controller) {
+                    controller.use(controllerState, level, controllerPos, player, hand, hit);
+                    return InteractionResult.sidedSuccess(level.isClientSide());
                 }
             }
         }
@@ -247,12 +247,12 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, Wrenchabl
     public boolean onWrenched(BlockState state, Level level, BlockPos pos, Player player,
             InteractionHand hand) {
         // Check if the super onWrenched method does anything.
-        if (Wrenchable.super.onWrenched(state, level, pos, player, hand)) {
+        if (IWrenchable.super.onWrenched(state, level, pos, player, hand)) {
             return true;
         }
         // If not, and the multiblock structure is formed, propagate the wrenched
         // event to the multiblock controller.
-        if (state.getValue(IS_FORMED)) {
+        if (state.getValue(FORMED)) {
             BlockPos controllerPos = getControllerPos(level, pos);
             if (controllerPos != null && !controllerPos.equals(pos)) {
                 BlockState controllerState = level.getBlockState(controllerPos);
