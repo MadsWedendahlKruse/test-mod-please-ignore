@@ -1,0 +1,32 @@
+{
+    "layers": [
+        [
+            "rar",
+            "IaI",
+            "rPr"
+        ],
+        [
+            "bXb",
+            "bab",
+            "bbb"
+        ],
+        [
+            "b b",
+            " a ",
+            "b b"
+        ],
+        [
+            "rrr",
+            "IrI",
+            "rrr"
+        ]
+    ],
+    "key": {
+        "X": "testmod:crusher",
+        "I": "testmod:machine_io_port",
+        "P": "testmod:machine_power_port",
+        "b": "testmod:machine_frame_basic",
+        "a": "testmod:machine_frame_advanced",
+        "r": "testmod:machine_frame_reinforced"
+    }
+}

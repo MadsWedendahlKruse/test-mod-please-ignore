@@ -16,7 +16,7 @@ public class CrafterContainerData implements ContainerData {
 
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -24,6 +24,10 @@ public class CrafterContainerData implements ContainerData {
         return switch (index) {
             case 0 -> blockEntity.getProgress();
             case 1 -> blockEntity.getMaxProgress();
+            // TODO: EnergyPerTick is currently technically limited to a short, but we should
+            // probably change it to an int. On the other hand that's some serious power creep
+            // if it can use more than 32k RF/tick
+            case 2 -> blockEntity.getEnergyPerTick();
             default -> 0;
         };
     }
@@ -33,6 +37,7 @@ public class CrafterContainerData implements ContainerData {
         switch (index) {
             case 0 -> menu.setProgress(value);
             case 1 -> menu.setMaxProgress(value);
+            case 2 -> menu.setEnergyPerTick(value);
         }
     }
 }

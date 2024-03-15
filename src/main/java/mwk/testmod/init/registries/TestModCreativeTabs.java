@@ -25,8 +25,13 @@ public class TestModCreativeTabs {
 						output.accept(TestModBlocks.MACHINE_FRAME_BASIC_BLOCK);
 						output.accept(TestModBlocks.MACHINE_FRAME_REINFORCED_BLOCK);
 						output.accept(TestModBlocks.MACHINE_FRAME_ADVANCED_BLOCK);
+						output.accept(TestModBlocks.MACHINE_IO_PORT_BLOCK);
+						output.accept(TestModBlocks.MACHINE_POWER_PORT_BLOCK);
+
 						output.accept(TestModBlocks.SUPER_FURNACE_BLOCK);
 						output.accept(TestModBlocks.SUPER_ASSEMBLER_BLOCK);
+						output.accept(TestModBlocks.CRUSHER_BLOCK);
+
 						output.accept(TestModItems.WRENCH_ITEM);
 						output.accept(TestModItems.HOLOGRAM_PROJECTOR_ITEM);
 					}).build());

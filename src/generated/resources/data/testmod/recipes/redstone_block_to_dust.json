@@ -1,5 +1,5 @@
 {
-  "type": "testmod:crusher",
+  "type": "testmod:crushing",
   "input": {
     "item": "minecraft:redstone_block"
   },

@@ -1,4 +1,5 @@
 {
+  "block.testmod.crusher": "Crusher",
   "block.testmod.machine_frame_advanced": "Advanced Machine Frame",
   "block.testmod.machine_frame_basic": "Basic Machine Frame",
   "block.testmod.machine_frame_reinforced": "Reinforced Machine Frame",
@@ -17,12 +18,15 @@
   "info.testmod.hologram_projector.blueprint.unlocked": "Blueprint position unlocked",
   "item.testmod.hologram_projector": "Hologram Projector",
   "item.testmod.wrench": "Wrench",
+  "multiblock.testmod.crusher": "Crusher",
   "multiblock.testmod.super_assembler": "Super Assembler",
   "multiblock.testmod.super_furnace": "Super Furnace",
   "widget.testmod.energy_bar": "Energy",
-  "widget.testmod.energy_bar.hover": "Energy: %s/%s",
+  "widget.testmod.energy_bar.hover": "%s/%s FE",
   "widget.testmod.hologram_projector.blueprints": "Blueprints",
   "widget.testmod.hologram_projector.buttons": "Buttons",
   "widget.testmod.hologram_projector.none": "None",
-  "widget.testmod.panel.energy": "Energy"
+  "widget.testmod.panel.energy": "Energy",
+  "widget.testmod.panel.energy_use_text": "    %s FE/t",
+  "widget.testmod.panel.energy_use_title": "Energy use"
 }

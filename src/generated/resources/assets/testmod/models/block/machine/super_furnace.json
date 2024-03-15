@@ -1,0 +1,6 @@
+{
+  "parent": "testmod:block/machine/controller",
+  "textures": {
+    "screen": "testmod:block/machine/controller/screen/super_furnace"
+  }
+}

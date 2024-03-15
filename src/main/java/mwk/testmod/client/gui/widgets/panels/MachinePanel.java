@@ -26,8 +26,10 @@ public abstract class MachinePanel extends AbstractWidget {
 
     public static final int DEFAULT_ICON_WIDTH = 16;
     public static final int DEFAULT_ICON_HEIGHT = 16;
+    public static final int DEFAULT_ICON_PADDING = 5;
     public static final int LETTER_WIDTH = 5;
     public static final int LETTER_HEIGHT = 7;
+    public static final int LINE_HEIGHT = 11;
 
     public static final float ANIMATION_WIDTH_DURATION = 0.2f;
     public static final float ANIMATION_HEIGHT_DURATION = 0.2f;
@@ -50,7 +52,7 @@ public abstract class MachinePanel extends AbstractWidget {
     private int iconPaddingX;
     private int iconPaddingY;
 
-    private final Font font;
+    protected static final Font font = Minecraft.getInstance().font;
 
     public MachinePanel(int widthOpen, int heightOpen, Component message, float[] color,
             ResourceLocation icon, int iconPaddingX, int iconPaddingY) {
@@ -85,9 +87,6 @@ public abstract class MachinePanel extends AbstractWidget {
         this.iconHeight = iconHeight;
         this.iconPaddingX = iconPaddingX;
         this.iconPaddingY = iconPaddingY;
-
-        Minecraft minecraft = Minecraft.getInstance();
-        this.font = minecraft.font;
     }
 
     public void setPosition(int x, int y, boolean left) {
@@ -117,7 +116,7 @@ public abstract class MachinePanel extends AbstractWidget {
      * could be e.g. a list of upgrades that the player can insert into the machine, or stats about
      * the power consumption/generation of the machine.
      */
-    public abstract void renderOpen(GuiGraphics guiGraphics, int mouseX, int mouseY,
+    protected abstract void renderOpen(GuiGraphics guiGraphics, int mouseX, int mouseY,
             float partialTick);
 
     /**
@@ -125,7 +124,7 @@ public abstract class MachinePanel extends AbstractWidget {
      *         panel is open. This is the recommended point to start rendering the content of the
      *         open panel from.
      */
-    public int getOpenLeft() {
+    protected int getOpenLeft() {
         return getX() + iconPaddingX;
     }
 
@@ -134,7 +133,7 @@ public abstract class MachinePanel extends AbstractWidget {
      *         panel is open. This is the recommended point to start rendering the content of the
      *         open panel from.
      */
-    public int getOpenTop() {
+    protected int getOpenTop() {
         return getY() + 2 * iconPaddingY + iconHeight;
     }
 

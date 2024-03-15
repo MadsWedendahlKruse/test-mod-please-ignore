@@ -1,7 +1,7 @@
 package mwk.testmod.init.registries;
 
 import mwk.testmod.TestMod;
-import mwk.testmod.common.recipe.CrusherRecipe;
+import mwk.testmod.common.recipe.CrushingRecipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.neoforged.bus.api.IEventBus;
@@ -15,8 +15,8 @@ public class TestModRecipes {
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS =
             DeferredRegister.create(Registries.RECIPE_SERIALIZER, TestMod.MODID);
 
-    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> CRUSHER_RECIPE_SERIALIZER =
-            RECIPE_SERIALIZERS.register("crusher", () -> CrusherRecipe.Serializer.INSTANCE);
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> CRUSHING_RECIPE_SERIALIZER =
+            RECIPE_SERIALIZERS.register("crushing", () -> CrushingRecipe.Serializer.INSTANCE);
 
     public static void register(IEventBus modEventBus) {
         RECIPE_SERIALIZERS.register(modEventBus);

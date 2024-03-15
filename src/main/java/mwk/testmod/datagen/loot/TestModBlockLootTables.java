@@ -23,8 +23,12 @@ public class TestModBlockLootTables extends BlockLootSubProvider {
         this.dropSelf(TestModBlocks.MACHINE_FRAME_BASIC_BLOCK.get());
         this.dropSelf(TestModBlocks.MACHINE_FRAME_REINFORCED_BLOCK.get());
         this.dropSelf(TestModBlocks.MACHINE_FRAME_ADVANCED_BLOCK.get());
+        this.dropSelf(TestModBlocks.MACHINE_IO_PORT_BLOCK.get());
+        this.dropSelf(TestModBlocks.MACHINE_POWER_PORT_BLOCK.get());
+
         this.dropSelf(TestModBlocks.SUPER_FURNACE_BLOCK.get());
         this.dropSelf(TestModBlocks.SUPER_ASSEMBLER_BLOCK.get());
+        this.dropSelf(TestModBlocks.CRUSHER_BLOCK.get());
 
         // this.dropSelf(TestModBlocks.HOLOGRAM_BLOCK.get());
         this.dropOther(TestModBlocks.HOLOGRAM_BLOCK.get(), ItemStack.EMPTY.getItem());

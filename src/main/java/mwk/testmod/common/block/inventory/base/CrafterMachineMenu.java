@@ -10,6 +10,7 @@ public class CrafterMachineMenu extends BaseMachineMenu {
 
     private int progress;
     private int maxProgress;
+    private int energyPerTick;
 
     protected CrafterMachineMenu(MenuType<?> menuType, int containerId, Player player, BlockPos pos,
             int playerInventoryX, int playerInventoryY) {
@@ -17,6 +18,7 @@ public class CrafterMachineMenu extends BaseMachineMenu {
         if (player.level().getBlockEntity(pos) instanceof CrafterMachineBlockEntity blockEntity) {
             this.progress = blockEntity.getProgress();
             this.maxProgress = blockEntity.getMaxProgress();
+            this.energyPerTick = blockEntity.getEnergyPerTick();
             addDataSlots(new CrafterContainerData(blockEntity, this));
         } else {
             // TODO: Not sure what to do here
@@ -39,5 +41,13 @@ public class CrafterMachineMenu extends BaseMachineMenu {
 
     public void setMaxProgress(int maxProgress) {
         this.maxProgress = maxProgress;
+    }
+
+    public int getEnergyPerTick() {
+        return energyPerTick;
+    }
+
+    public void setEnergyPerTick(int energyPerTick) {
+        this.energyPerTick = energyPerTick;
     }
 }

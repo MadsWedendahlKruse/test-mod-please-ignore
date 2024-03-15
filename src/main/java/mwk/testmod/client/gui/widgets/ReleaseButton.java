@@ -7,8 +7,6 @@ import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * A button that calls a method when released.
@@ -69,7 +67,6 @@ public class ReleaseButton extends Button {
                 this.height);
     }
 
-    @OnlyIn(Dist.CLIENT)
     public interface OnRelease {
         void onRelease(ReleaseButton button);
     }

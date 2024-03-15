@@ -20,6 +20,8 @@ public class TestModDataGenerators {
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
+        generator.addProvider(event.includeClient(),
+                new TestModBlockStateProvider(packOutput, existingFileHelper));
         generator.addProvider(event.includeServer(), TestModLootTableProvider.create(packOutput));
         generator.addProvider(event.includeServer(),
                 new TestModRecipeProvider(packOutput, lookupProvider));

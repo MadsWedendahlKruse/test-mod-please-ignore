@@ -39,12 +39,7 @@ public class BaseMachineScreen<T extends BaseMachineMenu> extends EnergyScreen<T
     }
 
     protected void addMachinePanels() {
-        panelManager.addPanel(new EnergyPanel());
-        panelManager.addPanel(new EnergyPanel());
-        panelManager.addPanel(new EnergyPanel());
-        panelManager.addPanel(new EnergyPanel());
-        panelManager.addPanel(new EnergyPanel());
-        panelManager.addPanel(new EnergyPanel());
+        // TODO: Abstract?
     }
 
     @Override

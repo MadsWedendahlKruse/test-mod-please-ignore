@@ -4,6 +4,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import com.google.common.base.Predicate;
 import com.mojang.logging.LogUtils;
+import mwk.testmod.client.gui.screen.CrusherScreen;
 import mwk.testmod.client.gui.screen.SuperFurnaceScreen;
 import mwk.testmod.client.hologram.HologramRenderer;
 import mwk.testmod.common.block.multiblock.HologramBlockColor;
@@ -156,6 +157,7 @@ public class TestMod {
 			event.enqueueWork(() -> {
 				MenuScreens.register(TestModMenus.SUPER_FURNACE_MENU.get(),
 						SuperFurnaceScreen::new);
+				MenuScreens.register(TestModMenus.CRUSHER_MENU.get(), CrusherScreen::new);
 			});
 		}
 

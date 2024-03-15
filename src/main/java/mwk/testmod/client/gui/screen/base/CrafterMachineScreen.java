@@ -2,6 +2,7 @@ package mwk.testmod.client.gui.screen.base;
 
 import mwk.testmod.TestMod;
 import mwk.testmod.client.gui.widgets.ProgressIcon;
+import mwk.testmod.client.gui.widgets.panels.EnergyPanel;
 import mwk.testmod.common.block.inventory.base.CrafterMachineMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
@@ -38,6 +39,16 @@ public abstract class CrafterMachineScreen<T extends CrafterMachineMenu>
     }
 
     protected abstract void renderProgress(GuiGraphics guiGraphics);
+
+    @Override
+    protected void addMachinePanels() {
+        panelManager.addPanel(new EnergyPanel(menu));
+        panelManager.addPanel(new EnergyPanel(menu));
+        panelManager.addPanel(new EnergyPanel(menu));
+        panelManager.addPanel(new EnergyPanel(menu));
+        panelManager.addPanel(new EnergyPanel(menu));
+        panelManager.addPanel(new EnergyPanel(menu));
+    }
 
     @Override
     protected void init() {

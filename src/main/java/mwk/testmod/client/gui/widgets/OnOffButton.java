@@ -5,14 +5,11 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * A button that can be toggled on and off. The button has a separate widget sprite for each state,
  * making it useful for buttons that need to visually change when toggled, e.g. a play button.
  */
-@OnlyIn(Dist.CLIENT)
 public class OnOffButton extends ImageButton {
 
     private boolean on;
@@ -82,7 +79,6 @@ public class OnOffButton extends ImageButton {
                 this.height);
     }
 
-    @OnlyIn(Dist.CLIENT)
     public interface OnPress {
         void onPress(OnOffButton button);
     }

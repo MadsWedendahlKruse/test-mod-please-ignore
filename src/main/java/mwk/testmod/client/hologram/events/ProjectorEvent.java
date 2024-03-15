@@ -1,5 +1,6 @@
 package mwk.testmod.client.hologram.events;
 
+import mwk.testmod.TestMod;
 import mwk.testmod.client.hologram.HologramRenderer;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintState;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
@@ -44,8 +45,8 @@ public class ProjectorEvent implements HologramEvent {
                 return;
             }
         }
-        AABB aabb = blueprint.getAABB(lookAtPos, blueprintDirection);
-        BlockPos controllerPos = lookAtPos.offset(0, (int) aabb.getYsize() / 2 + 1, 0);
+        AABB aabb = blueprint.getAABB(null, blueprintDirection);
+        BlockPos controllerPos = lookAtPos.offset(0, (int) -aabb.minY + 1, 0);
         BlueprintState blueprintState =
                 blueprint.getState(level, controllerPos, blueprintDirection);
         boolean animateMove = renderer.getLatestEvent() instanceof ProjectorEvent;

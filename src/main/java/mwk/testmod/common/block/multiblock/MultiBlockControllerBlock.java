@@ -51,7 +51,7 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
     public MultiBlockControllerBlock(Properties properties,
             BiFunction<BlockPos, BlockState, BlockEntity> blockEntityFactory) {
         super(properties);
-        registerDefaultState(defaultBlockState().setValue(FACING, Direction.NORTH));
+        registerDefaultState(defaultBlockState().setValue(FACING, Direction.EAST));
         this.blockEntityFactory = blockEntityFactory;
     }
 

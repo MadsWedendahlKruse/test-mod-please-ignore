@@ -1,9 +1,43 @@
 {
-    "parent": "testmod:block/machine/base",
-    "textures": {
-        "top": "testmod:block/machine/frame/advanced",
-        "side": "testmod:block/machine/frame/advanced",
-        "back": "testmod:block/machine/frame/advanced",
-        "bottom": "testmod:block/machine/frame/advanced"
-    }
+	"credit": "Made with Blockbench",
+	"parent": "block/cube_all",
+	"render_type": "cutout",
+	"textures": {
+		"particle": "testmod:block/machine/controller/front",
+		"front": "testmod:block/machine/controller/front",
+		"side": "testmod:block/machine/controller/side",
+		"top": "testmod:block/machine/controller/top",
+		"bottom": "testmod:block/machine/bottom",
+		"screen": "testmod:gui/sprites/container/progress/fire"
+	},
+	"elements": [
+		{
+			"name": "block",
+			"from": [0, 0, 0],
+			"to": [16, 16, 16],
+			"faces": {
+				"north": {"uv": [0, 0, 16, 16], "texture": "#front"},
+				"east": {"uv": [0, 0, 16, 16], "texture": "#side"},
+				"south": {"uv": [0, 0, 16, 16], "texture": "#side"},
+				"west": {"uv": [0, 0, 16, 16], "texture": "#side"},
+				"up": {"uv": [0, 0, 16, 16], "texture": "#top"},
+				"down": {"uv": [0, 0, 16, 16], "texture": "#bottom"}
+			}
+		},
+		{
+			"name": "screen",
+			"from": [4, 4, -0.01],
+			"to": [12, 12, -0.01],
+			"faces": {
+				"north": {
+                    "neoforge_data": {
+                        "block_light": 15,
+                        "sky_light": 15,
+                        "ambient_occlusion": false
+                    },
+                    "uv": [0, 0, 16, 16], "texture": "#screen"
+                }
+			}
+		}
+	]
 }

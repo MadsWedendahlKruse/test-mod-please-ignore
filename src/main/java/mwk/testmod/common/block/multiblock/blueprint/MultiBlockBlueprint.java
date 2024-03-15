@@ -329,21 +329,12 @@ public class MultiBlockBlueprint {
      * @return The AABB of the multiblock structure.
      */
     public AABB getAABB(@Nullable BlockPos controllerPos, Direction direction) {
-        Rotation rotation;
-        switch (direction) {
-            case SOUTH:
-                rotation = Rotation.CLOCKWISE_180;
-                break;
-            case EAST:
-                rotation = Rotation.CLOCKWISE_90;
-                break;
-            case WEST:
-                rotation = Rotation.COUNTERCLOCKWISE_90;
-                break;
-            default:
-                rotation = Rotation.NONE;
-                break;
-        }
+        Rotation rotation = switch (direction) {
+            case SOUTH -> Rotation.CLOCKWISE_180;
+            case EAST -> Rotation.CLOCKWISE_90;
+            case WEST -> Rotation.COUNTERCLOCKWISE_90;
+            default -> Rotation.NONE;
+        };
         BlockPos minCorner = this.minCorner.rotate(rotation);
         BlockPos maxCorner = this.maxCorner.rotate(rotation);
         AABB aabb = AABB.encapsulatingFullBlocks(minCorner, maxCorner);

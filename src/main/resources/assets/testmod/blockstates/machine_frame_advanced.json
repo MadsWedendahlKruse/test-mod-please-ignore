@@ -1,6 +1,0 @@
-{
-  "variants": {
-    "formed=false": { "model": "testmod:block/frame/machine_frame_advanced" },
-    "formed=true": { "model": "testmod:block/empty" }
-  }
-}

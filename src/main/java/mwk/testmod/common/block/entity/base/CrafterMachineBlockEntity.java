@@ -75,4 +75,8 @@ public abstract class CrafterMachineBlockEntity<T extends Recipe<?>> extends Bas
     public int getMaxProgress() {
         return maxProgress;
     }
+
+    public int getEnergyPerTick() {
+        return energyPerTick;
+    }
 }
