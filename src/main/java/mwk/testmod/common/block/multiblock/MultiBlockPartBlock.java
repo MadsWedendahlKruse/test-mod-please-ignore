@@ -230,13 +230,16 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
         // If the multiblock structure is formed, propagate the use event to the
         // multiblock controller.
         if (state.getValue(FORMED)) {
+            // Prevent the client from doing anything
+            if (level.isClientSide()) {
+                return InteractionResult.SUCCESS;
+            }
             BlockPos controllerPos = getControllerPos(level, pos);
             // Make sure it's not already the controller
             if (controllerPos != null && !controllerPos.equals(pos)) {
                 BlockState controllerState = level.getBlockState(controllerPos);
                 if (controllerState.getBlock() instanceof MultiBlockControllerBlock controller) {
-                    controller.use(controllerState, level, controllerPos, player, hand, hit);
-                    return InteractionResult.sidedSuccess(level.isClientSide());
+                    return controller.use(controllerState, level, controllerPos, player, hand, hit);
                 }
             }
         }
