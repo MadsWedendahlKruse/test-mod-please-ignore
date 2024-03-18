@@ -1,0 +1,10 @@
+{
+  "type": "testmod:crushing",
+  "input": {
+    "item": "minecraft:iron_ore"
+  },
+  "output": {
+    "count": 3,
+    "item": "minecraft:raw_iron"
+  }
+}

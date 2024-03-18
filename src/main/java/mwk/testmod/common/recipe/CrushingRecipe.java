@@ -3,6 +3,7 @@ package mwk.testmod.common.recipe;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import mwk.testmod.TestMod;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -65,6 +66,13 @@ public class CrushingRecipe implements Recipe<Container> {
     @Override
     public RecipeType<?> getType() {
         return Type.INSTANCE;
+    }
+
+    @Override
+    public NonNullList<Ingredient> getIngredients() {
+        NonNullList<Ingredient> ingredients = NonNullList.create();
+        ingredients.add(input);
+        return ingredients;
     }
 
     public static class Type implements RecipeType<CrushingRecipe> {

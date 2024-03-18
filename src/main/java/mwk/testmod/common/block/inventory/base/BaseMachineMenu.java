@@ -39,7 +39,7 @@ public class BaseMachineMenu extends EnergyMenu {
             this.outputSlots = blockEntity.getOutputSlots();
             this.inventorySize = inputSlots + outputSlots;
             this.maxSlotIndex = Inventory.INVENTORY_SIZE + this.inventorySize;
-            addInputOutputSlots(blockEntity.getItemHandler());
+            addInputOutputSlots(blockEntity.getItemHandler(null));
             this.playerInventoryX = playerInventoryX;
             this.playerInventoryY = playerInventoryY;
             addPlayerSlots(player.getInventory());

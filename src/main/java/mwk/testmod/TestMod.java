@@ -104,17 +104,27 @@ public class TestMod {
 	private void registerCapabilities(RegisterCapabilitiesEvent event) {
 		// TODO: This seems like a quite cumbersome way to register capabilities
 		event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
-				TestModBlockEntities.MULTI_BLOCK_PART_BLOCK_ENTITY_TYPE.get(),
-				(entity, direction) -> entity.getEnergyHandler());
+				TestModBlockEntities.MULTI_BLOCK_ENERGY_PORT_BLOCK_ENTITY_TYPE.get(),
+				(entity, direction) -> entity.getEnergyHandler(direction));
 		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
-				TestModBlockEntities.MULTI_BLOCK_PART_BLOCK_ENTITY_TYPE.get(),
-				(entity, direction) -> entity.getItemHandler());
+				TestModBlockEntities.MULTI_BLOCK_INPUT_PORT_BLOCK_ENTITY_TYPE.get(),
+				(entity, direction) -> entity.getItemHandler(direction));
+		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
+				TestModBlockEntities.MULTI_BLOCK_OUTPUT_PORT_BLOCK_ENTITY_TYPE.get(),
+				(entity, direction) -> entity.getItemHandler(direction));
+
 		event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
 				TestModBlockEntities.SUPER_FURNACE_BLOCK_ENTITY_TYPE.get(),
-				(entity, direction) -> entity.getEnergyHandler());
+				(entity, direction) -> entity.getEnergyHandler(direction));
 		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
 				TestModBlockEntities.SUPER_FURNACE_BLOCK_ENTITY_TYPE.get(),
-				(entity, direction) -> entity.getItemHandler());
+				(entity, direction) -> entity.getItemHandler(direction));
+		event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
+				TestModBlockEntities.CRUSHER_BLOCK_ENTITY_TYPE.get(),
+				(entity, direction) -> entity.getEnergyHandler(direction));
+		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
+				TestModBlockEntities.CRUSHER_BLOCK_ENTITY_TYPE.get(),
+				(entity, direction) -> entity.getItemHandler(direction));
 	}
 
 	// You can use SubscribeEvent and let the Event Bus discover methods to call

@@ -3,6 +3,7 @@ package mwk.testmod.datagen;
 import mwk.testmod.TestMod;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
+import mwk.testmod.common.block.multiblock.MutliBlockIOPortBlock;
 import mwk.testmod.init.registries.TestModBlocks;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
@@ -28,10 +29,12 @@ public class TestModBlockStateProvider extends BlockStateProvider {
                 "frame/reinforced", TestModBlocks.MACHINE_FRAME_REINFORCED_ID);
         registerMultiBLockPart(TestModBlocks.MACHINE_FRAME_ADVANCED_BLOCK.get(), "frame/advanced",
                 TestModBlocks.MACHINE_FRAME_ADVANCED_ID);
-        registerMultiBLockPart(TestModBlocks.MACHINE_IO_PORT_BLOCK.get(), "io_port",
-                TestModBlocks.MACHINE_IO_PORT_ID);
-        registerMultiBLockPart(TestModBlocks.MACHINE_POWER_PORT_BLOCK.get(), "power_port",
-                TestModBlocks.MACHINE_POWER_PORT_ID);
+        registerMultiBLockPart(TestModBlocks.MACHINE_INPUT_PORT_BLOCK.get(), "input_port",
+                TestModBlocks.MACHINE_INPUT_PORT_ID);
+        registerMultiBLockPart(TestModBlocks.MACHINE_OUTPUT_PORT_BLOCK.get(), "output_port",
+                TestModBlocks.MACHINE_OUTPUT_PORT_ID);
+        registerMultiBLockPart(TestModBlocks.MACHINE_ENERGY_PORT_BLOCK.get(), "energy_port",
+                TestModBlocks.MACHINE_ENERGY_PORT_ID);
 
         registerMultiBlockController(TestModBlocks.SUPER_FURNACE_BLOCK.get(),
                 TestModBlocks.SUPER_FURNACE_ID);

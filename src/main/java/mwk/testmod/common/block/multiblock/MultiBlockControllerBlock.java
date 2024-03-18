@@ -6,6 +6,7 @@ import mwk.testmod.client.events.HologramClientEvents;
 import mwk.testmod.client.hologram.HologramRenderer;
 import mwk.testmod.client.hologram.events.ClearIfCurrentEvent;
 import mwk.testmod.client.hologram.events.WrenchEvent;
+import mwk.testmod.common.block.entity.base.BaseMachineBlockEntity;
 import mwk.testmod.common.block.interfaces.ITickable;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintBlockInfo;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintState;
@@ -16,9 +17,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -35,6 +38,7 @@ import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.neoforged.neoforge.items.IItemHandler;
 
 /**
  * The controller block of a multiblock structure.
@@ -137,9 +141,8 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
         // Set the formed state of the blocks.
         for (BlockPos blockPos : positions) {
             BlockState blockState = level.getBlockState(blockPos);
-            if (blockState.getBlock() instanceof MultiBlockPartBlock) {
-                ((MultiBlockPartBlock) blockState.getBlock()).setPartFormed(level, blockPos,
-                        blockState, isFormed, controllerPos);
+            if (blockState.getBlock() instanceof MultiBlockPartBlock partBlock) {
+                partBlock.setPartFormed(level, blockPos, blockState, isFormed, controllerPos);
             } else {
                 if (checkBlueprint) {
                     TestMod.LOGGER.debug("Block @ " + blockPos + " is " + blockState.getBlock()
@@ -207,6 +210,9 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
         // Does onRemove only run on the server side?
         HologramRenderer.getInstance()
                 .setEvent(new ClearIfCurrentEvent(blueprint, pos, state.getValue(FACING)));
+        if (level.getBlockEntity(pos) instanceof BaseMachineBlockEntity blockEntity) {
+            Containers.dropContents(level, pos, blockEntity.getDrops());
+        }
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
 

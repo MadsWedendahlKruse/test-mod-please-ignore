@@ -25,8 +25,9 @@ public class TestModCreativeTabs {
 						output.accept(TestModBlocks.MACHINE_FRAME_BASIC_BLOCK);
 						output.accept(TestModBlocks.MACHINE_FRAME_REINFORCED_BLOCK);
 						output.accept(TestModBlocks.MACHINE_FRAME_ADVANCED_BLOCK);
-						output.accept(TestModBlocks.MACHINE_IO_PORT_BLOCK);
-						output.accept(TestModBlocks.MACHINE_POWER_PORT_BLOCK);
+						output.accept(TestModBlocks.MACHINE_INPUT_PORT_BLOCK);
+						output.accept(TestModBlocks.MACHINE_OUTPUT_PORT_BLOCK);
+						output.accept(TestModBlocks.MACHINE_ENERGY_PORT_BLOCK);
 
 						output.accept(TestModBlocks.SUPER_FURNACE_BLOCK);
 						output.accept(TestModBlocks.SUPER_ASSEMBLER_BLOCK);

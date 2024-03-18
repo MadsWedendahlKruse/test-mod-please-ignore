@@ -1,10 +1,13 @@
 package mwk.testmod.common.block.entity.base;
 
+import mwk.testmod.TestMod;
 import mwk.testmod.common.block.interfaces.ITickable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -13,8 +16,8 @@ import net.minecraft.world.level.block.state.BlockState;
 /**
  * A block entity that can craft items using recipes.
  */
-public abstract class CrafterMachineBlockEntity<T extends Recipe<?>> extends BaseMachineBlockEntity
-        implements ITickable, MenuProvider {
+public abstract class CrafterMachineBlockEntity<T extends Recipe<Container>>
+        extends BaseMachineBlockEntity implements ITickable, MenuProvider {
 
     public static final String NBT_TAG_PROGRESS = "progress";
 
@@ -54,6 +57,19 @@ public abstract class CrafterMachineBlockEntity<T extends Recipe<?>> extends Bas
         return inventory.getStackInSlot(slot).isEmpty() || (inventory.getStackInSlot(slot).is(item)
                 && inventory.getStackInSlot(slot).getCount() + count <= inventory
                         .getSlotLimit(slot));
+    }
+
+    @Override
+    protected boolean isInputValid(int slot, ItemStack stack) {
+        if (slot >= inputSlots) {
+            return false;
+        }
+        return this.level.getRecipeManager().getAllRecipesFor(recipeType).stream()
+                .anyMatch(recipe -> {
+                    return recipe.value().getIngredients().stream().anyMatch(ingredient -> {
+                        return ingredient.test(stack);
+                    });
+                });
     }
 
     @Override

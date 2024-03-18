@@ -34,17 +34,12 @@ public class BlueprintBlockInfo {
      * @return the position of the block relative to the controller
      */
     public BlockPos getRelativePosition(Direction direction) {
-        switch (direction) {
-            case SOUTH:
-                return position.rotate(Rotation.CLOCKWISE_180);
-            case EAST:
-                return position.rotate(Rotation.CLOCKWISE_90);
-            case WEST:
-                return position.rotate(Rotation.COUNTERCLOCKWISE_90);
-            case NORTH:
-            default:
-                return position;
-        }
+        return switch (direction) {
+            case SOUTH -> position.rotate(Rotation.CLOCKWISE_180);
+            case EAST -> position.rotate(Rotation.CLOCKWISE_90);
+            case WEST -> position.rotate(Rotation.COUNTERCLOCKWISE_90);
+            default -> position;
+        };
     }
 
     /**

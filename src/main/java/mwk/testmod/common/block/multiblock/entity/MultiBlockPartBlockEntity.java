@@ -1,10 +1,9 @@
 package mwk.testmod.common.block.multiblock.entity;
 
-import mwk.testmod.common.block.entity.SuperFurnaceBlockEntity;
-import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import mwk.testmod.init.registries.TestModBlockEntities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -18,7 +17,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 public class MultiBlockPartBlockEntity extends BlockEntity {
 
     // The position of the controller block for this multiblock structure.
-    private BlockPos controllerPos;
+    protected BlockPos controllerPos;
 
     public MultiBlockPartBlockEntity(BlockPos pos, BlockState state) {
         this(TestModBlockEntities.MULTI_BLOCK_PART_BLOCK_ENTITY_TYPE.get(), pos, state);
@@ -65,6 +64,13 @@ public class MultiBlockPartBlockEntity extends BlockEntity {
         return false;
     }
 
+    /**
+     * Helper function for checking if the block at the given position is part of a formed
+     * multiblock structure.
+     * 
+     * @param pos The position of the block to check.
+     * @return True if the block is part of a formed multiblock structure, false otherwise.
+     */
     protected boolean isFormed(BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         if (state.getBlock() instanceof MultiBlockPartBlock) {
@@ -73,23 +79,19 @@ public class MultiBlockPartBlockEntity extends BlockEntity {
         return false;
     }
 
-    public IEnergyStorage getEnergyHandler() {
-        if (isFormed()) {
-            BlockEntity controllerEntity = level.getBlockEntity(controllerPos);
-            if (controllerEntity instanceof SuperFurnaceBlockEntity energyEntity) {
-                return energyEntity.getEnergyHandler();
-            }
-        }
+    /**
+     * Get the energy handler for the multiblock structure. By default this returns null. This
+     * should be overridden by subclasses that need to provide an energy handler, e.g. energy ports.
+     */
+    public IEnergyStorage getEnergyHandler(Direction direction) {
         return null;
     }
 
-    public IItemHandler getItemHandler() {
-        if (isFormed()) {
-            BlockEntity controllerEntity = level.getBlockEntity(controllerPos);
-            if (controllerEntity instanceof SuperFurnaceBlockEntity itemEntity) {
-                return itemEntity.getItemHandler();
-            }
-        }
+    /**
+     * Get the item handler for the multiblock structure. By default this returns null. This should
+     * be overridden by subclasses that need to provide an item handler, e.g. item ports.
+     */
+    public IItemHandler getItemHandler(Direction direction) {
         return null;
     }
 }

@@ -1,0 +1,9 @@
+{
+  "type": "testmod:crushing",
+  "input": {
+    "item": "minecraft:cobblestone"
+  },
+  "output": {
+    "item": "minecraft:gravel"
+  }
+}

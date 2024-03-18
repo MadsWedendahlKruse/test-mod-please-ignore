@@ -1,0 +1,10 @@
+{
+  "type": "testmod:crushing",
+  "input": {
+    "item": "minecraft:copper_ore"
+  },
+  "output": {
+    "count": 8,
+    "item": "minecraft:raw_copper"
+  }
+}

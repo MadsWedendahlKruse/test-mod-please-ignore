@@ -11,7 +11,7 @@ public class CrusherScreen extends ParallelCrafterMachineScreen<CrusherMenu> {
     public static final int TEXTURE_HEIGHT = 193;
 
     public CrusherScreen(CrusherMenu menu, Inventory playerInventory, Component title) {
-        super(menu, playerInventory, title, "crush",
+        super(menu, playerInventory, title, "dust",
                 ParallelCrafterMachineScreen.PRESET_3X3_PARALLEL);
     }
 }

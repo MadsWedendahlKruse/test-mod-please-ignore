@@ -1,6 +1,8 @@
 package mwk.testmod.common.block.entity.base;
 
+import java.util.ArrayList;
 import java.util.Optional;
+import org.apache.commons.lang3.tuple.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -40,7 +42,8 @@ public abstract class ParallelCrafterMachineBlockEntity<T extends Recipe<Contain
             if (recipe.isEmpty()) {
                 continue;
             }
-            if (isRecipeValid(slot, recipe)) {
+            ArrayList<Pair<Integer, Integer>> outputSlots = getOutputSlots(recipe);
+            if (!outputSlots.isEmpty()) {
                 recipesFound++;
                 recipeValid = true;
                 if (increaseProgress) {
@@ -50,7 +53,7 @@ public abstract class ParallelCrafterMachineBlockEntity<T extends Recipe<Contain
                 }
                 if (hasProgressFinished()) {
                     progressFinished = true;
-                    craftItem(slot, recipe);
+                    craftItem(slot, outputSlots, recipe);
                 }
             }
         }
@@ -72,33 +75,54 @@ public abstract class ParallelCrafterMachineBlockEntity<T extends Recipe<Contain
     }
 
     /**
-     * This method checks if the given recipe is valid. This method is also responsible for checking
-     * that the result of the recipe can be inserted into the output slot(s).
+     * This method checks if the given recipe is valid and returns the indices of output slot(s) to
+     * place the result in, as well as the amount that should be placed in eachs slot. In case the
+     * entire recipe output can't fit into a single slot, the output is split into multiple slots.
      * 
-     * @param slot The index of the output slot to check if the recipe is valid for. In the parallel
-     *        crafter, each output slot has a corresponding input slot with the same index.
      * @param recipe The recipe to check.
-     * @return True if the recipe is valid, false otherwise.
+     * @return The indices of the output slot(s) to place the result in.
      */
-    protected boolean isRecipeValid(int slot, Optional<RecipeHolder<T>> recipe) {
-        if (recipe.isEmpty()) {
-            return false;
+    protected ArrayList<Pair<Integer, Integer>> getOutputSlots(Optional<RecipeHolder<T>> recipe) {
+        ArrayList<Pair<Integer, Integer>> outputSlots = new ArrayList<>();
+        if (!recipe.isEmpty()) {
+            ItemStack result = recipe.get().value().getResultItem(null);
+            int recipeCount = result.getCount();
+            int currentCount = 0;
+            for (int i = 0; i < inputSlots; i++) {
+                int slot = i + inputSlots;
+                if (!inventory.getStackInSlot(slot).isEmpty()
+                        && !inventory.getStackInSlot(slot).is(result.getItem())) {
+                    continue;
+                }
+                int remainingSpace =
+                        inventory.getSlotLimit(slot) - inventory.getStackInSlot(slot).getCount();
+                int amountToPlace = Math.min(remainingSpace, recipeCount - currentCount);
+                currentCount += amountToPlace;
+                outputSlots.add(Pair.of(slot, amountToPlace));
+                if (currentCount >= recipeCount) {
+                    break;
+                }
+            }
         }
-        ItemStack result = recipe.get().value().getResultItem(null);
-        return canInsertItemIntoSlot(inputSlots + slot, result.getItem(), result.getCount());
+        return outputSlots;
     }
 
     /**
-     * Craft the item for the given recipe and insert the result into the output slot.
+     * Craft the item for the given recipe and input slot.
      * 
-     * @param slot The index of the output slot to place the result in. In the parallel crafter,
-     *        each output slot has a corresponding input slot with the same index.
+     * @param inputSlot The index of the input slot to craft the item for.
+     * @param outputSlot The indices of the output slot(s) to place the result in.
      * @param recipe The recipe to craft.
      */
-    protected void craftItem(int slot, Optional<RecipeHolder<T>> recipe) {
+    protected void craftItem(int inputSlot, ArrayList<Pair<Integer, Integer>> outputSlots,
+            Optional<RecipeHolder<T>> recipe) {
         ItemStack result = recipe.get().value().getResultItem(null);
-        this.inventory.extractItem(slot, 1, false);
-        this.inventory.setStackInSlot(inputSlots + slot, new ItemStack(result.getItem(),
-                this.inventory.getStackInSlot(inputSlots + slot).getCount() + result.getCount()));
+        this.inventory.extractItem(inputSlot, 1, false);
+        for (Pair<Integer, Integer> outputSlot : outputSlots) {
+            int newSize = inventory.getStackInSlot(outputSlot.getLeft()).getCount()
+                    + outputSlot.getRight();
+            this.inventory.setStackInSlot(outputSlot.getLeft(),
+                    new ItemStack(result.getItem(), newSize));
+        }
     }
 }

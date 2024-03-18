@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "testmod:machine_io_port"
+          "name": "testmod:machine_energy_port"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "testmod:blocks/machine_io_port"
+  "random_sequence": "testmod:blocks/machine_energy_port"
 }

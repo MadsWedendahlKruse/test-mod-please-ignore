@@ -6,6 +6,7 @@ import mwk.testmod.common.util.energy.EnergyStorageConsumer;
 import mwk.testmod.common.util.energy.EnergyStorageGenerator;
 import mwk.testmod.common.util.energy.EnergyStorageWrapper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -39,8 +40,6 @@ public class EnergyBlockEntity extends BlockEntity {
             case CONSUMER -> Lazy.of(() -> new EnergyStorageConsumer(energy, this));
             case GENERATOR -> Lazy.of(() -> new EnergyStorageGenerator(energy, this));
         };
-        // TODO: SUPER ILLEGAL! Only for testing purposes
-        energy.receiveEnergy(TestModConfig.ENERGY_CAPACITY_DEFAULT.get() / 2, false);
     }
 
     @Override
@@ -66,7 +65,7 @@ public class EnergyBlockEntity extends BlockEntity {
         return energy.getMaxEnergyStored();
     }
 
-    public IEnergyStorage getEnergyHandler() {
+    public IEnergyStorage getEnergyHandler(Direction direction) {
         return energyHandler.get();
     }
 }

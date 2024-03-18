@@ -7,6 +7,7 @@ import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.datagen.TestModLanguageProvider;
 import mwk.testmod.init.registries.TestModBlockEntities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -40,16 +41,16 @@ public class SuperFurnaceBlockEntity extends ParallelCrafterMachineBlockEntity<S
     }
 
     @Override
-    public IItemHandler getItemHandler() {
-        if (isFormed()) {
-            return itemHandler.get();
+    public IItemHandler getItemHandler(Direction direction) {
+        if (isFormed() && direction == null) {
+            return inventory;
         }
         return null;
     }
 
     @Override
-    public IEnergyStorage getEnergyHandler() {
-        if (isFormed()) {
+    public IEnergyStorage getEnergyHandler(Direction direction) {
+        if (isFormed() && direction == null) {
             return energyHandler.get();
         }
         return null;

@@ -163,6 +163,8 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof MultiBlockPartBlockEntity) {
                 ((MultiBlockPartBlockEntity) blockEntity).setControllerPos(controllerPos);
+                // TODO: Only do this if the entity has capabilities
+                blockEntity.invalidateCapabilities();
             }
         } else {
             // Spawn particles on client side
@@ -208,15 +210,16 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
             // already the new state, so the below attempt to unform will fail
             if (state.getBlock() instanceof MultiBlockControllerBlock controller) {
                 controller.setMultiblockFormed(level, pos, state, false, false);
-                return;
-            }
-            // If it's not, we have to find the controller and unform it
-            BlockPos controllerPos = getControllerPos(level, pos);
-            if (controllerPos != null) {
-                BlockState controllerState = level.getBlockState(controllerPos);
-                if (controllerState.getBlock() instanceof MultiBlockControllerBlock) {
-                    ((MultiBlockControllerBlock) controllerState.getBlock()).setMultiblockFormed(
-                            level, controllerPos, controllerState, false, false);
+            } else {
+                // If it's not, we have to find the controller and unform it
+                BlockPos controllerPos = getControllerPos(level, pos);
+                if (controllerPos != null) {
+                    BlockState controllerState = level.getBlockState(controllerPos);
+                    if (controllerState.getBlock() instanceof MultiBlockControllerBlock) {
+                        ((MultiBlockControllerBlock) controllerState.getBlock())
+                                .setMultiblockFormed(level, controllerPos, controllerState, false,
+                                        false);
+                    }
                 }
             }
         }
