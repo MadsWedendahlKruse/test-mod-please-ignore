@@ -1,0 +1,5 @@
+{
+    "loader": "neoforge:obj",
+    "flip_v": true,
+    "model": "testmod:models/block/multiblock/crusher_rotor.obj"
+}

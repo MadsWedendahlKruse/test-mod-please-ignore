@@ -1,15 +1,16 @@
-package mwk.testmod.client.hologram;
+package mwk.testmod.client.render.hologram;
 
 import org.joml.Quaternionf;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import mwk.testmod.client.animations.DynamicAnimationAngle;
 import mwk.testmod.client.animations.DynamicAnimationVector;
-import mwk.testmod.client.hologram.components.HologramBlockRenderer;
-import mwk.testmod.client.hologram.components.HologramGeometryRenderer;
-import mwk.testmod.client.hologram.components.HologramItemRenderer;
-import mwk.testmod.client.hologram.components.HologramTextRenderer;
-import mwk.testmod.client.hologram.events.HologramEvent;
+import mwk.testmod.client.render.RenderUtils;
+import mwk.testmod.client.render.hologram.components.HologramBlockRenderer;
+import mwk.testmod.client.render.hologram.components.HologramGeometryRenderer;
+import mwk.testmod.client.render.hologram.components.HologramItemRenderer;
+import mwk.testmod.client.render.hologram.components.HologramTextRenderer;
+import mwk.testmod.client.render.hologram.events.HologramEvent;
 import mwk.testmod.common.block.multiblock.HologramBlock.HologramColor;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintState;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
@@ -144,20 +145,6 @@ public class HologramRenderer {
         poseStack.popPose();
     }
 
-    private float getRotation(Direction facing) {
-        switch (facing) {
-            case EAST:
-                return -(float) Math.PI / 2.0F;
-            case WEST:
-                return (float) Math.PI / 2.0F;
-            case SOUTH:
-                return (float) Math.PI;
-            case NORTH:
-            default:
-                return 0.0F;
-        }
-    }
-
     public boolean isCurrentBlueprint(BlockPos controllerPos, MultiBlockBlueprint blueprint,
             Direction facing) {
         return this.controllerPos != null && this.controllerPos.equals(controllerPos)
@@ -196,7 +183,7 @@ public class HologramRenderer {
         }
         Vec3 targetPos = new Vec3(controllerPos.getX(), controllerPos.getY(), controllerPos.getZ());
         moveAnimation.setTargetValue(targetPos);
-        float targetRotation = getRotation(facing);
+        float targetRotation = RenderUtils.getRotation(facing);
         rotateAnimation.setTargetValue(targetRotation);
         if (animateMove) {
             moveAnimation.start();

@@ -1,9 +1,9 @@
 package mwk.testmod.client.events;
 
 import mwk.testmod.TestMod;
-import mwk.testmod.client.hologram.HologramRenderer;
-import mwk.testmod.client.hologram.events.ClearEvent;
-import mwk.testmod.client.hologram.events.ProjectorEvent;
+import mwk.testmod.client.render.hologram.HologramRenderer;
+import mwk.testmod.client.render.hologram.events.ClearEvent;
+import mwk.testmod.client.render.hologram.events.ProjectorEvent;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
 import mwk.testmod.common.item.HologramProjectorItem;
 import net.minecraft.client.Minecraft;

@@ -9,6 +9,7 @@ import mwk.testmod.init.registries.TestModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -25,7 +26,7 @@ public class SuperFurnaceBlockEntity extends ParallelCrafterMachineBlockEntity<S
     public SuperFurnaceBlockEntity(BlockPos pos, BlockState state) {
         super(TestModBlockEntities.SUPER_FURNACE_BLOCK_ENTITY_TYPE.get(), pos, state,
                 TestModConfig.ENERGY_CAPACITY_DEFAULT.get(), 20, INPUT_OUTPUT_SLOTS, 20,
-                RecipeType.SMELTING);
+                RecipeType.SMELTING, SoundEvents.FURNACE_FIRE_CRACKLE, 20);
     }
 
     // TODO: These three are duplicated in the MultiBlockPartBlockEntity

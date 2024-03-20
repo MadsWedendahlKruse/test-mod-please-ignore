@@ -2,7 +2,7 @@ package mwk.testmod.client.animations.base;
 
 /**
  * A class for creating animations that run indefinitely. This is useful for creating animations
- * that should keep running until manually stopped, e.g. rotating a model or a button.
+ * that should keep running until manually stopped, e.g. rotating a model.
  */
 public abstract class PerpetualAnimation<T> extends Animation<T> {
 
@@ -22,5 +22,17 @@ public abstract class PerpetualAnimation<T> extends Animation<T> {
     @Override
     public T getValue() {
         return multiply(rate, elapsedTime);
+    }
+
+    @Override
+    protected T add(T t1, T t2) {
+        // Not used
+        return null;
+    }
+
+    @Override
+    protected T subtract(T t1, T t2) {
+        // Not used
+        return null;
     }
 }

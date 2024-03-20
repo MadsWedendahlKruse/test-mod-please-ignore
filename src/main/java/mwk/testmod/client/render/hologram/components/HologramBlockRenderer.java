@@ -1,4 +1,4 @@
-package mwk.testmod.client.hologram.components;
+package mwk.testmod.client.render.hologram.components;
 
 import java.util.Collection;
 import javax.annotation.Nullable;

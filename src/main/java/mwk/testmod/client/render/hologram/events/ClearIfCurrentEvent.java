@@ -1,6 +1,6 @@
-package mwk.testmod.client.hologram.events;
+package mwk.testmod.client.render.hologram.events;
 
-import mwk.testmod.client.hologram.HologramRenderer;
+import mwk.testmod.client.render.hologram.HologramRenderer;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

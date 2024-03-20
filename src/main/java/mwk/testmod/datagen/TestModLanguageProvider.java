@@ -50,6 +50,11 @@ public class TestModLanguageProvider extends LanguageProvider {
 			"widget.testmod.panel.energy_use_title";
 	public static final String KEY_WIDGET_PANEL_ENERGY_USE_TEXT =
 			"widget.testmod.panel.energy_use_text";
+	// Subtitles
+	public static final String KEY_SUBTITLE_MULTIBLOCK_FORM =
+			"sounds.testmod.block.multiblock.form";
+	public static final String KEY_SUBTITLE_MULTIBLOCK_CRUSHER =
+			"sounds.testmod.block.multiblock.crusher";
 
 	public TestModLanguageProvider(PackOutput output, String locale) {
 		super(output, TestMod.MODID, locale);
@@ -95,5 +100,8 @@ public class TestModLanguageProvider extends LanguageProvider {
 		add(KEY_WIDGET_PANEL_ENERGY, "Energy");
 		add(KEY_WIDGET_PANEL_ENERGY_USE_TITLE, "Energy use");
 		add(KEY_WIDGET_PANEL_ENERGY_USE_TEXT, "    %s FE/t");
+		// Sounds
+		add(KEY_SUBTITLE_MULTIBLOCK_FORM, "Multiblock forms");
+		add(KEY_SUBTITLE_MULTIBLOCK_CRUSHER, "Crusher crushes");
 	}
 }

@@ -3,9 +3,9 @@ package mwk.testmod.common.block.multiblock;
 import java.util.function.BiFunction;
 import mwk.testmod.TestMod;
 import mwk.testmod.client.events.HologramClientEvents;
-import mwk.testmod.client.hologram.HologramRenderer;
-import mwk.testmod.client.hologram.events.ClearIfCurrentEvent;
-import mwk.testmod.client.hologram.events.WrenchEvent;
+import mwk.testmod.client.render.hologram.HologramRenderer;
+import mwk.testmod.client.render.hologram.events.ClearIfCurrentEvent;
+import mwk.testmod.client.render.hologram.events.WrenchEvent;
 import mwk.testmod.common.block.entity.base.BaseMachineBlockEntity;
 import mwk.testmod.common.block.interfaces.ITickable;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintBlockInfo;
@@ -21,7 +21,6 @@ import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -30,15 +29,16 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.neoforge.items.IItemHandler;
 
 /**
  * The controller block of a multiblock structure.
@@ -47,6 +47,8 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
 
     // The direction the controller block is facing.
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    // The working state of the multiblock structure.
+    public static final BooleanProperty WORKING = BooleanProperty.create("working");
 
     // The blueprint for the multiblock structure.
     private MultiBlockBlueprint blueprint;
@@ -55,7 +57,8 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
     public MultiBlockControllerBlock(Properties properties,
             BiFunction<BlockPos, BlockState, BlockEntity> blockEntityFactory) {
         super(properties);
-        registerDefaultState(defaultBlockState().setValue(FACING, Direction.NORTH));
+        registerDefaultState(
+                defaultBlockState().setValue(FACING, Direction.NORTH).setValue(WORKING, false));
         this.blockEntityFactory = blockEntityFactory;
     }
 
@@ -63,6 +66,7 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
     protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(FACING);
+        builder.add(WORKING);
     }
 
     @Override
@@ -206,8 +210,16 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState,
             boolean movedByPiston) {
         TestMod.LOGGER.debug("MultiBlockControllerBlock::onRemove");
+
         // TODO: This doesn't do anything if we also check for client side
         // Does onRemove only run on the server side?
+
+        // Note to self: this method runs every time the block state changes, not just when the
+        // block is broken (contrary to what the name might suggest).
+        if (newState.getBlock() instanceof MultiBlockControllerBlock
+                && newState.getValue(FORMED) == state.getValue(FORMED)) {
+            return;
+        }
         HologramRenderer.getInstance()
                 .setEvent(new ClearIfCurrentEvent(blueprint, pos, state.getValue(FACING)));
         if (level.getBlockEntity(pos) instanceof BaseMachineBlockEntity blockEntity) {

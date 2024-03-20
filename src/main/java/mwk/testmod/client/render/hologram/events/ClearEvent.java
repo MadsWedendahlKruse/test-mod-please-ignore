@@ -1,6 +1,6 @@
-package mwk.testmod.client.hologram.events;
+package mwk.testmod.client.render.hologram.events;
 
-import mwk.testmod.client.hologram.HologramRenderer;
+import mwk.testmod.client.render.hologram.HologramRenderer;
 
 public class ClearEvent implements HologramEvent {
 

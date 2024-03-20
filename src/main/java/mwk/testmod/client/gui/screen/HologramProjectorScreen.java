@@ -12,6 +12,8 @@ import mwk.testmod.client.gui.widgets.BlueprintList;
 import mwk.testmod.client.gui.widgets.ButtonList;
 import mwk.testmod.client.gui.widgets.OnOffButton;
 import mwk.testmod.client.gui.widgets.ReleaseButton;
+import mwk.testmod.client.render.block_entity.CrusherBlockEntityRenderer;
+import mwk.testmod.common.block.entity.CrusherBlockEntity;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintBlockInfo;
@@ -27,6 +29,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -34,6 +37,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -304,6 +308,14 @@ public class HologramProjectorScreen extends Screen {
         poseStack.translate(-center.x, -center.y, -center.z);
         blockRenderer.renderSingleBlock(state, poseStack, bufferSource, LightTexture.FULL_BRIGHT,
                 OverlayTexture.NO_OVERLAY);
+        // Create a dummy block entity for the block entity renderer
+        BlockEntity blockEntity = blueprint.getController().newBlockEntity(BlockPos.ZERO, state);
+        BlockEntityRenderer<BlockEntity> blockEntityRenderer =
+                Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(blockEntity);
+        if (blockEntityRenderer != null) {
+            blockEntityRenderer.render(blockEntity, 0, poseStack, bufferSource,
+                    LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+        }
         bufferSource.endBatch();
         poseStack.popPose();
     }

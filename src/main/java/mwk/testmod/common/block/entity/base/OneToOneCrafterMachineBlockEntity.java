@@ -3,6 +3,7 @@ package mwk.testmod.common.block.entity.base;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -23,8 +24,9 @@ public abstract class OneToOneCrafterMachineBlockEntity<T extends Recipe<Contain
 
     protected OneToOneCrafterMachineBlockEntity(BlockEntityType<?> type, BlockPos pos,
             BlockState state, int maxEnergy, int energyPerTick, int maxProgress,
-            RecipeType<T> recipeType) {
-        super(type, pos, state, maxEnergy, energyPerTick, 1, 1, maxProgress, recipeType);
+            RecipeType<T> recipeType, SoundEvent sound, int soundDuration) {
+        super(type, pos, state, maxEnergy, energyPerTick, 1, 1, maxProgress, recipeType, sound,
+                soundDuration);
     }
 
     @Override

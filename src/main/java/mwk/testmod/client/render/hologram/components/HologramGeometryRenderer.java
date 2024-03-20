@@ -1,4 +1,4 @@
-package mwk.testmod.client.hologram.components;
+package mwk.testmod.client.render.hologram.components;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

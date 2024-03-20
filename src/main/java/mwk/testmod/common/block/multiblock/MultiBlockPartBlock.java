@@ -140,9 +140,8 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
      */
     private void playMultiBlockSound(Level level, BlockPos pos, boolean isFormed) {
         SoundEvent soundEvent =
-                isFormed ? TestModSounds.MULTI_BLOCK_FORM.get() : SoundEvents.ANVIL_DESTROY;
-        level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, soundEvent,
-                SoundSource.BLOCKS, 0.8F, 1.0F, false);
+                isFormed ? TestModSounds.MULTIBLOCK_FORM.get() : SoundEvents.ANVIL_DESTROY;
+        level.playSound(null, pos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
     }
 
     /**
@@ -166,7 +165,6 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
                 // TODO: Only do this if the entity has capabilities
                 blockEntity.invalidateCapabilities();
             }
-        } else {
             // Spawn particles on client side
             // TODO: Consider only spanwing particles on the faces that are exposed to air.
             // I'm not sure if this is a premature optimization.
@@ -175,6 +173,7 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
             if (state.getBlock() instanceof MultiBlockControllerBlock) {
                 playMultiBlockSound(level, pos, isFormed);
             }
+        } else {
         }
     }
 

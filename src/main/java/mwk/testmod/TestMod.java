@@ -6,7 +6,8 @@ import com.google.common.base.Predicate;
 import com.mojang.logging.LogUtils;
 import mwk.testmod.client.gui.screen.CrusherScreen;
 import mwk.testmod.client.gui.screen.SuperFurnaceScreen;
-import mwk.testmod.client.hologram.HologramRenderer;
+import mwk.testmod.client.render.block_entity.CrusherBlockEntityRenderer;
+import mwk.testmod.client.render.hologram.HologramRenderer;
 import mwk.testmod.common.block.multiblock.HologramBlockColor;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintRegistry;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
@@ -35,6 +36,8 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
@@ -174,6 +177,17 @@ public class TestMod {
 		@SubscribeEvent
 		public static void onRegisterColorHandlersEvent(RegisterColorHandlersEvent.Block event) {
 			event.register(new HologramBlockColor(), TestModBlocks.HOLOGRAM_BLOCK.get());
+		}
+
+		@SubscribeEvent
+		public static void onRegisterRenderersEvent(EntityRenderersEvent.RegisterRenderers event) {
+			event.registerBlockEntityRenderer(TestModBlockEntities.CRUSHER_BLOCK_ENTITY_TYPE.get(),
+					(context) -> new CrusherBlockEntityRenderer(context));
+		}
+
+		@SubscribeEvent
+		public static void onRegisterAdditionalEvent(ModelEvent.RegisterAdditional event) {
+			event.register(new ResourceLocation(MODID, "block/multiblock/crusher_rotor"));
 		}
 	}
 

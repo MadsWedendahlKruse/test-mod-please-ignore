@@ -50,7 +50,6 @@ public class EnergyBlockEntity extends BlockEntity {
 
     @Override
     public void load(CompoundTag tag) {
-        TestMod.LOGGER.debug(tag.toString());
         super.load(tag);
         if (tag.contains(NBT_TAG_ENERGY)) {
             energy.deserializeNBT(IntTag.valueOf(tag.getInt(NBT_TAG_ENERGY)));

@@ -2,8 +2,8 @@ package mwk.testmod.common.item;
 
 import mwk.testmod.TestMod;
 import mwk.testmod.client.gui.screen.HologramProjectorScreen;
-import mwk.testmod.client.hologram.HologramRenderer;
-import mwk.testmod.client.hologram.events.ProjectorEvent;
+import mwk.testmod.client.render.hologram.HologramRenderer;
+import mwk.testmod.client.render.hologram.events.ProjectorEvent;
 import mwk.testmod.datagen.TestModLanguageProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;

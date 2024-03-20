@@ -2,6 +2,7 @@ package mwk.testmod.common.block.entity.base;
 
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
@@ -19,9 +20,9 @@ public abstract class SingleCrafterMachineBlockEntity<T extends Recipe<Container
 
     protected SingleCrafterMachineBlockEntity(BlockEntityType<?> type, BlockPos pos,
             BlockState state, int maxEnergy, int energyPerTick, int inputSlots, int outputSlots,
-            int maxProgress, RecipeType<T> recipeType) {
+            int maxProgress, RecipeType<T> recipeType, SoundEvent sound, int soundDuration) {
         super(type, pos, state, maxEnergy, energyPerTick, inputSlots, outputSlots, maxProgress,
-                recipeType);
+                recipeType, sound, soundDuration);
     }
 
     public final void tick() {

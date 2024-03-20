@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import org.apache.commons.lang3.tuple.Pair;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
@@ -22,9 +23,9 @@ public abstract class ParallelCrafterMachineBlockEntity<T extends Recipe<Contain
 
     protected ParallelCrafterMachineBlockEntity(BlockEntityType<?> type, BlockPos pos,
             BlockState state, int maxEnergy, int energyPerTick, int itemSlots, int maxProgress,
-            RecipeType<T> recipeType) {
+            RecipeType<T> recipeType, SoundEvent sound, int soundDuration) {
         super(type, pos, state, maxEnergy, energyPerTick, itemSlots, itemSlots, maxProgress,
-                recipeType);
+                recipeType, sound, soundDuration);
     }
 
     public final void tick() {
@@ -46,9 +47,11 @@ public abstract class ParallelCrafterMachineBlockEntity<T extends Recipe<Contain
             if (!outputSlots.isEmpty()) {
                 recipesFound++;
                 recipeValid = true;
+                // Only increase progress once per tick
                 if (increaseProgress) {
                     increaseProgress();
                     setChanged();
+                    setWorking(true);
                     increaseProgress = false;
                 }
                 if (hasProgressFinished()) {
@@ -56,6 +59,10 @@ public abstract class ParallelCrafterMachineBlockEntity<T extends Recipe<Contain
                     craftItem(slot, outputSlots, recipe);
                 }
             }
+        }
+        playSound();
+        if (!recipeValid) {
+            setWorking(false);
         }
         if (!recipeValid || progressFinished) {
             resetProgress();
@@ -80,7 +87,8 @@ public abstract class ParallelCrafterMachineBlockEntity<T extends Recipe<Contain
      * entire recipe output can't fit into a single slot, the output is split into multiple slots.
      * 
      * @param recipe The recipe to check.
-     * @return The indices of the output slot(s) to place the result in.
+     * @return The indices of the output slot(s) to place the result in and the amount to place in
+     *         each slot.
      */
     protected ArrayList<Pair<Integer, Integer>> getOutputSlots(Optional<RecipeHolder<T>> recipe) {
         ArrayList<Pair<Integer, Integer>> outputSlots = new ArrayList<>();

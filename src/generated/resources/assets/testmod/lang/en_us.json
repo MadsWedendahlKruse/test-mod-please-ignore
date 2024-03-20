@@ -21,6 +21,8 @@
   "multiblock.testmod.crusher": "Crusher",
   "multiblock.testmod.super_assembler": "Super Assembler",
   "multiblock.testmod.super_furnace": "Super Furnace",
+  "sounds.testmod.block.multiblock.crusher": "Crusher crushes",
+  "sounds.testmod.block.multiblock.form": "Multiblock forms",
   "widget.testmod.energy_bar": "Energy",
   "widget.testmod.energy_bar.hover": "%s/%s FE",
   "widget.testmod.hologram_projector.blueprints": "Blueprints",
