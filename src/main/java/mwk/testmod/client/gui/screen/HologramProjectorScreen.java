@@ -62,6 +62,7 @@ public class HologramProjectorScreen extends Screen {
     private static final int BLUEPRINT_MATERIALS_ITEM_HEIGHT = 20;
     private static final int BLUEPRINT_MATERIALS_ITEMS_PER_ROW =
             BLUEPRINT_MATERIALS_WIDTH / BLUEPRINT_MATERIALS_ITEM_WIDTH;
+    private static final int BLUEPRINT_MATERIALS_ITEM_ROWS = 2;
     private static final ResourceLocation EMPTY_BLOCK_SPRITE =
             new ResourceLocation(TestMod.MODID, "widget/empty_block");
     private static final int ITEMSTACK_PIXEL_SIZE = 16;
@@ -69,7 +70,8 @@ public class HologramProjectorScreen extends Screen {
     // All three elements combined
     private static final int BLUEPRINT_WIDTH = BLUEPRINT_MODEL_WIDTH;
     private static final int BLUEPRINT_HEIGHT = BLUEPRINT_MODEL_HEIGHT + BLUEPRINT_MODEL_BUTTON_SIZE
-            + BLUEPRINT_MATERIALS_ITEM_HEIGHT + 2 * BLUEPRINT_MODEL_BUTTON_SPACING;
+            + BLUEPRINT_MATERIALS_ITEM_ROWS * BLUEPRINT_MATERIALS_ITEM_HEIGHT
+            + (BLUEPRINT_MATERIALS_ITEM_ROWS + 1) * BLUEPRINT_MODEL_BUTTON_SPACING;
     private static final int BLUEPRINT_X_OFFSET = 10;
 
     private static final int BLUEPRINT_LIST_WIDTH = BLUEPRINT_MODEL_WIDTH;
@@ -292,8 +294,16 @@ public class HologramProjectorScreen extends Screen {
             BufferSource bufferSource, BlockRenderDispatcher blockRenderer, int x, int y) {
         setupPoseStack(blueprint, poseStack, x, y);
         Vec3 center = blueprint.getAABB().getCenter();
-        renderBlocks(poseStack, bufferSource, blockRenderer, blueprint.getBlocks(), center,
-                layerSpacing);
+        BlueprintBlockInfo[] blocks = blueprint.getBlocks();
+        // Calculate the sum of the y coordiantes of the "lowest" and "highest" blocks
+        int ySum = blocks[0].getRelativePosition().getY()
+                + blocks[blocks.length - 1].getRelativePosition().getY();
+        if (ySum != 0) {
+            // If it's non-zero that means the controller is not at the center of the blueprint
+            // so we need to adjust the center
+            center = center.add(0, (ySum) * layerSpacing / 2, 0);
+        }
+        renderBlocks(poseStack, bufferSource, blockRenderer, blocks, center, layerSpacing);
         bufferSource.endBatch();
         poseStack.popPose();
     }
@@ -393,11 +403,13 @@ public class HologramProjectorScreen extends Screen {
         }
         // Draw backgrounds as well as actual items
         ResourceLocation background = BlueprintList.BACKGROUND_SPRITES.get(true, false);
-        int numRows = (int) Math
-                .max(Math.ceil((float) materials.size() / BLUEPRINT_MATERIALS_ITEMS_PER_ROW), 1);
+        int numRows = (int) Math.max(
+                Math.ceil((float) materials.size() / BLUEPRINT_MATERIALS_ITEMS_PER_ROW),
+                BLUEPRINT_MATERIALS_ITEM_ROWS);
         final int itemSlots = numRows * BLUEPRINT_MATERIALS_ITEMS_PER_ROW;
         guiGraphics.blitSprite(background, x, y, BLUEPRINT_MATERIALS_WIDTH,
-                numRows * BLUEPRINT_MATERIALS_ITEM_HEIGHT);
+                numRows * BLUEPRINT_MATERIALS_ITEM_HEIGHT
+                        + (numRows - 1) * BLUEPRINT_MODEL_BUTTON_SPACING);
         for (int i = 0; i < itemSlots; i++) {
             int row = i / BLUEPRINT_MATERIALS_ITEMS_PER_ROW;
             int col = i % BLUEPRINT_MATERIALS_ITEMS_PER_ROW;
@@ -415,7 +427,7 @@ public class HologramProjectorScreen extends Screen {
                 guiGraphics.renderItem(itemStack, itemX, itemY);
                 Minecraft minecraft = Minecraft.getInstance();
                 guiGraphics.renderItemDecorations(minecraft.font, itemStack, itemX, itemY);
-                // TODO: mouse over hitbox is wrong¨
+                // TODO: mouse over hitbox is wrong
                 if (mouseX >= itemX && mouseX <= itemX + ITEMSTACK_PIXEL_SIZE && mouseY >= itemY
                         && mouseY <= itemY + ITEMSTACK_PIXEL_SIZE) {
                     guiGraphics.renderTooltip(minecraft.font, itemStack, mouseX, mouseY);

@@ -47,15 +47,20 @@ public class HologramItemRenderer {
     }
 
     private void renderItemName(PoseStack poseStack, ItemStack itemStack,
-            HologramTextRenderer textRenderer) {
+            HologramTextRenderer textRenderer, int textColor) {
         textRenderer.renderText(poseStack, itemStack.getHoverName(), -HOLOGRAM_ITEM_SCALE,
-                HOLOGRAM_ITEM_SCALE / 4, 0.0F);
+                HOLOGRAM_ITEM_SCALE / 4, 0.0F, textColor);
+    }
+
+    private void renderItemName(PoseStack poseStack, ItemStack itemStack,
+            HologramTextRenderer textRenderer) {
+        renderItemName(poseStack, itemStack, textRenderer, HologramTextRenderer.TEXT_WHITE);
     }
 
     public void renderItemStack(PoseStack poseStack, ItemStack itemStack, float x, float y, float z,
             float[] color, float alpha, float scale, ItemDisplayContext context,
             @Nullable HologramTextRenderer textRenderer, ItemStackTextRenderType textRenderType,
-            boolean endBatch) {
+            int textColor, boolean endBatch) {
         if (color != null) {
             RenderSystem.setShaderColor(color[0], color[1], color[2], alpha);
         }
@@ -68,18 +73,18 @@ public class HologramItemRenderer {
             bufferSource.endBatch();
         }
         if (textRenderer != null) {
-            // TODO: This is a bit of a hack to undo the scaling
+            // TODO: This is a bit of a hack to undo the scaling of the item stack
             poseStack.scale(1.0F / scale, 1.0F / scale, 1.0F / scale);
             switch (textRenderType) {
                 case COUNT:
                     renderItemCount(poseStack, itemStack, textRenderer);
                     break;
                 case NAME:
-                    renderItemName(poseStack, itemStack, textRenderer);
+                    renderItemName(poseStack, itemStack, textRenderer, textColor);
                     break;
                 case COUNT_AND_NAME:
                     renderItemCount(poseStack, itemStack, textRenderer);
-                    renderItemName(poseStack, itemStack, textRenderer);
+                    renderItemName(poseStack, itemStack, textRenderer, textColor);
                     break;
                 case NONE:
                 default:
@@ -90,24 +95,26 @@ public class HologramItemRenderer {
     }
 
     public void renderItemStack(PoseStack poseStack, ItemStack itemStack, float x, float y, float z,
-            float[] color, @Nullable HologramTextRenderer textRenderer,
-            ItemStackTextRenderType textRenderType, boolean endBatch) {
-        renderItemStack(poseStack, itemStack, x, y, z, color, HOLOGRAM_ITEM_ALPHA,
+            float[] itemColor, @Nullable HologramTextRenderer textRenderer,
+            ItemStackTextRenderType textRenderType, int textColor, boolean endBatch) {
+        renderItemStack(poseStack, itemStack, x, y, z, itemColor, HOLOGRAM_ITEM_ALPHA,
                 HOLOGRAM_ITEM_SCALE, ItemDisplayContext.NONE, textRenderer, textRenderType,
-                endBatch);
+                textColor, endBatch);
     }
 
     public float renderItemStackList(PoseStack poseStack, Collection<ItemStack> itemStacks, float x,
-            float y, float z, float[] color, @Nullable HologramTextRenderer textRenderer,
-            ItemStackTextRenderType textRenderType, Component header, boolean endBatch) {
+            float y, float z, float[] itemColor, @Nullable HologramTextRenderer textRenderer,
+            ItemStackTextRenderType textRenderType, int textColor, Component header,
+            boolean endBatch) {
         float height = 0.0F;
         if (textRenderer != null && header != null) {
-            textRenderer.renderText(poseStack, header, x + HOLOGRAM_ITEM_SCALE / 2, y, z);
+            textRenderer.renderText(poseStack, header, x + HOLOGRAM_ITEM_SCALE / 2, y, z,
+                    textColor);
             height -= LIST_ELEMENT_HEIGHT;
         }
         for (ItemStack itemStack : itemStacks) {
-            renderItemStack(poseStack, itemStack, x, y + height, z, color, textRenderer,
-                    textRenderType, endBatch);
+            renderItemStack(poseStack, itemStack, x, y + height, z, itemColor, textRenderer,
+                    textRenderType, textColor, endBatch);
             height -= LIST_ELEMENT_HEIGHT;
         }
         if (endBatch) {
@@ -117,10 +124,10 @@ public class HologramItemRenderer {
     }
 
     public float renderItemStackList(PoseStack poseStack, Collection<ItemStack> itemStacks, float x,
-            float y, float z, float[] color, @Nullable HologramTextRenderer textRenderer,
-            ItemStackTextRenderType textRenderType, boolean endBatch) {
-        return renderItemStackList(poseStack, itemStacks, x, y, z, color, textRenderer,
-                textRenderType, null, endBatch);
+            float y, float z, float[] itemColor, @Nullable HologramTextRenderer textRenderer,
+            ItemStackTextRenderType textRenderType, int textColor, boolean endBatch) {
+        return renderItemStackList(poseStack, itemStacks, x, y, z, itemColor, textRenderer,
+                textRenderType, textColor, null, endBatch);
     }
 
     public void renderBlueprintStatus(PoseStack poseStack, HologramTextRenderer textRenderer,
@@ -131,20 +138,23 @@ public class HologramItemRenderer {
         if (!blueprintState.isComplete()) {
             Collection<ItemStack> missingBlockStacks =
                     BlueprintBlockInfo.getItemStacks(blueprintState.getMissingBlocks(), false);
-            if (!missingBlockStacks.isEmpty()) {
-                height +=
-                        renderItemStackList(poseStack, missingBlockStacks, 0, height, 0,
-                                HOLOGRAM_COLOR_WHITE, textRenderer,
-                                ItemStackTextRenderType.COUNT_AND_NAME,
-                                Component.translatable(
-                                        TestModLanguageProvider.KEY_INFO_CONTROLLER_MISSING_BLOCKS),
-                                true);
-            }
             Collection<ItemStack> incorrectBlockStacks =
                     BlueprintBlockInfo.getItemStacks(blueprintState.getIncorrectBlocks(), true);
+            // Estimate the height of the text to render the missing and incorrect blocks so they
+            // don't go into the ground (+1 for the header text)
+            height += Math.max((missingBlockStacks.size() + incorrectBlockStacks.size() + 1)
+                    * LIST_ELEMENT_HEIGHT - 1, 0);
+            if (!missingBlockStacks.isEmpty()) {
+                height += renderItemStackList(poseStack, missingBlockStacks, 0, height, 0,
+                        HOLOGRAM_COLOR_WHITE, textRenderer, ItemStackTextRenderType.COUNT_AND_NAME,
+                        HologramTextRenderer.TEXT_WHITE, Component.translatable(
+                                TestModLanguageProvider.KEY_INFO_CONTROLLER_MISSING_BLOCKS),
+                        true);
+            }
             if (!incorrectBlockStacks.isEmpty()) {
                 height += renderItemStackList(poseStack, incorrectBlockStacks, 0, height, 0,
                         HOLOGRAM_COLOR_WHITE, textRenderer, ItemStackTextRenderType.COUNT_AND_NAME,
+                        HologramTextRenderer.TEXT_RED,
                         Component.translatable(
                                 TestModLanguageProvider.KEY_INFO_CONTROLLER_INCORRECT_BLOCKS),
                         true);
@@ -167,7 +177,7 @@ public class HologramItemRenderer {
             // if it's worth the hassle. On the other hand it works *shrug*
             renderItemStack(poseStack, new ItemStack(TestModItems.WRENCH_ITEM.get()), 0.5F, -0.65F,
                     0.25F, HOLOGRAM_COLOR_WHITE, 1.0F, 0.5F, ItemDisplayContext.GUI, null,
-                    ItemStackTextRenderType.NONE, true);
+                    ItemStackTextRenderType.NONE, HologramTextRenderer.TEXT_WHITE, true);
         }
         poseStack.popPose();
     }

@@ -91,8 +91,8 @@ public abstract class ParallelCrafterMachineBlockEntity<T extends Recipe<Contain
      *         each slot.
      */
     protected ArrayList<Pair<Integer, Integer>> getOutputSlots(Optional<RecipeHolder<T>> recipe) {
-        ArrayList<Pair<Integer, Integer>> outputSlots = new ArrayList<>();
         if (!recipe.isEmpty()) {
+            ArrayList<Pair<Integer, Integer>> outputSlots = new ArrayList<>();
             ItemStack result = recipe.get().value().getResultItem(null);
             int recipeCount = result.getCount();
             int currentCount = 0;
@@ -105,14 +105,18 @@ public abstract class ParallelCrafterMachineBlockEntity<T extends Recipe<Contain
                 int remainingSpace =
                         inventory.getSlotLimit(slot) - inventory.getStackInSlot(slot).getCount();
                 int amountToPlace = Math.min(remainingSpace, recipeCount - currentCount);
+                if (amountToPlace <= 0) {
+                    continue;
+                }
                 currentCount += amountToPlace;
                 outputSlots.add(Pair.of(slot, amountToPlace));
+                // Only return the output slots if we have enough slots to place the entire result
                 if (currentCount >= recipeCount) {
-                    break;
+                    return outputSlots;
                 }
             }
         }
-        return outputSlots;
+        return new ArrayList<>();
     }
 
     /**

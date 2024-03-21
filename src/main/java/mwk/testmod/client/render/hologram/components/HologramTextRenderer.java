@@ -15,7 +15,8 @@ public class HologramTextRenderer {
     // Text is for some reason rendered upside down by default
     private static final Quaternionf HOLOGRAM_TEXT_ROTATION =
             new Quaternionf().rotationZ((float) Math.PI);
-    private static final int TEXT_WHITE = 16777215;
+    public static final int TEXT_WHITE = getTextColor(255, 255, 255);
+    public static final int TEXT_RED = getTextColor(255, 0, 0);
 
     private Font font;
     private BufferSource bufferSource;
@@ -49,5 +50,9 @@ public class HologramTextRenderer {
         for (int i = 0; i < components.length; i++) {
             renderText(poseStack, components[i], x, y - (i * spacing), z);
         }
+    }
+
+    private static int getTextColor(int r, int g, int b) {
+        return (r << 16) + (g << 8) + b;
     }
 }
