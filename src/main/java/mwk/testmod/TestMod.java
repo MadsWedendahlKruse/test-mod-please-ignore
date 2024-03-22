@@ -16,6 +16,7 @@ import mwk.testmod.init.registries.TestModBlocks;
 import mwk.testmod.init.registries.TestModCreativeTabs;
 import mwk.testmod.init.registries.TestModItems;
 import mwk.testmod.init.registries.TestModMenus;
+import mwk.testmod.init.registries.TestModModels;
 import mwk.testmod.init.registries.TestModRecipes;
 import mwk.testmod.init.registries.TestModSounds;
 import net.minecraft.client.Minecraft;
@@ -187,13 +188,7 @@ public class TestMod {
 
 		@SubscribeEvent
 		public static void onRegisterAdditionalEvent(ModelEvent.RegisterAdditional event) {
-			event.register(new ResourceLocation(MODID, "block/multiblock/crusher_rotor"));
+			TestModModels.register(event);
 		}
 	}
-
-	// @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE,
-	// value = Dist.CLIENT)
-	// public static class ClientForgeEvents {
-
-	// }
 }
