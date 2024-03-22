@@ -1,26 +1,17 @@
 package mwk.testmod.common.block.multiblock.blueprint;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.mojang.serialization.JsonOps;
-import mwk.testmod.TestMod;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Rotation;
@@ -32,6 +23,23 @@ import net.minecraft.world.phys.AABB;
  */
 public class MultiBlockBlueprint {
 
+    // Codec for a single layer, which is a list of strings
+    private static final Codec<List<String>> LAYER_CODEC = Codec.list(Codec.STRING);
+
+    // Codec for the layers section, which is a list of layers
+    private static final Codec<List<List<String>>> LAYERS_CODEC = Codec.list(LAYER_CODEC);
+
+    // Codec for the key section, which is a map of character to block identifier strings
+    private static final Codec<Map<String, String>> KEY_CODEC =
+            Codec.unboundedMap(Codec.STRING, Codec.STRING);
+
+    public static final Codec<MultiBlockBlueprint> CODEC =
+            RecordCodecBuilder.create(instance -> instance
+                    // We don't need the actual data here
+                    .group(LAYERS_CODEC.fieldOf("layers").forGetter(d -> null),
+                            KEY_CODEC.fieldOf("key").forGetter(d -> null))
+                    .apply(instance, MultiBlockBlueprint::new));
+
     // The name of the multiblock structure.
     private String name;
     // The controller block of the multiblock structure.
@@ -42,22 +50,8 @@ public class MultiBlockBlueprint {
     private BlockPos minCorner;
     private BlockPos maxCorner;
 
-    /**
-     * A helper class to hold the data for a multiblock blueprint.
-     */
-    private static class BlueprintData {
-        public String name;
-        public MultiBlockControllerBlock controller;
-        public BlueprintBlockInfo[] blocks;
-    }
-
-    /**
-     * Construct a new multiblock blueprint. See
-     * {@link #create(String, MultiBlockControllerBlock, BlockPos[], BlockState[])}.
-     */
-    private MultiBlockBlueprint(String name, MultiBlockControllerBlock controller,
-            BlueprintBlockInfo[] blocks) {
-        this.name = name;
+    public MultiBlockBlueprint(List<List<String>> layers, Map<String, String> key) {
+        parseData(layers, key);
         // Initialize the corners to extreme values to ensure they get updated.
         int minX = Integer.MAX_VALUE;
         int minY = Integer.MAX_VALUE;
@@ -78,164 +72,59 @@ public class MultiBlockBlueprint {
         // Set the min and max corners based on the calculated values.
         this.minCorner = new BlockPos(minX, minY, minZ);
         this.maxCorner = new BlockPos(maxX, maxY, maxZ);
-        this.blocks = blocks;
-        this.controller = controller;
-        controller.setBlueprint(this);
+        this.controller.setBlueprint(this);
     }
 
-    /**
-     * Construct a new multiblock blueprint from a blueprint data object.
-     * 
-     * @param data The blueprint data object to construct the blueprint from.
-     */
-    private MultiBlockBlueprint(BlueprintData data) {
-        this(data.name, data.controller, data.blocks);
-    }
-
-    /**
-     * Create a new multiblock blueprint.
-     * 
-     * @param name The name of the multiblock structure.
-     * @param controller The controller block of the multiblock structure. The controller block, and
-     *        by extension the blueprint, is assumed to be facing north.
-     * @param blocks The blocks that make up the multiblock structure. The positions are relative to
-     *        the controller block.
-     * @return The new multiblock blueprint.
-     */
-    public static MultiBlockBlueprint create(String name, MultiBlockControllerBlock controller,
-            BlueprintBlockInfo[] blocks) {
-        return new MultiBlockBlueprint(name, controller, blocks);
-    }
-
-    /**
-     * Parse a JSON file to create a new multiblock blueprint.
-     * 
-     * @param resourceManager The resource manager to load the blueprint from.
-     * @param location The resource location of the JSON file.
-     * @return The blueprint data object.
-     * @throws IllegalArgumentException If the JSON file is not formatted correctly.
-     */
-    private static BlueprintData parseJson(ResourceManager resourceManager,
-            ResourceLocation location) {
-        // Initialize the blueprint data object.
-        BlueprintData data = new BlueprintData();
-        // Extract the name from the location. The name is after the last slash, and
-        // before the last period.
-        String name = location.getPath();
-        name = name.substring(name.lastIndexOf("/") + 1, name.lastIndexOf("."));
-        name = "multiblock." + TestMod.MODID + "." + name;
-        data.name = name;
-        try (InputStream stream = resourceManager.open(location)) {
-            JsonElement jsonElement =
-                    JsonParser.parseReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
-            if (!jsonElement.isJsonObject()) {
-                throw new IllegalArgumentException("Blueprint JSON must be an object.");
-            }
-            JsonObject jsonObject = jsonElement.getAsJsonObject();
-            // Parse the layers of the blueprint.
-            JsonArray layers = jsonObject.getAsJsonArray("layers");
-            if (layers == null) {
-                throw new IllegalArgumentException(
-                        "Blueprint JSON must have an element named \"layers\" which "
-                                + "must be an array.");
-            }
-            // Assume each layer has the same dimensions.
-            // TODO: What if the layers don't have the same dimensions?
-            ArrayList<Character> blockKeys = new ArrayList<Character>();
-            ArrayList<BlockPos> positions = new ArrayList<BlockPos>();
-            for (int i = 0; i < layers.size(); i++) {
-                JsonArray layer = layers.get(i).getAsJsonArray();
-                if (layer == null) {
-                    throw new IllegalArgumentException(
-                            "Each layer in \"layers\" must be an array.");
-                }
-                for (int j = 0; j < layer.size(); j++) {
-                    String row = layer.get(j).getAsString();
-                    if (row == null) {
-                        throw new IllegalArgumentException(
-                                "Each row in the layer must be a string.");
+    private void parseData(List<List<String>> layers, Map<String, String> key) {
+        ArrayList<BlockPos> positions = new ArrayList<BlockPos>();
+        ArrayList<String> symbols = new ArrayList<String>();
+        for (int i = 0; i < layers.size(); i++) {
+            List<String> layer = layers.get(i);
+            for (int j = 0; j < layer.size(); j++) {
+                String row = layer.get(j);
+                for (int k = 0; k < row.length(); k++) {
+                    char c = row.charAt(k);
+                    if (c == ' ') {
+                        continue;
                     }
-                    for (int k = 0; k < row.length(); k++) {
-                        char c = row.charAt(k);
-                        if (c == ' ') {
-                            continue;
-                        }
-                        blockKeys.add(c);
-                        positions.add(new BlockPos(k, i, j));
-                    }
+                    positions.add(new BlockPos(k, i, j));
+                    symbols.add(c + "");
                 }
             }
-            // Parse key mappings.
-            JsonObject keyMapping = jsonObject.getAsJsonObject("key");
-            if (keyMapping == null) {
-                throw new IllegalArgumentException(
-                        "Blueprint JSON must have an element named \"key\" which "
-                                + "must be an object.");
-            }
-            HashMap<Character, String> blockIdMap = new HashMap<>();
-            for (Map.Entry<String, JsonElement> entry : keyMapping.entrySet()) {
-                char symbol = entry.getKey().charAt(0);
-                String blockIdentifier = entry.getValue().getAsString();
-                if (blockIdentifier == null) {
-                    throw new IllegalArgumentException("Value of each key must be a string.");
-                }
-                blockIdMap.put(symbol, blockIdentifier);
-            }
-            // Convert the block keys to block states.
-            BlockState[] states = new BlockState[blockKeys.size()];
-            boolean foundController = false;
-            for (int i = 0; i < blockKeys.size(); i++) {
-                char symbol = blockKeys.get(i);
-                String blockIdentifier = blockIdMap.get(symbol);
-                Block block = BuiltInRegistries.BLOCK.get(new ResourceLocation(blockIdentifier));
-                states[i] = block.defaultBlockState();
-                // TODO: Maybe this will give a false positive if the block has another
-                // boolean property. Alternatively we could check if the block is an
-                // instance of MultiBlockPartBlock.
-                if (!block.defaultBlockState().hasProperty(MultiBlockPartBlock.FORMED)) {
-                    throw new IllegalArgumentException("Block with identifier " + blockIdentifier
-                            + " does not have the " + "property \"formed\".");
-                }
-                // Check if the block is the controller block.
-                if (block instanceof MultiBlockControllerBlock) {
-                    foundController = true;
-                    data.controller = (MultiBlockControllerBlock) block;
-                    // Convert the positions to relative positions.
-                    BlockPos controllerPos = positions.get(i);
-                    for (int j = 0; j < positions.size(); j++) {
-                        positions.set(j, positions.get(j).subtract(controllerPos));
-                    }
-                }
-            }
-            if (!foundController) {
-                throw new IllegalArgumentException("Blueprint JSON must have a controller block.");
-            }
-            data.blocks = new BlueprintBlockInfo[positions.size()];
-            for (int i = 0; i < positions.size(); i++) {
-                data.blocks[i] = new BlueprintBlockInfo(positions.get(i), states[i]);
-            }
-        } catch (IOException e) {
-            TestMod.LOGGER.info("Failed to read file: " + location + ", " + e.getMessage());
         }
-        return data;
-    }
-
-    /**
-     * Create a new multiblock blueprint by loading it from a JSON file.
-     * 
-     * @param resourceManager The resource manager to load the blueprint from.
-     * @param location The resource location of the JSON file.
-     * @return The new multiblock blueprint.
-     */
-    public static MultiBlockBlueprint create(ResourceManager resourceManager,
-            ResourceLocation location) {
-        try {
-            BlueprintData data = parseJson(resourceManager, location);
-            return new MultiBlockBlueprint(data);
-        } catch (Exception e) {
-            TestMod.LOGGER.info("Failed to load blueprint: " + location + ", " + e.getMessage());
+        BlockState[] states = new BlockState[symbols.size()];
+        boolean foundController = false;
+        for (int i = 0; i < symbols.size(); i++) {
+            String symbol = symbols.get(i);
+            String blockIdentifier = key.get(symbol);
+            Block block = BuiltInRegistries.BLOCK.get(new ResourceLocation(blockIdentifier));
+            states[i] = block.defaultBlockState();
+            // TODO: Maybe this will give a false positive if the block has another
+            // boolean property. Alternatively we could check if the block is an
+            // instance of MultiBlockPartBlock.
+            if (!block.defaultBlockState().hasProperty(MultiBlockPartBlock.FORMED)) {
+                throw new IllegalArgumentException("Block with identifier " + blockIdentifier
+                        + " does not have the " + "property \"formed\".");
+            }
+            // Check if the block is the controller block.
+            if (block instanceof MultiBlockControllerBlock controller) {
+                foundController = true;
+                this.controller = controller;
+                // Convert the positions to relative positions.
+                BlockPos controllerPos = positions.get(i);
+                for (int j = 0; j < positions.size(); j++) {
+                    positions.set(j, positions.get(j).subtract(controllerPos));
+                }
+                this.name = blockIdentifier;
+            }
         }
-        return null;
+        if (!foundController) {
+            throw new IllegalArgumentException("Blueprint JSON must have a controller block.");
+        }
+        this.blocks = new BlueprintBlockInfo[positions.size()];
+        for (int i = 0; i < positions.size(); i++) {
+            this.blocks[i] = new BlueprintBlockInfo(positions.get(i), states[i]);
+        }
     }
 
     /**

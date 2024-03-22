@@ -3,15 +3,18 @@ package mwk.testmod.client.gui.widgets;
 import java.util.ArrayList;
 import java.util.Collection;
 import mwk.testmod.TestMod;
-import mwk.testmod.common.block.multiblock.blueprint.BlueprintRegistry;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
 import mwk.testmod.datagen.TestModLanguageProvider;
+import mwk.testmod.init.registries.TestModBlueprints;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractScrollWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
 public class BlueprintList extends AbstractScrollWidget {
@@ -25,7 +28,7 @@ public class BlueprintList extends AbstractScrollWidget {
     public static final int DEFAULT_SPACING = 2;
 
     private ArrayList<BlueprintButton> buttons = new ArrayList<BlueprintButton>();
-    private String blueprintKey = "";
+    private ResourceKey<MultiBlockBlueprint> blueprintKey = null;
     private int padding;
     private int spacing;
 
@@ -40,19 +43,20 @@ public class BlueprintList extends AbstractScrollWidget {
         this.spacing = spacing;
         addBlueprintButton(
                 Component.translatable(TestModLanguageProvider.KEY_WIDGET_HOLOGRAM_PROJECTOR_NONE),
-                "");
-        Collection<MultiBlockBlueprint> blueprints =
-                BlueprintRegistry.getInstance().getBlueprints().values();
-        // TEMP
-        for (int i = 0; i < 10; i++) {
-            for (MultiBlockBlueprint blueprint : blueprints) {
-                addBlueprintButton(Component.translatable(blueprint.getName()),
-                        blueprint.getName());
-            }
-        }
+                null);
+        Minecraft minecraft = Minecraft.getInstance();
+        minecraft.level.registryAccess().lookup(TestModBlueprints.BLUEPRINT_REGISTRY_KEY)
+                .ifPresent(blueprintRegistry -> {
+                    blueprintRegistry.listElements().forEach(blueprint -> {
+                        TestMod.LOGGER.debug("Found blueprint with key: " + blueprint.key());
+                        addBlueprintButton(Component.translatable(blueprint.value().getName()),
+                                blueprint.key());
+                    });
+                });
     }
 
-    private void addBlueprintButton(Component buttonLabel, String blueprintKey) {
+    private void addBlueprintButton(Component buttonLabel,
+            ResourceKey<MultiBlockBlueprint> blueprintKey) {
         buttons.add(new BlueprintButton(getX() + padding / 2, getY() + getInnerHeight(),
                 width - padding, Button.DEFAULT_HEIGHT, buttonLabel, (pButton) -> {
                     this.blueprintKey = blueprintKey;
@@ -63,7 +67,7 @@ public class BlueprintList extends AbstractScrollWidget {
         return buttons;
     }
 
-    public String getBlueprintKey() {
+    public ResourceKey<MultiBlockBlueprint> getBlueprintKey() {
         return blueprintKey;
     }
 

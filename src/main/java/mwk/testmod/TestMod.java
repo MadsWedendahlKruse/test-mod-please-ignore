@@ -1,16 +1,12 @@
 package mwk.testmod;
 
-import java.util.Map;
 import org.slf4j.Logger;
-import com.google.common.base.Predicate;
 import com.mojang.logging.LogUtils;
 import mwk.testmod.client.gui.screen.CrusherScreen;
 import mwk.testmod.client.gui.screen.SuperFurnaceScreen;
 import mwk.testmod.client.render.block_entity.CrusherBlockEntityRenderer;
 import mwk.testmod.client.render.hologram.HologramRenderer;
 import mwk.testmod.common.block.multiblock.HologramBlockColor;
-import mwk.testmod.common.block.multiblock.blueprint.BlueprintRegistry;
-import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
 import mwk.testmod.init.registries.TestModBlockEntities;
 import mwk.testmod.init.registries.TestModBlocks;
 import mwk.testmod.init.registries.TestModCreativeTabs;
@@ -22,9 +18,6 @@ import mwk.testmod.init.registries.TestModSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.api.distmarker.Dist;
@@ -52,9 +45,6 @@ public class TestMod {
 	// Directly reference a slf4j logger
 	// private static final Logger LOGGER = LogUtils.getLogger();
 	public static final Logger LOGGER = LogUtils.getLogger();
-
-	// TODO: Not sure if I need to do something more fancy here?
-	public static final BlueprintRegistry BLUEPRINT_REGISTRY = BlueprintRegistry.getInstance();
 
 	// The constructor for the mod class is the first code that is run when your mod is loaded.
 	// FML will recognize some parameter types like IEventBus or ModContainer and pass them in
@@ -136,23 +126,6 @@ public class TestMod {
 	public void onServerStarting(ServerStartingEvent event) {
 		// Do something when the server starts
 		LOGGER.info("HELLO from server starting");
-
-		// Load multiblock blueprints
-		// TODO: Can't these be loaded when the game starts?
-		String path = "blueprints";
-		Predicate<ResourceLocation> jsonFilter = s -> s.getPath().endsWith(".json");
-		ResourceManager resourceManager = event.getServer().getResourceManager();
-		Map<ResourceLocation, Resource> resources = resourceManager.listResources(path, jsonFilter);
-		for (Map.Entry<ResourceLocation, Resource> entry : resources.entrySet()) {
-			ResourceLocation location = entry.getKey();
-			if (location.getNamespace().equals(MODID)) {
-				LOGGER.info("Loading blueprint from: {}", location);
-				MultiBlockBlueprint blueprint =
-						MultiBlockBlueprint.create(resourceManager, location);
-				BLUEPRINT_REGISTRY.registerBlueprint(blueprint);
-				LOGGER.info("Loaded blueprint with name: {}", blueprint.getName());
-			}
-		}
 	}
 
 	// You can use EventBusSubscriber to automatically register all static methods in the class

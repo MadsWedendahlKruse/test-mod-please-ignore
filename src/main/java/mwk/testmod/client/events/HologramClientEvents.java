@@ -6,9 +6,11 @@ import mwk.testmod.client.render.hologram.events.ClearEvent;
 import mwk.testmod.client.render.hologram.events.ProjectorEvent;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
 import mwk.testmod.common.item.HologramProjectorItem;
+import mwk.testmod.init.registries.TestModBlueprints;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
@@ -81,6 +83,8 @@ public class HologramClientEvents {
     }
 
     private static ItemStack previousItem = ItemStack.EMPTY;
+    private static ResourceKey<MultiBlockBlueprint> previousKey = null;
+    private static MultiBlockBlueprint blueprint = null;
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent event) {
@@ -96,11 +100,19 @@ public class HologramClientEvents {
                 // If the latest hologram was not rendered by the projector, we don't want to
                 // accidentally override it
                 if (!(HOLOGRAM_RENDERER.getLatestEvent() instanceof ProjectorEvent)) {
-                    HologramProjectorItem.setBlueprintKey(projector, "");
+                    HologramProjectorItem.setBlueprintKey(projector, null);
                 }
             }
-            String blueprintKey = HologramProjectorItem.getBlueprintKey(projector);
-            MultiBlockBlueprint blueprint = TestMod.BLUEPRINT_REGISTRY.getBlueprint(blueprintKey);
+            ResourceKey<MultiBlockBlueprint> key = HologramProjectorItem.getBlueprintKey(projector);
+            if (key == null) {
+                blueprint = null;
+            } else if (key != previousKey) {
+                blueprint = minecraft.level.registryAccess()
+                        .registry(TestModBlueprints.BLUEPRINT_REGISTRY_KEY)
+                        .flatMap(blueprintRegistry -> blueprintRegistry.getOptional(key))
+                        .orElse(null);
+                previousKey = key;
+            }
             if (blueprint != null) {
                 BlockPos pos = getLookingAtBlockPos(player);
                 if (pos != null) {

@@ -1,6 +1,7 @@
 package mwk.testmod.client.gui.screen;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -8,6 +9,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import mwk.testmod.TestMod;
 import mwk.testmod.client.animations.FixedAnimationFloat;
 import mwk.testmod.client.animations.PerpetualAnimationFloat;
+import mwk.testmod.client.events.HologramClientEvents;
 import mwk.testmod.client.gui.widgets.BlueprintList;
 import mwk.testmod.client.gui.widgets.ButtonList;
 import mwk.testmod.client.gui.widgets.OnOffButton;
@@ -17,10 +19,10 @@ import mwk.testmod.common.block.entity.CrusherBlockEntity;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintBlockInfo;
-import mwk.testmod.common.block.multiblock.blueprint.BlueprintRegistry;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
 import mwk.testmod.common.item.HologramProjectorItem;
 import mwk.testmod.datagen.TestModLanguageProvider;
+import mwk.testmod.init.registries.TestModBlueprints;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -32,7 +34,9 @@ import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -272,8 +276,14 @@ public class HologramProjectorScreen extends Screen {
         guiGraphics.blitSprite(BlueprintList.BACKGROUND_SPRITES.get(false, false), getBlueprintX(),
                 getBlueprintY(), BLUEPRINT_MODEL_WIDTH, BLUEPRINT_MODEL_HEIGHT);
 
-        MultiBlockBlueprint blueprint =
-                BlueprintRegistry.getInstance().getBlueprint(blueprintList.getBlueprintKey());
+        Minecraft minecraft = Minecraft.getInstance();
+        RegistryAccess registryAccess = minecraft.level.registryAccess();
+        MultiBlockBlueprint blueprint = null;
+        ResourceKey<MultiBlockBlueprint> key = blueprintList.getBlueprintKey();
+        if (key != null) {
+            blueprint = registryAccess.registry(TestModBlueprints.BLUEPRINT_REGISTRY_KEY)
+                    .flatMap(blueprintRegistry -> blueprintRegistry.getOptional(key)).orElse(null);
+        }
         renderMaterials(
                 guiGraphics, blueprint, getBlueprintX(), getBlueprintY() + BLUEPRINT_MODEL_HEIGHT
                         + BLUEPRINT_MODEL_BUTTON_SIZE + 2 * BLUEPRINT_MODEL_BUTTON_SPACING,
@@ -319,7 +329,7 @@ public class HologramProjectorScreen extends Screen {
         blockRenderer.renderSingleBlock(state, poseStack, bufferSource, LightTexture.FULL_BRIGHT,
                 OverlayTexture.NO_OVERLAY);
         // Create a dummy block entity for the block entity renderer
-        BlockEntity blockEntity = blueprint.getController().newBlockEntity(BlockPos.ZERO, state);
+        BlockEntity blockEntity = controller.newBlockEntity(BlockPos.ZERO, state);
         BlockEntityRenderer<BlockEntity> blockEntityRenderer =
                 Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(blockEntity);
         if (blockEntityRenderer != null) {
