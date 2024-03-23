@@ -8,6 +8,7 @@ import mwk.testmod.init.registries.TestModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -126,8 +127,10 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
             double[] position = getRandomSurfacePosition(pos, 0.075);
             SimpleParticleType particleType =
                     isFormed ? ParticleTypes.HAPPY_VILLAGER : ParticleTypes.CRIT;
-            level.addParticle(particleType, position[0], position[1], position[2], 0.0f, 0.0f,
-                    0.0f);
+            if (level instanceof ServerLevel serverLevel) {
+                serverLevel.sendParticles(particleType, position[0], position[1], position[2], 1,
+                        0.0, 0.0, 0.0, 0.0);
+            }
         }
     }
 
@@ -159,24 +162,23 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
         if (level.getBlockState(pos).getBlock() instanceof MultiBlockPartBlock) {
             level.setBlockAndUpdate(pos, state.setValue(FORMED, isFormed));
         }
-        if (!level.isClientSide()) {
-            // Update block entity on server side
-            BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof MultiBlockPartBlockEntity multiBlockEntity) {
-                multiBlockEntity.setControllerPos(controllerPos);
-                // TODO: Only do this if the entity has capabilities
-                blockEntity.invalidateCapabilities();
-            }
-            // Only play the sound for the controller, otherwise we get a sound from each block
-            if (state.getBlock() instanceof MultiBlockControllerBlock) {
-                playMultiBlockSound(level, pos, isFormed);
-            }
-        } else {
-            // Spawn particles on client side
-            // TODO: Consider only spanwing particles on the faces that are exposed to air.
-            // I'm not sure if this is a premature optimization.
-            spawnMultiBlockParticles(level, pos, isFormed);
+        if (level.isClientSide()) {
+            return;
         }
+        // Update block entity on server side
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof MultiBlockPartBlockEntity multiBlockEntity) {
+            multiBlockEntity.setControllerPos(controllerPos);
+            // TODO: Only do this if the entity has capabilities
+            blockEntity.invalidateCapabilities();
+        }
+        // Only play the sound for the controller, otherwise we get a sound from each block
+        if (state.getBlock() instanceof MultiBlockControllerBlock) {
+            playMultiBlockSound(level, pos, isFormed);
+        }
+        // TODO: Consider only spanwing particles on the faces that are exposed to air.
+        // I'm not sure if this is a premature optimization.
+        spawnMultiBlockParticles(level, pos, isFormed);
     }
 
     /**
