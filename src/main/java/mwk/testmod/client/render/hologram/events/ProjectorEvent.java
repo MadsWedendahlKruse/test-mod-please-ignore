@@ -1,6 +1,5 @@
 package mwk.testmod.client.render.hologram.events;
 
-import mwk.testmod.TestMod;
 import mwk.testmod.client.render.hologram.HologramRenderer;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintState;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;

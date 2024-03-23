@@ -1,7 +1,6 @@
 package mwk.testmod.client.gui.screen;
 
 import java.util.ArrayList;
-import java.util.Optional;
 import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -9,13 +8,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import mwk.testmod.TestMod;
 import mwk.testmod.client.animations.FixedAnimationFloat;
 import mwk.testmod.client.animations.PerpetualAnimationFloat;
-import mwk.testmod.client.events.HologramClientEvents;
 import mwk.testmod.client.gui.widgets.BlueprintList;
 import mwk.testmod.client.gui.widgets.ButtonList;
 import mwk.testmod.client.gui.widgets.OnOffButton;
 import mwk.testmod.client.gui.widgets.ReleaseButton;
-import mwk.testmod.client.render.block_entity.CrusherBlockEntityRenderer;
-import mwk.testmod.common.block.entity.CrusherBlockEntity;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintBlockInfo;

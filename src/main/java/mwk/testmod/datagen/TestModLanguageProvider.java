@@ -83,7 +83,7 @@ public class TestModLanguageProvider extends LanguageProvider {
 		add(KEY_INFO_CONTROLLER_BLUEPRINT_INSUFFICIENT_BLOCKS,
 				"You are missing the required blocks to build the blueprint");
 		add(KEY_INFO_CONTROLLER_BLUEPRINT_BLOCKED,
-				"An incorrect block is in the way of the blueprint");
+				"An incorrect block is in the way of the blueprint [x=%s, y=%s, z=%s]");
 		add(KEY_INFO_CONTROLLER_MISSING_BLOCKS, "Missing blocks:");
 		add(KEY_INFO_CONTROLLER_INCORRECT_BLOCKS, "Incorrect blocks:");
 		add(KEY_INFO_CONTROLLER_HOLOGRAM_COMPLETE, "Blueprint complete!");

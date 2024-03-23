@@ -161,6 +161,9 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
         // Set the formed state of the blocks.
         for (BlockPos blockPos : positions) {
             BlockState blockState = level.getBlockState(blockPos);
+            if (blockPos == controllerPos) {
+                blockState = controllerState;
+            }
             if (blockState.getBlock() instanceof MultiBlockPartBlock partBlock) {
                 partBlock.setPartFormed(level, blockPos, blockState, isFormed, controllerPos);
             } else {
@@ -258,29 +261,36 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
                     TestModLanguageProvider.KEY_INFO_CONTROLLER_BLUEPRINT_COMPLETE), true);
             return InteractionResult.FAIL;
         }
-        boolean playerHasMissingBlock = false;
         for (BlueprintBlockInfo blockInfo : blueprintState.getMissingBlocks()) {
             BlockPos blockInfoPos = blockInfo.getAbsolutePosition(pos, state.getValue(FACING));
-            ItemStack stack = blockInfo.getExpectedItemStack();
-            int itemIndex = inventory.findSlotMatchingItem(stack);
-            if (itemIndex != -1) {
-                playerHasMissingBlock = true;
-                // Sanity check that we're not overwriting a block that's already there.
-                if (!level.getBlockState(blockInfoPos).isAir()) {
-                    player.displayClientMessage(
-                            Component.translatable(
-                                    TestModLanguageProvider.KEY_INFO_CONTROLLER_BLUEPRINT_BLOCKED),
-                            true);
-                    return InteractionResult.SUCCESS;
+            ItemStack expectedItemStack = blockInfo.getExpectedItemStack();
+            ItemStack blockToPlace = ItemStack.EMPTY;
+            if (player.getAbilities().instabuild) {
+                blockToPlace = expectedItemStack;
+            } else {
+                // Check if the player has the missing block in their inventory.
+                int itemIndex = inventory.findSlotMatchingItem(expectedItemStack);
+                if (itemIndex != -1) {
+                    blockToPlace = inventory.getItem(itemIndex);
                 }
+            }
+            // Sanity check that we're not overwriting a block that's already there.
+            if (!level.getBlockState(blockInfoPos).isAir()) {
+                player.displayClientMessage(
+                        Component.translatable(
+                                TestModLanguageProvider.KEY_INFO_CONTROLLER_BLUEPRINT_BLOCKED,
+                                blockInfoPos.getX(), blockInfoPos.getY(), blockInfoPos.getZ()),
+                        true);
+                return InteractionResult.SUCCESS;
+            }
+            if (!blockToPlace.isEmpty()) {
                 // Simulate the block being placed by the player. This handles playing the sound
                 // and removing the item from the player's inventory.
-                ItemStack itemStack = inventory.getItem(itemIndex);
-                if (itemStack.getItem() instanceof BlockItem blockItem) {
+                if (blockToPlace.getItem() instanceof BlockItem blockItem) {
                     BlockHitResult hitResult = new BlockHitResult(hit.getLocation(),
                             hit.getDirection(), blockInfoPos, hit.isInside());
                     UseOnContext context =
-                            new UseOnContext(level, player, hand, itemStack, hitResult);
+                            new UseOnContext(level, player, hand, blockToPlace, hitResult);
                     InteractionResult result = blockItem.useOn(context);
                     if (result != InteractionResult.FAIL) {
                         // Notify the blueprint hologram that a block has been placed.
@@ -294,13 +304,11 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
             }
         }
         // Notify the player if they don't have any of the missing blocks in their inventory.
-        if (!playerHasMissingBlock) {
-            player.displayClientMessage(Component.translatable(
-                    TestModLanguageProvider.KEY_INFO_CONTROLLER_BLUEPRINT_INSUFFICIENT_BLOCKS),
-                    true);
-            // TODO: Not sure if we want to return SUCCESS here?
-            return InteractionResult.SUCCESS;
-        }
+        player.displayClientMessage(
+                Component.translatable(
+                        TestModLanguageProvider.KEY_INFO_CONTROLLER_BLUEPRINT_INSUFFICIENT_BLOCKS),
+                true);
+        // TODO: Not sure if we want to return SUCCESS here?
         return InteractionResult.SUCCESS;
     }
 

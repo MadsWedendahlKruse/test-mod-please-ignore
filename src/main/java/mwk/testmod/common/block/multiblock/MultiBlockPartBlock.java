@@ -156,24 +156,26 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
     public void setPartFormed(Level level, BlockPos pos, BlockState state, boolean isFormed,
             BlockPos controllerPos) {
         // Update block state on both sides
-        level.setBlockAndUpdate(pos, state.setValue(FORMED, isFormed));
+        if (level.getBlockState(pos).getBlock() instanceof MultiBlockPartBlock) {
+            level.setBlockAndUpdate(pos, state.setValue(FORMED, isFormed));
+        }
         if (!level.isClientSide()) {
             // Update block entity on server side
             BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof MultiBlockPartBlockEntity) {
-                ((MultiBlockPartBlockEntity) blockEntity).setControllerPos(controllerPos);
+            if (blockEntity instanceof MultiBlockPartBlockEntity multiBlockEntity) {
+                multiBlockEntity.setControllerPos(controllerPos);
                 // TODO: Only do this if the entity has capabilities
                 blockEntity.invalidateCapabilities();
             }
-            // Spawn particles on client side
-            // TODO: Consider only spanwing particles on the faces that are exposed to air.
-            // I'm not sure if this is a premature optimization.
-            spawnMultiBlockParticles(level, pos, isFormed);
             // Only play the sound for the controller, otherwise we get a sound from each block
             if (state.getBlock() instanceof MultiBlockControllerBlock) {
                 playMultiBlockSound(level, pos, isFormed);
             }
         } else {
+            // Spawn particles on client side
+            // TODO: Consider only spanwing particles on the faces that are exposed to air.
+            // I'm not sure if this is a premature optimization.
+            spawnMultiBlockParticles(level, pos, isFormed);
         }
     }
 
@@ -214,10 +216,10 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
                 BlockPos controllerPos = getControllerPos(level, pos);
                 if (controllerPos != null) {
                     BlockState controllerState = level.getBlockState(controllerPos);
-                    if (controllerState.getBlock() instanceof MultiBlockControllerBlock) {
-                        ((MultiBlockControllerBlock) controllerState.getBlock())
-                                .setMultiblockFormed(level, controllerPos, controllerState, false,
-                                        false);
+                    if (controllerState
+                            .getBlock() instanceof MultiBlockControllerBlock controller) {
+                        controller.setMultiblockFormed(level, controllerPos, controllerState, false,
+                                false);
                     }
                 }
             }

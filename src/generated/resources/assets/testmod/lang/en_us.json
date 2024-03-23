@@ -5,7 +5,7 @@
   "block.testmod.machine_frame_reinforced": "Reinforced Machine Frame",
   "block.testmod.super_assembler": "Super Assembler",
   "block.testmod.super_furnace": "Super Furnace",
-  "info.testmod.controller.blueprint.blocked": "An incorrect block is in the way of the blueprint",
+  "info.testmod.controller.blueprint.blocked": "An incorrect block is in the way of the blueprint [x=%s, y=%s, z=%s]",
   "info.testmod.controller.blueprint.complete": "The blueprint is complete, form the multiblock with a wrench",
   "info.testmod.controller.blueprint.help": "Right-click with a wrench to see the blueprint",
   "info.testmod.controller.blueprint.hologram.complete": "Blueprint complete!",

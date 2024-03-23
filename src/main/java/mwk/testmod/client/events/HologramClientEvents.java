@@ -106,7 +106,8 @@ public class HologramClientEvents {
             ResourceKey<MultiBlockBlueprint> key = HologramProjectorItem.getBlueprintKey(projector);
             if (key == null) {
                 blueprint = null;
-            } else if (key != previousKey) {
+            } else if (key != previousKey
+                    || !(HOLOGRAM_RENDERER.getLatestEvent() instanceof ProjectorEvent)) {
                 blueprint = minecraft.level.registryAccess()
                         .registry(TestModBlueprints.BLUEPRINT_REGISTRY_KEY)
                         .flatMap(blueprintRegistry -> blueprintRegistry.getOptional(key))
