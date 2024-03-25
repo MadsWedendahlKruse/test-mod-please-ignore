@@ -8,6 +8,7 @@ import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.recipe.CrushingRecipe;
 import mwk.testmod.datagen.TestModLanguageProvider;
 import mwk.testmod.init.registries.TestModBlockEntities;
+import mwk.testmod.init.registries.TestModBlocks;
 import mwk.testmod.init.registries.TestModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,7 +27,7 @@ public class CrusherBlockEntity extends ParallelCrafterMachineBlockEntity<Crushi
     private final PerpetualAnimationFloat rotorAnimation;
 
     public CrusherBlockEntity(BlockPos pos, BlockState state) {
-        super(TestModBlockEntities.CRUSHER_BLOCK_ENTITY_TYPE.get(), pos, state,
+        super(TestModBlockEntities.CRUSHER_ENTITY_TYPE.get(), pos, state,
                 TestModConfig.ENERGY_CAPACITY_DEFAULT.get(), 20, 9, 20,
                 CrushingRecipe.Type.INSTANCE, TestModSounds.MULTIBLOCK_CRUSHER.get(),
                 // SoundEvents.BEACON_AMBIENT,
@@ -37,7 +38,7 @@ public class CrusherBlockEntity extends ParallelCrafterMachineBlockEntity<Crushi
 
     @Override
     public Component getDisplayName() {
-        return Component.translatable(TestModLanguageProvider.KEY_MULTIBLOCK_CRUSHER);
+        return TestModBlocks.CRUSHER.get().getName();
     }
 
     @Override

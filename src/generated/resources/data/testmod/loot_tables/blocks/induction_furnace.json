@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "testmod:super_furnace"
+          "name": "testmod:induction_furnace"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "testmod:blocks/super_furnace"
+  "random_sequence": "testmod:blocks/induction_furnace"
 }

@@ -162,6 +162,7 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
         if (level.getBlockState(pos).getBlock() instanceof MultiBlockPartBlock) {
             level.setBlockAndUpdate(pos, state.setValue(FORMED, isFormed));
         }
+        // The rest is handled on the server side
         if (level.isClientSide()) {
             return;
         }

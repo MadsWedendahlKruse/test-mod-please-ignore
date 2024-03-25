@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "formed=false": {
+      "model": "testmod:block/machine/copper_coil"
+    },
+    "formed=true": {
+      "model": "testmod:block/empty"
+    }
+  }
+}

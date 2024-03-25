@@ -16,7 +16,10 @@ import mwk.testmod.init.registries.TestModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -229,10 +232,6 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState,
             boolean movedByPiston) {
         TestMod.LOGGER.debug("MultiBlockControllerBlock::onRemove");
-
-        // TODO: This doesn't do anything if we also check for client side
-        // Does onRemove only run on the server side?
-
         // Note to self: this method runs every time the block state changes, not just when the
         // block is broken (contrary to what the name might suggest).
         if (newState.getBlock() instanceof MultiBlockControllerBlock
@@ -245,6 +244,22 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
             Containers.dropContents(level, pos, blockEntity.getDrops());
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+    /**
+     * Build the entire multiblock structure at once. This is only used when the player is in
+     * creative mode and sneaking.
+     */
+    private void buildEntireMultiBlock(Level level, BlockPos pos, BlockState state,
+            BlueprintState blueprintState) {
+        for (BlueprintBlockInfo missingBlockInfo : blueprintState.getMissingBlocks()) {
+            BlockPos missingBlockInfoPos =
+                    missingBlockInfo.getAbsolutePosition(pos, state.getValue(FACING));
+            BlockState missingBlockState = missingBlockInfo.getExpectedState();
+            level.setBlockAndUpdate(missingBlockInfoPos, missingBlockState);
+        }
+        level.playSound(null, pos, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 1.0f, 1.0f);
+        HologramRenderer.getInstance().updateBlueprintState();
     }
 
     /**
@@ -265,8 +280,13 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
             BlockPos blockInfoPos = blockInfo.getAbsolutePosition(pos, state.getValue(FACING));
             ItemStack expectedItemStack = blockInfo.getExpectedItemStack();
             ItemStack blockToPlace = ItemStack.EMPTY;
-            if (player.getAbilities().instabuild) {
+            if (player.isCreative()) {
                 blockToPlace = expectedItemStack;
+                // If the player is sneaking build the whole multiblock structure.
+                if (player.isShiftKeyDown()) {
+                    buildEntireMultiBlock(level, pos, state, blueprintState);
+                    return InteractionResult.SUCCESS;
+                }
             } else {
                 // Check if the player has the missing block in their inventory.
                 int itemIndex = inventory.findSlotMatchingItem(expectedItemStack);
@@ -278,7 +298,7 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
             if (!level.getBlockState(blockInfoPos).isAir()) {
                 player.displayClientMessage(
                         Component.translatable(
-                                TestModLanguageProvider.KEY_INFO_CONTROLLER_BLUEPRINT_BLOCKED,
+                                TestModLanguageProvider.KEY_INFO_CONTROLLER_BLUEPRINTED,
                                 blockInfoPos.getX(), blockInfoPos.getY(), blockInfoPos.getZ()),
                         true);
                 return InteractionResult.SUCCESS;
@@ -304,10 +324,8 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
             }
         }
         // Notify the player if they don't have any of the missing blocks in their inventory.
-        player.displayClientMessage(
-                Component.translatable(
-                        TestModLanguageProvider.KEY_INFO_CONTROLLER_BLUEPRINT_INSUFFICIENT_BLOCKS),
-                true);
+        player.displayClientMessage(Component.translatable(
+                TestModLanguageProvider.KEY_INFO_CONTROLLER_BLUEPRINT_INSUFFICIENTS), true);
         // TODO: Not sure if we want to return SUCCESS here?
         return InteractionResult.SUCCESS;
     }

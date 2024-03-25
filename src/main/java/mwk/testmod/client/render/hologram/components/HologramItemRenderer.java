@@ -148,15 +148,14 @@ public class HologramItemRenderer {
                 height += renderItemStackList(poseStack, missingBlockStacks, 0, height, 0,
                         HOLOGRAM_COLOR_WHITE, textRenderer, ItemStackTextRenderType.COUNT_AND_NAME,
                         HologramTextRenderer.TEXT_WHITE, Component.translatable(
-                                TestModLanguageProvider.KEY_INFO_CONTROLLER_MISSING_BLOCKS),
+                                TestModLanguageProvider.KEY_INFO_CONTROLLER_MISSINGS),
                         true);
             }
             if (!incorrectBlockStacks.isEmpty()) {
                 height += renderItemStackList(poseStack, incorrectBlockStacks, 0, height, 0,
                         HOLOGRAM_COLOR_WHITE, textRenderer, ItemStackTextRenderType.COUNT_AND_NAME,
-                        HologramTextRenderer.TEXT_RED,
-                        Component.translatable(
-                                TestModLanguageProvider.KEY_INFO_CONTROLLER_INCORRECT_BLOCKS),
+                        HologramTextRenderer.TEXT_RED, Component.translatable(
+                                TestModLanguageProvider.KEY_INFO_CONTROLLER_INCORRECTS),
                         true);
             }
         } else {

@@ -23,7 +23,7 @@ public class TestModConfig {
                         BUILDER.comment("The default energy capacity for machines").defineInRange(
                                         "powerCapacityDefault", 50000, 0, Integer.MAX_VALUE);
 
-        private static final ModConfigSpec.BooleanValue LOG_DIRT_BLOCK =
+        private static final ModConfigSpec.BooleanValue LOG_DIRT =
                         BUILDER.comment("Whether to log the dirt block on common setup")
                                         .define("logDirtBlock", true);
 
@@ -55,7 +55,7 @@ public class TestModConfig {
 
         @SubscribeEvent
         static void onLoad(final ModConfigEvent event) {
-                logDirtBlock = LOG_DIRT_BLOCK.get();
+                logDirtBlock = LOG_DIRT.get();
                 magicNumber = MAGIC_NUMBER.get();
                 magicNumberIntroduction = MAGIC_NUMBER_INTRODUCTION.get();
 

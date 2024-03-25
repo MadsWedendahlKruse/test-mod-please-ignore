@@ -11,20 +11,21 @@ public class TestModLanguageProvider extends LanguageProvider {
 	// Mutliblocks
 	public static final String KEY_MULTIBLOCK_SUPER_ASSERMBLER =
 			"multiblock.testmod.super_assembler";
-	public static final String KEY_MULTIBLOCK_SUPER_FURNACE = "multiblock.testmod.super_furnace";
+	public static final String KEY_MULTIBLOCK_INDUCTION_FURNACE =
+			"multiblock.testmod.induction_furnace";
 	public static final String KEY_MULTIBLOCK_CRUSHER = "multiblock.testmod.crusher";
 	// Info
 	public static final String KEY_INFO_CONTROLLER_BLUEPRINT_HELP =
 			"info.testmod.controller.blueprint.help";
 	public static final String KEY_INFO_CONTROLLER_BLUEPRINT_COMPLETE =
 			"info.testmod.controller.blueprint.complete";
-	public static final String KEY_INFO_CONTROLLER_BLUEPRINT_INSUFFICIENT_BLOCKS =
+	public static final String KEY_INFO_CONTROLLER_BLUEPRINT_INSUFFICIENTS =
 			"info.testmod.controller.blueprint.insufficient_blocks";
-	public static final String KEY_INFO_CONTROLLER_BLUEPRINT_BLOCKED =
+	public static final String KEY_INFO_CONTROLLER_BLUEPRINTED =
 			"info.testmod.controller.blueprint.blocked";
-	public static final String KEY_INFO_CONTROLLER_MISSING_BLOCKS =
+	public static final String KEY_INFO_CONTROLLER_MISSINGS =
 			"info.testmod.controller.blueprint.hologram.missing_blocks";
-	public static final String KEY_INFO_CONTROLLER_INCORRECT_BLOCKS =
+	public static final String KEY_INFO_CONTROLLER_INCORRECTS =
 			"info.testmod.controller.blueprint.hologram.incorrect_blocks";
 	public static final String KEY_INFO_CONTROLLER_HOLOGRAM_COMPLETE =
 			"info.testmod.controller.blueprint.hologram.complete";
@@ -63,16 +64,12 @@ public class TestModLanguageProvider extends LanguageProvider {
 	@Override
 	protected void addTranslations() {
 		// Blocks
-		add(TestModBlocks.MACHINE_FRAME_BASIC_BLOCK.get(), "Basic Machine Frame");
-		add(TestModBlocks.MACHINE_FRAME_REINFORCED_BLOCK.get(), "Reinforced Machine Frame");
-		add(TestModBlocks.MACHINE_FRAME_ADVANCED_BLOCK.get(), "Advanced Machine Frame");
-		add(TestModBlocks.SUPER_ASSEMBLER_BLOCK.get(), "Super Assembler");
-		add(TestModBlocks.SUPER_FURNACE_BLOCK.get(), "Super Furnace");
-		add(TestModBlocks.CRUSHER_BLOCK.get(), "Crusher");
-		// Multiblocks
-		add(KEY_MULTIBLOCK_SUPER_ASSERMBLER, "Super Assembler");
-		add(KEY_MULTIBLOCK_SUPER_FURNACE, "Super Furnace");
-		add(KEY_MULTIBLOCK_CRUSHER, "Crusher");
+		add(TestModBlocks.MACHINE_FRAME_BASIC.get(), "Basic Machine Frame");
+		add(TestModBlocks.MACHINE_FRAME_REINFORCED.get(), "Reinforced Machine Frame");
+		add(TestModBlocks.MACHINE_FRAME_ADVANCED.get(), "Advanced Machine Frame");
+		add(TestModBlocks.SUPER_ASSEMBLER.get(), "Super Assembler");
+		add(TestModBlocks.INDUCTION_FURNACE.get(), "Induction Furnace");
+		add(TestModBlocks.CRUSHER.get(), "Crusher");
 		// Items
 		add(TestModItems.WRENCH_ITEM.get(), "Wrench");
 		add(TestModItems.HOLOGRAM_PROJECTOR_ITEM.get(), "Hologram Projector");
@@ -80,12 +77,12 @@ public class TestModLanguageProvider extends LanguageProvider {
 		add(KEY_INFO_CONTROLLER_BLUEPRINT_HELP, "Right-click with a wrench to see the blueprint");
 		add(KEY_INFO_CONTROLLER_BLUEPRINT_COMPLETE,
 				"The blueprint is complete, form the multiblock with a wrench");
-		add(KEY_INFO_CONTROLLER_BLUEPRINT_INSUFFICIENT_BLOCKS,
+		add(KEY_INFO_CONTROLLER_BLUEPRINT_INSUFFICIENTS,
 				"You are missing the required blocks to build the blueprint");
-		add(KEY_INFO_CONTROLLER_BLUEPRINT_BLOCKED,
+		add(KEY_INFO_CONTROLLER_BLUEPRINTED,
 				"An incorrect block is in the way of the blueprint [x=%s, y=%s, z=%s]");
-		add(KEY_INFO_CONTROLLER_MISSING_BLOCKS, "Missing blocks:");
-		add(KEY_INFO_CONTROLLER_INCORRECT_BLOCKS, "Incorrect blocks:");
+		add(KEY_INFO_CONTROLLER_MISSINGS, "Missing blocks:");
+		add(KEY_INFO_CONTROLLER_INCORRECTS, "Incorrect blocks:");
 		add(KEY_INFO_CONTROLLER_HOLOGRAM_COMPLETE, "Blueprint complete!");
 		add(KEY_INFO_CONTROLLER_HOLOGRAM_RIGHT_CLICK_ME, "Right-click me with a wrench");
 		add(KEY_INFO_HOLOGRAM_PROJECTOR_HELP, "Shift + right-click to choose a blueprint");

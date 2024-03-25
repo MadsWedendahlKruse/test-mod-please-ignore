@@ -5,7 +5,7 @@ import mwk.testmod.client.render.hologram.HologramRenderer;
 import mwk.testmod.client.render.hologram.events.ClearEvent;
 import mwk.testmod.client.render.hologram.events.ProjectorEvent;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
-import mwk.testmod.common.item.HologramProjectorItem;
+import mwk.testmod.common.item.tools.HologramProjectorItem;
 import mwk.testmod.init.registries.TestModBlueprints;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;

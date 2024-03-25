@@ -3,7 +3,7 @@ package mwk.testmod;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import mwk.testmod.client.gui.screen.CrusherScreen;
-import mwk.testmod.client.gui.screen.SuperFurnaceScreen;
+import mwk.testmod.client.gui.screen.InductionFurnaceScreen;
 import mwk.testmod.client.render.block_entity.CrusherBlockEntityRenderer;
 import mwk.testmod.client.render.hologram.HologramRenderer;
 import mwk.testmod.common.block.multiblock.HologramBlockColor;
@@ -91,33 +91,33 @@ public class TestMod {
 	// Add the example block item to the building blocks tab
 	private void addCreative(BuildCreativeModeTabContentsEvent event) {
 		if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
-			// event.accept(EXAMPLE_BLOCK_ITEM);
+			// event.accept(EXAMPLE_ITEM);
 		}
 	}
 
 	private void registerCapabilities(RegisterCapabilitiesEvent event) {
 		// TODO: This seems like a quite cumbersome way to register capabilities
 		event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
-				TestModBlockEntities.MULTI_BLOCK_ENERGY_PORT_BLOCK_ENTITY_TYPE.get(),
+				TestModBlockEntities.MULTI_ENERGY_PORT_ENTITY_TYPE.get(),
 				(entity, direction) -> entity.getEnergyHandler(direction));
 		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
-				TestModBlockEntities.MULTI_BLOCK_INPUT_PORT_BLOCK_ENTITY_TYPE.get(),
+				TestModBlockEntities.MULTI_INPUT_PORT_ENTITY_TYPE.get(),
 				(entity, direction) -> entity.getItemHandler(direction));
 		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
-				TestModBlockEntities.MULTI_BLOCK_OUTPUT_PORT_BLOCK_ENTITY_TYPE.get(),
+				TestModBlockEntities.MULTI_OUTPUT_PORT_ENTITY_TYPE.get(),
 				(entity, direction) -> entity.getItemHandler(direction));
 
 		event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
-				TestModBlockEntities.SUPER_FURNACE_BLOCK_ENTITY_TYPE.get(),
+				TestModBlockEntities.INDUCTION_FURNACE_ENTITY_TYPE.get(),
 				(entity, direction) -> entity.getEnergyHandler(direction));
 		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
-				TestModBlockEntities.SUPER_FURNACE_BLOCK_ENTITY_TYPE.get(),
+				TestModBlockEntities.INDUCTION_FURNACE_ENTITY_TYPE.get(),
 				(entity, direction) -> entity.getItemHandler(direction));
 		event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
-				TestModBlockEntities.CRUSHER_BLOCK_ENTITY_TYPE.get(),
+				TestModBlockEntities.CRUSHER_ENTITY_TYPE.get(),
 				(entity, direction) -> entity.getEnergyHandler(direction));
 		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
-				TestModBlockEntities.CRUSHER_BLOCK_ENTITY_TYPE.get(),
+				TestModBlockEntities.CRUSHER_ENTITY_TYPE.get(),
 				(entity, direction) -> entity.getItemHandler(direction));
 	}
 
@@ -142,20 +142,20 @@ public class TestMod {
 
 			// TODO: McJty's tutorial uses enqueueWork here, but I don't know why
 			event.enqueueWork(() -> {
-				MenuScreens.register(TestModMenus.SUPER_FURNACE_MENU.get(),
-						SuperFurnaceScreen::new);
+				MenuScreens.register(TestModMenus.INDUCTION_FURNACE_MENU.get(),
+						InductionFurnaceScreen::new);
 				MenuScreens.register(TestModMenus.CRUSHER_MENU.get(), CrusherScreen::new);
 			});
 		}
 
 		@SubscribeEvent
 		public static void onRegisterColorHandlersEvent(RegisterColorHandlersEvent.Block event) {
-			event.register(new HologramBlockColor(), TestModBlocks.HOLOGRAM_BLOCK.get());
+			event.register(new HologramBlockColor(), TestModBlocks.HOLOGRAM.get());
 		}
 
 		@SubscribeEvent
 		public static void onRegisterRenderersEvent(EntityRenderersEvent.RegisterRenderers event) {
-			event.registerBlockEntityRenderer(TestModBlockEntities.CRUSHER_BLOCK_ENTITY_TYPE.get(),
+			event.registerBlockEntityRenderer(TestModBlockEntities.CRUSHER_ENTITY_TYPE.get(),
 					(context) -> new CrusherBlockEntityRenderer(context));
 		}
 

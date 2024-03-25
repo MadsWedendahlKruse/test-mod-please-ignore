@@ -18,35 +18,53 @@ public class TestModBlockStateProvider extends BlockStateProvider {
 		super(output, TestMod.MODID, exFileHelper);
 	}
 
-	@Override
-	protected void registerStatesAndModels() {
-		registerMultiBLockPart(TestModBlocks.MACHINE_FRAME_BASIC_BLOCK.get(), "frame/basic",
-				TestModBlocks.MACHINE_FRAME_BASIC_ID);
-		registerMultiBLockPart(TestModBlocks.MACHINE_FRAME_REINFORCED_BLOCK.get(),
-				"frame/reinforced", TestModBlocks.MACHINE_FRAME_REINFORCED_ID);
-		registerMultiBLockPart(TestModBlocks.MACHINE_FRAME_ADVANCED_BLOCK.get(), "frame/advanced",
-				TestModBlocks.MACHINE_FRAME_ADVANCED_ID);
-		registerMultiBLockPart(TestModBlocks.MACHINE_INPUT_PORT_BLOCK.get(), "input_port",
-				TestModBlocks.MACHINE_INPUT_PORT_ID);
-		registerMultiBLockPart(TestModBlocks.MACHINE_OUTPUT_PORT_BLOCK.get(), "output_port",
-				TestModBlocks.MACHINE_OUTPUT_PORT_ID);
-		registerMultiBLockPart(TestModBlocks.MACHINE_ENERGY_PORT_BLOCK.get(), "energy_port",
-				TestModBlocks.MACHINE_ENERGY_PORT_ID);
-
-		registerMultiBlockController(TestModBlocks.SUPER_FURNACE_BLOCK.get(),
-				TestModBlocks.SUPER_FURNACE_ID);
-		registerMultiBlockController(TestModBlocks.SUPER_ASSEMBLER_BLOCK.get(),
-				TestModBlocks.SUPER_ASSEMBLER_ID);
-		registerMultiBlockController(TestModBlocks.CRUSHER_BLOCK.get(), TestModBlocks.CRUSHER_ID);
+	private enum CubeModel {
+		CUBE_ALL, CUBE_COLUMN
 	}
 
-	protected void registerMultiBLockPart(MultiBlockPartBlock block, String path,
-			String registryName) {
+	@Override
+	protected void registerStatesAndModels() {
+		registerMultiBlockPart(TestModBlocks.MACHINE_FRAME_BASIC.get(), "frame/basic",
+				TestModBlocks.MACHINE_FRAME_BASIC_ID, CubeModel.CUBE_ALL);
+		registerMultiBlockPart(TestModBlocks.MACHINE_FRAME_REINFORCED.get(), "frame/reinforced",
+				TestModBlocks.MACHINE_FRAME_REINFORCED_ID, CubeModel.CUBE_ALL);
+		registerMultiBlockPart(TestModBlocks.MACHINE_FRAME_ADVANCED.get(), "frame/advanced",
+				TestModBlocks.MACHINE_FRAME_ADVANCED_ID, CubeModel.CUBE_ALL);
+		registerMultiBlockPart(TestModBlocks.MACHINE_INPUT_PORT.get(), "input_port",
+				TestModBlocks.MACHINE_INPUT_PORT_ID, CubeModel.CUBE_ALL);
+		registerMultiBlockPart(TestModBlocks.MACHINE_OUTPUT_PORT.get(), "output_port",
+				TestModBlocks.MACHINE_OUTPUT_PORT_ID, CubeModel.CUBE_ALL);
+		registerMultiBlockPart(TestModBlocks.MACHINE_ENERGY_PORT.get(), "energy_port",
+				TestModBlocks.MACHINE_ENERGY_PORT_ID, CubeModel.CUBE_ALL);
+		registerMultiBlockPart(TestModBlocks.COPPER_COIL.get(), "copper_coil",
+				TestModBlocks.COPPER_COIL_ID, CubeModel.CUBE_COLUMN);
+
+		registerMultiBlockController(TestModBlocks.INDUCTION_FURNACE.get(),
+				TestModBlocks.INDUCTION_FURNACE_ID);
+		registerMultiBlockController(TestModBlocks.SUPER_ASSEMBLER.get(),
+				TestModBlocks.SUPER_ASSEMBLER_ID);
+		registerMultiBlockController(TestModBlocks.CRUSHER.get(), TestModBlocks.CRUSHER_ID);
+	}
+
+	protected void createCubeAll(String modelPath, String texturePath) {
+		models().withExistingParent(modelPath, "minecraft:block/cube_all").texture("all",
+				texturePath);
+	}
+
+	protected void createCubeColumn(String modelPath, String texturePath) {
+		models().withExistingParent(modelPath, "minecraft:block/cube_column")
+				.texture("end", texturePath + "_end").texture("side", texturePath + "_side");
+	}
+
+	protected void registerMultiBlockPart(MultiBlockPartBlock block, String path,
+			String registryName, CubeModel modelType) {
 		String machineModelPath = "block/machine/" + path;
 		ResourceLocation modelLocation = modLoc(machineModelPath);
 		// Create the model for the block
-		models().withExistingParent(machineModelPath, "minecraft:block/cube_all").texture("all",
-				"block/machine/" + path);
+		switch (modelType) {
+			case CUBE_ALL -> createCubeAll(machineModelPath, "block/machine/" + path);
+			case CUBE_COLUMN -> createCubeColumn(machineModelPath, "block/machine/" + path);
+		}
 		// Create the model for the item
 		itemModels().getBuilder(registryName).parent(models().getExistingFile(modelLocation));
 		// Create the blockstate for the block

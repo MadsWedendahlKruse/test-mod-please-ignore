@@ -1,0 +1,8 @@
+{
+    "loader": "neoforge:obj",
+    "flip_v": true,
+    "model": "testmod:models/block/multiblock/induction_furnace.obj",
+    "textures": {
+        "particle": "minecraft:block/dirt"
+    }
+}

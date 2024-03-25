@@ -1,0 +1,9 @@
+{
+  "type": "testmod:crushing",
+  "input": {
+    "item": "minecraft:iron_ingot"
+  },
+  "output": {
+    "item": "testmod:dust_iron"
+  }
+}

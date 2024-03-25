@@ -13,19 +13,24 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 @Mod.EventBusSubscriber(modid = TestMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class TestModDataGenerators {
-    @SubscribeEvent
-    public static void gatherData(GatherDataEvent event) {
-        DataGenerator generator = event.getGenerator();
-        PackOutput packOutput = generator.getPackOutput();
-        ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
-        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
+	@SubscribeEvent
+	public static void onGatherData(GatherDataEvent event) {
+		DataGenerator generator = event.getGenerator();
+		PackOutput packOutput = generator.getPackOutput();
+		ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
+		CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
-        generator.addProvider(event.includeClient(),
-                new TestModBlockStateProvider(packOutput, existingFileHelper));
-        generator.addProvider(event.includeServer(), TestModLootTableProvider.create(packOutput));
-        generator.addProvider(event.includeServer(),
-                new TestModRecipeProvider(packOutput, lookupProvider));
-        generator.addProvider(event.includeServer(),
-                new TestModLanguageProvider(packOutput, "en_us"));
-    }
+		generator.addProvider(event.includeClient(),
+				new TestModBlockStateProvider(packOutput, existingFileHelper));
+		generator.addProvider(event.includeClient(),
+				new TestModItemModelProvider(packOutput, existingFileHelper));
+		generator.addProvider(event.includeServer(), TestModLootTableProvider.create(packOutput));
+		generator.addProvider(event.includeServer(),
+				new TestModRecipeProvider(packOutput, lookupProvider));
+		generator.addProvider(event.includeServer(),
+				new TestModLanguageProvider(packOutput, "en_us"));
+		// TODO: Implement TestModBlueprintProvider
+		// generator.addProvider(event.includeServer(),
+		// new TestModBlueprintProvider(packOutput, lookupProvider));
+	}
 }

@@ -11,7 +11,7 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
 public class MultiBlockEnergyPortBlockEntity extends MultiBlockPartBlockEntity {
 
     public MultiBlockEnergyPortBlockEntity(BlockPos pos, BlockState state) {
-        super(TestModBlockEntities.MULTI_BLOCK_ENERGY_PORT_BLOCK_ENTITY_TYPE.get(), pos, state);
+        super(TestModBlockEntities.MULTI_ENERGY_PORT_ENTITY_TYPE.get(), pos, state);
     }
 
     @Override

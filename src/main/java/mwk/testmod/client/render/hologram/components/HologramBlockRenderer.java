@@ -63,7 +63,7 @@ public class HologramBlockRenderer {
      */
     public void renderHologramBlockOverlay(PoseStack poseStack, BlockPos position,
             HologramColor color, boolean animate) {
-        BlockState state = TestModBlocks.HOLOGRAM_BLOCK.get().defaultBlockState();
+        BlockState state = TestModBlocks.HOLOGRAM.get().defaultBlockState();
         state = state.setValue(HologramBlock.COLOR, color);
         renderHologramBlock(poseStack, position, state, animate);
     }

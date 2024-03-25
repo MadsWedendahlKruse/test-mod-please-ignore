@@ -20,19 +20,20 @@ public class TestModBlockLootTables extends BlockLootSubProvider {
     protected void generate() {
         // TODO: Find a way to do this automatically so I don't have to update
         // this file every time I add a new block.
-        this.dropSelf(TestModBlocks.MACHINE_FRAME_BASIC_BLOCK.get());
-        this.dropSelf(TestModBlocks.MACHINE_FRAME_REINFORCED_BLOCK.get());
-        this.dropSelf(TestModBlocks.MACHINE_FRAME_ADVANCED_BLOCK.get());
-        this.dropSelf(TestModBlocks.MACHINE_INPUT_PORT_BLOCK.get());
-        this.dropSelf(TestModBlocks.MACHINE_OUTPUT_PORT_BLOCK.get());
-        this.dropSelf(TestModBlocks.MACHINE_ENERGY_PORT_BLOCK.get());
+        this.dropSelf(TestModBlocks.MACHINE_FRAME_BASIC.get());
+        this.dropSelf(TestModBlocks.MACHINE_FRAME_REINFORCED.get());
+        this.dropSelf(TestModBlocks.MACHINE_FRAME_ADVANCED.get());
+        this.dropSelf(TestModBlocks.MACHINE_INPUT_PORT.get());
+        this.dropSelf(TestModBlocks.MACHINE_OUTPUT_PORT.get());
+        this.dropSelf(TestModBlocks.MACHINE_ENERGY_PORT.get());
 
-        this.dropSelf(TestModBlocks.SUPER_FURNACE_BLOCK.get());
-        this.dropSelf(TestModBlocks.SUPER_ASSEMBLER_BLOCK.get());
-        this.dropSelf(TestModBlocks.CRUSHER_BLOCK.get());
+        this.dropSelf(TestModBlocks.COPPER_COIL.get());
 
-        // this.dropSelf(TestModBlocks.HOLOGRAM_BLOCK.get());
-        this.dropOther(TestModBlocks.HOLOGRAM_BLOCK.get(), ItemStack.EMPTY.getItem());
+        this.dropSelf(TestModBlocks.INDUCTION_FURNACE.get());
+        this.dropSelf(TestModBlocks.SUPER_ASSEMBLER.get());
+        this.dropSelf(TestModBlocks.CRUSHER.get());
+
+        this.dropOther(TestModBlocks.HOLOGRAM.get(), ItemStack.EMPTY.getItem());
     }
 
     @Override

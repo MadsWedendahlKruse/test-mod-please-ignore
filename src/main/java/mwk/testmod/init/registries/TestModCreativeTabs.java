@@ -22,19 +22,28 @@ public class TestModCreativeTabs {
 					.withTabsBefore(CreativeModeTabs.COMBAT)
 					.icon(() -> TestModItems.WRENCH_ITEM.get().getDefaultInstance())
 					.displayItems((parameters, output) -> {
-						output.accept(TestModBlocks.MACHINE_FRAME_BASIC_BLOCK);
-						output.accept(TestModBlocks.MACHINE_FRAME_REINFORCED_BLOCK);
-						output.accept(TestModBlocks.MACHINE_FRAME_ADVANCED_BLOCK);
-						output.accept(TestModBlocks.MACHINE_INPUT_PORT_BLOCK);
-						output.accept(TestModBlocks.MACHINE_OUTPUT_PORT_BLOCK);
-						output.accept(TestModBlocks.MACHINE_ENERGY_PORT_BLOCK);
+						// Blocks
+						output.accept(TestModBlocks.MACHINE_FRAME_BASIC);
+						output.accept(TestModBlocks.MACHINE_FRAME_REINFORCED);
+						output.accept(TestModBlocks.MACHINE_FRAME_ADVANCED);
+						output.accept(TestModBlocks.MACHINE_INPUT_PORT);
+						output.accept(TestModBlocks.MACHINE_OUTPUT_PORT);
+						output.accept(TestModBlocks.MACHINE_ENERGY_PORT);
 
-						output.accept(TestModBlocks.SUPER_FURNACE_BLOCK);
-						output.accept(TestModBlocks.SUPER_ASSEMBLER_BLOCK);
-						output.accept(TestModBlocks.CRUSHER_BLOCK);
+						output.accept(TestModBlocks.COPPER_COIL);
 
+						output.accept(TestModBlocks.INDUCTION_FURNACE);
+						output.accept(TestModBlocks.SUPER_ASSEMBLER);
+						output.accept(TestModBlocks.CRUSHER);
+
+						// Items
 						output.accept(TestModItems.WRENCH_ITEM);
 						output.accept(TestModItems.HOLOGRAM_PROJECTOR_ITEM);
+
+						output.accept(TestModItems.COAL_DUST);
+						output.accept(TestModItems.IRON_DUST);
+						output.accept(TestModItems.STEEL_DUST);
+						output.accept(TestModItems.STEEL_INGOT);
 					}).build());
 
 	public static void register(IEventBus modEventBus) {

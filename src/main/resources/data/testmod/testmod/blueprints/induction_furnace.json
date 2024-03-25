@@ -1,28 +1,29 @@
 {
     "layers": [
         [
-            "brrrb",
-            "rrrrr",
-            "brErb"
+            "bab",
+            "OrO",
+            "bEb"
         ],
         [
-            "b   X",
-            "OrrrI",
-            "baaab"
+            "cXc",
+            "r r",
+            "crc"
         ],
         [
-            "brrrb",
-            "rrrrr",
-            "brrrb"
+            "crc",
+            "rIr",
+            "crc"
         ]
     ],
     "key": {
-        "X": "testmod:super_furnace",
+        "X": "testmod:induction_furnace",
         "I": "testmod:machine_input_port",
         "O": "testmod:machine_output_port",
         "E": "testmod:machine_energy_port",
         "b": "testmod:machine_frame_basic",
         "r": "testmod:machine_frame_reinforced",
-        "a": "testmod:machine_frame_advanced"
+        "a": "testmod:machine_frame_advanced",
+        "c": "testmod:copper_coil"
     }
 }

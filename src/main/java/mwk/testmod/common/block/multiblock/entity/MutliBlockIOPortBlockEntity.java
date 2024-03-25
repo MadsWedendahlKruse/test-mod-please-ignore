@@ -13,8 +13,8 @@ public class MutliBlockIOPortBlockEntity extends MultiBlockPartBlockEntity {
     private final boolean input;
 
     public MutliBlockIOPortBlockEntity(BlockPos pos, BlockState state, boolean input) {
-        super(input ? TestModBlockEntities.MULTI_BLOCK_INPUT_PORT_BLOCK_ENTITY_TYPE.get()
-                : TestModBlockEntities.MULTI_BLOCK_OUTPUT_PORT_BLOCK_ENTITY_TYPE.get(), pos, state);
+        super(input ? TestModBlockEntities.MULTI_INPUT_PORT_ENTITY_TYPE.get()
+                : TestModBlockEntities.MULTI_OUTPUT_PORT_ENTITY_TYPE.get(), pos, state);
         this.input = input;
     }
 

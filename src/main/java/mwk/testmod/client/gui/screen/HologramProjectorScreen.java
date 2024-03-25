@@ -16,7 +16,7 @@ import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintBlockInfo;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
-import mwk.testmod.common.item.HologramProjectorItem;
+import mwk.testmod.common.item.tools.HologramProjectorItem;
 import mwk.testmod.datagen.TestModLanguageProvider;
 import mwk.testmod.init.registries.TestModBlueprints;
 import net.minecraft.client.Minecraft;
@@ -63,7 +63,7 @@ public class HologramProjectorScreen extends Screen {
     private static final int BLUEPRINT_MATERIALS_ITEMS_PER_ROW =
             BLUEPRINT_MATERIALS_WIDTH / BLUEPRINT_MATERIALS_ITEM_WIDTH;
     private static final int BLUEPRINT_MATERIALS_ITEM_ROWS = 2;
-    private static final ResourceLocation EMPTY_BLOCK_SPRITE =
+    private static final ResourceLocation EMPTY_SPRITE =
             new ResourceLocation(TestMod.MODID, "widget/empty_block");
     private static final int ITEMSTACK_PIXEL_SIZE = 16;
 
@@ -423,7 +423,7 @@ public class HologramProjectorScreen extends Screen {
             int itemY =
                     y + row * (BLUEPRINT_MATERIALS_ITEM_HEIGHT + BLUEPRINT_MODEL_BUTTON_SPACING);
             // Background
-            guiGraphics.blitSprite(EMPTY_BLOCK_SPRITE, itemX, itemY, BLUEPRINT_MATERIALS_ITEM_WIDTH,
+            guiGraphics.blitSprite(EMPTY_SPRITE, itemX, itemY, BLUEPRINT_MATERIALS_ITEM_WIDTH,
                     BLUEPRINT_MATERIALS_ITEM_HEIGHT);
             // Items
             if (i < materials.size()) {

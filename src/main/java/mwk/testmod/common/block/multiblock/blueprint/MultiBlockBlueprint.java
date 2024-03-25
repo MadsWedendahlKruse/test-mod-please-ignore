@@ -30,14 +30,15 @@ public class MultiBlockBlueprint {
     private static final Codec<List<List<String>>> LAYERS_CODEC = Codec.list(LAYER_CODEC);
 
     // Codec for the key section, which is a map of character to block identifier strings
+    // String is used because Codec.CHARACTER doesn't exist
     private static final Codec<Map<String, String>> KEY_CODEC =
             Codec.unboundedMap(Codec.STRING, Codec.STRING);
 
     public static final Codec<MultiBlockBlueprint> CODEC =
             RecordCodecBuilder.create(instance -> instance
                     // We don't need the actual data here
-                    .group(LAYERS_CODEC.fieldOf("layers").forGetter(d -> null),
-                            KEY_CODEC.fieldOf("key").forGetter(d -> null))
+                    .group(LAYERS_CODEC.fieldOf("layers").forGetter(data -> null),
+                            KEY_CODEC.fieldOf("key").forGetter(data -> null))
                     .apply(instance, MultiBlockBlueprint::new));
 
     // The name of the multiblock structure.
@@ -75,6 +76,9 @@ public class MultiBlockBlueprint {
         this.controller.setBlueprint(this);
     }
 
+    /**
+     * Parse the data from the layers and key sections of the blueprint JSON.
+     */
     private void parseData(List<List<String>> layers, Map<String, String> key) {
         ArrayList<BlockPos> positions = new ArrayList<BlockPos>();
         ArrayList<String> symbols = new ArrayList<String>();
@@ -106,7 +110,6 @@ public class MultiBlockBlueprint {
                 throw new IllegalArgumentException("Block with identifier " + blockIdentifier
                         + " does not have the " + "property \"formed\".");
             }
-            // Check if the block is the controller block.
             if (block instanceof MultiBlockControllerBlock controller) {
                 foundController = true;
                 this.controller = controller;
@@ -115,7 +118,7 @@ public class MultiBlockBlueprint {
                 for (int j = 0; j < positions.size(); j++) {
                     positions.set(j, positions.get(j).subtract(controllerPos));
                 }
-                this.name = blockIdentifier;
+                this.name = controller.getName().getString();
             }
         }
         if (!foundController) {

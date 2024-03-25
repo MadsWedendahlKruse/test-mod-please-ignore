@@ -1,4 +1,4 @@
-package mwk.testmod.common.item;
+package mwk.testmod.common.item.tools;
 
 import mwk.testmod.TestMod;
 import mwk.testmod.client.gui.screen.HologramProjectorScreen;

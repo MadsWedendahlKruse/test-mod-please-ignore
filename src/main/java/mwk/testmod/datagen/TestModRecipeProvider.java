@@ -3,14 +3,19 @@ package mwk.testmod.datagen;
 import java.util.concurrent.CompletableFuture;
 import mwk.testmod.TestMod;
 import mwk.testmod.common.recipe.CrushingRecipe;
+import mwk.testmod.init.registries.TestModItems;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 
 public class TestModRecipeProvider extends RecipeProvider {
@@ -22,45 +27,56 @@ public class TestModRecipeProvider extends RecipeProvider {
 
 	@Override
 	protected void buildRecipes(RecipeOutput recipeOutput) {
-		recipeOutput.accept(new ResourceLocation(TestMod.MODID, "gravel_from_cobblestone"),
-				new CrushingRecipe(Ingredient.of(Blocks.COBBLESTONE), new ItemStack(Blocks.GRAVEL)),
-				null);
-		recipeOutput.accept(new ResourceLocation(TestMod.MODID, "sand_from_gravel"),
-				new CrushingRecipe(Ingredient.of(Blocks.GRAVEL), new ItemStack(Blocks.SAND)), null);
+		registerCrushingRecipes(recipeOutput);
 
-		recipeOutput.accept(new ResourceLocation(TestMod.MODID, "raw_iron_from_iron_ore"),
-				new CrushingRecipe(Ingredient.of(Blocks.IRON_ORE),
-						new ItemStack(Items.RAW_IRON, 3)),
-				null);
-		recipeOutput.accept(new ResourceLocation(TestMod.MODID, "raw_gold_from_gold_ore"),
-				new CrushingRecipe(Ingredient.of(Blocks.GOLD_ORE),
-						new ItemStack(Items.RAW_GOLD, 3)),
-				null);
-		recipeOutput.accept(new ResourceLocation(TestMod.MODID, "raw_copper_from_copper_ore"),
-				new CrushingRecipe(Ingredient.of(Blocks.COPPER_ORE),
-						new ItemStack(Items.RAW_COPPER, 8)),
-				null);
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TestModItems.STEEL_DUST)
+				.requires(TestModItems.IRON_DUST).requires(TestModItems.COAL_DUST)
+				.unlockedBy(getHasName(TestModItems.IRON_DUST), has(TestModItems.IRON_DUST))
+				.save(recipeOutput);
+		SimpleCookingRecipeBuilder
+				.blasting(Ingredient.of(TestModItems.STEEL_DUST.get()), RecipeCategory.MISC,
+						TestModItems.STEEL_INGOT.get(), 1.0F, 200)
+				.unlockedBy(getHasName(TestModItems.STEEL_DUST), has(TestModItems.STEEL_DUST))
+				.save(recipeOutput);
+	}
 
-		recipeOutput.accept(new ResourceLocation(TestMod.MODID, "redstone_dust_from_redstone_ore"),
-				new CrushingRecipe(Ingredient.of(Blocks.REDSTONE_ORE),
-						new ItemStack(Items.REDSTONE, 12)),
-				null);
-		recipeOutput.accept(
-				new ResourceLocation(TestMod.MODID, "redstone_dust_from_redstone_block"),
-				new CrushingRecipe(Ingredient.of(Blocks.REDSTONE_BLOCK),
-						new ItemStack(Items.REDSTONE, 9)),
-				null);
-		recipeOutput.accept(new ResourceLocation(TestMod.MODID, "lapis_dust_from_lapis_ore"),
-				new CrushingRecipe(Ingredient.of(Blocks.LAPIS_ORE),
-						new ItemStack(Items.LAPIS_LAZULI, 12)),
-				null);
-		recipeOutput.accept(new ResourceLocation(TestMod.MODID, "lapis_dust_from_lapis_block"),
-				new CrushingRecipe(Ingredient.of(Blocks.LAPIS_BLOCK),
-						new ItemStack(Items.LAPIS_LAZULI, 9)),
-				null);
-		recipeOutput.accept(new ResourceLocation(TestMod.MODID, "diamond_from_diamond_ore"),
-				new CrushingRecipe(Ingredient.of(Blocks.DIAMOND_ORE),
-						new ItemStack(Items.DIAMOND, 2)),
-				null);
+	private void registerCrushingRecipe(RecipeOutput recipeOutput, String name, Ingredient input,
+			ItemLike output, int count) {
+		recipeOutput.accept(new ResourceLocation(TestMod.MODID, name),
+				new CrushingRecipe(input, new ItemStack(output, count)), null);
+	}
+
+	private void registerCrushingRecipe(RecipeOutput recipeOutput, String name, Ingredient input,
+			ItemLike output) {
+		registerCrushingRecipe(recipeOutput, name, input, output, 1);
+	}
+
+	private void registerCrushingRecipes(RecipeOutput recipeOutput) {
+		registerCrushingRecipe(recipeOutput, "gravel_from_cobblestone",
+				Ingredient.of(Blocks.COBBLESTONE), Blocks.GRAVEL);
+		registerCrushingRecipe(recipeOutput, "sand_from_gravel", Ingredient.of(Blocks.GRAVEL),
+				Blocks.SAND);
+		registerCrushingRecipe(recipeOutput, "raw_iron_from_iron_ore",
+				Ingredient.of(Blocks.IRON_ORE), Items.RAW_IRON, 3);
+		registerCrushingRecipe(recipeOutput, "raw_gold_from_gold_ore",
+				Ingredient.of(Blocks.GOLD_ORE), Items.RAW_GOLD, 3);
+		registerCrushingRecipe(recipeOutput, "raw_copper_from_copper_ore",
+				Ingredient.of(Blocks.COPPER_ORE), Items.RAW_COPPER, 8);
+		registerCrushingRecipe(recipeOutput, "redstone_dust_from_redstone_ore",
+				Ingredient.of(Blocks.REDSTONE_ORE), Items.REDSTONE, 12);
+		registerCrushingRecipe(recipeOutput, "redstone_dust_from_redstone_block",
+				Ingredient.of(Blocks.REDSTONE_BLOCK), Items.REDSTONE, 9);
+		registerCrushingRecipe(recipeOutput, "lapis_dust_from_lapis_ore",
+				Ingredient.of(Blocks.LAPIS_ORE), Items.LAPIS_LAZULI, 12);
+		registerCrushingRecipe(recipeOutput, "lapis_dust_from_lapis_block",
+				Ingredient.of(Blocks.LAPIS_BLOCK), Items.LAPIS_LAZULI, 9);
+		registerCrushingRecipe(recipeOutput, "diamond_from_diamond_ore",
+				Ingredient.of(Blocks.DIAMOND_ORE), Items.DIAMOND, 2);
+		registerCrushingRecipe(recipeOutput, "coal_dust_from_coal", Ingredient.of(Items.COAL),
+				TestModItems.COAL_DUST);
+		registerCrushingRecipe(recipeOutput, "iron_dust_from_iron_ingot",
+				Ingredient.of(Items.IRON_INGOT), TestModItems.IRON_DUST);
+		registerCrushingRecipe(recipeOutput, "steel_dust_from_steel_ingot",
+				Ingredient.of(TestModItems.STEEL_INGOT.get()), TestModItems.STEEL_DUST);
 	}
 }
