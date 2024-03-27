@@ -1,20 +1,20 @@
 {
-    "block.multiblock.form": {
+    "block.multiblock_form": {
         "category": "block",
         "sounds": [
-            "testmod:block/multiblock/form"
+            "testmod:block/multiblock_form"
         ],
-        "subtitle": "sounds.testmod.block.multiblock.form"
+        "subtitle": "sounds.testmod.block.multiblock_form"
     },
-    "block.multiblock.crusher": {
+    "block.crusher": {
         "category": "block",
         "sounds": [
             {
-                "name": "testmod:block/multiblock/crusher_mono",
+                "name": "testmod:block/crusher",
                 "attenuation_distance": 16,
                 "volume": 0.9
             }
         ],
-        "subtitle": "sounds.testmod.block.multiblock.crusher"
+        "subtitle": "sounds.testmod.block.crusher"
     }
 }

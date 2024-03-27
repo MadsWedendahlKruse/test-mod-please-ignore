@@ -1,8 +1,0 @@
-{
-    "loader": "neoforge:obj",
-    "flip_v": true,
-    "model": "testmod:models/block/multiblock/crusher_no_rotor.obj",
-    "textures": {
-        "particle": "testmod:block/machine/frame/advanced"
-    }
-}

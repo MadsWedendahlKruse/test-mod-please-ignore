@@ -1,7 +1,7 @@
 {
   "variants": {
     "formed=false": {
-      "model": "testmod:block/machine/output_port"
+      "model": "testmod:block/machine_output_port"
     },
     "formed=true": {
       "model": "testmod:block/empty"

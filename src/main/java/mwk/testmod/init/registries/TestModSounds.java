@@ -12,8 +12,8 @@ public class TestModSounds {
 
 	private TestModSounds() {}
 
-	public static final String MULTIBLOCK_FORM_ID = "block.multiblock.form";
-	public static final String MULTIBLOCK_CRUSHER_ID = "block.multiblock.crusher";
+	public static final String MULTIBLOCK_FORM_ID = "block.multiblock_form";
+	public static final String MULTIBLOCK_CRUSHER_ID = "block.crusher";
 	public static final int MULTIBLOCK_CRUSHER_DURATION = 20; // [ticks]
 	public static final int MULTIBLOCK_CRUSHER_RANGE = 32; // [blocks]
 

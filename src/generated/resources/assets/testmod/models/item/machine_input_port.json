@@ -1,3 +1,3 @@
 {
-  "parent": "testmod:block/machine/input_port"
+  "parent": "testmod:block/machine_input_port"
 }

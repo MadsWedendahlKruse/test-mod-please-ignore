@@ -24,20 +24,20 @@ public class TestModBlockStateProvider extends BlockStateProvider {
 
 	@Override
 	protected void registerStatesAndModels() {
-		registerMultiBlockPart(TestModBlocks.MACHINE_FRAME_BASIC.get(), "frame/basic",
+		registerMultiBlockPart(TestModBlocks.MACHINE_FRAME_BASIC.get(),
 				TestModBlocks.MACHINE_FRAME_BASIC_ID, CubeModel.CUBE_ALL);
-		registerMultiBlockPart(TestModBlocks.MACHINE_FRAME_REINFORCED.get(), "frame/reinforced",
+		registerMultiBlockPart(TestModBlocks.MACHINE_FRAME_REINFORCED.get(),
 				TestModBlocks.MACHINE_FRAME_REINFORCED_ID, CubeModel.CUBE_ALL);
-		registerMultiBlockPart(TestModBlocks.MACHINE_FRAME_ADVANCED.get(), "frame/advanced",
+		registerMultiBlockPart(TestModBlocks.MACHINE_FRAME_ADVANCED.get(),
 				TestModBlocks.MACHINE_FRAME_ADVANCED_ID, CubeModel.CUBE_ALL);
-		registerMultiBlockPart(TestModBlocks.MACHINE_INPUT_PORT.get(), "input_port",
+		registerMultiBlockPart(TestModBlocks.MACHINE_INPUT_PORT.get(),
 				TestModBlocks.MACHINE_INPUT_PORT_ID, CubeModel.CUBE_ALL);
-		registerMultiBlockPart(TestModBlocks.MACHINE_OUTPUT_PORT.get(), "output_port",
+		registerMultiBlockPart(TestModBlocks.MACHINE_OUTPUT_PORT.get(),
 				TestModBlocks.MACHINE_OUTPUT_PORT_ID, CubeModel.CUBE_ALL);
-		registerMultiBlockPart(TestModBlocks.MACHINE_ENERGY_PORT.get(), "energy_port",
+		registerMultiBlockPart(TestModBlocks.MACHINE_ENERGY_PORT.get(),
 				TestModBlocks.MACHINE_ENERGY_PORT_ID, CubeModel.CUBE_ALL);
-		registerMultiBlockPart(TestModBlocks.COPPER_COIL.get(), "copper_coil",
-				TestModBlocks.COPPER_COIL_ID, CubeModel.CUBE_COLUMN);
+		registerMultiBlockPart(TestModBlocks.COPPER_COIL.get(), TestModBlocks.COPPER_COIL_ID,
+				CubeModel.CUBE_COLUMN);
 
 		registerMultiBlockController(TestModBlocks.INDUCTION_FURNACE.get(),
 				TestModBlocks.INDUCTION_FURNACE_ID);
@@ -46,27 +46,27 @@ public class TestModBlockStateProvider extends BlockStateProvider {
 		registerMultiBlockController(TestModBlocks.CRUSHER.get(), TestModBlocks.CRUSHER_ID);
 	}
 
-	protected void createCubeAll(String modelPath, String texturePath) {
+	protected void createCubeAll(String modelPath) {
 		models().withExistingParent(modelPath, "minecraft:block/cube_all").texture("all",
-				texturePath);
+				modelPath);
 	}
 
-	protected void createCubeColumn(String modelPath, String texturePath) {
+	protected void createCubeColumn(String modelPath) {
 		models().withExistingParent(modelPath, "minecraft:block/cube_column")
-				.texture("end", texturePath + "_end").texture("side", texturePath + "_side");
+				.texture("end", modelPath + "_end").texture("side", modelPath + "_side");
 	}
 
-	protected void registerMultiBlockPart(MultiBlockPartBlock block, String path,
-			String registryName, CubeModel modelType) {
-		String machineModelPath = "block/machine/" + path;
-		ResourceLocation modelLocation = modLoc(machineModelPath);
+	protected void registerMultiBlockPart(MultiBlockPartBlock block, String name,
+			CubeModel modelType) {
+		String modelPath = "block/" + name;
+		ResourceLocation modelLocation = modLoc(modelPath);
 		// Create the model for the block
 		switch (modelType) {
-			case CUBE_ALL -> createCubeAll(machineModelPath, "block/machine/" + path);
-			case CUBE_COLUMN -> createCubeColumn(machineModelPath, "block/machine/" + path);
+			case CUBE_ALL -> createCubeAll(modelPath);
+			case CUBE_COLUMN -> createCubeColumn(modelPath);
 		}
 		// Create the model for the item
-		itemModels().getBuilder(registryName).parent(models().getExistingFile(modelLocation));
+		itemModels().getBuilder(name).parent(models().getExistingFile(modelLocation));
 		// Create the blockstate for the block
 		ModelFile model = models().getExistingFile(modelLocation);
 		ModelFile emptyModel = models().getExistingFile(modLoc("block/empty"));
@@ -77,15 +77,15 @@ public class TestModBlockStateProvider extends BlockStateProvider {
 	}
 
 	protected void registerMultiBlockController(MultiBlockControllerBlock block, String name) {
-		String machineModelPath = "block/machine/" + name;
+		String modelPath = "block/" + name;
 		// Create the model for the block
-		models().withExistingParent(machineModelPath, "testmod:block/machine/controller")
-				.texture("screen", "block/machine/controller/screen/" + name);
+		models().withExistingParent(modelPath, "testmod:block/multiblock_controller")
+				.texture("screen", "block/controller_screen_" + name);
 		// Create the model for the item
-		itemModels().getBuilder(name).parent(models().getExistingFile(modLoc(machineModelPath)));
+		itemModels().getBuilder(name).parent(models().getExistingFile(modLoc(modelPath)));
 		// Create the blockstate for the block
-		ModelFile modelUnformed = models().getExistingFile(modLoc(machineModelPath));
-		ModelFile modelFormed = models().getExistingFile(modLoc("block/multiblock/" + name));
+		ModelFile modelUnformed = models().getExistingFile(modLoc(modelPath));
+		ModelFile modelFormed = models().getExistingFile(modLoc("multiblock/" + name));
 		getVariantBuilder(block).forAllStatesExcept(state -> {
 			Direction dir = state.getValue(MultiBlockControllerBlock.FACING);
 			boolean formed = state.getValue(MultiBlockControllerBlock.FORMED);

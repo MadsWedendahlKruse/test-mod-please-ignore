@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:block/cube_column",
-  "textures": {
-    "end": "testmod:block/machine/copper_coil_end",
-    "side": "testmod:block/machine/copper_coil_side"
-  }
-}

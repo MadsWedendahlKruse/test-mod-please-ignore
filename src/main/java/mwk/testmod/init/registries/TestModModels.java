@@ -9,7 +9,7 @@ public class TestModModels {
 
     private TestModModels() {}
 
-    public static final String CRUSHER_ROTOR_PATH = "block/multiblock/crusher_rotor";
+    public static final String CRUSHER_ROTOR_PATH = "multiblock/crusher_rotor";
 
     public static final AuxillaryModel CRUSHER_ROTOR = new AuxillaryModel(CRUSHER_ROTOR_PATH);
 

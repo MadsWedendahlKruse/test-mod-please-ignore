@@ -1,0 +1,6 @@
+{
+  "parent": "testmod:block/multiblock_controller",
+  "textures": {
+    "screen": "testmod:block/controller_screen_super_assembler"
+  }
+}

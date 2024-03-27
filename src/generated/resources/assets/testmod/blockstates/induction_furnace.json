@@ -1,63 +1,63 @@
 {
   "variants": {
     "facing=east,formed=false,working=false": {
-      "model": "testmod:block/machine/induction_furnace",
+      "model": "testmod:block/induction_furnace",
       "y": 90
     },
     "facing=east,formed=false,working=true": {
-      "model": "testmod:block/machine/induction_furnace",
+      "model": "testmod:block/induction_furnace",
       "y": 90
     },
     "facing=east,formed=true,working=false": {
-      "model": "testmod:block/multiblock/induction_furnace",
+      "model": "testmod:multiblock/induction_furnace",
       "y": 90
     },
     "facing=east,formed=true,working=true": {
-      "model": "testmod:block/multiblock/induction_furnace",
+      "model": "testmod:multiblock/induction_furnace",
       "y": 90
     },
     "facing=north,formed=false,working=false": {
-      "model": "testmod:block/machine/induction_furnace"
+      "model": "testmod:block/induction_furnace"
     },
     "facing=north,formed=false,working=true": {
-      "model": "testmod:block/machine/induction_furnace"
+      "model": "testmod:block/induction_furnace"
     },
     "facing=north,formed=true,working=false": {
-      "model": "testmod:block/multiblock/induction_furnace"
+      "model": "testmod:multiblock/induction_furnace"
     },
     "facing=north,formed=true,working=true": {
-      "model": "testmod:block/multiblock/induction_furnace"
+      "model": "testmod:multiblock/induction_furnace"
     },
     "facing=south,formed=false,working=false": {
-      "model": "testmod:block/machine/induction_furnace",
+      "model": "testmod:block/induction_furnace",
       "y": 180
     },
     "facing=south,formed=false,working=true": {
-      "model": "testmod:block/machine/induction_furnace",
+      "model": "testmod:block/induction_furnace",
       "y": 180
     },
     "facing=south,formed=true,working=false": {
-      "model": "testmod:block/multiblock/induction_furnace",
+      "model": "testmod:multiblock/induction_furnace",
       "y": 180
     },
     "facing=south,formed=true,working=true": {
-      "model": "testmod:block/multiblock/induction_furnace",
+      "model": "testmod:multiblock/induction_furnace",
       "y": 180
     },
     "facing=west,formed=false,working=false": {
-      "model": "testmod:block/machine/induction_furnace",
+      "model": "testmod:block/induction_furnace",
       "y": 270
     },
     "facing=west,formed=false,working=true": {
-      "model": "testmod:block/machine/induction_furnace",
+      "model": "testmod:block/induction_furnace",
       "y": 270
     },
     "facing=west,formed=true,working=false": {
-      "model": "testmod:block/multiblock/induction_furnace",
+      "model": "testmod:multiblock/induction_furnace",
       "y": 270
     },
     "facing=west,formed=true,working=true": {
-      "model": "testmod:block/multiblock/induction_furnace",
+      "model": "testmod:multiblock/induction_furnace",
       "y": 270
     }
   }

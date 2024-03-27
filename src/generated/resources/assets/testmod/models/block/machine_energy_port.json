@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "testmod:block/machine/frame/reinforced"
+    "all": "testmod:block/machine_energy_port"
   }
 }

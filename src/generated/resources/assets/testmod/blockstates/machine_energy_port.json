@@ -1,7 +1,7 @@
 {
   "variants": {
     "formed=false": {
-      "model": "testmod:block/machine/energy_port"
+      "model": "testmod:block/machine_energy_port"
     },
     "formed=true": {
       "model": "testmod:block/empty"

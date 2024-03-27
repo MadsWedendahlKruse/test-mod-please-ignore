@@ -3,11 +3,11 @@
 	"parent": "block/cube_all",
 	"render_type": "cutout",
 	"textures": {
-		"particle": "testmod:block/machine/controller/front",
-		"front": "testmod:block/machine/controller/front",
-		"side": "testmod:block/machine/controller/side",
-		"top": "testmod:block/machine/controller/top",
-		"bottom": "testmod:block/machine/bottom",
+		"particle": "testmod:block/controller_front",
+		"front": "testmod:block/controller_front",
+		"side": "testmod:block/controller_side",
+		"top": "testmod:block/controller_top",
+		"bottom": "testmod:block/machine_frame_reinforced",
 		"screen": "testmod:gui/sprites/container/progress/fire"
 	},
 	"elements": [

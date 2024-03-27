@@ -53,9 +53,8 @@ public class TestModLanguageProvider extends LanguageProvider {
 			"widget.testmod.panel.energy_use_text";
 	// Subtitles
 	public static final String KEY_SUBTITLE_MULTIBLOCK_FORM =
-			"sounds.testmod.block.multiblock.form";
-	public static final String KEY_SUBTITLE_MULTIBLOCK_CRUSHER =
-			"sounds.testmod.block.multiblock.crusher";
+			"sounds.testmod.block.multiblock_form";
+	public static final String KEY_SUBTITLE_MULTIBLOCK_CRUSHER = "sounds.testmod.block.crusher";
 
 	public TestModLanguageProvider(PackOutput output, String locale) {
 		super(output, TestMod.MODID, locale);
