@@ -1,0 +1,14 @@
+{
+  "values": [
+    "testmod:machine_frame_basic",
+    "testmod:machine_frame_reinforced",
+    "testmod:machine_frame_advanced",
+    "testmod:machine_input_port",
+    "testmod:machine_output_port",
+    "testmod:machine_energy_port",
+    "testmod:copper_coil",
+    "testmod:induction_furnace",
+    "testmod:super_assembler",
+    "testmod:crusher"
+  ]
+}

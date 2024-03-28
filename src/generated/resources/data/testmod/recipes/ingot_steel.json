@@ -4,7 +4,7 @@
   "cookingtime": 200,
   "experience": 1.0,
   "ingredient": {
-    "item": "testmod:dust_steel"
+    "tag": "forge:dusts/steel"
   },
   "result": "testmod:ingot_steel"
 }

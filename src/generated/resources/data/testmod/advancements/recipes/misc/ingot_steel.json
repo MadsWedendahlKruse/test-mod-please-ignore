@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "testmod:dust_steel"
-            ]
+            "tag": "forge:dusts/steel"
           }
         ]
       },

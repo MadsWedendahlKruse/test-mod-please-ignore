@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "testmod:dust_iron"
-            ]
+            "tag": "forge:dusts/iron"
           }
         ]
       },

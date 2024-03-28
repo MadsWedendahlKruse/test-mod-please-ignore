@@ -1,7 +1,7 @@
 {
   "type": "testmod:crushing",
   "input": {
-    "item": "testmod:ingot_steel"
+    "tag": "forge:ingots/steel"
   },
   "output": {
     "item": "testmod:dust_steel"

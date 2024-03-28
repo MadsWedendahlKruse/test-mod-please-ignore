@@ -1,6 +1,5 @@
 package mwk.testmod.client.gui.screen.base;
 
-import mwk.testmod.client.gui.widgets.panels.EnergyPanel;
 import mwk.testmod.client.gui.widgets.panels.PanelManager;
 import mwk.testmod.common.block.inventory.base.BaseMachineMenu;
 import net.minecraft.client.gui.GuiGraphics;

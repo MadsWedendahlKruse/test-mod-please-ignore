@@ -29,6 +29,10 @@ public class TestModDataGenerators {
 				new TestModRecipeProvider(packOutput, lookupProvider));
 		generator.addProvider(event.includeServer(),
 				new TestModLanguageProvider(packOutput, "en_us"));
+		TestModBlockTagProvider blockTagProvider = generator.addProvider(event.includeServer(),
+				new TestModBlockTagProvider(packOutput, lookupProvider, existingFileHelper));
+		generator.addProvider(event.includeServer(), new TestModItemTagProvider(packOutput,
+				lookupProvider, blockTagProvider.contentsGetter(), existingFileHelper));
 		// TODO: Implement TestModBlueprintProvider
 		// generator.addProvider(event.includeServer(),
 		// new TestModBlueprintProvider(packOutput, lookupProvider));

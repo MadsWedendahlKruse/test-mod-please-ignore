@@ -3,10 +3,10 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "testmod:dust_iron"
+      "tag": "forge:dusts/iron"
     },
     {
-      "item": "testmod:dust_coal"
+      "tag": "forge:dusts/coal"
     }
   ],
   "result": {

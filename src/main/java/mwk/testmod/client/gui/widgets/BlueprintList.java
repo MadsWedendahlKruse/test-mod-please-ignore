@@ -12,7 +12,6 @@ import net.minecraft.client.gui.components.AbstractScrollWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -48,7 +47,6 @@ public class BlueprintList extends AbstractScrollWidget {
         minecraft.level.registryAccess().lookup(TestModBlueprints.BLUEPRINT_REGISTRY_KEY)
                 .ifPresent(blueprintRegistry -> {
                     blueprintRegistry.listElements().forEach(blueprint -> {
-                        TestMod.LOGGER.debug("Found blueprint with key: " + blueprint.key());
                         addBlueprintButton(Component.translatable(blueprint.value().getName()),
                                 blueprint.key());
                     });

@@ -3,6 +3,7 @@ package mwk.testmod.datagen;
 import java.util.concurrent.CompletableFuture;
 import mwk.testmod.TestMod;
 import mwk.testmod.common.recipe.CrushingRecipe;
+import mwk.testmod.common.util.TestModTags;
 import mwk.testmod.init.registries.TestModItems;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.PackOutput;
@@ -30,13 +31,13 @@ public class TestModRecipeProvider extends RecipeProvider {
 		registerCrushingRecipes(recipeOutput);
 
 		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TestModItems.STEEL_DUST)
-				.requires(TestModItems.IRON_DUST).requires(TestModItems.COAL_DUST)
-				.unlockedBy(getHasName(TestModItems.IRON_DUST), has(TestModItems.IRON_DUST))
+				.requires(TestModTags.Items.IRON_DUST).requires(TestModTags.Items.COAL_DUST)
+				.unlockedBy(getHasName(TestModItems.IRON_DUST), has(TestModTags.Items.IRON_DUST))
 				.save(recipeOutput);
 		SimpleCookingRecipeBuilder
-				.blasting(Ingredient.of(TestModItems.STEEL_DUST.get()), RecipeCategory.MISC,
+				.blasting(Ingredient.of(TestModTags.Items.STEEL_DUST), RecipeCategory.MISC,
 						TestModItems.STEEL_INGOT.get(), 1.0F, 200)
-				.unlockedBy(getHasName(TestModItems.STEEL_DUST), has(TestModItems.STEEL_DUST))
+				.unlockedBy(getHasName(TestModItems.STEEL_DUST), has(TestModTags.Items.STEEL_DUST))
 				.save(recipeOutput);
 	}
 
@@ -77,6 +78,6 @@ public class TestModRecipeProvider extends RecipeProvider {
 		registerCrushingRecipe(recipeOutput, "iron_dust_from_iron_ingot",
 				Ingredient.of(Items.IRON_INGOT), TestModItems.IRON_DUST);
 		registerCrushingRecipe(recipeOutput, "steel_dust_from_steel_ingot",
-				Ingredient.of(TestModItems.STEEL_INGOT.get()), TestModItems.STEEL_DUST);
+				Ingredient.of(TestModTags.Items.STEEL_INGOT), TestModItems.STEEL_DUST);
 	}
 }
