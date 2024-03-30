@@ -1,0 +1,14 @@
+{
+  "type": "testmod:separation",
+  "input": {
+    "item": "testmod:dust_steel"
+  },
+  "outputs": [
+    {
+      "item": "testmod:dust_iron"
+    },
+    {
+      "item": "testmod:dust_coal"
+    }
+  ]
+}

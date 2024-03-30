@@ -1,0 +1,9 @@
+{
+  "type": "testmod:crushing",
+  "input": {
+    "tag": "forge:raw_materials/ilmenite"
+  },
+  "output": {
+    "item": "testmod:dust_ilmenite"
+  }
+}

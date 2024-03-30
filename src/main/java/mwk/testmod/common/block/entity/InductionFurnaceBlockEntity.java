@@ -4,7 +4,6 @@ import mwk.testmod.TestModConfig;
 import mwk.testmod.common.block.entity.base.ParallelCrafterMachineBlockEntity;
 import mwk.testmod.common.block.inventory.InductionFurnaceMenu;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
-import mwk.testmod.datagen.TestModLanguageProvider;
 import mwk.testmod.init.registries.TestModBlockEntities;
 import mwk.testmod.init.registries.TestModBlocks;
 import net.minecraft.core.BlockPos;

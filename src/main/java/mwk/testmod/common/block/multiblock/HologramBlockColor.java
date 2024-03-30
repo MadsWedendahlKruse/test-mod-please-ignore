@@ -2,7 +2,6 @@ package mwk.testmod.common.block.multiblock;
 
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.core.BlockPos;
-import net.minecraft.references.Items;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 

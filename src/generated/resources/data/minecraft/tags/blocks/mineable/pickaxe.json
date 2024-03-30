@@ -9,6 +9,9 @@
     "testmod:copper_coil",
     "testmod:induction_furnace",
     "testmod:super_assembler",
-    "testmod:crusher"
+    "testmod:crusher",
+    "testmod:separator",
+    "testmod:ilmenite_ore",
+    "testmod:deepslate_ilmenite_ore"
   ]
 }

@@ -4,12 +4,14 @@ import java.util.function.Supplier;
 import mwk.testmod.TestMod;
 import mwk.testmod.common.block.entity.CrusherBlockEntity;
 import mwk.testmod.common.block.entity.InductionFurnaceBlockEntity;
+import mwk.testmod.common.block.entity.SeparatorBlockEntity;
 import mwk.testmod.common.block.multiblock.HologramBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockEnergyPortBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import mwk.testmod.common.block.multiblock.MutliBlockIOPortBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
@@ -24,6 +26,9 @@ public class TestModBlocks {
 	public static final DeferredRegister.Blocks BLOCKS =
 			DeferredRegister.createBlocks(TestMod.MODID);
 
+	public static final String ILMENITE_ORE_ID = "ilmenite_ore";
+	public static final String DEEPSLATE_ILMENITE_ORE_ID = "deepslate_ilmenite_ore";
+
 	public static final String MACHINE_FRAME_BASIC_ID = "machine_frame_basic";
 	public static final String MACHINE_FRAME_REINFORCED_ID = "machine_frame_reinforced";
 	public static final String MACHINE_FRAME_ADVANCED_ID = "machine_frame_advanced";
@@ -35,8 +40,15 @@ public class TestModBlocks {
 	public static final String INDUCTION_FURNACE_ID = "induction_furnace";
 	public static final String SUPER_ASSEMBLER_ID = "super_assembler";
 	public static final String CRUSHER_ID = "crusher";
+	public static final String SEPARATOR_ID = "separator";
 
 	public static final String HOLOGRAM_ID = "hologram";
+
+	// Normal blocks
+	public static final DeferredBlock<Block> ILMENITE_ORE =
+			registerBlockWithItem(ILMENITE_ORE_ID, () -> new Block(Blocks.IRON_ORE.properties()));
+	public static final DeferredBlock<Block> DEEPSLATE_ILMENITE_ORE = registerBlockWithItem(
+			DEEPSLATE_ILMENITE_ORE_ID, () -> new Block(Blocks.DEEPSLATE_IRON_ORE.properties()));
 
 	// Multiblock parts
 	public static final DeferredBlock<MultiBlockPartBlock> MACHINE_FRAME_BASIC =
@@ -73,6 +85,9 @@ public class TestModBlocks {
 	public static final DeferredBlock<MultiBlockControllerBlock> CRUSHER = registerBlockWithItem(
 			CRUSHER_ID,
 			() -> new MultiBlockControllerBlock(getMachineProperties(), CrusherBlockEntity::new));
+	public static final DeferredBlock<MultiBlockControllerBlock> SEPARATOR = registerBlockWithItem(
+			SEPARATOR_ID,
+			() -> new MultiBlockControllerBlock(getMachineProperties(), SeparatorBlockEntity::new));
 
 	public static final DeferredBlock<HologramBlock> HOLOGRAM =
 			BLOCKS.register(HOLOGRAM_ID, () -> new HologramBlock());

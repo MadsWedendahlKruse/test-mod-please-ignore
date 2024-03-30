@@ -1,0 +1,23 @@
+{
+    "layers": [
+        [
+            "rrX",
+            "OaO",
+            "rEr"
+        ],
+        [
+            "bbb",
+            "bIb",
+            "bbb"
+        ]
+    ],
+    "key": {
+        "X": "testmod:separator",
+        "I": "testmod:machine_input_port",
+        "O": "testmod:machine_output_port",
+        "E": "testmod:machine_energy_port",
+        "b": "testmod:machine_frame_basic",
+        "r": "testmod:machine_frame_reinforced",
+        "a": "testmod:machine_frame_advanced"
+    }
+}

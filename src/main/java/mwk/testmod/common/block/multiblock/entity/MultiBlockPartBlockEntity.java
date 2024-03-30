@@ -20,7 +20,7 @@ public class MultiBlockPartBlockEntity extends BlockEntity {
     protected BlockPos controllerPos;
 
     public MultiBlockPartBlockEntity(BlockPos pos, BlockState state) {
-        this(TestModBlockEntities.MULTI_PART_ENTITY_TYPE.get(), pos, state);
+        this(TestModBlockEntities.MULTI_BLOCK_PART_ENTITY_TYPE.get(), pos, state);
     }
 
     public MultiBlockPartBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {

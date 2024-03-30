@@ -1,0 +1,5 @@
+{
+    "loader": "neoforge:obj",
+    "flip_v": true,
+    "model": "testmod:models/multiblock/separator_spinner.obj"
+}

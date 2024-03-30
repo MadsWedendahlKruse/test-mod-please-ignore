@@ -1,8 +1,12 @@
 package mwk.testmod.datagen;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import mwk.testmod.TestMod;
 import mwk.testmod.common.recipe.CrushingRecipe;
+import mwk.testmod.common.recipe.SeparationRecipe;
 import mwk.testmod.common.util.TestModTags;
 import mwk.testmod.init.registries.TestModItems;
 import net.minecraft.core.HolderLookup.Provider;
@@ -28,16 +32,30 @@ public class TestModRecipeProvider extends RecipeProvider {
 
 	@Override
 	protected void buildRecipes(RecipeOutput recipeOutput) {
+		registerShapelessRecipes(recipeOutput);
+		registerCookingRecipes(recipeOutput);
 		registerCrushingRecipes(recipeOutput);
+		registerSeparationRecipes(recipeOutput);
+	}
 
+	private void registerShapelessRecipes(RecipeOutput recipeOutput) {
 		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TestModItems.STEEL_DUST)
 				.requires(TestModTags.Items.IRON_DUST).requires(TestModTags.Items.COAL_DUST)
 				.unlockedBy(getHasName(TestModItems.IRON_DUST), has(TestModTags.Items.IRON_DUST))
 				.save(recipeOutput);
+	}
+
+	private void registerCookingRecipes(RecipeOutput recipeOutput) {
 		SimpleCookingRecipeBuilder
 				.blasting(Ingredient.of(TestModTags.Items.STEEL_DUST), RecipeCategory.MISC,
 						TestModItems.STEEL_INGOT.get(), 1.0F, 200)
 				.unlockedBy(getHasName(TestModItems.STEEL_DUST), has(TestModTags.Items.STEEL_DUST))
+				.save(recipeOutput);
+		SimpleCookingRecipeBuilder
+				.blasting(Ingredient.of(TestModTags.Items.TITANIUM_DUST), RecipeCategory.MISC,
+						TestModItems.TITANIUM_INGOT.get(), 1.0F, 200)
+				.unlockedBy(getHasName(TestModItems.TITANIUM_DUST),
+						has(TestModTags.Items.TITANIUM_DUST))
 				.save(recipeOutput);
 	}
 
@@ -77,7 +95,29 @@ public class TestModRecipeProvider extends RecipeProvider {
 				TestModItems.COAL_DUST);
 		registerCrushingRecipe(recipeOutput, "iron_dust_from_iron_ingot",
 				Ingredient.of(Items.IRON_INGOT), TestModItems.IRON_DUST);
+		registerCrushingRecipe(recipeOutput, "iron_dust_from_raw_iron",
+				Ingredient.of(Items.RAW_IRON), TestModItems.IRON_DUST);
 		registerCrushingRecipe(recipeOutput, "steel_dust_from_steel_ingot",
 				Ingredient.of(TestModTags.Items.STEEL_INGOT), TestModItems.STEEL_DUST);
+		registerCrushingRecipe(recipeOutput, "ilmenite_dust_from_raw_ilmenite",
+				Ingredient.of(TestModTags.Items.RAW_ILMENITE), TestModItems.ILMENITE_DUST);
+	}
+
+	private void registerSeparationRecipe(RecipeOutput recipeOutput, String name, Ingredient input,
+			List<ItemStack> outputs) {
+		recipeOutput.accept(new ResourceLocation(TestMod.MODID, name),
+				new SeparationRecipe(input, outputs), null);
+	}
+
+	private void registerSeparationRecipes(RecipeOutput recipeOutput) {
+		registerSeparationRecipe(recipeOutput, "steel_dust_separation",
+				Ingredient.of(TestModItems.STEEL_DUST),
+				new ArrayList<ItemStack>(Arrays.asList(new ItemStack(TestModItems.IRON_DUST.get()),
+						new ItemStack(TestModItems.COAL_DUST.get()))));
+		registerSeparationRecipe(recipeOutput, "ilmenite_dust_separation",
+				Ingredient.of(TestModItems.ILMENITE_DUST),
+				new ArrayList<ItemStack>(
+						Arrays.asList(new ItemStack(TestModItems.TITANIUM_DUST.get()),
+								new ItemStack(TestModItems.IRON_DUST.get()))));
 	}
 }

@@ -1,0 +1,14 @@
+{
+  "type": "testmod:separation",
+  "input": {
+    "item": "testmod:dust_ilmenite"
+  },
+  "outputs": [
+    {
+      "item": "testmod:dust_titanium"
+    },
+    {
+      "item": "testmod:dust_iron"
+    }
+  ]
+}

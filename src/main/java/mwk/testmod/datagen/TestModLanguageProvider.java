@@ -8,12 +8,6 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
 
 public class TestModLanguageProvider extends LanguageProvider {
 
-	// Mutliblocks
-	public static final String KEY_MULTIBLOCK_SUPER_ASSERMBLER =
-			"multiblock.testmod.super_assembler";
-	public static final String KEY_MULTIBLOCK_INDUCTION_FURNACE =
-			"multiblock.testmod.induction_furnace";
-	public static final String KEY_MULTIBLOCK_CRUSHER = "multiblock.testmod.crusher";
 	// Info
 	public static final String KEY_INFO_CONTROLLER_BLUEPRINT_HELP =
 			"info.testmod.controller.blueprint.help";
@@ -69,6 +63,7 @@ public class TestModLanguageProvider extends LanguageProvider {
 		add(TestModBlocks.SUPER_ASSEMBLER.get(), "Super Assembler");
 		add(TestModBlocks.INDUCTION_FURNACE.get(), "Induction Furnace");
 		add(TestModBlocks.CRUSHER.get(), "Crusher");
+		add(TestModBlocks.SEPARATOR.get(), "Separator");
 		// Items
 		add(TestModItems.WRENCH_ITEM.get(), "Wrench");
 		add(TestModItems.HOLOGRAM_PROJECTOR_ITEM.get(), "Hologram Projector");

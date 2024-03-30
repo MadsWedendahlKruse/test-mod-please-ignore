@@ -9,6 +9,7 @@
     "testmod:copper_coil",
     "testmod:induction_furnace",
     "testmod:super_assembler",
-    "testmod:crusher"
+    "testmod:crusher",
+    "testmod:separator"
   ]
 }

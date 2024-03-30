@@ -4,7 +4,9 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import mwk.testmod.client.gui.screen.CrusherScreen;
 import mwk.testmod.client.gui.screen.InductionFurnaceScreen;
+import mwk.testmod.client.gui.screen.SeparatorScreen;
 import mwk.testmod.client.render.block_entity.CrusherBlockEntityRenderer;
+import mwk.testmod.client.render.block_entity.SeparatorBlockEntityRenderer;
 import mwk.testmod.client.render.hologram.HologramRenderer;
 import mwk.testmod.common.block.multiblock.HologramBlockColor;
 import mwk.testmod.init.registries.TestModBlockEntities;
@@ -13,7 +15,8 @@ import mwk.testmod.init.registries.TestModCreativeTabs;
 import mwk.testmod.init.registries.TestModItems;
 import mwk.testmod.init.registries.TestModMenus;
 import mwk.testmod.init.registries.TestModModels;
-import mwk.testmod.init.registries.TestModRecipes;
+import mwk.testmod.init.registries.TestModRecipeSerializers;
+import mwk.testmod.init.registries.TestModRecipeTypes;
 import mwk.testmod.init.registries.TestModSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -59,7 +62,8 @@ public class TestMod {
 		TestModCreativeTabs.register(modEventBus);
 		TestModSounds.register(modEventBus);
 		TestModMenus.register(modEventBus);
-		TestModRecipes.register(modEventBus);
+		TestModRecipeTypes.register(modEventBus);
+		TestModRecipeSerializers.register(modEventBus);
 
 		// Register ourselves for server and other game events we are interested in.
 		// Note that this is necessary if and only if we want *this* class (testmod) to
@@ -145,6 +149,7 @@ public class TestMod {
 				MenuScreens.register(TestModMenus.INDUCTION_FURNACE_MENU.get(),
 						InductionFurnaceScreen::new);
 				MenuScreens.register(TestModMenus.CRUSHER_MENU.get(), CrusherScreen::new);
+				MenuScreens.register(TestModMenus.SEPARATOR_MENU.get(), SeparatorScreen::new);
 			});
 		}
 
@@ -157,6 +162,8 @@ public class TestMod {
 		public static void onRegisterRenderersEvent(EntityRenderersEvent.RegisterRenderers event) {
 			event.registerBlockEntityRenderer(TestModBlockEntities.CRUSHER_ENTITY_TYPE.get(),
 					(context) -> new CrusherBlockEntityRenderer(context));
+			event.registerBlockEntityRenderer(TestModBlockEntities.SEPARATOR_ENTITY_TYPE.get(),
+					(context) -> new SeparatorBlockEntityRenderer(context));
 		}
 
 		@SubscribeEvent

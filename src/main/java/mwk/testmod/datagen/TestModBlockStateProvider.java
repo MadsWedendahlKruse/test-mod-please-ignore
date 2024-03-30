@@ -7,6 +7,7 @@ import mwk.testmod.init.registries.TestModBlocks;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
@@ -24,6 +25,10 @@ public class TestModBlockStateProvider extends BlockStateProvider {
 
 	@Override
 	protected void registerStatesAndModels() {
+		registerOreBlock(TestModBlocks.ILMENITE_ORE.get(), TestModBlocks.ILMENITE_ORE_ID);
+		registerOreBlock(TestModBlocks.DEEPSLATE_ILMENITE_ORE.get(),
+				TestModBlocks.DEEPSLATE_ILMENITE_ORE_ID);
+
 		registerMultiBlockPart(TestModBlocks.MACHINE_FRAME_BASIC.get(),
 				TestModBlocks.MACHINE_FRAME_BASIC_ID, CubeModel.CUBE_ALL);
 		registerMultiBlockPart(TestModBlocks.MACHINE_FRAME_REINFORCED.get(),
@@ -44,6 +49,7 @@ public class TestModBlockStateProvider extends BlockStateProvider {
 		registerMultiBlockController(TestModBlocks.SUPER_ASSEMBLER.get(),
 				TestModBlocks.SUPER_ASSEMBLER_ID);
 		registerMultiBlockController(TestModBlocks.CRUSHER.get(), TestModBlocks.CRUSHER_ID);
+		registerMultiBlockController(TestModBlocks.SEPARATOR.get(), TestModBlocks.SEPARATOR_ID);
 	}
 
 	protected void createCubeAll(String modelPath) {
@@ -97,6 +103,20 @@ public class TestModBlockStateProvider extends BlockStateProvider {
 			};
 			ModelFile model = formed ? modelFormed : modelUnformed;
 			return ConfiguredModel.builder().modelFile(model).rotationY(yRotation).build();
+		});
+	}
+
+	protected void registerOreBlock(Block block, String name) {
+		String modelPath = "block/" + name;
+		// Create the model for the block
+		models().withExistingParent(modelPath, "minecraft:block/cube_all").texture("all",
+				modelPath);
+		// Create the model for the item
+		itemModels().getBuilder(name).parent(models().getExistingFile(modLoc(modelPath)));
+		// Create the blockstate for the block
+		ModelFile model = models().getExistingFile(modLoc(modelPath));
+		getVariantBuilder(block).forAllStatesExcept(state -> {
+			return ConfiguredModel.builder().modelFile(model).build();
 		});
 	}
 }

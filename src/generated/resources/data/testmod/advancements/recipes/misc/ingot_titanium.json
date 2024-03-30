@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_dust_titanium": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:dusts/titanium"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "testmod:ingot_titanium"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_dust_titanium"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "testmod:ingot_titanium"
+    ]
+  }
+}

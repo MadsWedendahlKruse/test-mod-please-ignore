@@ -31,10 +31,12 @@ public abstract class SingleCrafterMachineBlockEntity<T extends Recipe<Container
         }
         Optional<RecipeHolder<T>> recipe = getCurrentRecipe();
         if (recipe.isEmpty()) {
+            setWorking(false);
             return;
         }
         if (isRecipeValid(recipe)) {
             increaseProgress();
+            setWorking(true);
             setChanged();
             if (hasProgressFinished()) {
                 craftItem(recipe);

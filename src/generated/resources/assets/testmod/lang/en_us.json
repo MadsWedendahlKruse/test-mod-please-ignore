@@ -4,6 +4,7 @@
   "block.testmod.machine_frame_advanced": "Advanced Machine Frame",
   "block.testmod.machine_frame_basic": "Basic Machine Frame",
   "block.testmod.machine_frame_reinforced": "Reinforced Machine Frame",
+  "block.testmod.separator": "Separator",
   "block.testmod.super_assembler": "Super Assembler",
   "info.testmod.controller.blueprint.blocked": "An incorrect block is in the way of the blueprint [x=%s, y=%s, z=%s]",
   "info.testmod.controller.blueprint.complete": "The blueprint is complete, form the multiblock with a wrench",

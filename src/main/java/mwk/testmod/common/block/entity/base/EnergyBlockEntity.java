@@ -1,7 +1,5 @@
 package mwk.testmod.common.block.entity.base;
 
-import mwk.testmod.TestMod;
-import mwk.testmod.TestModConfig;
 import mwk.testmod.common.util.energy.EnergyStorageConsumer;
 import mwk.testmod.common.util.energy.EnergyStorageGenerator;
 import mwk.testmod.common.util.energy.EnergyStorageWrapper;

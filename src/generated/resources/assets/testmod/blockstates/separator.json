@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "facing=east,formed=false,working=false": {
+      "model": "testmod:block/separator",
+      "y": 90
+    },
+    "facing=east,formed=false,working=true": {
+      "model": "testmod:block/separator",
+      "y": 90
+    },
+    "facing=east,formed=true,working=false": {
+      "model": "testmod:multiblock/separator",
+      "y": 90
+    },
+    "facing=east,formed=true,working=true": {
+      "model": "testmod:multiblock/separator",
+      "y": 90
+    },
+    "facing=north,formed=false,working=false": {
+      "model": "testmod:block/separator"
+    },
+    "facing=north,formed=false,working=true": {
+      "model": "testmod:block/separator"
+    },
+    "facing=north,formed=true,working=false": {
+      "model": "testmod:multiblock/separator"
+    },
+    "facing=north,formed=true,working=true": {
+      "model": "testmod:multiblock/separator"
+    },
+    "facing=south,formed=false,working=false": {
+      "model": "testmod:block/separator",
+      "y": 180
+    },
+    "facing=south,formed=false,working=true": {
+      "model": "testmod:block/separator",
+      "y": 180
+    },
+    "facing=south,formed=true,working=false": {
+      "model": "testmod:multiblock/separator",
+      "y": 180
+    },
+    "facing=south,formed=true,working=true": {
+      "model": "testmod:multiblock/separator",
+      "y": 180
+    },
+    "facing=west,formed=false,working=false": {
+      "model": "testmod:block/separator",
+      "y": 270
+    },
+    "facing=west,formed=false,working=true": {
+      "model": "testmod:block/separator",
+      "y": 270
+    },
+    "facing=west,formed=true,working=false": {
+      "model": "testmod:multiblock/separator",
+      "y": 270
+    },
+    "facing=west,formed=true,working=true": {
+      "model": "testmod:multiblock/separator",
+      "y": 270
+    }
+  }
+}

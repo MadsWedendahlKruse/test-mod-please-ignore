@@ -14,9 +14,15 @@ public class TestModItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
+        basicItem(TestModItems.RAW_ILMENITE.get());
+
         basicItem(TestModItems.COAL_DUST.get());
         basicItem(TestModItems.IRON_DUST.get());
         basicItem(TestModItems.STEEL_DUST.get());
+        basicItem(TestModItems.ILMENITE_DUST.get());
+        basicItem(TestModItems.TITANIUM_DUST.get());
+
         basicItem(TestModItems.STEEL_INGOT.get());
+        basicItem(TestModItems.TITANIUM_INGOT.get());
     }
 }

@@ -6,9 +6,9 @@ import mwk.testmod.common.block.entity.base.ParallelCrafterMachineBlockEntity;
 import mwk.testmod.common.block.inventory.CrusherMenu;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.recipe.CrushingRecipe;
-import mwk.testmod.datagen.TestModLanguageProvider;
 import mwk.testmod.init.registries.TestModBlockEntities;
 import mwk.testmod.init.registries.TestModBlocks;
+import mwk.testmod.init.registries.TestModRecipeTypes;
 import mwk.testmod.init.registries.TestModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -23,14 +23,12 @@ import net.neoforged.neoforge.items.IItemHandler;
 public class CrusherBlockEntity extends ParallelCrafterMachineBlockEntity<CrushingRecipe> {
 
     public static final float ROTOR_SPEED = (float) Math.PI; // [rad/s]
-
     private final PerpetualAnimationFloat rotorAnimation;
 
     public CrusherBlockEntity(BlockPos pos, BlockState state) {
         super(TestModBlockEntities.CRUSHER_ENTITY_TYPE.get(), pos, state,
                 TestModConfig.ENERGY_CAPACITY_DEFAULT.get(), 20, 9, 20,
-                CrushingRecipe.Type.INSTANCE, TestModSounds.MULTIBLOCK_CRUSHER.get(),
-                // SoundEvents.BEACON_AMBIENT,
+                TestModRecipeTypes.CRUSHING.get(), TestModSounds.MULTIBLOCK_CRUSHER.get(),
                 TestModSounds.MULTIBLOCK_CRUSHER_DURATION);
         rotorAnimation = new PerpetualAnimationFloat(ROTOR_SPEED);
         rotorAnimation.start();
@@ -42,9 +40,9 @@ public class CrusherBlockEntity extends ParallelCrafterMachineBlockEntity<Crushi
     }
 
     @Override
-    public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory,
-            Player pPlayer) {
-        return new CrusherMenu(pContainerId, pPlayer, worldPosition);
+    public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory,
+            Player player) {
+        return new CrusherMenu(containerId, player, worldPosition);
     }
 
     public void updateRotorAnimation() {

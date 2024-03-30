@@ -8,16 +8,20 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Class for any auxiliary models that are used in block entity renderers, e.g. rotors in a crusher.
  */
-public class AuxillaryModel {
+public class AuxiliaryModel {
 
     private final String modelPath;
+    private BakedModel bakedModel = null;
 
-    public AuxillaryModel(String modelPath) {
+    public AuxiliaryModel(String modelPath) {
         this.modelPath = modelPath;
     }
 
     public BakedModel getBakedModel() {
-        return Minecraft.getInstance().getBlockRenderer().getBlockModelShaper().getModelManager()
-                .getModel(new ResourceLocation(TestMod.MODID, modelPath));
+        if (bakedModel == null) {
+            bakedModel = Minecraft.getInstance().getBlockRenderer().getBlockModelShaper()
+                    .getModelManager().getModel(new ResourceLocation(TestMod.MODID, modelPath));
+        }
+        return bakedModel;
     }
 }
