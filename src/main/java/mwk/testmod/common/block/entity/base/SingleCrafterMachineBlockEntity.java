@@ -30,10 +30,6 @@ public abstract class SingleCrafterMachineBlockEntity<T extends Recipe<Container
             return;
         }
         Optional<RecipeHolder<T>> recipe = getCurrentRecipe();
-        if (recipe.isEmpty()) {
-            setWorking(false);
-            return;
-        }
         if (isRecipeValid(recipe)) {
             increaseProgress();
             setWorking(true);
@@ -44,6 +40,7 @@ public abstract class SingleCrafterMachineBlockEntity<T extends Recipe<Container
             }
         } else {
             resetProgress();
+            setWorking(false);
         }
     }
 

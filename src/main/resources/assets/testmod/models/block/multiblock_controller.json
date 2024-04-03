@@ -29,7 +29,13 @@
 			"from": [3, 3, -0.01],
 			"to": [13, 13, -0.01],
 			"faces": {
-				"north": {"uv": [0, 0, 16, 16], "texture": "#screen"}
+				"north": {
+				"neoforge_data": {
+					"block_light": 15,
+					"sky_light": 15,
+					"ambient_occlusion": false
+				},
+				"uv": [0, 0, 16, 16], "texture": "#screen"}
 			}
 		}
 	]

@@ -6,10 +6,10 @@ import mwk.testmod.common.block.inventory.InductionFurnaceMenu;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.init.registries.TestModBlockEntities;
 import mwk.testmod.init.registries.TestModBlocks;
+import mwk.testmod.init.registries.TestModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -26,7 +26,8 @@ public class InductionFurnaceBlockEntity extends ParallelCrafterMachineBlockEnti
     public InductionFurnaceBlockEntity(BlockPos pos, BlockState state) {
         super(TestModBlockEntities.INDUCTION_FURNACE_ENTITY_TYPE.get(), pos, state,
                 TestModConfig.ENERGY_CAPACITY_DEFAULT.get(), 20, INPUT_OUTPUT_SLOTS, 20,
-                RecipeType.BLASTING, SoundEvents.FURNACE_FIRE_CRACKLE, 20);
+                RecipeType.BLASTING, TestModSounds.MULTIBLOCK_INDUCTION_FURNACE.get(),
+                TestModSounds.MULTIBLOCK_INDUCTION_FURNACE_DURATION);
     }
 
     // TODO: These three are duplicated in the MultiBlockPartBlockEntity

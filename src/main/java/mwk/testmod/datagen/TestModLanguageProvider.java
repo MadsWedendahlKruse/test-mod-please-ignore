@@ -8,6 +8,8 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
 
 public class TestModLanguageProvider extends LanguageProvider {
 
+	// Creative tabs
+	public static final String KEY_CREATIVE_TAB = "itemGroup.testmod";
 	// Info
 	public static final String KEY_INFO_CONTROLLER_BLUEPRINT_HELP =
 			"info.testmod.controller.blueprint.help";
@@ -56,10 +58,18 @@ public class TestModLanguageProvider extends LanguageProvider {
 
 	@Override
 	protected void addTranslations() {
+		// Creative tabs
+		add(KEY_CREATIVE_TAB, "Test Mod");
 		// Blocks
+		add(TestModBlocks.ILMENITE_ORE.get(), "Ilmenite Ore");
+		add(TestModBlocks.DEEPSLATE_ILMENITE_ORE.get(), "Deepslate Ilmenite Ore");
 		add(TestModBlocks.MACHINE_FRAME_BASIC.get(), "Basic Machine Frame");
 		add(TestModBlocks.MACHINE_FRAME_REINFORCED.get(), "Reinforced Machine Frame");
 		add(TestModBlocks.MACHINE_FRAME_ADVANCED.get(), "Advanced Machine Frame");
+		add(TestModBlocks.MACHINE_INPUT_PORT.get(), "Machine Input Port");
+		add(TestModBlocks.MACHINE_OUTPUT_PORT.get(), "Machine Output Port");
+		add(TestModBlocks.MACHINE_ENERGY_PORT.get(), "Machine Energy Port");
+		add(TestModBlocks.COPPER_COIL.get(), "Copper Coil");
 		add(TestModBlocks.SUPER_ASSEMBLER.get(), "Super Assembler");
 		add(TestModBlocks.INDUCTION_FURNACE.get(), "Induction Furnace");
 		add(TestModBlocks.CRUSHER.get(), "Crusher");
@@ -67,6 +77,14 @@ public class TestModLanguageProvider extends LanguageProvider {
 		// Items
 		add(TestModItems.WRENCH_ITEM.get(), "Wrench");
 		add(TestModItems.HOLOGRAM_PROJECTOR_ITEM.get(), "Hologram Projector");
+		add(TestModItems.RAW_ILMENITE.get(), "Raw Ilmenite");
+		add(TestModItems.COAL_DUST.get(), "Coal Dust");
+		add(TestModItems.IRON_DUST.get(), "Iron Dust");
+		add(TestModItems.STEEL_DUST.get(), "Steel Dust");
+		add(TestModItems.ILMENITE_DUST.get(), "Ilmenite Dust");
+		add(TestModItems.TITANIUM_DUST.get(), "Titanium Dust");
+		add(TestModItems.STEEL_INGOT.get(), "Steel Ingot");
+		add(TestModItems.TITANIUM_INGOT.get(), "Titanium Ingot");
 		// Info
 		add(KEY_INFO_CONTROLLER_BLUEPRINT_HELP, "Right-click with a wrench to see the blueprint");
 		add(KEY_INFO_CONTROLLER_BLUEPRINT_COMPLETE,

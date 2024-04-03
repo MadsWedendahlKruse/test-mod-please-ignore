@@ -1,7 +1,7 @@
 package mwk.testmod.client.gui.screen.base;
 
 import mwk.testmod.TestMod;
-import mwk.testmod.client.gui.widgets.ProgresArrow;
+import mwk.testmod.client.gui.widgets.ProgressArrowSingle;
 import mwk.testmod.common.block.inventory.base.CrafterMachineMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -11,7 +11,7 @@ import net.minecraft.world.entity.player.Inventory;
 public class ParallelCrafterMachineScreen<T extends CrafterMachineMenu>
         extends CrafterMachineScreen<T> {
 
-    private final ProgresArrow[] progressArrows;
+    private final ProgressArrowSingle[] progressArrows;
     private final int progressArrowX;
     private final int progressArrowY;
     private final int progressArrowSpacing;
@@ -30,7 +30,7 @@ public class ParallelCrafterMachineScreen<T extends CrafterMachineMenu>
             int progressArrows, int progressArrowX, int progressArrowY, int progressArrowSpacing) {
         super(menu, playerInventory, title, texture, energyBarX, energyBarY, imageWidth,
                 imageHeight, iconName, progressIconX, progressIconY);
-        this.progressArrows = new ProgresArrow[progressArrows];
+        this.progressArrows = new ProgressArrowSingle[progressArrows];
         this.progressArrowX = progressArrowX;
         this.progressArrowY = progressArrowY;
         this.progressArrowSpacing = progressArrowSpacing;
@@ -40,14 +40,14 @@ public class ParallelCrafterMachineScreen<T extends CrafterMachineMenu>
     protected void init() {
         super.init();
         for (int i = 0; i < progressArrows.length; i++) {
-            progressArrows[i] = new ProgresArrow(menu, this.leftPos + progressArrowX,
+            progressArrows[i] = new ProgressArrowSingle(menu, this.leftPos + progressArrowX,
                     this.topPos + progressArrowY + i * progressArrowSpacing);
         }
     }
 
     @Override
     protected void renderProgress(GuiGraphics guiGraphics) {
-        for (ProgresArrow progressArrow : progressArrows) {
+        for (ProgressArrowSingle progressArrow : progressArrows) {
             progressArrow.render(guiGraphics);
         }
     }

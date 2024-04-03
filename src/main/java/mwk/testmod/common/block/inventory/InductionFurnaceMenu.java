@@ -16,6 +16,7 @@ public class InductionFurnaceMenu extends CrafterMachineMenu {
 						+ DEFAULT_PLAYER_INVENTORY_X,
 				ParallelCrafterMachineScreen.PRESET_3X3_PARALLEL.imageHeight
 						- BaseMachineScreen.TEXTURE_INVENTORY_HEIGHT
-						+ BaseMachineScreen.INVETORY_PADDING_Y);
+						+ BaseMachineScreen.INVETORY_PADDING_Y,
+				49, 45, 139, 45);
 	}
 }

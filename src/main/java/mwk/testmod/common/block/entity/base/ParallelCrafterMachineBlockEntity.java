@@ -123,7 +123,7 @@ public abstract class ParallelCrafterMachineBlockEntity<T extends Recipe<Contain
      * Craft the item for the given recipe and input slot.
      * 
      * @param inputSlot The index of the input slot to craft the item for.
-     * @param outputSlot The indices of the output slot(s) to place the result in.
+     * @param outputSlots The indices of the output slot(s) to place the result in.
      * @param recipe The recipe to craft.
      */
     protected void craftItem(int inputSlot, ArrayList<Pair<Integer, Integer>> outputSlots,

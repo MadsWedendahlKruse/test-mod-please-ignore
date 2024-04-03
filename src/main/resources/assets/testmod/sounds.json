@@ -2,7 +2,11 @@
     "block.multiblock_form": {
         "category": "block",
         "sounds": [
-            "testmod:block/multiblock_form"
+            {
+                "name": "testmod:block/multiblock_form1",
+                "attenuation_distance": 16,
+                "volume": 0.9
+            }
         ],
         "subtitle": "sounds.testmod.block.multiblock_form"
     },
@@ -16,5 +20,16 @@
             }
         ],
         "subtitle": "sounds.testmod.block.crusher"
+    },
+    "block.induction_furnace": {
+        "category": "block",
+        "sounds": [
+            {
+                "name": "testmod:block/induction_furnace3",
+                "attenuation_distance": 8,
+                "volume": 0.9
+            }
+        ],
+        "subtitle": "sounds.testmod.block.induction_furnace"
     }
 }

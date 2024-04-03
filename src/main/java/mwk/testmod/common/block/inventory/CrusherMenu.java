@@ -9,14 +9,15 @@ import net.minecraft.world.entity.player.Player;
 
 public class CrusherMenu extends CrafterMachineMenu {
 
-    public CrusherMenu(int containerId, Player player, BlockPos pos) {
-        super(TestModMenus.CRUSHER_MENU.get(), containerId, player, pos,
-                (ParallelCrafterMachineScreen.PRESET_3X3_PARALLEL.imageWidth
-                        - BaseMachineScreen.TEXTURE_INVENTORY_WIDTH) / 2
-                        + DEFAULT_PLAYER_INVENTORY_X,
-                ParallelCrafterMachineScreen.PRESET_3X3_PARALLEL.imageHeight
-                        - BaseMachineScreen.TEXTURE_INVENTORY_HEIGHT
-                        + BaseMachineScreen.INVETORY_PADDING_Y);
-    }
+        public CrusherMenu(int containerId, Player player, BlockPos pos) {
+                super(TestModMenus.CRUSHER_MENU.get(), containerId, player, pos,
+                                (ParallelCrafterMachineScreen.PRESET_3X3_PARALLEL.imageWidth
+                                                - BaseMachineScreen.TEXTURE_INVENTORY_WIDTH) / 2
+                                                + DEFAULT_PLAYER_INVENTORY_X,
+                                ParallelCrafterMachineScreen.PRESET_3X3_PARALLEL.imageHeight
+                                                - BaseMachineScreen.TEXTURE_INVENTORY_HEIGHT
+                                                + BaseMachineScreen.INVETORY_PADDING_Y,
+                                49, 45, 139, 45);
+        }
 
 }

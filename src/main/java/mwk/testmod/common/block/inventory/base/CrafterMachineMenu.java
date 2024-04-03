@@ -13,8 +13,10 @@ public class CrafterMachineMenu extends BaseMachineMenu {
     private int energyPerTick;
 
     protected CrafterMachineMenu(MenuType<?> menuType, int containerId, Player player, BlockPos pos,
-            int playerInventoryX, int playerInventoryY) {
-        super(menuType, containerId, player, pos, playerInventoryX, playerInventoryY);
+            int playerInventoryX, int playerInventoryY, int inputSlotCenterX, int inputSlotCenterY,
+            int outputSlotCenterX, int outputSlotCenterY) {
+        super(menuType, containerId, player, pos, playerInventoryX, playerInventoryY,
+                inputSlotCenterX, inputSlotCenterY, outputSlotCenterX, outputSlotCenterY);
         if (player.level().getBlockEntity(pos) instanceof CrafterMachineBlockEntity blockEntity) {
             this.progress = blockEntity.getProgress();
             this.maxProgress = blockEntity.getMaxProgress();

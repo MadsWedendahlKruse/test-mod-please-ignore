@@ -28,9 +28,14 @@ public class BaseMachineMenu extends EnergyMenu {
     private final int outputSlots;
     private final int inventorySize;
     private final int maxSlotIndex;
+    private final int inputSlotCenterX;
+    private final int inputSlotCenterY;
+    private final int outputSlotCenterX;
+    private final int outputSlotCenterY;
 
     protected BaseMachineMenu(MenuType<?> menuType, int containerId, Player player, BlockPos pos,
-            int playerInventoryX, int playerInventoryY) {
+            int playerInventoryX, int playerInventoryY, int inputSlotCenterX, int inputSlotCenterY,
+            int outputSlotCenterX, int outputSlotCenterY) {
         super(menuType, containerId, player, pos);
         this.pos = pos;
         this.block = player.level().getBlockState(pos).getBlock();
@@ -38,6 +43,10 @@ public class BaseMachineMenu extends EnergyMenu {
             this.inputSlots = blockEntity.getInputSlots();
             this.outputSlots = blockEntity.getOutputSlots();
             this.inventorySize = inputSlots + outputSlots;
+            this.inputSlotCenterX = inputSlotCenterX;
+            this.inputSlotCenterY = inputSlotCenterY;
+            this.outputSlotCenterX = outputSlotCenterX;
+            this.outputSlotCenterY = outputSlotCenterY;
             this.maxSlotIndex = Inventory.INVENTORY_SIZE + this.inventorySize;
             addInputOutputSlots(blockEntity.getItemHandler(null));
             this.playerInventoryX = playerInventoryX;
@@ -76,12 +85,13 @@ public class BaseMachineMenu extends EnergyMenu {
         // Input slots
         int inputColumns = (int) Math.ceil((double) inputSlots / 3);
         int inputRows = (int) Math.ceil((double) inputSlots / inputColumns);
-        addItemHandlerSlots(itemHandler, 0, inputSlots, 49, 45, dxy, dxy, inputRows, inputColumns);
+        addItemHandlerSlots(itemHandler, 0, inputSlots, inputSlotCenterX, inputSlotCenterY, dxy,
+                dxy, inputRows, inputColumns);
         // Output slots
         int outputColumns = (int) Math.ceil((double) outputSlots / 3);
         int outputRows = (int) Math.ceil((double) outputSlots / outputColumns);
-        addItemHandlerSlots(itemHandler, inputSlots, outputSlots, 139, 45, dxy, dxy, outputRows,
-                outputColumns);
+        addItemHandlerSlots(itemHandler, inputSlots, outputSlots, outputSlotCenterX,
+                outputSlotCenterY, dxy, dxy, outputRows, outputColumns);
     }
 
     private int addSlotRange(Container playerInventory, int index, int x, int y, int slots,
