@@ -20,12 +20,6 @@ public class BaseMachineScreen<T extends BaseMachineMenu> extends EnergyScreen<T
     protected PanelManager panelManager;
 
     public BaseMachineScreen(T menu, Inventory playerInventory, Component title,
-            BaseMachineScreenPreset preset) {
-        this(menu, playerInventory, title, preset.texture, preset.energyBarX, preset.energyBarY,
-                preset.imageWidth, preset.imageHeight);
-    }
-
-    public BaseMachineScreen(T menu, Inventory playerInventory, Component title,
             ResourceLocation texture, int energyBarX, int energyBarY, int imageWidth,
             int imageHeight) {
         super(menu, playerInventory, title, energyBarX, energyBarY);
@@ -74,20 +68,5 @@ public class BaseMachineScreen<T extends BaseMachineMenu> extends EnergyScreen<T
     public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
         panelManager.mouseClicked(pMouseX, pMouseY, pButton);
         return super.mouseClicked(pMouseX, pMouseY, pButton);
-    }
-
-    public static class BaseMachineScreenPreset extends EnergyScreenPreset {
-
-        public final ResourceLocation texture;
-        public final int imageWidth;
-        public final int imageHeight;
-
-        public BaseMachineScreenPreset(int energyBarX, int energyBarY, ResourceLocation texture,
-                int imageWidth, int imageHeight) {
-            super(energyBarX, energyBarY);
-            this.texture = texture;
-            this.imageWidth = imageWidth;
-            this.imageHeight = imageHeight;
-        }
     }
 }

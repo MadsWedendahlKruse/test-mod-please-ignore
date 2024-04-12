@@ -1,6 +1,5 @@
 package mwk.testmod.client.gui.screen.base;
 
-import mwk.testmod.TestMod;
 import mwk.testmod.client.gui.widgets.ProgressArrowSingle;
 import mwk.testmod.common.block.inventory.base.CrafterMachineMenu;
 import net.minecraft.client.gui.GuiGraphics;
@@ -15,14 +14,6 @@ public class ParallelCrafterMachineScreen<T extends CrafterMachineMenu>
     private final int progressArrowX;
     private final int progressArrowY;
     private final int progressArrowSpacing;
-
-    public ParallelCrafterMachineScreen(T menu, Inventory playerInventory, Component title,
-            String iconName, ParallelCraftingMachineScreenPreset preset) {
-        this(menu, playerInventory, title, preset.texture, preset.energyBarX, preset.energyBarY,
-                preset.imageWidth, preset.imageHeight, iconName, preset.progressIconX,
-                preset.progressIconY, preset.progressArrows, preset.progressArrowX,
-                preset.progressArrowY, preset.progressArrowSpacing);
-    }
 
     public ParallelCrafterMachineScreen(T menu, Inventory playerInventory, Component title,
             ResourceLocation texture, int energyBarX, int energyBarY, int imageWidth,
@@ -51,29 +42,4 @@ public class ParallelCrafterMachineScreen<T extends CrafterMachineMenu>
             progressArrow.render(guiGraphics);
         }
     }
-
-    public static class ParallelCraftingMachineScreenPreset extends CrafterMachineScreenPreset {
-
-        public final int progressArrows;
-        public final int progressArrowX;
-        public final int progressArrowY;
-        public final int progressArrowSpacing;
-
-        public ParallelCraftingMachineScreenPreset(int energyBarX, int energyBarY,
-                ResourceLocation texture, int imageWidth, int imageHeight, String iconName,
-                int progressIconX, int progressIconY, int progressArrows, int progressArrowX,
-                int progressArrowY, int progressArrowSpacing) {
-            super(energyBarX, energyBarY, texture, imageWidth, imageHeight, iconName, progressIconX,
-                    progressIconY);
-            this.progressArrows = progressArrows;
-            this.progressArrowX = progressArrowX;
-            this.progressArrowY = progressArrowY;
-            this.progressArrowSpacing = progressArrowSpacing;
-        }
-    }
-
-    public static final ParallelCraftingMachineScreenPreset PRESET_3X3_PARALLEL =
-            new ParallelCraftingMachineScreenPreset(7, 27,
-                    new ResourceLocation(TestMod.MODID, "textures/gui/container/3x3_parallel.png"),
-                    188, 193, "fire", 95, 46, 2, 93, 27, 40);
 }

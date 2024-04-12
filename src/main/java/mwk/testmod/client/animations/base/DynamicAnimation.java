@@ -68,10 +68,6 @@ public abstract class DynamicAnimation<T> extends Animation<T> {
      */
     protected abstract T defaultValue();
 
-    protected boolean compare(T t1, T t2) {
-        return t1.equals(t2);
-    }
-
     @Override
     public T getValue() {
         if (!startValueSet()) {

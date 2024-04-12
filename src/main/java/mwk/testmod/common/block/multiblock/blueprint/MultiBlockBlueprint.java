@@ -21,7 +21,7 @@ import net.minecraft.world.phys.AABB;
 /**
  * A blueprint for a multiblock structure.
  */
-public class MultiBlockBlueprint {
+public final class MultiBlockBlueprint {
 
     // Codec for a single layer, which is a list of strings
     private static final Codec<List<String>> LAYER_CODEC = Codec.list(Codec.STRING);

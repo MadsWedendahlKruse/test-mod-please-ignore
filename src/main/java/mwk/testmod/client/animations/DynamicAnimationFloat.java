@@ -41,9 +41,4 @@ public class DynamicAnimationFloat extends DynamicAnimation<Float> {
     protected Float defaultValue() {
         return 0.0F;
     }
-
-    @Override
-    protected boolean compare(Float t1, Float t2) {
-        return Float.compare(t1, t2) == 0;
-    }
 }

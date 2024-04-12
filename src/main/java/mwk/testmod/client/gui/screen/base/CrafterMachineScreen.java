@@ -19,13 +19,6 @@ public abstract class CrafterMachineScreen<T extends CrafterMachineMenu>
     private final int progressIconY;
 
     public CrafterMachineScreen(T menu, Inventory playerInventory, Component title,
-            CrafterMachineScreenPreset preset) {
-        this(menu, playerInventory, title, preset.texture, preset.energyBarX, preset.energyBarY,
-                preset.imageWidth, preset.imageHeight, preset.iconName, preset.progressIconX,
-                preset.progressIconY);
-    }
-
-    public CrafterMachineScreen(T menu, Inventory playerInventory, Component title,
             ResourceLocation texture, int energyBarX, int energyBarY, int imageWidth,
             int imageHeight, String iconName, int progressIconX, int progressIconY) {
         super(menu, playerInventory, title, texture, energyBarX, energyBarY, imageWidth,
@@ -62,21 +55,5 @@ public abstract class CrafterMachineScreen<T extends CrafterMachineMenu>
         super.renderBg(guiGraphics, partialTick, mouseX, mouseY);
         progressIcon.render(guiGraphics);
         renderProgress(guiGraphics);
-    }
-
-    public static class CrafterMachineScreenPreset extends BaseMachineScreenPreset {
-
-        public final String iconName;
-        public final int progressIconX;
-        public final int progressIconY;
-
-        public CrafterMachineScreenPreset(int energyBarX, int energyBarY, ResourceLocation texture,
-                int imageWidth, int imageHeight, String iconName, int progressIconX,
-                int progressIconY) {
-            super(energyBarX, energyBarY, texture, imageWidth, imageHeight);
-            this.iconName = iconName;
-            this.progressIconX = progressIconX;
-            this.progressIconY = progressIconY;
-        }
     }
 }

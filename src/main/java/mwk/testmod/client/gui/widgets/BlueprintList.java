@@ -61,10 +61,6 @@ public class BlueprintList extends AbstractScrollWidget {
                 }));
     }
 
-    public Collection<BlueprintButton> getButtons() {
-        return buttons;
-    }
-
     public ResourceKey<MultiBlockBlueprint> getBlueprintKey() {
         return blueprintKey;
     }
