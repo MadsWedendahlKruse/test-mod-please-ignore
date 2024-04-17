@@ -25,7 +25,7 @@ public class InductionFurnaceBlockEntity extends ParallelCrafterMachineBlockEnti
 
     public InductionFurnaceBlockEntity(BlockPos pos, BlockState state) {
         super(TestModBlockEntities.INDUCTION_FURNACE_ENTITY_TYPE.get(), pos, state,
-                TestModConfig.ENERGY_CAPACITY_DEFAULT.get(), 20, INPUT_OUTPUT_SLOTS, 20,
+                TestModConfig.ENERGY_CAPACITY_DEFAULT.get(), 20, INPUT_OUTPUT_SLOTS, 6, 20,
                 RecipeType.BLASTING, TestModSounds.MULTIBLOCK_INDUCTION_FURNACE.get(),
                 TestModSounds.MULTIBLOCK_INDUCTION_FURNACE_DURATION);
     }
@@ -45,7 +45,7 @@ public class InductionFurnaceBlockEntity extends ParallelCrafterMachineBlockEnti
     @Override
     public IItemHandler getItemHandler(Direction direction) {
         if (isFormed() && direction == null) {
-            return inventory;
+            return super.getItemHandler(direction);
         }
         return null;
     }

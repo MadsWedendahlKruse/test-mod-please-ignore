@@ -51,8 +51,17 @@ public abstract class MachinePanel extends AbstractWidget {
     private int iconHeight;
     private int iconPaddingX;
     private int iconPaddingY;
+    // Top left corner of the panel in screen coordinates
+    protected int screenX;
+    protected int screenY;
 
     protected static final Font font = Minecraft.getInstance().font;
+
+    public MachinePanel(int widthOpen, int heightOpen, Component message, float[] color,
+            ResourceLocation icon) {
+        this(widthOpen, heightOpen, message, color, icon, DEFAULT_ICON_WIDTH, DEFAULT_ICON_HEIGHT,
+                DEFAULT_ICON_PADDING, DEFAULT_ICON_PADDING);
+    }
 
     public MachinePanel(int widthOpen, int heightOpen, Component message, float[] color,
             ResourceLocation icon, int iconPaddingX, int iconPaddingY) {
@@ -63,16 +72,18 @@ public abstract class MachinePanel extends AbstractWidget {
     public MachinePanel(int widthOpen, int heightOpen, Component message, float[] color,
             ResourceLocation icon, int iconWidth, int iconHeight, int iconPaddingX,
             int iconPaddingY) {
-        this(iconWidth + 2 * iconPaddingX, iconHeight + 2 * iconPaddingY, widthOpen, heightOpen,
-                message, color, icon, iconWidth, iconHeight, iconPaddingX, iconPaddingY);
-
+        this(iconWidth + 2 * iconPaddingX, iconHeight + 2 * iconPaddingY,
+                2 * iconPaddingX + widthOpen, iconHeight + 3 * iconPaddingY + heightOpen, message,
+                color, icon, iconWidth, iconHeight, iconPaddingX, iconPaddingY);
     }
 
     public MachinePanel(int widthClosed, int heightClosed, int widthOpen, int heightOpen,
             Component message, float[] color, ResourceLocation icon, int iconWidth, int iconHeight,
             int iconPaddingX, int iconPaddingY) {
         super(0, 0, widthClosed, heightClosed, message);
-        this.widthOpen = widthOpen;
+        // Make sure there's room for the message
+        this.widthOpen =
+                Math.max(widthOpen, font.width(message.getString()) + iconWidth + 3 * iconPaddingX);
         this.heightOpen = heightOpen;
         this.widthClosed = widthClosed;
         this.heightClosed = heightClosed;
@@ -95,8 +106,17 @@ public abstract class MachinePanel extends AbstractWidget {
         this.left = left;
     }
 
+    public void setScreenPosition(int x, int y) {
+        screenX = x;
+        screenY = y;
+    }
+
     public boolean isOpen() {
         return open;
+    }
+
+    public boolean isOpenFully() {
+        return isOpen() && animationWidth.isFinished() && animationHeight.isFinished();
     }
 
     public void close() {
@@ -187,7 +207,7 @@ public abstract class MachinePanel extends AbstractWidget {
                 0xffffff);
         // Only render open if the animations are finished
         // TODO: Reveal it gradually? Would be cool, but not sure if it's worth the effort
-        if (open && animationWidth.isFinished() && animationHeight.isFinished()) {
+        if (isOpenFully()) {
             renderOpen(guiGraphics, mouseX, mouseY, partialTick);
         }
     }

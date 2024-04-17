@@ -7,7 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
-public class BaseMachineScreen<T extends BaseMachineMenu> extends EnergyScreen<T> {
+public abstract class BaseMachineScreen<T extends BaseMachineMenu> extends EnergyScreen<T> {
 
     public static final int TEXTURE_INVENTORY_WIDTH = 176;
     public static final int TEXTURE_INVENTORY_HEIGHT = 98;
@@ -31,9 +31,7 @@ public class BaseMachineScreen<T extends BaseMachineMenu> extends EnergyScreen<T
         this.inventoryLabelY = menu.getPlayerInventoryY() - INVENTORY_LABEL_Y_OFFSET;
     }
 
-    protected void addMachinePanels() {
-        // TODO: Abstract?
-    }
+    protected abstract void addMachinePanels();
 
     @Override
     protected void init() {
@@ -66,7 +64,10 @@ public class BaseMachineScreen<T extends BaseMachineMenu> extends EnergyScreen<T
 
     @Override
     public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
-        panelManager.mouseClicked(pMouseX, pMouseY, pButton);
+        // If a slot if hovered, don't allow the panel to be clicked
+        if (hoveredSlot == null) {
+            panelManager.mouseClicked(pMouseX, pMouseY, pButton);
+        }
         return super.mouseClicked(pMouseX, pMouseY, pButton);
     }
 }

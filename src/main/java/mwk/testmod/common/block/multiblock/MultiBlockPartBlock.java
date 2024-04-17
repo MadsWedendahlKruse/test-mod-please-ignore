@@ -4,6 +4,7 @@ import java.util.Random;
 import mwk.testmod.TestMod;
 import mwk.testmod.common.block.interfaces.IWrenchable;
 import mwk.testmod.common.block.multiblock.entity.MultiBlockPartBlockEntity;
+import mwk.testmod.common.util.RandomUtils;
 import mwk.testmod.init.registries.TestModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -36,8 +37,7 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
     private static final int NUM_PARTICLES = 10;
 
     // Random number generator for particle effects.
-    // TODO: Is this the best way to do this?
-    private static Random random = new Random();
+    private static final Random RANDOM = RandomUtils.RANDOM;
 
     public MultiBlockPartBlock(Properties properties) {
         // TODO: Not sure if noOcculsion is the best way to do this.
@@ -73,41 +73,41 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
     public static double[] getRandomSurfacePosition(BlockPos pos, double offset) {
         double[] position = new double[3];
         // Pick a random face of the block.
-        int face = random.nextInt(6);
+        int face = RANDOM.nextInt(6);
         // Pick a random position on the face of the block.
         position[0] = pos.getX();
         position[1] = pos.getY();
         position[2] = pos.getZ();
         switch (face) {
             case 0:
-                position[0] += random.nextDouble();
+                position[0] += RANDOM.nextDouble();
                 position[1] += 1.0 + offset;
-                position[2] += random.nextDouble();
+                position[2] += RANDOM.nextDouble();
                 break;
             case 1:
-                position[0] += random.nextDouble();
+                position[0] += RANDOM.nextDouble();
                 position[1] += 0.0 - offset;
-                position[2] += random.nextDouble();
+                position[2] += RANDOM.nextDouble();
                 break;
             case 2:
-                position[0] += random.nextDouble();
-                position[1] += random.nextDouble();
+                position[0] += RANDOM.nextDouble();
+                position[1] += RANDOM.nextDouble();
                 position[2] += 1.0 + offset;
                 break;
             case 3:
-                position[0] += random.nextDouble();
-                position[1] += random.nextDouble();
+                position[0] += RANDOM.nextDouble();
+                position[1] += RANDOM.nextDouble();
                 position[2] += 0.0 - offset;
                 break;
             case 4:
                 position[0] += 1.0 + offset;
-                position[1] += random.nextDouble();
-                position[2] += random.nextDouble();
+                position[1] += RANDOM.nextDouble();
+                position[2] += RANDOM.nextDouble();
                 break;
             case 5:
                 position[0] += 0.0 - offset;
-                position[1] += random.nextDouble();
-                position[2] += random.nextDouble();
+                position[1] += RANDOM.nextDouble();
+                position[2] += RANDOM.nextDouble();
                 break;
             default:
                 break;

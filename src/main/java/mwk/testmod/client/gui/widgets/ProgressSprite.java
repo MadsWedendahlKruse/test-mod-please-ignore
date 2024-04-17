@@ -7,6 +7,8 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ProgressSprite {
 
+    public static final int MAX_PROGRESS_REDUCTION = 3;
+
     private final WidgetSprites sprites;
     private final CrafterMachineMenu menu;
     private final int x;
@@ -39,19 +41,23 @@ public class ProgressSprite {
                     y + backgroundOffsetY, width, height);
         }
         if (progress > 0 && maxProgress > 0) {
-            int progressScaled =
-                    (int) ((float) progress / (float) maxProgress * (horizontal ? width : height));
+            // We don't want the sprite to disappear immediately when the progress is 100%,
+            // so max progress is reduced slightly.
+            float progressFraction =
+                    (float) progress / (float) (maxProgress - MAX_PROGRESS_REDUCTION);
+            int maxSize = horizontal ? width : height;
+            int progressSize = (int) (Math.min(1.0f, progressFraction) * maxSize);
             ResourceLocation sprite = sprites.get(true, false);
             if (horizontal) {
                 // Only clip the width of the sprite for horizontal progress bars.
-                guiGraphics.blitSprite(sprite, width, height, 0, 0, x, y, progressScaled, height);
+                guiGraphics.blitSprite(sprite, width, height, 0, 0, x, y, progressSize, height);
             } else {
                 // Only clip the height of the sprite for vertical progress bars.
                 // Notice how the 'y' position of the sprite is adjusted to start drawing from the
                 // bottom.
-                int yOffset = height - progressScaled; // Start drawing from the bottom
+                int yOffset = height - progressSize; // Start drawing from the bottom
                 guiGraphics.blitSprite(sprite, width, height, 0, yOffset, x, y + yOffset, width,
-                        progressScaled);
+                        progressSize);
             }
         }
     }

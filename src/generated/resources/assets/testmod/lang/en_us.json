@@ -32,6 +32,7 @@
   "item.testmod.ingot_steel": "Steel Ingot",
   "item.testmod.ingot_titanium": "Titanium Ingot",
   "item.testmod.raw_ilmenite": "Raw Ilmenite",
+  "item.testmod.speed_upgrade": "Speed Upgrade",
   "item.testmod.wrench": "Wrench",
   "itemGroup.testmod": "Test Mod",
   "sounds.testmod.block.crusher": "Crusher crushes",
@@ -42,6 +43,11 @@
   "widget.testmod.hologram_projector.buttons": "Buttons",
   "widget.testmod.hologram_projector.none": "None",
   "widget.testmod.panel.energy": "Energy",
-  "widget.testmod.panel.energy_use_text": "    %s FE/t",
-  "widget.testmod.panel.energy_use_title": "Energy use"
+  "widget.testmod.panel.energy_capacity_text": "  %s FE",
+  "widget.testmod.panel.energy_capacity_title": "Capacity",
+  "widget.testmod.panel.energy_crafting_text": "  %s t (%s s)",
+  "widget.testmod.panel.energy_crafting_title": "Crafting",
+  "widget.testmod.panel.energy_usage_text": "  %s FE/t (%s%%)",
+  "widget.testmod.panel.energy_usage_title": "Usage",
+  "widget.testmod.panel.upgrade": "Upgrades"
 }

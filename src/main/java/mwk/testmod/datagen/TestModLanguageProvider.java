@@ -43,10 +43,19 @@ public class TestModLanguageProvider extends LanguageProvider {
 	public static final String KEY_WIDGET_ENERGY_BAR = "widget.testmod.energy_bar";
 	public static final String KEY_WIDGET_ENERGY_BAR_HOVER = "widget.testmod.energy_bar.hover";
 	public static final String KEY_WIDGET_PANEL_ENERGY = "widget.testmod.panel.energy";
-	public static final String KEY_WIDGET_PANEL_ENERGY_USE_TITLE =
-			"widget.testmod.panel.energy_use_title";
-	public static final String KEY_WIDGET_PANEL_ENERGY_USE_TEXT =
-			"widget.testmod.panel.energy_use_text";
+	public static final String KEY_WIDGET_PANEL_ENERGY_USAGE_TITLE =
+			"widget.testmod.panel.energy_usage_title";
+	public static final String KEY_WIDGET_PANEL_ENERGY_USAGE_TEXT =
+			"widget.testmod.panel.energy_usage_text";
+	public static final String KEY_WIDGET_PANEL_ENERGY_CAPACITY_TITLE =
+			"widget.testmod.panel.energy_capacity_title";
+	public static final String KEY_WIDGET_PANEL_ENERGY_CAPACITY_TEXT =
+			"widget.testmod.panel.energy_capacity_text";
+	public static final String KEY_WIDGET_PANEL_ENERGY_CRAFTING_TITLE =
+			"widget.testmod.panel.energy_crafting_title";
+	public static final String KEY_WIDGET_PANEL_ENERGY_CRAFTING_TEXT =
+			"widget.testmod.panel.energy_crafting_text";
+	public static final String KEY_WIDGET_PANEL_UPGRADE = "widget.testmod.panel.upgrade";
 	// Subtitles
 	public static final String KEY_SUBTITLE_MULTIBLOCK_FORM =
 			"sounds.testmod.block.multiblock_form";
@@ -85,6 +94,7 @@ public class TestModLanguageProvider extends LanguageProvider {
 		add(TestModItems.TITANIUM_DUST.get(), "Titanium Dust");
 		add(TestModItems.STEEL_INGOT.get(), "Steel Ingot");
 		add(TestModItems.TITANIUM_INGOT.get(), "Titanium Ingot");
+		add(TestModItems.SPEED_UPGRADE.get(), "Speed Upgrade");
 		// Info
 		add(KEY_INFO_CONTROLLER_BLUEPRINT_HELP, "Right-click with a wrench to see the blueprint");
 		add(KEY_INFO_CONTROLLER_BLUEPRINT_COMPLETE,
@@ -107,8 +117,13 @@ public class TestModLanguageProvider extends LanguageProvider {
 		add(KEY_WIDGET_ENERGY_BAR, "Energy");
 		add(KEY_WIDGET_ENERGY_BAR_HOVER, "%s/%s FE");
 		add(KEY_WIDGET_PANEL_ENERGY, "Energy");
-		add(KEY_WIDGET_PANEL_ENERGY_USE_TITLE, "Energy use");
-		add(KEY_WIDGET_PANEL_ENERGY_USE_TEXT, "    %s FE/t");
+		add(KEY_WIDGET_PANEL_ENERGY_USAGE_TITLE, "Usage");
+		add(KEY_WIDGET_PANEL_ENERGY_USAGE_TEXT, "  %s FE/t (%s%%)");
+		add(KEY_WIDGET_PANEL_ENERGY_CAPACITY_TITLE, "Capacity");
+		add(KEY_WIDGET_PANEL_ENERGY_CAPACITY_TEXT, "  %s FE");
+		add(KEY_WIDGET_PANEL_ENERGY_CRAFTING_TITLE, "Crafting");
+		add(KEY_WIDGET_PANEL_ENERGY_CRAFTING_TEXT, "  %s t (%s s)");
+		add(KEY_WIDGET_PANEL_UPGRADE, "Upgrades");
 		// Sounds
 		add(KEY_SUBTITLE_MULTIBLOCK_FORM, "Multiblock forms");
 		add(KEY_SUBTITLE_MULTIBLOCK_CRUSHER, "Crusher crushes");

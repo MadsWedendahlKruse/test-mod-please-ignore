@@ -23,7 +23,7 @@ public class MutliBlockIOPortBlockEntity extends MultiBlockPartBlockEntity {
         if (isFormed()) {
             BlockEntity controllerEntity = level.getBlockEntity(controllerPos);
             if (controllerEntity instanceof BaseMachineBlockEntity itemEntity) {
-                return input ? itemEntity.getInputHandler(direction)
+                return input ? itemEntity.getInputHandler(direction, false)
                         : itemEntity.getOutputHandler(direction);
             }
         }

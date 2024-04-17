@@ -18,7 +18,7 @@ public class OutputItemHandler extends ItemHandlerWrapper {
 
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
-        if (slot >= startSlot && slot < startSlot + slots) {
+        if (isSlotValid(slot)) {
             return itemHandler.extractItem(slot, amount, simulate);
         }
         return ItemStack.EMPTY;

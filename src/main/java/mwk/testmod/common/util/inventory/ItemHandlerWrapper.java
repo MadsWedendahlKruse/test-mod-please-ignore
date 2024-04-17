@@ -1,15 +1,15 @@
 package mwk.testmod.common.util.inventory;
 
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
-public class ItemHandlerWrapper implements IItemHandler {
+public class ItemHandlerWrapper implements IItemHandlerModifiable {
 
-    protected final IItemHandler itemHandler;
+    protected final IItemHandlerModifiable itemHandler;
     protected final int startSlot;
     protected final int slots;
 
-    public ItemHandlerWrapper(IItemHandler itemHandler, int startSlot, int slots) {
+    public ItemHandlerWrapper(IItemHandlerModifiable itemHandler, int startSlot, int slots) {
         this.itemHandler = itemHandler;
         this.startSlot = startSlot;
         this.slots = slots;
@@ -20,9 +20,18 @@ public class ItemHandlerWrapper implements IItemHandler {
         return itemHandler.getSlots();
     }
 
+    public int getStartSlot() {
+        return startSlot;
+    }
+
+    public int getEndSlot() {
+        return startSlot + slots;
+    }
+
     @Override
     public int getSlotLimit(int slot) {
-        return itemHandler.getSlotLimit(slot);
+        // return itemHandler.getSlotLimit(slot);
+        return 64;
     }
 
     @Override
@@ -43,5 +52,14 @@ public class ItemHandlerWrapper implements IItemHandler {
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         return itemHandler.extractItem(slot, amount, simulate);
+    }
+
+    @Override
+    public void setStackInSlot(int slot, ItemStack stack) {
+        itemHandler.setStackInSlot(slot, stack);
+    }
+
+    public boolean isSlotValid(int slot) {
+        return slot >= startSlot && slot < startSlot + slots;
     }
 }

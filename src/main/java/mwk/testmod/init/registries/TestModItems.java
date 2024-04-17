@@ -3,6 +3,7 @@ package mwk.testmod.init.registries;
 import mwk.testmod.TestMod;
 import mwk.testmod.common.item.tools.HologramProjectorItem;
 import mwk.testmod.common.item.tools.WrenchItem;
+import mwk.testmod.common.item.upgrades.SpeedUpgradeItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -37,6 +38,9 @@ public class TestModItems {
 			ITEMS.register("ingot_steel", () -> new Item(new Item.Properties()));
 	public static final DeferredItem<Item> TITANIUM_INGOT =
 			ITEMS.register("ingot_titanium", () -> new Item(new Item.Properties()));
+
+	public static final DeferredItem<Item> SPEED_UPGRADE = ITEMS.register("speed_upgrade",
+			() -> new SpeedUpgradeItem(new Item.Properties(), 0.3F, 0.4F));
 
 	public static void register(IEventBus modEventBus) {
 		ITEMS.register(modEventBus);

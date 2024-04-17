@@ -20,7 +20,7 @@ public abstract class OneToOneCrafterMachineBlockEntity<T extends Recipe<Contain
     protected OneToOneCrafterMachineBlockEntity(BlockEntityType<?> type, BlockPos pos,
             BlockState state, int maxEnergy, int energyPerTick, int maxProgress,
             RecipeType<T> recipeType, SoundEvent sound, int soundDuration) {
-        super(type, pos, state, maxEnergy, energyPerTick, 1, 1, maxProgress, recipeType, sound,
+        super(type, pos, state, maxEnergy, energyPerTick, 1, 1, 6, maxProgress, recipeType, sound,
                 soundDuration);
     }
 

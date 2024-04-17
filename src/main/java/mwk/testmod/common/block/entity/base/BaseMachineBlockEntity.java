@@ -1,11 +1,16 @@
 package mwk.testmod.common.block.entity.base;
 
+import mwk.testmod.TestMod;
+import mwk.testmod.common.block.interfaces.IUpgradable;
+import mwk.testmod.common.item.upgrades.base.UpgradeItem;
 import mwk.testmod.common.util.inventory.InputItemHandler;
 import mwk.testmod.common.util.inventory.OutputItemHandler;
+import mwk.testmod.common.util.inventory.UpgradeItemHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -14,28 +19,36 @@ import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.energy.EnergyStorage;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 
 /**
  * A block entity that stores energy and also has an inventory.
  */
-public class BaseMachineBlockEntity extends EnergyBlockEntity {
+public abstract class BaseMachineBlockEntity extends EnergyBlockEntity
+        implements MenuProvider, IUpgradable {
 
     public static final String NBT_TAG_INVENTORY = "inventory";
 
     protected final int inputSlots;
     protected final int outputSlots;
+    protected final int upgradeSlots;
     protected final int inventorySize;
 
     protected final ItemStackHandler inventory;
-    protected final Lazy<InputItemHandler> inputHandler;
+    protected final Lazy<InputItemHandler> inputHandlerPlayer;
+    protected final Lazy<InputItemHandler> inputHandlerAutomation;
     protected final Lazy<OutputItemHandler> outputHandler;
+    protected final Lazy<UpgradeItemHandler> upgradeHandler;
+    protected final Lazy<CombinedInvWrapper> combinedInventory;
 
     public BaseMachineBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
-            int maxEnergy, EnergyType energyType, int inputSlots, int outputSlots) {
+            int maxEnergy, EnergyType energyType, int inputSlots, int outputSlots,
+            int upgradeSlots) {
         super(type, pos, state, new EnergyStorage(maxEnergy), energyType);
         this.inputSlots = inputSlots;
         this.outputSlots = outputSlots;
-        inventorySize = inputSlots + outputSlots;
+        this.upgradeSlots = upgradeSlots;
+        inventorySize = inputSlots + outputSlots + upgradeSlots;
         inventory = new ItemStackHandler(inventorySize) {
             @Override
             protected void onContentsChanged(int slot) {
@@ -43,12 +56,30 @@ public class BaseMachineBlockEntity extends EnergyBlockEntity {
             }
 
             @Override
-            public boolean isItemValid(int slot, ItemStack stack) {
-                return isInputValid(slot, stack);
+            public int getSlotLimit(int slot) {
+                if (inputHandlerPlayer.get().isSlotValid(slot)) {
+                    return inputHandlerPlayer.get().getSlotLimit(slot);
+                }
+                if (outputHandler.get().isSlotValid(slot)) {
+                    return outputHandler.get().getSlotLimit(slot);
+                }
+                if (upgradeHandler.get().isSlotValid(slot)) {
+                    return upgradeHandler.get().getSlotLimit(slot);
+                }
+                return super.getSlotLimit(slot);
+                // TODO: For some reason this doesn't work
+                // return combinedInventory.get().getSlotLimit(slot);
             }
         };
-        inputHandler = Lazy.of(() -> new InputItemHandler(inventory, 0, inputSlots));
+        inputHandlerPlayer = Lazy
+                .of(() -> new InputItemHandler(inventory, 0, inputSlots, this::isInputValid, true));
+        inputHandlerAutomation = Lazy.of(
+                () -> new InputItemHandler(inventory, 0, inputSlots, this::isInputValid, false));
         outputHandler = Lazy.of(() -> new OutputItemHandler(inventory, inputSlots, outputSlots));
+        upgradeHandler = Lazy.of(() -> new UpgradeItemHandler(inventory, inputSlots + outputSlots,
+                upgradeSlots, this));
+        combinedInventory = Lazy.of(() -> new CombinedInvWrapper(inputHandlerPlayer.get(),
+                outputHandler.get(), upgradeHandler.get()));
     }
 
     @Override
@@ -63,6 +94,8 @@ public class BaseMachineBlockEntity extends EnergyBlockEntity {
         if (tag.contains(NBT_TAG_INVENTORY)) {
             inventory.deserializeNBT(tag.getCompound(NBT_TAG_INVENTORY));
         }
+        TestMod.LOGGER.debug("Load NBT");
+        applyUpgrades();
     }
 
     /**
@@ -79,15 +112,19 @@ public class BaseMachineBlockEntity extends EnergyBlockEntity {
     }
 
     public IItemHandler getItemHandler(Direction direction) {
-        return inventory;
+        return combinedInventory.get();
     }
 
-    public InputItemHandler getInputHandler(Direction direction) {
-        return inputHandler.get();
+    public InputItemHandler getInputHandler(Direction direction, boolean player) {
+        return player ? inputHandlerPlayer.get() : inputHandlerAutomation.get();
     }
 
     public OutputItemHandler getOutputHandler(Direction direction) {
         return outputHandler.get();
+    }
+
+    public UpgradeItemHandler getUpgradeHandler(Direction direction) {
+        return upgradeHandler.get();
     }
 
     public int getInputSlots() {
@@ -96,6 +133,10 @@ public class BaseMachineBlockEntity extends EnergyBlockEntity {
 
     public int getOutputSlots() {
         return outputSlots;
+    }
+
+    public int getUpgradeSlots() {
+        return upgradeSlots;
     }
 
     public int getInventorySize() {
@@ -112,5 +153,37 @@ public class BaseMachineBlockEntity extends EnergyBlockEntity {
             inventory.setItem(i, this.inventory.getStackInSlot(i));
         }
         return inventory;
+    }
+
+    /**
+     * Reset whatever values the upgrades have changed to their default values.
+     */
+    abstract protected void resetUpgrades();
+
+    /**
+     * Install the given upgrade to the block entity. This should check the type of the upgrade and
+     * modify the block entity accordingly.
+     * 
+     * @param upgrade the upgrade to install
+     */
+    abstract protected void installUpgrade(UpgradeItem upgrade);
+
+    /**
+     * Apply the upgrades to the block entity. This should be called whenever the upgrades are
+     * changed.
+     */
+    @Override
+    public final void applyUpgrades() {
+        if (level != null && level.isClientSide()) {
+            return;
+        }
+        resetUpgrades();
+        for (int i = upgradeHandler.get().getStartSlot(); i < upgradeHandler.get()
+                .getEndSlot(); i++) {
+            ItemStack stack = inventory.getStackInSlot(i);
+            if (stack.getItem() instanceof UpgradeItem upgrade) {
+                installUpgrade(upgrade);
+            }
+        }
     }
 }

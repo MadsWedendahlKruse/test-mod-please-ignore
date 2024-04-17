@@ -15,6 +15,6 @@ public class InductionFurnaceMenu extends CrafterMachineMenu {
 						/ 2 + DEFAULT_PLAYER_INVENTORY_X,
 				InductionFurnaceScreen.TEXTURE_HEIGHT - BaseMachineScreen.TEXTURE_INVENTORY_HEIGHT
 						+ BaseMachineScreen.INVETORY_PADDING_Y,
-				49, 45, 139, 45);
+				31, 27, 121, 27);
 	}
 }

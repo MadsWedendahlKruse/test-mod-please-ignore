@@ -3,6 +3,8 @@ package mwk.testmod.client.gui.screen.base;
 import mwk.testmod.TestMod;
 import mwk.testmod.client.gui.widgets.ProgressIcon;
 import mwk.testmod.client.gui.widgets.panels.EnergyPanel;
+import mwk.testmod.client.gui.widgets.panels.PanelManager;
+import mwk.testmod.client.gui.widgets.panels.UpgradePanel;
 import mwk.testmod.common.block.inventory.base.CrafterMachineMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
@@ -35,12 +37,12 @@ public abstract class CrafterMachineScreen<T extends CrafterMachineMenu>
 
     @Override
     protected void addMachinePanels() {
-        panelManager.addPanel(new EnergyPanel(menu));
-        panelManager.addPanel(new EnergyPanel(menu));
-        panelManager.addPanel(new EnergyPanel(menu));
-        panelManager.addPanel(new EnergyPanel(menu));
-        panelManager.addPanel(new EnergyPanel(menu));
-        panelManager.addPanel(new EnergyPanel(menu));
+        panelManager.addPanel(new EnergyPanel(menu), PanelManager.Side.LEFT);
+        int upgradeRows = (int) Math.ceil((float) menu.upgradeSlots / 3);
+        int upgradeColumns = (int) Math.ceil((float) menu.upgradeSlots / upgradeRows);
+        panelManager.addPanel(new UpgradePanel(menu, upgradeRows, upgradeColumns),
+                PanelManager.Side.LEFT);
+        // panelManager.addPanel(new UpgradePanel(menu), PanelManager.Side.RIGHT);
     }
 
     @Override

@@ -27,7 +27,7 @@ public class CrusherBlockEntity extends ParallelCrafterMachineBlockEntity<Crushi
 
     public CrusherBlockEntity(BlockPos pos, BlockState state) {
         super(TestModBlockEntities.CRUSHER_ENTITY_TYPE.get(), pos, state,
-                TestModConfig.ENERGY_CAPACITY_DEFAULT.get(), 20, 9, 20,
+                TestModConfig.ENERGY_CAPACITY_DEFAULT.get(), 20, 9, 6, 20,
                 TestModRecipeTypes.CRUSHING.get(), TestModSounds.MULTIBLOCK_CRUSHER.get(),
                 TestModSounds.MULTIBLOCK_CRUSHER_DURATION);
         rotorAnimation = new PerpetualAnimationFloat(ROTOR_SPEED);
@@ -68,7 +68,7 @@ public class CrusherBlockEntity extends ParallelCrafterMachineBlockEntity<Crushi
     @Override
     public IItemHandler getItemHandler(Direction direction) {
         if (isFormed() && direction == null) {
-            return inventory;
+            return super.getItemHandler(direction);
         }
         return null;
     }

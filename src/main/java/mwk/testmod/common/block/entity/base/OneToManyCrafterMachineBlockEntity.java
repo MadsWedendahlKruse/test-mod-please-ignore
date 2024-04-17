@@ -16,9 +16,10 @@ public abstract class OneToManyCrafterMachineBlockEntity<T extends SeparationRec
 
     protected OneToManyCrafterMachineBlockEntity(BlockEntityType<?> type, BlockPos pos,
             BlockState state, int maxEnergy, int energyPerTick, int inputSlots, int outputSlots,
-            int maxProgress, RecipeType<T> recipeType, SoundEvent sound, int soundDuration) {
-        super(type, pos, state, maxEnergy, energyPerTick, inputSlots, outputSlots, maxProgress,
-                recipeType, sound, soundDuration);
+            int upgradeSlots, int maxProgress, RecipeType<T> recipeType, SoundEvent sound,
+            int soundDuration) {
+        super(type, pos, state, maxEnergy, energyPerTick, inputSlots, outputSlots, upgradeSlots,
+                maxProgress, recipeType, sound, soundDuration);
     }
 
     @Override

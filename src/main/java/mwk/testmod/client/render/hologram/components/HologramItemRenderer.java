@@ -7,6 +7,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintBlockInfo;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintState;
+import mwk.testmod.common.util.ColorUtils;
 import mwk.testmod.datagen.TestModLanguageProvider;
 import mwk.testmod.init.registries.TestModItems;
 import net.minecraft.client.renderer.LightTexture;
@@ -54,7 +55,7 @@ public class HologramItemRenderer {
 
     private void renderItemName(PoseStack poseStack, ItemStack itemStack,
             HologramTextRenderer textRenderer) {
-        renderItemName(poseStack, itemStack, textRenderer, HologramTextRenderer.TEXT_WHITE);
+        renderItemName(poseStack, itemStack, textRenderer, ColorUtils.TEXT_WHITE);
     }
 
     public void renderItemStack(PoseStack poseStack, ItemStack itemStack, float x, float y, float z,
@@ -145,18 +146,22 @@ public class HologramItemRenderer {
             height += Math.max((missingBlockStacks.size() + incorrectBlockStacks.size() + 1)
                     * LIST_ELEMENT_HEIGHT - 1, 0);
             if (!missingBlockStacks.isEmpty()) {
-                height += renderItemStackList(poseStack, missingBlockStacks, 0, height, 0,
-                        HOLOGRAM_COLOR_WHITE, textRenderer, ItemStackTextRenderType.COUNT_AND_NAME,
-                        HologramTextRenderer.TEXT_WHITE, Component.translatable(
-                                TestModLanguageProvider.KEY_INFO_CONTROLLER_MISSINGS),
-                        true);
+                height +=
+                        renderItemStackList(poseStack, missingBlockStacks, 0, height, 0,
+                                HOLOGRAM_COLOR_WHITE, textRenderer,
+                                ItemStackTextRenderType.COUNT_AND_NAME, ColorUtils.TEXT_WHITE,
+                                Component.translatable(
+                                        TestModLanguageProvider.KEY_INFO_CONTROLLER_MISSINGS),
+                                true);
             }
             if (!incorrectBlockStacks.isEmpty()) {
-                height += renderItemStackList(poseStack, incorrectBlockStacks, 0, height, 0,
-                        HOLOGRAM_COLOR_WHITE, textRenderer, ItemStackTextRenderType.COUNT_AND_NAME,
-                        HologramTextRenderer.TEXT_RED, Component.translatable(
-                                TestModLanguageProvider.KEY_INFO_CONTROLLER_INCORRECTS),
-                        true);
+                height +=
+                        renderItemStackList(poseStack, incorrectBlockStacks, 0, height, 0,
+                                HOLOGRAM_COLOR_WHITE, textRenderer,
+                                ItemStackTextRenderType.COUNT_AND_NAME, ColorUtils.TEXT_RED,
+                                Component.translatable(
+                                        TestModLanguageProvider.KEY_INFO_CONTROLLER_INCORRECTS),
+                                true);
             }
         } else {
             textRenderer.renderTextList(poseStack, new Component[] {
@@ -176,7 +181,7 @@ public class HologramItemRenderer {
             // if it's worth the hassle. On the other hand it works *shrug*
             renderItemStack(poseStack, new ItemStack(TestModItems.WRENCH_ITEM.get()), 0.5F, -0.65F,
                     0.25F, HOLOGRAM_COLOR_WHITE, 1.0F, 0.5F, ItemDisplayContext.GUI, null,
-                    ItemStackTextRenderType.NONE, HologramTextRenderer.TEXT_WHITE, true);
+                    ItemStackTextRenderType.NONE, ColorUtils.TEXT_WHITE, true);
         }
         poseStack.popPose();
     }

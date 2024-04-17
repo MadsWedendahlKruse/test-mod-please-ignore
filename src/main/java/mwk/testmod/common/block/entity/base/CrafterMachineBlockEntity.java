@@ -2,12 +2,13 @@ package mwk.testmod.common.block.entity.base;
 
 import mwk.testmod.common.block.interfaces.ITickable;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
+import mwk.testmod.common.item.upgrades.SpeedUpgradeItem;
+import mwk.testmod.common.item.upgrades.base.UpgradeItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
@@ -19,7 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * A block entity that can craft items using recipes.
  */
 public abstract class CrafterMachineBlockEntity<T extends Recipe<Container>>
-        extends BaseMachineBlockEntity implements ITickable, MenuProvider {
+        extends BaseMachineBlockEntity implements ITickable {
 
     public static final String NBT_TAG_PROGRESS = "progress";
 
@@ -27,20 +28,29 @@ public abstract class CrafterMachineBlockEntity<T extends Recipe<Container>>
 
     private int progress;
     private int maxProgress;
+    // Storing the progress per tick as a float makes applying upgrades easier
+    private float progressPerTick;
     private int energyPerTick;
+    // Base values before upgrades
+    public final int maxProgressBase;
+    public final int energyPerTickBase;
 
     private final SoundEvent sound;
     private final int soundDuration; // in ticks
     private long soundStart; // in ticks
 
     protected CrafterMachineBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
-            int maxEnergy, int energyPerTick, int inputSlots, int outputSlots, int maxProgress,
-            RecipeType<T> recipeType, SoundEvent sound, int soundDuration) {
-        super(type, pos, state, maxEnergy, EnergyType.CONSUMER, inputSlots, outputSlots);
+            int maxEnergy, int energyPerTick, int inputSlots, int outputSlots, int upgradeSlots,
+            int maxProgress, RecipeType<T> recipeType, SoundEvent sound, int soundDuration) {
+        super(type, pos, state, maxEnergy, EnergyType.CONSUMER, inputSlots, outputSlots,
+                upgradeSlots);
         this.recipeType = recipeType;
         this.progress = 0;
         this.maxProgress = maxProgress;
+        this.maxProgressBase = maxProgress;
+        this.progressPerTick = 1.0F;
         this.energyPerTick = energyPerTick;
+        this.energyPerTickBase = energyPerTick;
         this.sound = sound;
         this.soundDuration = soundDuration;
         this.soundStart = 0;
@@ -122,7 +132,8 @@ public abstract class CrafterMachineBlockEntity<T extends Recipe<Container>>
     }
 
     public void setWorking(boolean working) {
-        // TODO: Right now this only works if the block entity is attached to a multiblock
+        // TODO: Right now this only works if the block entity is attached to a
+        // multiblock
         // controller. This should be changed to work with any block entity?
         if (level != null && getBlockState().getBlock() instanceof MultiBlockControllerBlock) {
             level.setBlockAndUpdate(worldPosition,
@@ -139,5 +150,29 @@ public abstract class CrafterMachineBlockEntity<T extends Recipe<Container>>
             return getBlockState().getValue(MultiBlockControllerBlock.WORKING);
         }
         return false;
+    }
+
+    @Override
+    public boolean isUpgradeValid(UpgradeItem upgrade) {
+        if (upgrade instanceof SpeedUpgradeItem) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected void resetUpgrades() {
+        maxProgress = maxProgressBase;
+        progressPerTick = 1.0F;
+        energyPerTick = energyPerTickBase;
+    }
+
+    @Override
+    protected void installUpgrade(UpgradeItem upgrade) {
+        if (upgrade instanceof SpeedUpgradeItem speedUpgrade) {
+            progressPerTick += speedUpgrade.getSpeedMultiplier();
+            maxProgress = (int) (maxProgressBase / progressPerTick);
+            energyPerTick += energyPerTickBase * speedUpgrade.getEnergyMultiplier();
+        }
     }
 }

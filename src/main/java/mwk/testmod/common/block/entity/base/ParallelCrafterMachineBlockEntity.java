@@ -22,10 +22,10 @@ public abstract class ParallelCrafterMachineBlockEntity<T extends Recipe<Contain
         extends CrafterMachineBlockEntity<T> {
 
     protected ParallelCrafterMachineBlockEntity(BlockEntityType<?> type, BlockPos pos,
-            BlockState state, int maxEnergy, int energyPerTick, int itemSlots, int maxProgress,
-            RecipeType<T> recipeType, SoundEvent sound, int soundDuration) {
-        super(type, pos, state, maxEnergy, energyPerTick, itemSlots, itemSlots, maxProgress,
-                recipeType, sound, soundDuration);
+            BlockState state, int maxEnergy, int energyPerTick, int itemSlots, int upgradeSlots,
+            int maxProgress, RecipeType<T> recipeType, SoundEvent sound, int soundDuration) {
+        super(type, pos, state, maxEnergy, energyPerTick, itemSlots, itemSlots, upgradeSlots,
+                maxProgress, recipeType, sound, soundDuration);
     }
 
     public final void tick() {

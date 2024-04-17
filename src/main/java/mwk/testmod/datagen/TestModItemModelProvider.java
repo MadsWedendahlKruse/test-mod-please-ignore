@@ -24,5 +24,7 @@ public class TestModItemModelProvider extends ItemModelProvider {
 
         basicItem(TestModItems.STEEL_INGOT.get());
         basicItem(TestModItems.TITANIUM_INGOT.get());
+
+        basicItem(TestModItems.SPEED_UPGRADE.get());
     }
 }

@@ -7,13 +7,12 @@ import net.minecraft.client.gui.GuiGraphics;
 
 public class PanelManager {
 
-    private enum Side {
+    public enum Side {
         LEFT, RIGHT
     }
 
     private Map<Side, ArrayList<MachinePanel>> panels =
             new HashMap<Side, ArrayList<MachinePanel>>();
-    private Map<Side, MachinePanel> activePanels = new HashMap<Side, MachinePanel>();
 
     private int menuLeft;
     private int menuTop;
@@ -38,10 +37,15 @@ public class PanelManager {
     public void addPanel(MachinePanel panel) {
         // TODO: Find a better way to decide which side to put the panel on
         if (panels.get(Side.LEFT).size() <= panels.get(Side.RIGHT).size()) {
-            panels.get(Side.LEFT).add(panel);
+            addPanel(panel, Side.LEFT);
         } else {
-            panels.get(Side.RIGHT).add(panel);
+            addPanel(panel, Side.RIGHT);
         }
+    }
+
+    public void addPanel(MachinePanel panel, Side side) {
+        panels.get(side).add(panel);
+        panel.setScreenPosition(menuLeft, menuTop);
     }
 
     public int getX(Side side) {
@@ -55,17 +59,7 @@ public class PanelManager {
     public void renderSide(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick,
             Side side) {
         int y = menuTop + topOffset;
-        ArrayList<MachinePanel> panels = this.panels.get(side);
-        if (activePanels.get(side) != null && !activePanels.get(side).isOpen()) {
-            activePanels.put(side, null);
-        }
-        for (MachinePanel panel : panels) {
-            if (panel.isOpen() && activePanels.get(side) != panel) {
-                if (activePanels.get(side) != null) {
-                    activePanels.get(side).close();
-                }
-                activePanels.put(side, panel);
-            }
+        for (MachinePanel panel : panels.get(side)) {
             panel.setPosition(getX(side), y, side == Side.LEFT);
             panel.render(guiGraphics, mouseX, mouseY, partialTick);
             y += panel.getHeight();
@@ -80,8 +74,30 @@ public class PanelManager {
 
     public void mouseClicked(double mouseX, double mouseY, int button) {
         for (Side side : Side.values()) {
-            for (MachinePanel panel : panels.get(side)) {
-                panel.mouseClicked(mouseX, mouseY, button);
+            int clickedPanelIndex = -1;
+            // Calculate the height of all the panels that are open
+            int openPanelsHeight = 0;
+            ArrayList<MachinePanel> panelsSide = this.panels.get(side);
+            for (int i = 0; i < panelsSide.size(); i++) {
+                MachinePanel panel = panelsSide.get(i);
+                boolean panelClicked = panel.mouseClicked(mouseX, mouseY, button);
+                if (panel.isOpen()) {
+                    openPanelsHeight += panel.getHeight();
+                    if (panelClicked) {
+                        clickedPanelIndex = i;
+                    }
+                }
+            }
+            if (clickedPanelIndex == -1) {
+                continue;
+            }
+            // Close the other panels until there is enough space for the clicked panel
+            for (int i = 0; i < panelsSide.size() && openPanelsHeight > menuHeight; i++) {
+                MachinePanel panel = panelsSide.get(i);
+                if (i != clickedPanelIndex && panel.isOpen()) {
+                    panel.close();
+                    openPanelsHeight -= panel.getHeight();
+                }
             }
         }
     }

@@ -23,7 +23,7 @@ public class SeparatorBlockEntity extends OneToManyCrafterMachineBlockEntity<Sep
 
     public SeparatorBlockEntity(BlockPos pos, BlockState state) {
         super(TestModBlockEntities.SEPARATOR_ENTITY_TYPE.get(), pos, state,
-                TestModConfig.ENERGY_CAPACITY_DEFAULT.get(), 20, 1, 3, 20,
+                TestModConfig.ENERGY_CAPACITY_DEFAULT.get(), 20, 1, 3, 6, 20,
                 TestModRecipeTypes.SEPARATION.get(), TestModSounds.MULTIBLOCK_CRUSHER.get(),
                 TestModSounds.MULTIBLOCK_CRUSHER_DURATION);
         spinnerAnimation = new PerpetualAnimationFloat(SPINNER_SPEED);

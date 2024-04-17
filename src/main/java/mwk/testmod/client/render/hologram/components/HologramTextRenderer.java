@@ -2,6 +2,7 @@ package mwk.testmod.client.render.hologram.components;
 
 import org.joml.Quaternionf;
 import com.mojang.blaze3d.vertex.PoseStack;
+import mwk.testmod.common.util.ColorUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Font.DisplayMode;
 import net.minecraft.client.renderer.LightTexture;
@@ -15,8 +16,7 @@ public class HologramTextRenderer {
     // Text is for some reason rendered upside down by default
     private static final Quaternionf HOLOGRAM_TEXT_ROTATION =
             new Quaternionf().rotationZ((float) Math.PI);
-    public static final int TEXT_WHITE = getTextColor(255, 255, 255);
-    public static final int TEXT_RED = getTextColor(255, 0, 0);
+
 
     private Font font;
     private BufferSource bufferSource;
@@ -38,11 +38,11 @@ public class HologramTextRenderer {
     }
 
     public void renderText(PoseStack poseStack, Component component, float x, float y, float z) {
-        renderText(poseStack, component, x, y, z, TEXT_WHITE);
+        renderText(poseStack, component, x, y, z, ColorUtils.TEXT_WHITE);
     }
 
     public void renderText(PoseStack poseStack, Component component, float x, float y) {
-        renderText(poseStack, component, x, y, HOLOGRAM_TEXT_Z_OFFSET, TEXT_WHITE);
+        renderText(poseStack, component, x, y, HOLOGRAM_TEXT_Z_OFFSET, ColorUtils.TEXT_WHITE);
     }
 
     public void renderTextList(PoseStack poseStack, Component[] components, float x, float y,
@@ -50,9 +50,5 @@ public class HologramTextRenderer {
         for (int i = 0; i < components.length; i++) {
             renderText(poseStack, components[i], x, y - (i * spacing), z);
         }
-    }
-
-    private static int getTextColor(int r, int g, int b) {
-        return (r << 16) + (g << 8) + b;
     }
 }

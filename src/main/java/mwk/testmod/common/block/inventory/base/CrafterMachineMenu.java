@@ -1,5 +1,6 @@
 package mwk.testmod.common.block.inventory.base;
 
+import mwk.testmod.TestMod;
 import mwk.testmod.common.block.entity.base.CrafterMachineBlockEntity;
 import mwk.testmod.common.util.inventory.CrafterContainerData;
 import net.minecraft.core.BlockPos;
@@ -11,16 +12,23 @@ public class CrafterMachineMenu extends BaseMachineMenu {
     private int progress;
     private int maxProgress;
     private int energyPerTick;
+    public final int maxProgressBase;
+    public final int energyPerTickBase;
 
     protected CrafterMachineMenu(MenuType<?> menuType, int containerId, Player player, BlockPos pos,
-            int playerInventoryX, int playerInventoryY, int inputSlotCenterX, int inputSlotCenterY,
-            int outputSlotCenterX, int outputSlotCenterY) {
-        super(menuType, containerId, player, pos, playerInventoryX, playerInventoryY,
-                inputSlotCenterX, inputSlotCenterY, outputSlotCenterX, outputSlotCenterY);
+            int playerInventoryX, int playerInventoryY, int inputSlotsX, int inputSlotsY,
+            int outputSlotsX, int outputSlotsY) {
+        super(menuType, containerId, player, pos, playerInventoryX, playerInventoryY, inputSlotsX,
+                inputSlotsY, outputSlotsX, outputSlotsY);
         if (player.level().getBlockEntity(pos) instanceof CrafterMachineBlockEntity blockEntity) {
             this.progress = blockEntity.getProgress();
             this.maxProgress = blockEntity.getMaxProgress();
+            this.maxProgressBase = blockEntity.maxProgressBase;
             this.energyPerTick = blockEntity.getEnergyPerTick();
+            this.energyPerTickBase = blockEntity.energyPerTickBase;
+            TestMod.LOGGER.debug(
+                    "maxProgress = {}, maxProgressBase = {}, energyPerTick = {}, energyPerTickBase = {}",
+                    maxProgress, maxProgressBase, energyPerTick, energyPerTickBase);
             addDataSlots(new CrafterContainerData(blockEntity, this));
         } else {
             // TODO: Not sure what to do here
