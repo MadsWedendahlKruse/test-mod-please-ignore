@@ -15,6 +15,6 @@ public class CrusherScreen extends ParallelCrafterMachineScreen<CrusherMenu> {
     public CrusherScreen(CrusherMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title,
                 new ResourceLocation(TestMod.MODID, "textures/gui/container/3x3_parallel.png"), 7,
-                27, 188, 193, "dust", 95, 46, 2, 93, 27, 40);
+                27, 188, 193, "crushing", 95, 46, 2, 93, 27, 40);
     }
 }
