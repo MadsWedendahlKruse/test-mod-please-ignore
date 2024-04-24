@@ -1,6 +1,7 @@
 package mwk.testmod.client.gui.widgets.panels;
 
 import mwk.testmod.TestMod;
+import mwk.testmod.client.render.RenderUtils;
 import mwk.testmod.common.block.inventory.base.BaseMachineMenu;
 import mwk.testmod.datagen.TestModLanguageProvider;
 import net.minecraft.client.gui.GuiGraphics;
@@ -11,11 +12,9 @@ public class UpgradePanel extends MachinePanel {
 
     public static final ResourceLocation ICON =
             new ResourceLocation(TestMod.MODID, "widget/icon_upgrade");
-    public static final ResourceLocation ITEM_SLOT =
-            new ResourceLocation(TestMod.MODID, "widget/item_slot");
+
     public static final float[] COLOR = new float[] {0.5F, 0.75F, 0.5F, 1};
 
-    public static final int ITEM_SLOT_SIZE = 18;
     public static final int PADDING = 5;
 
     private final BaseMachineMenu menu;
@@ -23,8 +22,8 @@ public class UpgradePanel extends MachinePanel {
     private final int upgradeColumns;
 
     public UpgradePanel(BaseMachineMenu menu, int upgradeRows, int upgradeColumns) {
-        super(upgradeColumns * ITEM_SLOT_SIZE + 2 * PADDING,
-                upgradeRows * ITEM_SLOT_SIZE + 2 * PADDING,
+        super(upgradeColumns * RenderUtils.ITEM_SLOT_SIZE + 2 * PADDING,
+                upgradeRows * RenderUtils.ITEM_SLOT_SIZE + 2 * PADDING,
                 Component.translatable(TestModLanguageProvider.KEY_WIDGET_PANEL_UPGRADE), COLOR,
                 ICON);
         this.menu = menu;
@@ -34,13 +33,12 @@ public class UpgradePanel extends MachinePanel {
 
     @Override
     protected void renderOpen(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // -1 to account for the border of the item slot sprite
-        int startX = getOpenLeft() + PADDING - 1;
-        int startY = getOpenTop() + PADDING - 1;
+        int startX = getOpenLeft() + PADDING;
+        int startY = getOpenTop() + PADDING;
         for (int i = 0; i < menu.upgradeSlots; i++) {
-            int x = startX + (i % upgradeColumns) * ITEM_SLOT_SIZE;
-            int y = startY + (i / upgradeColumns) * ITEM_SLOT_SIZE;
-            guiGraphics.blitSprite(ITEM_SLOT, x, y, ITEM_SLOT_SIZE, ITEM_SLOT_SIZE);
+            int x = startX + (i % upgradeColumns) * RenderUtils.ITEM_SLOT_SIZE;
+            int y = startY + (i / upgradeColumns) * RenderUtils.ITEM_SLOT_SIZE;
+            RenderUtils.renderItemSlot(guiGraphics, x, y);
         }
     }
 

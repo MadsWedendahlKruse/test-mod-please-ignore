@@ -10,6 +10,7 @@
     "testmod:induction_furnace",
     "testmod:super_assembler",
     "testmod:crusher",
-    "testmod:separator"
+    "testmod:separator",
+    "testmod:teleporter"
   ]
 }

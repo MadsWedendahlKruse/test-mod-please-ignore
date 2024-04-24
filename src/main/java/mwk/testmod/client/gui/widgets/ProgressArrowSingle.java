@@ -11,8 +11,11 @@ public class ProgressArrowSingle extends ProgressArrow {
             new WidgetSprites(new ResourceLocation(TestMod.MODID, "container/progress/arrow_18"),
                     new ResourceLocation(TestMod.MODID, "container/progress/arrow_18_background"));
 
+    public static final int WIDTH = 18;
+    public static final int HEIGHT = 10;
+
     public ProgressArrowSingle(CrafterMachineMenu menu, int x, int y) {
-        super(PROGRESS_ARROW_18_SPRITES, menu, x, y, 18, 10);
+        super(PROGRESS_ARROW_18_SPRITES, menu, x, y, WIDTH, HEIGHT);
     }
 
 }

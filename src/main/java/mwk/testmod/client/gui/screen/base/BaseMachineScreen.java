@@ -1,8 +1,10 @@
 package mwk.testmod.client.gui.screen.base;
 
+import java.util.Collection;
 import mwk.testmod.client.gui.widgets.panels.PanelManager;
 import mwk.testmod.common.block.inventory.base.BaseMachineMenu;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -27,8 +29,8 @@ public abstract class BaseMachineScreen<T extends BaseMachineMenu> extends Energ
         this.texture = texture;
         this.imageWidth = imageWidth;
         this.imageHeight = imageHeight;
-        this.inventoryLabelX = menu.getPlayerInventoryX();
-        this.inventoryLabelY = menu.getPlayerInventoryY() - INVENTORY_LABEL_Y_OFFSET;
+        this.inventoryLabelX = menu.playerInventoryX;
+        this.inventoryLabelY = menu.playerInventoryY - INVENTORY_LABEL_Y_OFFSET;
     }
 
     protected abstract void addMachinePanels();
@@ -69,5 +71,21 @@ public abstract class BaseMachineScreen<T extends BaseMachineMenu> extends Energ
             panelManager.mouseClicked(pMouseX, pMouseY, pButton);
         }
         return super.mouseClicked(pMouseX, pMouseY, pButton);
+    }
+
+    @Override
+    protected boolean hasClickedOutside(double pMouseX, double pMouseY, int pGuiLeft, int pGuiTop,
+            int pMouseButton) {
+        if (panelManager.isMouseOver(pMouseX, pMouseY)) {
+            return false;
+        }
+        return super.hasClickedOutside(pMouseX, pMouseY, pGuiLeft, pGuiTop, pMouseButton);
+    }
+
+    /**
+     * @return A collection of areas that JEI should not render over.
+     */
+    public Collection<Rect2i> getGuiExtraAreas() {
+        return panelManager.getGuiExtraAreas();
     }
 }

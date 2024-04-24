@@ -20,18 +20,18 @@ public abstract class PerpetualAnimation<T> extends Animation<T> {
     }
 
     @Override
-    public T getValue() {
+    public final T getValue() {
         return multiply(rate, elapsedTime);
     }
 
     @Override
-    protected T add(T t1, T t2) {
+    protected final T add(T t1, T t2) {
         // Not used
         return null;
     }
 
     @Override
-    protected T subtract(T t1, T t2) {
+    protected final T subtract(T t1, T t2) {
         // Not used
         return null;
     }

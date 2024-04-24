@@ -5,6 +5,7 @@ import mwk.testmod.TestMod;
 import mwk.testmod.common.block.entity.CrusherBlockEntity;
 import mwk.testmod.common.block.entity.InductionFurnaceBlockEntity;
 import mwk.testmod.common.block.entity.SeparatorBlockEntity;
+import mwk.testmod.common.block.entity.TeleporterBlockEntity;
 import mwk.testmod.common.block.multiblock.HologramBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockEnergyPortBlock;
@@ -41,6 +42,7 @@ public class TestModBlocks {
 	public static final String SUPER_ASSEMBLER_ID = "super_assembler";
 	public static final String CRUSHER_ID = "crusher";
 	public static final String SEPARATOR_ID = "separator";
+	public static final String TELEPORTER_ID = "teleporter";
 
 	public static final String HOLOGRAM_ID = "hologram";
 
@@ -88,6 +90,9 @@ public class TestModBlocks {
 	public static final DeferredBlock<MultiBlockControllerBlock> SEPARATOR = registerBlockWithItem(
 			SEPARATOR_ID,
 			() -> new MultiBlockControllerBlock(getMachineProperties(), SeparatorBlockEntity::new));
+	public static final DeferredBlock<MultiBlockControllerBlock> TELEPORTER = registerBlockWithItem(
+			TELEPORTER_ID, () -> new MultiBlockControllerBlock(getMachineProperties(),
+					TeleporterBlockEntity::new));
 
 	public static final DeferredBlock<HologramBlock> HOLOGRAM =
 			BLOCKS.register(HOLOGRAM_ID, () -> new HologramBlock());

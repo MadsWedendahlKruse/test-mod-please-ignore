@@ -20,15 +20,15 @@ public class EnergyBar extends AbstractWidget {
 
 	private static final NumberFormat NUMBER_FORMAT = NumberFormat.getNumberInstance(Locale.US);
 
-	private static final ResourceLocation SPRITE_EMPTY =
+	public static final ResourceLocation SPRITE_EMPTY =
 			new ResourceLocation(TestMod.MODID, "widget/energy_bar_empty");
-	private static final ResourceLocation SPRITE_FULL =
+	public static final ResourceLocation SPRITE_FULL =
 			new ResourceLocation(TestMod.MODID, "widget/energy_bar_full");
 
 	public static final int WIDTH = 12;
 	public static final int HEIGHT = 52;
 
-	private EnergyMenu menu;
+	private final EnergyMenu menu;
 	private Font font;
 
 	public EnergyBar(EnergyMenu menu, int x, int y) {

@@ -25,10 +25,7 @@ public abstract class CrafterMachineScreen<T extends CrafterMachineMenu>
             int imageHeight, String iconName, int progressIconX, int progressIconY) {
         super(menu, playerInventory, title, texture, energyBarX, energyBarY, imageWidth,
                 imageHeight);
-        this.progressIconSprites = new WidgetSprites(
-                new ResourceLocation(TestMod.MODID, "container/progress/" + iconName),
-                new ResourceLocation(TestMod.MODID,
-                        "container/progress/" + iconName + "_background"));
+        this.progressIconSprites = ProgressIcon.createSprites(iconName);
         this.progressIconX = progressIconX;
         this.progressIconY = progressIconY;
     }
@@ -41,8 +38,7 @@ public abstract class CrafterMachineScreen<T extends CrafterMachineMenu>
         int upgradeRows = (int) Math.ceil((float) menu.upgradeSlots / 3);
         int upgradeColumns = (int) Math.ceil((float) menu.upgradeSlots / upgradeRows);
         panelManager.addPanel(new UpgradePanel(menu, upgradeRows, upgradeColumns),
-                PanelManager.Side.LEFT);
-        // panelManager.addPanel(new UpgradePanel(menu), PanelManager.Side.RIGHT);
+                PanelManager.Side.RIGHT);
     }
 
     @Override

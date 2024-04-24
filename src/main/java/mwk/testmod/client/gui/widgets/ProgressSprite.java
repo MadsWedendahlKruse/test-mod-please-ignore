@@ -32,9 +32,7 @@ public class ProgressSprite {
         this.backgroundOffsetY = backgroundOffsetY;
     }
 
-    public void render(GuiGraphics guiGraphics) {
-        int progress = menu.getProgress();
-        int maxProgress = menu.getMaxProgress();
+    public void render(GuiGraphics guiGraphics, int progress, int maxProgress) {
         ResourceLocation background = sprites.get(true, true);
         if (background != null) {
             guiGraphics.blitSprite(background, width, height, 0, 0, x + backgroundOffsetX,
@@ -60,5 +58,17 @@ public class ProgressSprite {
                         progressSize);
             }
         }
+    }
+
+    public void render(GuiGraphics guiGraphics) {
+        render(guiGraphics, menu.getProgress(), menu.getMaxProgress());
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }

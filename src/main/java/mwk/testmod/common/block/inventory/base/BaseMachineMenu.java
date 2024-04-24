@@ -1,7 +1,7 @@
 package mwk.testmod.common.block.inventory.base;
 
-import mwk.testmod.TestMod;
 import mwk.testmod.common.block.entity.base.BaseMachineBlockEntity;
+import mwk.testmod.common.util.inventory.ItemSlotGridHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -33,12 +33,12 @@ public class BaseMachineMenu extends EnergyMenu {
     public final int machineInventorySize;
     private boolean upgradesVisible = true;
 
-    private final int playerInventoryX;
-    private final int playerInventoryY;
-    private final int inputSlotsX;
-    private final int inputSlotsY;
-    private final int outputSlotsX;
-    private final int outputSlotsY;
+    public final int playerInventoryX;
+    public final int playerInventoryY;
+    public final int inputSlotsX;
+    public final int inputSlotsY;
+    public final int outputSlotsX;
+    public final int outputSlotsY;
     private int upgradeSlotsX;
     private int upgradeSlotsY;
 
@@ -71,63 +71,36 @@ public class BaseMachineMenu extends EnergyMenu {
         }
     }
 
-    protected final void addItemHandlerSlots(IItemHandler itemHandler, int startIndex, int slots,
-            int slotsX, int slotsY, int dx, int dy, int rows, int columns,
+    protected final void addItemHandlerSlots(IItemHandler itemHandler, int slots, int slotsX,
+            int slotsY, ItemSlotGridHelper slotGridHelper,
             SlotVisibilityCondition visibilityCondition) {
-        int startX = slotsX;
-        int startY = slotsY;
-        int x = startX;
-        int y = startY;
-        int index = startIndex;
-        for (int i = 0; i < columns; i++) {
-            for (int j = 0; j < rows; j++) {
-                if (visibilityCondition != null) {
-                    addSlot(new SlotItemHandler(itemHandler, index, x, y) {
-                        @Override
-                        public boolean isActive() {
-                            return visibilityCondition.isVisible();
-                        }
-                    });
-                } else {
-                    addSlot(new SlotItemHandler(itemHandler, index, x, y));
+        for (int i = 0; i < slots; i++) {
+            ItemSlotGridHelper.SlotPosition slotPosition =
+                    slotGridHelper.getSlotPosition(slotsX, slotsY, i);
+            addSlot(new SlotItemHandler(itemHandler, i, slotPosition.x(), slotPosition.y()) {
+                @Override
+                public boolean isActive() {
+                    return visibilityCondition == null || visibilityCondition.isVisible();
                 }
-                index++;
-                if (index - startIndex >= slots) {
-                    return;
-                }
-                y += dy;
-            }
-            x += dx;
-            y = startY;
+            });
         }
     }
 
-    protected final void addItemHandlerSlots(IItemHandler itemHandler, int startIndex, int slots,
-            int slotsX, int slotsY, int dx, int dy, int rows, int columns) {
-        addItemHandlerSlots(itemHandler, startIndex, slots, slotsX, slotsY, dx, dy, rows, columns,
-                null);
+    protected final void addItemHandlerSlots(IItemHandler itemHandler, int slots, int slotsX,
+            int slotsY, ItemSlotGridHelper slotGridHelper) {
+        addItemHandlerSlots(itemHandler, slots, slotsX, slotsY, slotGridHelper, null);
     }
 
     protected void addInputOutputSlots() {
-        // Input slots
-        int inputColumns = (int) Math.ceil((float) inputSlots / 3);
-        int inputRows = (int) Math.ceil((float) inputSlots / inputColumns);
-        addItemHandlerSlots(blockEntity.getInputHandler(null, true), 0, inputSlots, inputSlotsX,
-                inputSlotsY, SLOT_DX, SLOT_DY, inputRows, inputColumns);
-        // Output slots
-        int outputColumns = (int) Math.ceil((float) outputSlots / 3);
-        int outputRows = (int) Math.ceil((float) outputSlots / outputColumns);
-        addItemHandlerSlots(blockEntity.getOutputHandler(null), inputSlots, outputSlots,
-                outputSlotsX, outputSlotsY, SLOT_DX, SLOT_DY, outputRows, outputColumns);
+        addItemHandlerSlots(blockEntity.getInputHandler(null, true), inputSlots, inputSlotsX,
+                inputSlotsY, ItemSlotGridHelper.ROWS_3);
+        addItemHandlerSlots(blockEntity.getOutputHandler(null), outputSlots, outputSlotsX,
+                outputSlotsY, ItemSlotGridHelper.ROWS_3);
     }
 
     protected void addUpgradeSlots(int upgradeX, int upgradeY) {
-        // Upgrade slots
-        int upgradeRows = (int) Math.ceil((float) upgradeSlots / 3);
-        int upgradeColumns = (int) Math.ceil((float) upgradeSlots / upgradeRows);
-        addItemHandlerSlots(blockEntity.getUpgradeHandler(null), inputSlots + outputSlots,
-                upgradeSlots, upgradeX, upgradeY, SLOT_DX, SLOT_DY, upgradeRows, upgradeColumns,
-                () -> upgradesVisible);
+        addItemHandlerSlots(blockEntity.getUpgradeHandler(null), upgradeSlots, upgradeX, upgradeY,
+                ItemSlotGridHelper.ROWS_2, () -> upgradesVisible);
     }
 
     private int addSlotRange(Container playerInventory, int index, int x, int y, int slots,
@@ -156,14 +129,6 @@ public class BaseMachineMenu extends EnergyMenu {
                 18);
         // Player inventory
         addSlotBox(playerInventory, index, playerInventoryX, playerInventoryY, 9, 18, 3, 18);
-    }
-
-    public int getPlayerInventoryX() {
-        return playerInventoryX;
-    }
-
-    public int getPlayerInventoryY() {
-        return playerInventoryY;
     }
 
     // CREDIT GOES TO: diesieben07 | https://github.com/diesieben07/SevenCommons

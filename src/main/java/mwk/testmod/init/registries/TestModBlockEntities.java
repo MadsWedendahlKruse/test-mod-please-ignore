@@ -4,6 +4,7 @@ import mwk.testmod.TestMod;
 import mwk.testmod.common.block.entity.CrusherBlockEntity;
 import mwk.testmod.common.block.entity.InductionFurnaceBlockEntity;
 import mwk.testmod.common.block.entity.SeparatorBlockEntity;
+import mwk.testmod.common.block.entity.TeleporterBlockEntity;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import mwk.testmod.common.block.multiblock.entity.MultiBlockEnergyPortBlockEntity;
 import mwk.testmod.common.block.multiblock.entity.MultiBlockPartBlockEntity;
@@ -61,6 +62,10 @@ public class TestModBlockEntities {
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SeparatorBlockEntity>> SEPARATOR_ENTITY_TYPE =
 			BLOCK_ENTITY_TYPES.register(TestModBlocks.SEPARATOR_ID, () -> BlockEntityType.Builder
 					.of(SeparatorBlockEntity::new, TestModBlocks.SEPARATOR.get()).build(null));
+
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TeleporterBlockEntity>> TELEPORTER_ENTITY_TYPE =
+			BLOCK_ENTITY_TYPES.register(TestModBlocks.TELEPORTER_ID, () -> BlockEntityType.Builder
+					.of(TeleporterBlockEntity::new, TestModBlocks.TELEPORTER.get()).build(null));
 
 	public static void register(IEventBus modEventBus) {
 		BLOCK_ENTITY_TYPES.register(modEventBus);

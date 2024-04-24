@@ -1,9 +1,11 @@
 package mwk.testmod.client.gui.widgets.panels;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.Rect2i;
 
 public class PanelManager {
 
@@ -72,6 +74,17 @@ public class PanelManager {
         }
     }
 
+    public boolean isMouseOver(double mouseX, double mouseY) {
+        for (Side side : Side.values()) {
+            for (MachinePanel panel : panels.get(side)) {
+                if (panel.isMouseOver(mouseX, mouseY)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public void mouseClicked(double mouseX, double mouseY, int button) {
         for (Side side : Side.values()) {
             int clickedPanelIndex = -1;
@@ -100,5 +113,19 @@ public class PanelManager {
                 }
             }
         }
+    }
+
+    /**
+     * @return A collection of areas that JEI should not render over.
+     */
+    public Collection<Rect2i> getGuiExtraAreas() {
+        Collection<Rect2i> areas = new ArrayList<>();
+        for (Side side : Side.values()) {
+            for (MachinePanel panel : panels.get(side)) {
+                areas.add(new Rect2i(panel.getX(), panel.getY(), panel.getWidth(),
+                        panel.getHeight()));
+            }
+        }
+        return areas;
     }
 }

@@ -2,13 +2,13 @@ package mwk.testmod.common.recipe.serializers;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import mwk.testmod.common.recipe.base.OneToOnetemStackRecipe;
+import mwk.testmod.common.recipe.base.OneToOneItemStackRecipe;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
-public class OneToOneItemStackSerializer<T extends OneToOnetemStackRecipe>
+public class OneToOneItemStackSerializer<T extends OneToOneItemStackRecipe>
         implements RecipeSerializer<T> {
 
     private final RecipeFactory<T> factory;
@@ -22,9 +22,9 @@ public class OneToOneItemStackSerializer<T extends OneToOnetemStackRecipe>
     public Codec<T> codec() {
         if (codec == null) {
             codec = RecordCodecBuilder.create(instance -> instance.group(
-                    Ingredient.CODEC.fieldOf("input").forGetter(OneToOnetemStackRecipe::getInput),
+                    Ingredient.CODEC.fieldOf("input").forGetter(OneToOneItemStackRecipe::getInput),
                     ItemStack.ITEM_WITH_COUNT_CODEC.fieldOf("output")
-                            .forGetter(OneToOnetemStackRecipe::getResultItem))
+                            .forGetter(OneToOneItemStackRecipe::getResultItem))
                     .apply(instance, factory::create));
         }
         return codec;
@@ -38,14 +38,14 @@ public class OneToOneItemStackSerializer<T extends OneToOnetemStackRecipe>
     }
 
     @Override
-    public void toNetwork(FriendlyByteBuf buffer, OneToOnetemStackRecipe recipe) {
+    public void toNetwork(FriendlyByteBuf buffer, OneToOneItemStackRecipe recipe) {
         for (Ingredient ingredient : recipe.getIngredients()) {
             ingredient.toNetwork(buffer);
         }
         buffer.writeItem(recipe.getResultItem());
     }
 
-    public interface RecipeFactory<T extends OneToOnetemStackRecipe> {
+    public interface RecipeFactory<T extends OneToOneItemStackRecipe> {
         T create(Ingredient input, ItemStack output);
     }
 }

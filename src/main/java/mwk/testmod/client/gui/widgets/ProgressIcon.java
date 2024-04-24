@@ -1,7 +1,9 @@
 package mwk.testmod.client.gui.widgets;
 
+import mwk.testmod.TestMod;
 import mwk.testmod.common.block.inventory.base.CrafterMachineMenu;
 import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.resources.ResourceLocation;
 
 public class ProgressIcon extends ProgressSprite {
 
@@ -18,5 +20,12 @@ public class ProgressIcon extends ProgressSprite {
             int height, boolean horizontal) {
         super(sprites, menu, x, y, width, height, horizontal, BACKGROUND_OFFSET_X,
                 BACKGROUND_OFFSET_Y);
+    }
+
+    public static WidgetSprites createSprites(String iconName) {
+        return new WidgetSprites(
+                new ResourceLocation(TestMod.MODID, "container/progress/" + iconName),
+                new ResourceLocation(TestMod.MODID,
+                        "container/progress/" + iconName + "_background"));
     }
 }
