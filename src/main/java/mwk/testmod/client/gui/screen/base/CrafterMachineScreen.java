@@ -1,6 +1,5 @@
 package mwk.testmod.client.gui.screen.base;
 
-import mwk.testmod.TestMod;
 import mwk.testmod.client.gui.widgets.ProgressIcon;
 import mwk.testmod.client.gui.widgets.panels.EnergyPanel;
 import mwk.testmod.client.gui.widgets.panels.PanelManager;
