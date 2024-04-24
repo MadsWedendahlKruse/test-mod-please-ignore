@@ -3,7 +3,7 @@
         "category": "block",
         "sounds": [
             {
-                "name": "testmod:block/multiblock_form1",
+                "name": "testmod:block/multiblock_form",
                 "attenuation_distance": 16,
                 "volume": 0.9
             }
