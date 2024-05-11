@@ -14,7 +14,8 @@ public class InputItemHandler extends ItemHandlerWrapper {
      * @param itemHandler the underlying item handler
      * @param startInputSlot the index of the first input slot
      * @param inputSlots the number of input slots
-     * @param inputValidator the input validator
+     * @param inputValidator the input validator, which determines whether an item can be inserted.
+     *        See {@link InputValidator#isInputValid(int, ItemStack)}
      * @param playerInput whether the input is from a player
      */
     public InputItemHandler(ItemStackHandler itemHandler, int startInputSlot, int inputSlots,

@@ -3,6 +3,7 @@ package mwk.testmod.client.gui.widgets.panels;
 import mwk.testmod.TestMod;
 import mwk.testmod.client.render.RenderUtils;
 import mwk.testmod.common.block.inventory.base.BaseMachineMenu;
+import mwk.testmod.common.util.inventory.ItemSlotGridHelper;
 import mwk.testmod.datagen.TestModLanguageProvider;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -12,23 +13,19 @@ public class UpgradePanel extends MachinePanel {
 
     public static final ResourceLocation ICON =
             new ResourceLocation(TestMod.MODID, "widget/icon_upgrade");
-
     public static final float[] COLOR = new float[] {0.5F, 0.75F, 0.5F, 1};
-
     public static final int PADDING = 5;
 
-    private final BaseMachineMenu menu;
-    private final int upgradeRows;
-    private final int upgradeColumns;
+    private static final ItemSlotGridHelper GRID_HELPER = ItemSlotGridHelper.ROWS_2;
 
-    public UpgradePanel(BaseMachineMenu menu, int upgradeRows, int upgradeColumns) {
-        super(upgradeColumns * RenderUtils.ITEM_SLOT_SIZE + 2 * PADDING,
-                upgradeRows * RenderUtils.ITEM_SLOT_SIZE + 2 * PADDING,
+    private final BaseMachineMenu menu;
+
+    public UpgradePanel(BaseMachineMenu menu) {
+        super(GRID_HELPER.getWidth(menu.upgradeSlots) + 2 * PADDING,
+                GRID_HELPER.getHeight(menu.upgradeSlots) + 2 * PADDING,
                 Component.translatable(TestModLanguageProvider.KEY_WIDGET_PANEL_UPGRADE), COLOR,
                 ICON);
         this.menu = menu;
-        this.upgradeRows = upgradeRows;
-        this.upgradeColumns = upgradeColumns;
     }
 
     @Override
@@ -36,9 +33,9 @@ public class UpgradePanel extends MachinePanel {
         int startX = getOpenLeft() + PADDING;
         int startY = getOpenTop() + PADDING;
         for (int i = 0; i < menu.upgradeSlots; i++) {
-            int x = startX + (i % upgradeColumns) * RenderUtils.ITEM_SLOT_SIZE;
-            int y = startY + (i / upgradeColumns) * RenderUtils.ITEM_SLOT_SIZE;
-            RenderUtils.renderItemSlot(guiGraphics, x, y);
+            ItemSlotGridHelper.SlotPosition slotPosition =
+                    GRID_HELPER.getSlotPosition(startX, startY, i);
+            RenderUtils.renderItemSlot(guiGraphics, slotPosition.x(), slotPosition.y());
         }
     }
 

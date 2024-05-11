@@ -49,5 +49,6 @@
   "widget.testmod.panel.energy_crafting_title": "Crafting",
   "widget.testmod.panel.energy_usage_text": "  %s FE/t (%s%%)",
   "widget.testmod.panel.energy_usage_title": "Usage",
+  "widget.testmod.panel.settings": "Settings",
   "widget.testmod.panel.upgrade": "Upgrades"
 }

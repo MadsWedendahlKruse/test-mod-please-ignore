@@ -56,6 +56,7 @@ public class TestModLanguageProvider extends LanguageProvider {
 	public static final String KEY_WIDGET_PANEL_ENERGY_CRAFTING_TEXT =
 			"widget.testmod.panel.energy_crafting_text";
 	public static final String KEY_WIDGET_PANEL_UPGRADE = "widget.testmod.panel.upgrade";
+	public static final String KEY_WIDGET_PANEL_SETTINGS = "widget.testmod.panel.settings";
 	// Subtitles
 	public static final String KEY_SUBTITLE_MULTIBLOCK_FORM =
 			"sounds.testmod.block.multiblock_form";
@@ -124,6 +125,7 @@ public class TestModLanguageProvider extends LanguageProvider {
 		add(KEY_WIDGET_PANEL_ENERGY_CRAFTING_TITLE, "Crafting");
 		add(KEY_WIDGET_PANEL_ENERGY_CRAFTING_TEXT, "  %s t (%s s)");
 		add(KEY_WIDGET_PANEL_UPGRADE, "Upgrades");
+		add(KEY_WIDGET_PANEL_SETTINGS, "Settings");
 		// Sounds
 		add(KEY_SUBTITLE_MULTIBLOCK_FORM, "Multiblock forms");
 		add(KEY_SUBTITLE_MULTIBLOCK_CRUSHER, "Crusher crushes");

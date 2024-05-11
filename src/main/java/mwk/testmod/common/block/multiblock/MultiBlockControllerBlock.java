@@ -86,16 +86,15 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
             BlockEntityType<T> blockEntityType) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return null;
-        } else {
-            // Lambda expression that implements the BlockEntityTicker interface.
-            return (lvl, pos, st, be) -> {
-                if (be instanceof ITickable tickable) {
-                    tickable.tick();
-                }
-            };
         }
+        // Lambda expression that implements the BlockEntityTicker interface.
+        return (lvl, pos, st, be) -> {
+            if (be instanceof ITickable tickable) {
+                tickable.tick();
+            }
+        };
     }
 
     @Override

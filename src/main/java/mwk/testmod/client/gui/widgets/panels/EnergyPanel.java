@@ -14,7 +14,7 @@ public class EnergyPanel extends MachinePanel {
 
 	public static final ResourceLocation ICON =
 			new ResourceLocation(TestMod.MODID, "widget/icon_energy");
-	public static final float[] COLOR = new float[] {1, 0, 0, 1};
+	public static final float[] COLOR = new float[] {0.8F, 0, 0, 1};
 
 	private static final NumberFormat NUMBER_FORMAT = NumberFormat.getNumberInstance(Locale.US);
 	private static final int SPACE_WIDTH = 4;

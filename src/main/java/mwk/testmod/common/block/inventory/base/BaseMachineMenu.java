@@ -1,6 +1,7 @@
 package mwk.testmod.common.block.inventory.base;
 
 import mwk.testmod.common.block.entity.base.BaseMachineBlockEntity;
+import mwk.testmod.common.util.inventory.MachineIOContainerData;
 import mwk.testmod.common.util.inventory.ItemSlotGridHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
@@ -32,6 +33,8 @@ public class BaseMachineMenu extends EnergyMenu {
     public final int upgradeSlots;
     public final int machineInventorySize;
     private boolean upgradesVisible = true;
+    private boolean autoEject;
+    private boolean autoInsert;
 
     public final int playerInventoryX;
     public final int playerInventoryY;
@@ -64,6 +67,7 @@ public class BaseMachineMenu extends EnergyMenu {
             this.outputSlotsY = outputSlotsY;
             addInputOutputSlots();
             addUpgradeSlots(0, 0);
+            addDataSlots(new MachineIOContainerData(machineBlockEntity, this));
         } else {
             // TODO: Not sure what to do here
             throw new IllegalArgumentException(
@@ -224,5 +228,23 @@ public class BaseMachineMenu extends EnergyMenu {
     @FunctionalInterface
     private interface SlotVisibilityCondition {
         boolean isVisible();
+    }
+
+    public boolean isAutoEject() {
+        return autoEject;
+    }
+
+    public void setAutoEject(boolean autoEject) {
+        this.autoEject = autoEject;
+        blockEntity.setAutoEject(autoEject);
+    }
+
+    public boolean isAutoInsert() {
+        return autoInsert;
+    }
+
+    public void setAutoInsert(boolean autoInsert) {
+        this.autoInsert = autoInsert;
+        blockEntity.setAutoInsert(autoInsert);
     }
 }

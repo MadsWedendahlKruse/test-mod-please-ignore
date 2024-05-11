@@ -1,6 +1,7 @@
 package mwk.testmod.common.block.entity.base;
 
 import mwk.testmod.TestMod;
+import mwk.testmod.TestModConfig;
 import mwk.testmod.common.block.interfaces.IUpgradable;
 import mwk.testmod.common.item.upgrades.base.UpgradeItem;
 import mwk.testmod.common.util.inventory.InputItemHandler;
@@ -15,6 +16,7 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.energy.EnergyStorage;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -35,11 +37,16 @@ public abstract class BaseMachineBlockEntity extends EnergyBlockEntity
     protected final int inventorySize;
 
     protected final ItemStackHandler inventory;
-    protected final Lazy<InputItemHandler> inputHandlerPlayer;
-    protected final Lazy<InputItemHandler> inputHandlerAutomation;
-    protected final Lazy<OutputItemHandler> outputHandler;
-    protected final Lazy<UpgradeItemHandler> upgradeHandler;
+    protected final InputItemHandler inputHandlerPlayer;
+    protected final InputItemHandler inputHandlerAutomation;
+    protected final OutputItemHandler outputHandler;
+    protected final UpgradeItemHandler upgradeHandler;
     protected final Lazy<CombinedInvWrapper> combinedInventory;
+
+    public static final int IO_SPEED = TestModConfig.MACHINE_IO_SPEED_DEFAULT.get(); // [items/tick]
+
+    private boolean autoInsert;
+    private boolean autoEject;
 
     public BaseMachineBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
             int maxEnergy, EnergyType energyType, int inputSlots, int outputSlots,
@@ -57,29 +64,32 @@ public abstract class BaseMachineBlockEntity extends EnergyBlockEntity
 
             @Override
             public int getSlotLimit(int slot) {
-                if (inputHandlerPlayer.get().isSlotValid(slot)) {
-                    return inputHandlerPlayer.get().getSlotLimit(slot);
+                if (inputHandlerPlayer.isSlotValid(slot)) {
+                    return inputHandlerPlayer.getSlotLimit(slot);
                 }
-                if (outputHandler.get().isSlotValid(slot)) {
-                    return outputHandler.get().getSlotLimit(slot);
+                if (outputHandler.isSlotValid(slot)) {
+                    return outputHandler.getSlotLimit(slot);
                 }
-                if (upgradeHandler.get().isSlotValid(slot)) {
-                    return upgradeHandler.get().getSlotLimit(slot);
+                if (upgradeHandler.isSlotValid(slot)) {
+                    return upgradeHandler.getSlotLimit(slot);
                 }
                 return super.getSlotLimit(slot);
                 // TODO: For some reason this doesn't work
                 // return combinedInventory.get().getSlotLimit(slot);
             }
         };
-        inputHandlerPlayer = Lazy
-                .of(() -> new InputItemHandler(inventory, 0, inputSlots, this::isInputValid, true));
-        inputHandlerAutomation = Lazy.of(
-                () -> new InputItemHandler(inventory, 0, inputSlots, this::isInputValid, false));
-        outputHandler = Lazy.of(() -> new OutputItemHandler(inventory, inputSlots, outputSlots));
-        upgradeHandler = Lazy.of(() -> new UpgradeItemHandler(inventory, inputSlots + outputSlots,
-                upgradeSlots, this));
-        combinedInventory = Lazy.of(() -> new CombinedInvWrapper(inputHandlerPlayer.get(),
-                outputHandler.get(), upgradeHandler.get()));
+        inputHandlerPlayer =
+                new InputItemHandler(inventory, 0, inputSlots, this::isInputValid, true);
+        inputHandlerAutomation =
+                new InputItemHandler(inventory, 0, inputSlots, this::isInputValid, false);
+        outputHandler = new OutputItemHandler(inventory, inputSlots, outputSlots);
+        upgradeHandler =
+                new UpgradeItemHandler(inventory, inputSlots + outputSlots, upgradeSlots, this);
+        combinedInventory = Lazy.of(
+                () -> new CombinedInvWrapper(inputHandlerPlayer, outputHandler, upgradeHandler));
+
+        this.autoEject = true;
+        this.autoInsert = true;
     }
 
     @Override
@@ -94,7 +104,6 @@ public abstract class BaseMachineBlockEntity extends EnergyBlockEntity
         if (tag.contains(NBT_TAG_INVENTORY)) {
             inventory.deserializeNBT(tag.getCompound(NBT_TAG_INVENTORY));
         }
-        TestMod.LOGGER.debug("Load NBT");
         applyUpgrades();
     }
 
@@ -116,15 +125,15 @@ public abstract class BaseMachineBlockEntity extends EnergyBlockEntity
     }
 
     public InputItemHandler getInputHandler(Direction direction, boolean player) {
-        return player ? inputHandlerPlayer.get() : inputHandlerAutomation.get();
+        return player ? inputHandlerPlayer : inputHandlerAutomation;
     }
 
     public OutputItemHandler getOutputHandler(Direction direction) {
-        return outputHandler.get();
+        return outputHandler;
     }
 
     public UpgradeItemHandler getUpgradeHandler(Direction direction) {
-        return upgradeHandler.get();
+        return upgradeHandler;
     }
 
     public int getInputSlots() {
@@ -178,11 +187,104 @@ public abstract class BaseMachineBlockEntity extends EnergyBlockEntity
             return;
         }
         resetUpgrades();
-        for (int i = upgradeHandler.get().getStartSlot(); i < upgradeHandler.get()
-                .getEndSlot(); i++) {
+        for (int i = upgradeHandler.getStartSlot(); i < upgradeHandler.getEndSlot(); i++) {
             ItemStack stack = inventory.getStackInSlot(i);
             if (stack.getItem() instanceof UpgradeItem upgrade) {
                 installUpgrade(upgrade);
+            }
+        }
+    }
+
+    public boolean isAutoEject() {
+        return autoEject;
+    }
+
+    public void setAutoEject(boolean autoEject) {
+        TestMod.LOGGER.debug("Auto eject: " + autoEject + " side = " + level.isClientSide());
+        this.autoEject = autoEject;
+    }
+
+    public boolean isAutoInsert() {
+        return autoInsert;
+    }
+
+    public void setAutoInsert(boolean autoInsert) {
+        TestMod.LOGGER.debug("Auto insert: " + autoInsert + " side = " + level.isClientSide());
+        this.autoInsert = autoInsert;
+    }
+
+    /**
+     * Push items from the output slots to adjacent inventories.
+     * 
+     * @param pos the position whose neighbors to push to
+     */
+    public void ejectOutput(BlockPos pos) {
+        if (!autoEject) {
+            return;
+        }
+        // Check if the output slots are empty
+        boolean empty = true;
+        for (int i = outputHandler.getStartSlot(); i < outputHandler.getEndSlot(); i++) {
+            if (!outputHandler.getStackInSlot(i).isEmpty()) {
+                empty = false;
+                break;
+            }
+        }
+        if (empty) {
+            return;
+        }
+        for (Direction direction : Direction.values()) {
+            IItemHandler handler = level.getCapability(Capabilities.ItemHandler.BLOCK,
+                    pos.relative(direction), null);
+            if (handler == null) {
+                continue;
+            }
+            for (int i = outputHandler.getStartSlot(); i < outputHandler.getEndSlot(); i++) {
+                ItemStack extractedStack = outputHandler.extractItem(i, IO_SPEED, true);
+                if (extractedStack.isEmpty()) {
+                    continue;
+                }
+                for (int j = 0; j < handler.getSlots(); j++) {
+                    ItemStack remainder = handler.insertItem(j, extractedStack, false);
+                    outputHandler.extractItem(i, extractedStack.getCount() - remainder.getCount(),
+                            false);
+                    if (remainder.isEmpty()) {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Pull items from adjacent inventories to the input slots.
+     * 
+     * @param pos the position whose neighbors to pull from
+     */
+    public void pullInput(BlockPos pos) {
+        if (!autoInsert) {
+            return;
+        }
+        for (Direction direction : Direction.values()) {
+            IItemHandler handler = level.getCapability(Capabilities.ItemHandler.BLOCK,
+                    pos.relative(direction), null);
+            if (handler == null) {
+                continue;
+            }
+            for (int i = 0; i < handler.getSlots(); i++) {
+                ItemStack extractedStack = handler.extractItem(i, IO_SPEED, true);
+                if (extractedStack.isEmpty()) {
+                    continue;
+                }
+                for (int j = inputHandlerAutomation.getStartSlot(); j < inputHandlerAutomation
+                        .getEndSlot(); j++) {
+                    ItemStack remainder =
+                            inputHandlerAutomation.insertItem(j, extractedStack, false);
+                    handler.extractItem(i, extractedStack.getCount() - remainder.getCount(), false);
+                    if (remainder.isEmpty()) {
+                        break;
+                    }
+                }
             }
         }
     }

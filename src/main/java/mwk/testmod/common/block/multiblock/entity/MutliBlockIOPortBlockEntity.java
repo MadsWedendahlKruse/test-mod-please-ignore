@@ -1,6 +1,8 @@
 package mwk.testmod.common.block.multiblock.entity;
 
+import mwk.testmod.TestMod;
 import mwk.testmod.common.block.entity.base.BaseMachineBlockEntity;
+import mwk.testmod.common.block.interfaces.ITickable;
 import mwk.testmod.init.registries.TestModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -8,7 +10,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandler;
 
-public class MutliBlockIOPortBlockEntity extends MultiBlockPartBlockEntity {
+public class MutliBlockIOPortBlockEntity extends MultiBlockPartBlockEntity implements ITickable {
 
     private final boolean input;
 
@@ -22,11 +24,26 @@ public class MutliBlockIOPortBlockEntity extends MultiBlockPartBlockEntity {
     public IItemHandler getItemHandler(Direction direction) {
         if (isFormed()) {
             BlockEntity controllerEntity = level.getBlockEntity(controllerPos);
-            if (controllerEntity instanceof BaseMachineBlockEntity itemEntity) {
-                return input ? itemEntity.getInputHandler(direction, false)
-                        : itemEntity.getOutputHandler(direction);
+            if (controllerEntity instanceof BaseMachineBlockEntity machine) {
+                return input ? machine.getInputHandler(direction, false)
+                        : machine.getOutputHandler(direction);
             }
         }
         return null;
+    }
+
+    @Override
+    public void tick() {
+        if (!isFormed()) {
+            return;
+        }
+        BlockEntity controllerEntity = level.getBlockEntity(controllerPos);
+        if (controllerEntity instanceof BaseMachineBlockEntity machine) {
+            if (input) {
+                machine.pullInput(this.worldPosition);
+            } else {
+                machine.ejectOutput(this.worldPosition);
+            }
+        }
     }
 }

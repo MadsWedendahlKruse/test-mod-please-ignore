@@ -1,6 +1,5 @@
 package mwk.testmod.common.block.inventory.base;
 
-import mwk.testmod.TestMod;
 import mwk.testmod.common.block.entity.base.CrafterMachineBlockEntity;
 import mwk.testmod.common.util.inventory.CrafterContainerData;
 import net.minecraft.core.BlockPos;
@@ -26,9 +25,6 @@ public class CrafterMachineMenu extends BaseMachineMenu {
             this.maxProgressBase = blockEntity.maxProgressBase;
             this.energyPerTick = blockEntity.getEnergyPerTick();
             this.energyPerTickBase = blockEntity.energyPerTickBase;
-            TestMod.LOGGER.debug(
-                    "maxProgress = {}, maxProgressBase = {}, energyPerTick = {}, energyPerTickBase = {}",
-                    maxProgress, maxProgressBase, energyPerTick, energyPerTickBase);
             addDataSlots(new CrafterContainerData(blockEntity, this));
         } else {
             // TODO: Not sure what to do here

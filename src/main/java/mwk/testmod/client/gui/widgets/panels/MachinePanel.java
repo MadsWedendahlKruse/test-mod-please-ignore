@@ -35,22 +35,24 @@ public abstract class MachinePanel extends AbstractWidget {
     public static final float ANIMATION_HEIGHT_DURATION = 0.2f;
 
     private boolean open = false;
-    private int widthOpen;
-    private int heightOpen;
-    private int widthClosed;
-    private int heightClosed;
+    private final int widthOpen;
+    private final int heightOpen;
+    private final int widthClosed;
+    private final int heightClosed;
     // Animations for the panel opening and closing
-    private FixedAnimationFloat animationWidth;
-    private FixedAnimationFloat animationHeight;
+    private final FixedAnimationFloat animationWidth;
+    private final FixedAnimationFloat animationHeight;
     // Whether it's on the left or right side of the GUI
     private boolean left;
     private int initialX;
-    private float[] color;
-    private ResourceLocation icon;
-    private int iconWidth;
-    private int iconHeight;
-    private int iconPaddingX;
-    private int iconPaddingY;
+    private final float[] color;
+    private final ResourceLocation icon;
+    private final int iconWidth;
+    private final int iconHeight;
+    private final int iconPaddingX;
+    private final int iconPaddingY;
+    // Text to render when the panel is open
+    private String openText = "";
     // Top left corner of the panel in screen coordinates
     protected int screenX;
     protected int screenY;
@@ -83,7 +85,7 @@ public abstract class MachinePanel extends AbstractWidget {
         super(0, 0, widthClosed, heightClosed, message);
         // Make sure there's room for the message
         this.widthOpen =
-                Math.max(widthOpen, font.width(message.getString()) + iconWidth + 3 * iconPaddingX);
+                Math.max(widthOpen, font.width(message.getString()) + iconWidth + 4 * iconPaddingX);
         this.heightOpen = heightOpen;
         this.widthClosed = widthClosed;
         this.heightClosed = heightClosed;
@@ -202,8 +204,15 @@ public abstract class MachinePanel extends AbstractWidget {
         }
         // Only draw as many letters as fit into the panel
         int stringOffset = iconWidth + 2 * iconPaddingX;
-        String message = getMessage().getString((width - stringOffset) / (LETTER_WIDTH + 1));
-        guiGraphics.drawString(font, message, getX() + stringOffset, getY() + iconPaddingY + 4,
+        int stringSpace = width - stringOffset;
+        String message = getMessage().getString();
+        if (!animationFinished()) {
+            openText = "";
+            while (font.width(openText) < stringSpace && openText.length() < message.length()) {
+                openText += message.charAt(openText.length());
+            }
+        }
+        guiGraphics.drawString(font, openText, getX() + stringOffset, getY() + iconPaddingY + 4,
                 0xffffff);
         // Only render open if the animations are finished
         // TODO: Reveal it gradually? Would be cool, but not sure if it's worth the effort
@@ -215,5 +224,9 @@ public abstract class MachinePanel extends AbstractWidget {
     @Override
     protected void updateWidgetNarration(NarrationElementOutput pNarrationElementOutput) {
         // TODO Auto-generated method stub
+    }
+
+    private boolean animationFinished() {
+        return animationWidth.isFinished() && animationHeight.isFinished();
     }
 }
