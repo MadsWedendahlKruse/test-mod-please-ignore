@@ -37,8 +37,10 @@
   "itemGroup.testmod": "Test Mod",
   "sounds.testmod.block.crusher": "Crusher crushes",
   "sounds.testmod.block.multiblock_form": "Multiblock forms",
+  "widget.testmod.auto_eject.tooltip": "Auto eject: %s",
+  "widget.testmod.auto_insert.tooltip": "Auto insert: %s",
   "widget.testmod.energy_bar": "Energy",
-  "widget.testmod.energy_bar.hover": "%s/%s FE",
+  "widget.testmod.energy_bar.tooltip": "%s/%s FE",
   "widget.testmod.hologram_projector.blueprints": "Blueprints",
   "widget.testmod.hologram_projector.buttons": "Buttons",
   "widget.testmod.hologram_projector.none": "None",
@@ -50,5 +52,7 @@
   "widget.testmod.panel.energy_usage_text": "  %s FE/t (%s%%)",
   "widget.testmod.panel.energy_usage_title": "Usage",
   "widget.testmod.panel.settings": "Settings",
-  "widget.testmod.panel.upgrade": "Upgrades"
+  "widget.testmod.panel.upgrade": "Upgrades",
+  "widget.testmod.tooltip.off": "OFF",
+  "widget.testmod.tooltip.on": "ON"
 }

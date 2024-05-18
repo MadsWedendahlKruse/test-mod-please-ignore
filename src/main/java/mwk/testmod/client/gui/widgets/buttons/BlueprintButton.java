@@ -1,4 +1,4 @@
-package mwk.testmod.client.gui.widgets;
+package mwk.testmod.client.gui.widgets.buttons;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import mwk.testmod.TestMod;

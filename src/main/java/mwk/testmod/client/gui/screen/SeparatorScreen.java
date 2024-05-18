@@ -2,7 +2,7 @@ package mwk.testmod.client.gui.screen;
 
 import mwk.testmod.TestMod;
 import mwk.testmod.client.gui.screen.base.CrafterMachineScreen;
-import mwk.testmod.client.gui.widgets.ProgressArrow1To3;
+import mwk.testmod.client.gui.widgets.progress.ProgressArrow1To3;
 import mwk.testmod.common.block.inventory.SeparatorMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;

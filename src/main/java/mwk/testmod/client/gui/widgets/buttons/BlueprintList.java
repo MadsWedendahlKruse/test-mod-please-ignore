@@ -1,7 +1,6 @@
-package mwk.testmod.client.gui.widgets;
+package mwk.testmod.client.gui.widgets.buttons;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import mwk.testmod.TestMod;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
 import mwk.testmod.datagen.TestModLanguageProvider;

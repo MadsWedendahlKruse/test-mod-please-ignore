@@ -41,7 +41,7 @@ public class TestModLanguageProvider extends LanguageProvider {
 	public static final String KEY_WIDGET_HOLOGRAM_PROJECTOR_BUTTONS =
 			"widget.testmod.hologram_projector.buttons";
 	public static final String KEY_WIDGET_ENERGY_BAR = "widget.testmod.energy_bar";
-	public static final String KEY_WIDGET_ENERGY_BAR_HOVER = "widget.testmod.energy_bar.hover";
+	public static final String KEY_WIDGET_ENERGY_BAR_TOOLTIP = "widget.testmod.energy_bar.tooltip";
 	public static final String KEY_WIDGET_PANEL_ENERGY = "widget.testmod.panel.energy";
 	public static final String KEY_WIDGET_PANEL_ENERGY_USAGE_TITLE =
 			"widget.testmod.panel.energy_usage_title";
@@ -57,6 +57,11 @@ public class TestModLanguageProvider extends LanguageProvider {
 			"widget.testmod.panel.energy_crafting_text";
 	public static final String KEY_WIDGET_PANEL_UPGRADE = "widget.testmod.panel.upgrade";
 	public static final String KEY_WIDGET_PANEL_SETTINGS = "widget.testmod.panel.settings";
+	public static final String KEY_WIDGET_AUTO_INSERT_TOOLTIP =
+			"widget.testmod.auto_insert.tooltip";
+	public static final String KEY_WIDGET_AUTO_EJECT_TOOLTIP = "widget.testmod.auto_eject.tooltip";
+	public static final String KEY_WIDGET_TOOLTIP_ON = "widget.testmod.tooltip.on";
+	public static final String KEY_WIDGET_TOOLTIP_OFF = "widget.testmod.tooltip.off";
 	// Subtitles
 	public static final String KEY_SUBTITLE_MULTIBLOCK_FORM =
 			"sounds.testmod.block.multiblock_form";
@@ -116,7 +121,7 @@ public class TestModLanguageProvider extends LanguageProvider {
 		add(KEY_WIDGET_HOLOGRAM_PROJECTOR_BLUEPRINTS, "Blueprints");
 		add(KEY_WIDGET_HOLOGRAM_PROJECTOR_BUTTONS, "Buttons");
 		add(KEY_WIDGET_ENERGY_BAR, "Energy");
-		add(KEY_WIDGET_ENERGY_BAR_HOVER, "%s/%s FE");
+		add(KEY_WIDGET_ENERGY_BAR_TOOLTIP, "%s/%s FE");
 		add(KEY_WIDGET_PANEL_ENERGY, "Energy");
 		add(KEY_WIDGET_PANEL_ENERGY_USAGE_TITLE, "Usage");
 		add(KEY_WIDGET_PANEL_ENERGY_USAGE_TEXT, "  %s FE/t (%s%%)");
@@ -126,6 +131,10 @@ public class TestModLanguageProvider extends LanguageProvider {
 		add(KEY_WIDGET_PANEL_ENERGY_CRAFTING_TEXT, "  %s t (%s s)");
 		add(KEY_WIDGET_PANEL_UPGRADE, "Upgrades");
 		add(KEY_WIDGET_PANEL_SETTINGS, "Settings");
+		add(KEY_WIDGET_AUTO_INSERT_TOOLTIP, "Auto insert: %s");
+		add(KEY_WIDGET_AUTO_EJECT_TOOLTIP, "Auto eject: %s");
+		add(KEY_WIDGET_TOOLTIP_ON, "ON");
+		add(KEY_WIDGET_TOOLTIP_OFF, "OFF");
 		// Sounds
 		add(KEY_SUBTITLE_MULTIBLOCK_FORM, "Multiblock forms");
 		add(KEY_SUBTITLE_MULTIBLOCK_CRUSHER, "Crusher crushes");

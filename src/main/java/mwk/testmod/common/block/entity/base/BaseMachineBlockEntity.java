@@ -1,6 +1,5 @@
 package mwk.testmod.common.block.entity.base;
 
-import mwk.testmod.TestMod;
 import mwk.testmod.TestModConfig;
 import mwk.testmod.common.block.interfaces.IUpgradable;
 import mwk.testmod.common.item.upgrades.base.UpgradeItem;
@@ -30,6 +29,10 @@ public abstract class BaseMachineBlockEntity extends EnergyBlockEntity
         implements MenuProvider, IUpgradable {
 
     public static final String NBT_TAG_INVENTORY = "inventory";
+    public static final String NBT_TAG_AUTO_INSERT = "autoInsert";
+    public static final String NBT_TAG_AUTO_EJECT = "autoEject";
+
+    public static final int IO_SPEED = TestModConfig.MACHINE_IO_SPEED_DEFAULT.get(); // [items/tick]
 
     protected final int inputSlots;
     protected final int outputSlots;
@@ -42,8 +45,6 @@ public abstract class BaseMachineBlockEntity extends EnergyBlockEntity
     protected final OutputItemHandler outputHandler;
     protected final UpgradeItemHandler upgradeHandler;
     protected final Lazy<CombinedInvWrapper> combinedInventory;
-
-    public static final int IO_SPEED = TestModConfig.MACHINE_IO_SPEED_DEFAULT.get(); // [items/tick]
 
     private boolean autoInsert;
     private boolean autoEject;
@@ -96,6 +97,8 @@ public abstract class BaseMachineBlockEntity extends EnergyBlockEntity
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         tag.put(NBT_TAG_INVENTORY, inventory.serializeNBT());
+        tag.putBoolean(NBT_TAG_AUTO_INSERT, autoInsert);
+        tag.putBoolean(NBT_TAG_AUTO_EJECT, autoEject);
     }
 
     @Override
@@ -103,6 +106,12 @@ public abstract class BaseMachineBlockEntity extends EnergyBlockEntity
         super.load(tag);
         if (tag.contains(NBT_TAG_INVENTORY)) {
             inventory.deserializeNBT(tag.getCompound(NBT_TAG_INVENTORY));
+        }
+        if (tag.contains(NBT_TAG_AUTO_INSERT)) {
+            autoInsert = tag.getBoolean(NBT_TAG_AUTO_INSERT);
+        }
+        if (tag.contains(NBT_TAG_AUTO_EJECT)) {
+            autoEject = tag.getBoolean(NBT_TAG_AUTO_EJECT);
         }
         applyUpgrades();
     }
@@ -200,7 +209,6 @@ public abstract class BaseMachineBlockEntity extends EnergyBlockEntity
     }
 
     public void setAutoEject(boolean autoEject) {
-        TestMod.LOGGER.debug("Auto eject: " + autoEject + " side = " + level.isClientSide());
         this.autoEject = autoEject;
     }
 
@@ -209,7 +217,6 @@ public abstract class BaseMachineBlockEntity extends EnergyBlockEntity
     }
 
     public void setAutoInsert(boolean autoInsert) {
-        TestMod.LOGGER.debug("Auto insert: " + autoInsert + " side = " + level.isClientSide());
         this.autoInsert = autoInsert;
     }
 

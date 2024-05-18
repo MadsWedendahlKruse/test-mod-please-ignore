@@ -1,4 +1,4 @@
-package mwk.testmod.client.gui.widgets;
+package mwk.testmod.client.gui.widgets.buttons;
 
 import java.util.ArrayList;
 import net.minecraft.client.gui.GuiGraphics;

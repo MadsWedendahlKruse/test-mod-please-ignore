@@ -3,7 +3,7 @@ package mwk.testmod.client.gui.widgets.panels;
 import java.util.ArrayList;
 import java.util.List;
 import mwk.testmod.TestMod;
-import mwk.testmod.client.gui.widgets.OnOffButton;
+import mwk.testmod.client.gui.widgets.buttons.OnOffButton;
 import mwk.testmod.common.block.inventory.base.BaseMachineMenu;
 import mwk.testmod.datagen.TestModLanguageProvider;
 import net.minecraft.client.gui.GuiGraphics;
@@ -30,14 +30,16 @@ public class SettingsPanel extends MachinePanel {
                 Component.translatable(TestModLanguageProvider.KEY_WIDGET_PANEL_SETTINGS), COLOR,
                 ICON);
         this.menu = menu;
-        autoInsertButton = new OnOffButton(BUTTON_SIZE, (button) -> {
-            menu.setAutoInsert(!menu.isAutoInsert());
-        }, "auto_insert", "auto_insert");
         autoEjecButton = new OnOffButton(BUTTON_SIZE, (button) -> {
             menu.setAutoEject(!menu.isAutoEject());
-        }, "auto_eject", "auto_eject");
-        buttons.add(autoInsertButton);
+        }, "auto_eject_on", "auto_eject_off",
+                TestModLanguageProvider.KEY_WIDGET_AUTO_EJECT_TOOLTIP);
+        autoInsertButton = new OnOffButton(BUTTON_SIZE, (button) -> {
+            menu.setAutoInsert(!menu.isAutoInsert());
+        }, "auto_insert_on", "auto_insert_off",
+                TestModLanguageProvider.KEY_WIDGET_AUTO_INSERT_TOOLTIP);
         buttons.add(autoEjecButton);
+        buttons.add(autoInsertButton);
     }
 
     @Override
@@ -53,6 +55,15 @@ public class SettingsPanel extends MachinePanel {
     protected void renderOpen(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         autoEjecButton.render(guiGraphics, mouseX, mouseY, partialTick);
         autoInsertButton.render(guiGraphics, mouseX, mouseY, partialTick);
+        // There's something going on with the synching. I think the auto eject/insert values are
+        // being sent after the constructor is called, so we somehow need to set them again at
+        // another point in time. This is a temporary fix.
+        if (menu.isAutoEject() != autoEjecButton.isOn()) {
+            autoEjecButton.setOn(menu.isAutoEject());
+        }
+        if (menu.isAutoInsert() != autoInsertButton.isOn()) {
+            autoInsertButton.setOn(menu.isAutoInsert());
+        }
     }
 
     @Override

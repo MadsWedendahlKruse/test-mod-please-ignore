@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import mezz.jei.api.helpers.IGuiHelper;
 import mwk.testmod.client.gui.widgets.EnergyBar;
-import mwk.testmod.client.gui.widgets.ProgressArrowSingle;
+import mwk.testmod.client.gui.widgets.progress.ProgressArrowSingle;
 import mwk.testmod.client.render.RenderUtils;
 import mwk.testmod.common.recipe.CrushingRecipe;
 import mwk.testmod.compat.base.BaseRecipeCategory;

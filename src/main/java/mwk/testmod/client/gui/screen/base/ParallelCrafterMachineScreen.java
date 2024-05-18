@@ -1,6 +1,6 @@
 package mwk.testmod.client.gui.screen.base;
 
-import mwk.testmod.client.gui.widgets.ProgressArrowSingle;
+import mwk.testmod.client.gui.widgets.progress.ProgressArrowSingle;
 import mwk.testmod.common.block.inventory.base.CrafterMachineMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;

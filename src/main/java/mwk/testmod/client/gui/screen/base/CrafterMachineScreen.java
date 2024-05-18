@@ -1,10 +1,10 @@
 package mwk.testmod.client.gui.screen.base;
 
-import mwk.testmod.client.gui.widgets.ProgressIcon;
 import mwk.testmod.client.gui.widgets.panels.EnergyPanel;
 import mwk.testmod.client.gui.widgets.panels.PanelManager;
 import mwk.testmod.client.gui.widgets.panels.SettingsPanel;
 import mwk.testmod.client.gui.widgets.panels.UpgradePanel;
+import mwk.testmod.client.gui.widgets.progress.ProgressIcon;
 import mwk.testmod.common.block.inventory.base.CrafterMachineMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;

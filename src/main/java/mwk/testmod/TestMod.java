@@ -9,6 +9,7 @@ import mwk.testmod.client.render.block_entity.CrusherBlockEntityRenderer;
 import mwk.testmod.client.render.block_entity.SeparatorBlockEntityRenderer;
 import mwk.testmod.client.render.hologram.HologramRenderer;
 import mwk.testmod.common.block.multiblock.HologramBlockColor;
+import mwk.testmod.common.network.MachineIOPacket;
 import mwk.testmod.init.registries.TestModBlockEntities;
 import mwk.testmod.init.registries.TestModBlocks;
 import mwk.testmod.init.registries.TestModCreativeTabs;
@@ -38,6 +39,8 @@ import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
+import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(TestMod.MODID)
@@ -70,9 +73,9 @@ public class TestMod {
 		// @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
 		NeoForge.EVENT_BUS.register(this);
 
-		// Register the item to a creative tab
 		modEventBus.addListener(this::addCreative);
 		modEventBus.addListener(this::registerCapabilities);
+		modEventBus.addListener(this::onRegisterPayloadHandlers);
 
 		// Register our mod's ModConfigSpec so that FML can create and load the config file
 		// for us
@@ -119,6 +122,12 @@ public class TestMod {
 		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
 				TestModBlockEntities.CRUSHER_ENTITY_TYPE.get(),
 				(entity, direction) -> entity.getItemHandler(direction));
+	}
+
+	private void onRegisterPayloadHandlers(RegisterPayloadHandlerEvent event) {
+		final IPayloadRegistrar registrar = event.registrar(MODID);
+		registrar.play(MachineIOPacket.ID, MachineIOPacket::new,
+				handler -> handler.client(MachineIOPacket::handle).server(MachineIOPacket::handle));
 	}
 
 	// You can use SubscribeEvent and let the Event Bus discover methods to call

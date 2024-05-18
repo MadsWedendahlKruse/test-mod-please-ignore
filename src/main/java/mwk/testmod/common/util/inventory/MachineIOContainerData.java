@@ -21,6 +21,7 @@ public class MachineIOContainerData implements ContainerData {
 
     @Override
     public int get(int index) {
+        // TODO: This could be encoded in a single integer
         return switch (index) {
             case 0 -> blockEntity.isAutoEject() ? 1 : 0;
             case 1 -> blockEntity.isAutoInsert() ? 1 : 0;

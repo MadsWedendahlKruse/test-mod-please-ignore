@@ -1,4 +1,4 @@
-package mwk.testmod.client.gui.widgets;
+package mwk.testmod.client.gui.widgets.buttons;
 
 import mwk.testmod.TestMod;
 import net.minecraft.client.gui.GuiGraphics;

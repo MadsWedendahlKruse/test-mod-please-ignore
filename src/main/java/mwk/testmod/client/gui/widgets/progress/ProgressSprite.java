@@ -1,4 +1,4 @@
-package mwk.testmod.client.gui.widgets;
+package mwk.testmod.client.gui.widgets.progress;
 
 import mwk.testmod.common.block.inventory.base.CrafterMachineMenu;
 import net.minecraft.client.gui.GuiGraphics;

@@ -58,7 +58,7 @@ public class EnergyBar extends AbstractWidget {
 				getX(), getY() + this.height - barHeight, this.width, barHeight);
 		if (isMouseOver(mouseX, mouseY)) {
 			guiGraphics.renderTooltip(this.font,
-					Component.translatable(TestModLanguageProvider.KEY_WIDGET_ENERGY_BAR_HOVER,
+					Component.translatable(TestModLanguageProvider.KEY_WIDGET_ENERGY_BAR_TOOLTIP,
 							NUMBER_FORMAT.format(energy), NUMBER_FORMAT.format(maxEnergy)),
 					mouseX, mouseY);
 		}

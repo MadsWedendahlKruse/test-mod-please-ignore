@@ -1,8 +1,9 @@
 package mwk.testmod.common.block.inventory.base;
 
 import mwk.testmod.common.block.entity.base.BaseMachineBlockEntity;
-import mwk.testmod.common.util.inventory.MachineIOContainerData;
+import mwk.testmod.common.network.MachineIOPacket;
 import mwk.testmod.common.util.inventory.ItemSlotGridHelper;
+import mwk.testmod.common.util.inventory.MachineIOContainerData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -14,6 +15,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class BaseMachineMenu extends EnergyMenu {
 
@@ -236,7 +238,8 @@ public class BaseMachineMenu extends EnergyMenu {
 
     public void setAutoEject(boolean autoEject) {
         this.autoEject = autoEject;
-        blockEntity.setAutoEject(autoEject);
+        PacketDistributor.SERVER.noArg()
+                .send(new MachineIOPacket(MachineIOPacket.Type.AUTO_EJECT, autoEject, pos));
     }
 
     public boolean isAutoInsert() {
@@ -245,6 +248,7 @@ public class BaseMachineMenu extends EnergyMenu {
 
     public void setAutoInsert(boolean autoInsert) {
         this.autoInsert = autoInsert;
-        blockEntity.setAutoInsert(autoInsert);
+        PacketDistributor.SERVER.noArg()
+                .send(new MachineIOPacket(MachineIOPacket.Type.AUTO_INSERT, autoInsert, pos));
     }
 }
