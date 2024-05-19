@@ -1,7 +1,7 @@
 package mwk.testmod.client.gui.screen.base;
 
 import java.util.Collection;
-import mwk.testmod.client.gui.widgets.panels.PanelManager;
+import mwk.testmod.client.gui.widgets.panels.base.PanelManager;
 import mwk.testmod.common.block.inventory.base.BaseMachineMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
@@ -38,8 +38,8 @@ public abstract class BaseMachineScreen<T extends BaseMachineMenu> extends Energ
     @Override
     protected void init() {
         super.init();
-        panelManager =
-                new PanelManager(this.leftPos, this.topPos, this.imageWidth, this.height, 0, 10);
+        panelManager = new PanelManager(this.leftPos, this.topPos, this.imageWidth,
+                this.imageHeight, 0, 10);
         addMachinePanels();
     }
 
@@ -80,6 +80,39 @@ public abstract class BaseMachineScreen<T extends BaseMachineMenu> extends Energ
             return false;
         }
         return super.hasClickedOutside(pMouseX, pMouseY, pGuiLeft, pGuiTop, pMouseButton);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (panelManager.mouseReleased(mouseX, mouseY, button)) {
+            return true;
+        }
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX,
+            double dragY) {
+        if (panelManager.mouseDragged(mouseX, mouseY, button, dragX, dragY)) {
+            return true;
+        }
+        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        if (panelManager.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) {
+            return true;
+        }
+        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (panelManager.keyPressed(keyCode, scanCode, modifiers)) {
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     /**

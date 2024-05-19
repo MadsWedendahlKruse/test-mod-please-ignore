@@ -251,4 +251,8 @@ public class BaseMachineMenu extends EnergyMenu {
         PacketDistributor.SERVER.noArg()
                 .send(new MachineIOPacket(MachineIOPacket.Type.AUTO_INSERT, autoInsert, pos));
     }
+
+    public BaseMachineBlockEntity getBlockEntity() {
+        return blockEntity;
+    }
 }

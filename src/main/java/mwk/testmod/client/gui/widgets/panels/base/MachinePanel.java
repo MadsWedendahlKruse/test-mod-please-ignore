@@ -1,9 +1,10 @@
 
-package mwk.testmod.client.gui.widgets.panels;
+package mwk.testmod.client.gui.widgets.panels.base;
 
 import mwk.testmod.TestMod;
 import mwk.testmod.client.animations.FixedAnimationFloat;
 import mwk.testmod.client.animations.base.FixedAnimation.Function;
+import mwk.testmod.common.util.ColorUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -27,9 +28,10 @@ public abstract class MachinePanel extends AbstractWidget {
     public static final int DEFAULT_ICON_WIDTH = 16;
     public static final int DEFAULT_ICON_HEIGHT = 16;
     public static final int DEFAULT_ICON_PADDING = 5;
-    public static final int LETTER_WIDTH = 5;
-    public static final int LETTER_HEIGHT = 7;
-    public static final int LINE_HEIGHT = 11;
+
+    protected static final Font font = Minecraft.getInstance().font;
+    public static final int LINE_SPACING = 1;
+    public static final int LINE_HEIGHT = font.lineHeight + LINE_SPACING;
 
     public static final float ANIMATION_WIDTH_DURATION = 0.2f;
     public static final float ANIMATION_HEIGHT_DURATION = 0.2f;
@@ -42,8 +44,7 @@ public abstract class MachinePanel extends AbstractWidget {
     // Animations for the panel opening and closing
     private final FixedAnimationFloat animationWidth;
     private final FixedAnimationFloat animationHeight;
-    // Whether it's on the left or right side of the GUI
-    private boolean left;
+    private PanelSide side;
     private int initialX;
     private final float[] color;
     private final ResourceLocation icon;
@@ -57,7 +58,6 @@ public abstract class MachinePanel extends AbstractWidget {
     protected int screenX;
     protected int screenY;
 
-    protected static final Font font = Minecraft.getInstance().font;
 
     public MachinePanel(int widthOpen, int heightOpen, Component message, float[] color,
             ResourceLocation icon) {
@@ -102,10 +102,13 @@ public abstract class MachinePanel extends AbstractWidget {
         this.iconPaddingY = iconPaddingY;
     }
 
-    public void setPosition(int x, int y, boolean left) {
-        super.setPosition(left ? x - widthClosed : x, y);
+    public void setPosition(int x, int y, PanelSide side) {
+        switch (side) {
+            case LEFT -> super.setPosition(x - widthClosed, y);
+            case RIGHT -> super.setPosition(x, y);
+        }
         initialX = getX();
-        this.left = left;
+        this.side = side;
     }
 
     public void setScreenPosition(int x, int y) {
@@ -131,6 +134,14 @@ public abstract class MachinePanel extends AbstractWidget {
         if (animationHeight.isFinished()) {
             animationHeight.start();
         }
+    }
+
+    public int getHeightOpen() {
+        return heightOpen;
+    }
+
+    public int getWidthOpen() {
+        return widthOpen;
     }
 
     /**
@@ -190,10 +201,13 @@ public abstract class MachinePanel extends AbstractWidget {
         animationHeight.update();
         setWidth(animationWidth.getValue().intValue());
         setHeight(animationHeight.getValue().intValue());
-        if (left) {
+        if (side == PanelSide.LEFT) {
             setX(initialX - (getWidth() - widthClosed));
         }
-        ResourceLocation sprite = left ? SPRITE_LEFT : SPRITE_RIGHT;
+        ResourceLocation sprite = switch (side) {
+            case LEFT -> SPRITE_LEFT;
+            case RIGHT -> SPRITE_RIGHT;
+        };
         guiGraphics.setColor(color[0], color[1], color[2], color[3]);
         guiGraphics.blitSprite(sprite, getX(), getY(), width, height);
         guiGraphics.setColor(1, 1, 1, 1);
@@ -213,7 +227,7 @@ public abstract class MachinePanel extends AbstractWidget {
             }
         }
         guiGraphics.drawString(font, openText, getX() + stringOffset, getY() + iconPaddingY + 4,
-                0xffffff);
+                ColorUtils.TEXT_WHITE);
         // Only render open if the animations are finished
         // TODO: Reveal it gradually? Would be cool, but not sure if it's worth the effort
         if (isOpenFully()) {

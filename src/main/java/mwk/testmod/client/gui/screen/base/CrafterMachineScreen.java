@@ -1,9 +1,10 @@
 package mwk.testmod.client.gui.screen.base;
 
 import mwk.testmod.client.gui.widgets.panels.EnergyPanel;
-import mwk.testmod.client.gui.widgets.panels.PanelManager;
+import mwk.testmod.client.gui.widgets.panels.InfoPanel;
 import mwk.testmod.client.gui.widgets.panels.SettingsPanel;
 import mwk.testmod.client.gui.widgets.panels.UpgradePanel;
+import mwk.testmod.client.gui.widgets.panels.base.PanelSide;
 import mwk.testmod.client.gui.widgets.progress.ProgressIcon;
 import mwk.testmod.common.block.inventory.base.CrafterMachineMenu;
 import net.minecraft.client.gui.GuiGraphics;
@@ -34,9 +35,10 @@ public abstract class CrafterMachineScreen<T extends CrafterMachineMenu>
 
     @Override
     protected void addMachinePanels() {
-        panelManager.addPanel(new EnergyPanel(menu), PanelManager.Side.LEFT);
-        panelManager.addPanel(new UpgradePanel(menu), PanelManager.Side.RIGHT);
-        panelManager.addPanel(new SettingsPanel(menu), PanelManager.Side.RIGHT);
+        panelManager.addPanel(new InfoPanel(menu.getBlockEntity()), PanelSide.LEFT);
+        panelManager.addPanel(new EnergyPanel(menu), PanelSide.LEFT);
+        panelManager.addPanel(new UpgradePanel(menu), PanelSide.RIGHT);
+        panelManager.addPanel(new SettingsPanel(menu), PanelSide.RIGHT);
     }
 
     @Override

@@ -3,6 +3,7 @@ package mwk.testmod.client.gui.widgets.panels;
 import java.util.Locale;
 import com.ibm.icu.text.NumberFormat;
 import mwk.testmod.TestMod;
+import mwk.testmod.client.gui.widgets.panels.base.MachinePanel;
 import mwk.testmod.common.block.inventory.base.CrafterMachineMenu;
 import mwk.testmod.common.util.ColorUtils;
 import mwk.testmod.datagen.TestModLanguageProvider;
@@ -12,9 +13,8 @@ import net.minecraft.resources.ResourceLocation;
 
 public class EnergyPanel extends MachinePanel {
 
-	public static final ResourceLocation ICON =
-			new ResourceLocation(TestMod.MODID, "widget/icon_energy");
-	public static final float[] COLOR = new float[] {0.8F, 0, 0, 1};
+	public static final ResourceLocation ICON = new ResourceLocation(TestMod.MODID, "widget/icon_energy");
+	public static final float[] COLOR = new float[] { 0.8F, 0, 0, 1 };
 
 	private static final NumberFormat NUMBER_FORMAT = NumberFormat.getNumberInstance(Locale.US);
 	private static final int SPACE_WIDTH = 4;
@@ -42,8 +42,7 @@ public class EnergyPanel extends MachinePanel {
 
 	private static PanelTextElement[] getTextElements(CrafterMachineMenu menu) {
 		int energyModifier = 100 * menu.getEnergyPerTick() / menu.energyPerTickBase;
-		String craftingSpeedSeconds =
-				String.format(Locale.US, "%.2f", (float) menu.getMaxProgress() / 20);
+		String craftingSpeedSeconds = String.format(Locale.US, "%.2f", (float) menu.getMaxProgress() / 20);
 
 		return new PanelTextElement[] {
 				new PanelTextElement(TestModLanguageProvider.KEY_WIDGET_PANEL_ENERGY_CAPACITY_TITLE,
@@ -54,14 +53,13 @@ public class EnergyPanel extends MachinePanel {
 						NUMBER_FORMAT.format(menu.getEnergyPerTick()), energyModifier),
 				new PanelTextElement(TestModLanguageProvider.KEY_WIDGET_PANEL_ENERGY_CRAFTING_TITLE,
 						TestModLanguageProvider.KEY_WIDGET_PANEL_ENERGY_CRAFTING_TEXT,
-						NUMBER_FORMAT.format(menu.getMaxProgress()), craftingSpeedSeconds)};
+						NUMBER_FORMAT.format(menu.getMaxProgress()), craftingSpeedSeconds) };
 	}
 
 	private static int getMaxLineWidth(CrafterMachineMenu menu) {
 		int max = 0;
 		for (PanelTextElement element : getTextElements(menu)) {
-			int elementMax =
-					Math.max(font.width(element.title), font.width(element.text) + SPACE_WIDTH);
+			int elementMax = Math.max(font.width(element.title), font.width(element.text) + SPACE_WIDTH);
 			max = Math.max(max, elementMax);
 		}
 		return max;

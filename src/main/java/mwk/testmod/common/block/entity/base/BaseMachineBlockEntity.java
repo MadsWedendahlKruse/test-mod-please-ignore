@@ -1,6 +1,7 @@
 package mwk.testmod.common.block.entity.base;
 
 import mwk.testmod.TestModConfig;
+import mwk.testmod.common.block.interfaces.IDescripable;
 import mwk.testmod.common.block.interfaces.IUpgradable;
 import mwk.testmod.common.item.upgrades.base.UpgradeItem;
 import mwk.testmod.common.util.inventory.InputItemHandler;
@@ -26,7 +27,7 @@ import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
  * A block entity that stores energy and also has an inventory.
  */
 public abstract class BaseMachineBlockEntity extends EnergyBlockEntity
-        implements MenuProvider, IUpgradable {
+        implements MenuProvider, IUpgradable, IDescripable {
 
     public static final String NBT_TAG_INVENTORY = "inventory";
     public static final String NBT_TAG_AUTO_INSERT = "autoInsert";

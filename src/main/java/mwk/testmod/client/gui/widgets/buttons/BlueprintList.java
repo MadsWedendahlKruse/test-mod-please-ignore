@@ -54,10 +54,18 @@ public class BlueprintList extends AbstractScrollWidget {
 
     private void addBlueprintButton(Component buttonLabel,
             ResourceKey<MultiBlockBlueprint> blueprintKey) {
-        buttons.add(new BlueprintButton(getX() + padding / 2, getY() + getInnerHeight(),
-                width - padding, Button.DEFAULT_HEIGHT, buttonLabel, (pButton) -> {
-                    this.blueprintKey = blueprintKey;
-                }));
+        // buttons.add(new BlueprintButton(getX() + padding / 2, getY() + getInnerHeight(),
+        // width - padding, Button.DEFAULT_HEIGHT, buttonLabel, (pButton) -> {
+        // this.blueprintKey = blueprintKey;
+        // }));
+
+        // TEMP
+        for (int i = 0; i < 10; i++) {
+            buttons.add(new BlueprintButton(getX() + padding / 2, getY() + getInnerHeight(),
+                    width - padding, Button.DEFAULT_HEIGHT, buttonLabel, (pButton) -> {
+                        this.blueprintKey = blueprintKey;
+                    }));
+        }
     }
 
     public ResourceKey<MultiBlockBlueprint> getBlueprintKey() {

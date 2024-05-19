@@ -1,6 +1,7 @@
 package mwk.testmod.client.gui.widgets.panels;
 
 import mwk.testmod.TestMod;
+import mwk.testmod.client.gui.widgets.panels.base.MachinePanel;
 import mwk.testmod.client.render.RenderUtils;
 import mwk.testmod.common.block.inventory.base.BaseMachineMenu;
 import mwk.testmod.common.util.inventory.ItemSlotGridHelper;

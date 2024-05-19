@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import mwk.testmod.TestMod;
 import mwk.testmod.client.gui.widgets.buttons.OnOffButton;
+import mwk.testmod.client.gui.widgets.panels.base.MachinePanel;
+import mwk.testmod.client.gui.widgets.panels.base.PanelSide;
 import mwk.testmod.common.block.inventory.base.BaseMachineMenu;
 import mwk.testmod.datagen.TestModLanguageProvider;
 import net.minecraft.client.gui.GuiGraphics;
@@ -43,8 +45,8 @@ public class SettingsPanel extends MachinePanel {
     }
 
     @Override
-    public void setPosition(int x, int y, boolean left) {
-        super.setPosition(x, y, left);
+    public void setPosition(int x, int y, PanelSide side) {
+        super.setPosition(x, y, side);
         int buttonX = getOpenLeft() + 5;
         int buttonY = getOpenTop();
         autoEjecButton.setPosition(buttonX, buttonY);

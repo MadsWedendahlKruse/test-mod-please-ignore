@@ -6,6 +6,7 @@ import mwk.testmod.common.block.entity.base.ParallelCrafterMachineBlockEntity;
 import mwk.testmod.common.block.inventory.CrusherMenu;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.recipe.CrushingRecipe;
+import mwk.testmod.datagen.TestModLanguageProvider;
 import mwk.testmod.init.registries.TestModBlockEntities;
 import mwk.testmod.init.registries.TestModBlocks;
 import mwk.testmod.init.registries.TestModRecipeTypes;
@@ -43,6 +44,11 @@ public class CrusherBlockEntity extends ParallelCrafterMachineBlockEntity<Crushi
     public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory,
             Player player) {
         return new CrusherMenu(containerId, player, worldPosition);
+    }
+
+    @Override
+    public String getDescriptionKey() {
+        return TestModLanguageProvider.KEY_DESCRIPTION_CRUSHER;
     }
 
     public void updateRotorAnimation() {

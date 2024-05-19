@@ -4,6 +4,7 @@ import mwk.testmod.TestModConfig;
 import mwk.testmod.common.block.entity.base.ParallelCrafterMachineBlockEntity;
 import mwk.testmod.common.block.inventory.InductionFurnaceMenu;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
+import mwk.testmod.datagen.TestModLanguageProvider;
 import mwk.testmod.init.registries.TestModBlockEntities;
 import mwk.testmod.init.registries.TestModBlocks;
 import mwk.testmod.init.registries.TestModSounds;
@@ -67,5 +68,10 @@ public class InductionFurnaceBlockEntity extends ParallelCrafterMachineBlockEnti
     public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory,
             Player pPlayer) {
         return new InductionFurnaceMenu(pContainerId, pPlayer, worldPosition);
+    }
+
+    @Override
+    public String getDescriptionKey() {
+        return TestModLanguageProvider.KEY_DESCRIPTION_INDUCTION_FURNACE;
     }
 }

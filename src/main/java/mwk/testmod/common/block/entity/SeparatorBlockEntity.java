@@ -5,6 +5,7 @@ import mwk.testmod.client.animations.PerpetualAnimationFloat;
 import mwk.testmod.common.block.entity.base.OneToManyCrafterMachineBlockEntity;
 import mwk.testmod.common.block.inventory.SeparatorMenu;
 import mwk.testmod.common.recipe.SeparationRecipe;
+import mwk.testmod.datagen.TestModLanguageProvider;
 import mwk.testmod.init.registries.TestModBlockEntities;
 import mwk.testmod.init.registries.TestModBlocks;
 import mwk.testmod.init.registries.TestModRecipeTypes;
@@ -39,6 +40,11 @@ public class SeparatorBlockEntity extends OneToManyCrafterMachineBlockEntity<Sep
     public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory,
             Player player) {
         return new SeparatorMenu(containerId, player, worldPosition);
+    }
+
+    @Override
+    public String getDescriptionKey() {
+        return TestModLanguageProvider.KEY_DESCRIPTION_SEPARATOR;
     }
 
     public void updateSpinnerAnimation() {

@@ -8,6 +8,14 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
 
 public class TestModLanguageProvider extends LanguageProvider {
 
+	// Descriptions
+	public static final String KEY_DESCRIPTION_MISSING = "description.testmod.missing";
+	public static final String KEY_DESCRIPTION_SUPER_ASSEMBLER =
+			"description.testmod.super_assembler";
+	public static final String KEY_DESCRIPTION_INDUCTION_FURNACE =
+			"description.testmod.induction_furnace";
+	public static final String KEY_DESCRIPTION_CRUSHER = "description.testmod.crusher";
+	public static final String KEY_DESCRIPTION_SEPARATOR = "description.testmod.separator";
 	// Creative tabs
 	public static final String KEY_CREATIVE_TAB = "itemGroup.testmod";
 	// Info
@@ -42,6 +50,7 @@ public class TestModLanguageProvider extends LanguageProvider {
 			"widget.testmod.hologram_projector.buttons";
 	public static final String KEY_WIDGET_ENERGY_BAR = "widget.testmod.energy_bar";
 	public static final String KEY_WIDGET_ENERGY_BAR_TOOLTIP = "widget.testmod.energy_bar.tooltip";
+	public static final String KEY_WIDGET_PANEL_INFO = "widget.testmod.panel.info";
 	public static final String KEY_WIDGET_PANEL_ENERGY = "widget.testmod.panel.energy";
 	public static final String KEY_WIDGET_PANEL_ENERGY_USAGE_TITLE =
 			"widget.testmod.panel.energy_usage_title";
@@ -89,6 +98,17 @@ public class TestModLanguageProvider extends LanguageProvider {
 		add(TestModBlocks.INDUCTION_FURNACE.get(), "Induction Furnace");
 		add(TestModBlocks.CRUSHER.get(), "Crusher");
 		add(TestModBlocks.SEPARATOR.get(), "Separator");
+
+		// TEMPORARY DESCRIPTIONS
+		add(KEY_DESCRIPTION_MISSING, "No description available.");
+		add(KEY_DESCRIPTION_SUPER_ASSEMBLER,
+				"A powerful machine designed to automate the crafting of complex items. It can store multiple recipes and automatically craft items when provided with the necessary materials.");
+		add(KEY_DESCRIPTION_INDUCTION_FURNACE,
+				"A high-temperature furnace capable of smelting ores and processing materials at a faster rate than a standard furnace. Essential for efficient ore processing and preparation in advanced manufacturing systems.");
+		add(KEY_DESCRIPTION_CRUSHER,
+				"A powerful machine designed to break down ores into finer materials, enabling the extraction of valuable resources. Essential for efficient ore processing and preparation in advanced manufacturing systems.");
+		add(KEY_DESCRIPTION_SEPARATOR,
+				"A machine designed to separate mixed materials into their individual components. Essential for efficient ore processing and preparation in advanced manufacturing systems.");
 		// Items
 		add(TestModItems.WRENCH_ITEM.get(), "Wrench");
 		add(TestModItems.HOLOGRAM_PROJECTOR_ITEM.get(), "Hologram Projector");
@@ -122,6 +142,7 @@ public class TestModLanguageProvider extends LanguageProvider {
 		add(KEY_WIDGET_HOLOGRAM_PROJECTOR_BUTTONS, "Buttons");
 		add(KEY_WIDGET_ENERGY_BAR, "Energy");
 		add(KEY_WIDGET_ENERGY_BAR_TOOLTIP, "%s/%s FE");
+		add(KEY_WIDGET_PANEL_INFO, "Info");
 		add(KEY_WIDGET_PANEL_ENERGY, "Energy");
 		add(KEY_WIDGET_PANEL_ENERGY_USAGE_TITLE, "Usage");
 		add(KEY_WIDGET_PANEL_ENERGY_USAGE_TEXT, "  %s FE/t (%s%%)");
