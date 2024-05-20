@@ -1,4 +1,4 @@
-package mwk.testmod.compat;
+package mwk.testmod.compat.jei.recipe_categories;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,8 @@ import mwk.testmod.client.gui.widgets.EnergyBar;
 import mwk.testmod.client.gui.widgets.progress.ProgressArrowSingle;
 import mwk.testmod.client.render.RenderUtils;
 import mwk.testmod.common.recipe.CrushingRecipe;
-import mwk.testmod.compat.base.BaseRecipeCategory;
+import mwk.testmod.compat.jei.JEITestModRecipeTypes;
+import mwk.testmod.compat.jei.recipe_categories.base.BaseRecipeCategory;
 import mwk.testmod.init.registries.TestModBlocks;
 import net.minecraft.world.item.ItemStack;
 

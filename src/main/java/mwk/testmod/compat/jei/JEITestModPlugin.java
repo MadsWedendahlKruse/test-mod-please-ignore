@@ -1,5 +1,6 @@
-package mwk.testmod.compat;
+package mwk.testmod.compat.jei;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import mezz.jei.api.IModPlugin;
@@ -7,12 +8,24 @@ import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.gui.handlers.IGlobalGuiHandler;
 import mezz.jei.api.helpers.IGuiHelper;
+import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mwk.testmod.TestMod;
+import mwk.testmod.client.gui.screen.CrusherScreen;
+import mwk.testmod.client.gui.screen.InductionFurnaceScreen;
+import mwk.testmod.client.gui.screen.SeparatorScreen;
 import mwk.testmod.client.gui.screen.base.BaseMachineScreen;
+import mwk.testmod.client.gui.screen.base.CrafterMachineScreen;
+import mwk.testmod.client.gui.screen.config.GuiConfig;
+import mwk.testmod.client.gui.screen.config.GuiConfigs;
+import mwk.testmod.client.gui.widgets.progress.ProgressArrow;
+import mwk.testmod.client.gui.widgets.progress.ProgressArrowFactory;
+import mwk.testmod.client.gui.widgets.progress.ProgressIcon;
+import mwk.testmod.compat.jei.recipe_categories.CrushingRecipeCategory;
+import mwk.testmod.compat.jei.recipe_categories.SeparationRecipeCategory;
 import mwk.testmod.init.registries.TestModBlocks;
 import mwk.testmod.init.registries.TestModRecipeTypes;
 import net.minecraft.client.Minecraft;
@@ -58,6 +71,31 @@ public class JEITestModPlugin implements IModPlugin {
                 JEITestModRecipeTypes.SEPARATION);
     }
 
+    private Collection<Rect2i> getRecipeClickAreas(GuiConfig config) {
+        // TODO: This method could be somewhere else. Also we're assuming the progress arrows are
+        // spaced vertically.
+        ArrayList<Rect2i> clickAreas = new ArrayList<>();
+        clickAreas.add(new Rect2i(config.progressIconX(), config.progressIconY(),
+                ProgressIcon.WIDTH, ProgressIcon.HEIGHT));
+        for (int i = 0; i < config.progressArrows(); i++) {
+            ProgressArrow arrow = ProgressArrowFactory.create(config.progressArrowType(), null,
+                    config.progressArrowX(),
+                    config.progressArrowY() + i * config.progressArrowSpacing());
+            clickAreas.add(
+                    new Rect2i(arrow.getX(), arrow.getY(), arrow.getWidth(), arrow.getHeight()));
+        }
+        return clickAreas;
+    }
+
+    private <T extends CrafterMachineScreen<?>> void registerClickArea(
+            IGuiHandlerRegistration registration, Class<? extends T> containerScreenClass,
+            GuiConfig config, RecipeType<?> recipeType) {
+        for (Rect2i clickArea : getRecipeClickAreas(config)) {
+            registration.addRecipeClickArea(containerScreenClass, clickArea.getX(),
+                    clickArea.getY(), clickArea.getWidth(), clickArea.getHeight(), recipeType);
+        }
+    }
+
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
         registration.addGlobalGuiHandler(new IGlobalGuiHandler() {
@@ -70,5 +108,11 @@ public class JEITestModPlugin implements IModPlugin {
                 return Collections.emptyList();
             }
         });
+        registerClickArea(registration, InductionFurnaceScreen.class, GuiConfigs.INDUCTION_FURNACE,
+                RecipeTypes.BLASTING);
+        registerClickArea(registration, SeparatorScreen.class, GuiConfigs.SEPARATOR,
+                JEITestModRecipeTypes.SEPARATION);
+        registerClickArea(registration, CrusherScreen.class, GuiConfigs.CRUSHER,
+                JEITestModRecipeTypes.CRUSHING);
     }
 }

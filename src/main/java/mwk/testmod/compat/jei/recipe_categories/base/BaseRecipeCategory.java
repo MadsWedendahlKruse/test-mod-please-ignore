@@ -1,4 +1,4 @@
-package mwk.testmod.compat.base;
+package mwk.testmod.compat.jei.recipe_categories.base;
 
 import java.util.List;
 import mezz.jei.api.constants.VanillaTypes;

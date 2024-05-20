@@ -1,11 +1,15 @@
 package mwk.testmod.client.gui.screen.base;
 
+import java.util.ArrayList;
+import mwk.testmod.client.gui.screen.config.GuiConfig;
 import mwk.testmod.client.gui.widgets.panels.EnergyPanel;
 import mwk.testmod.client.gui.widgets.panels.InfoPanel;
 import mwk.testmod.client.gui.widgets.panels.SettingsPanel;
 import mwk.testmod.client.gui.widgets.panels.UpgradePanel;
 import mwk.testmod.client.gui.widgets.panels.base.PanelSide;
+import mwk.testmod.client.gui.widgets.progress.ProgressArrowFactory;
 import mwk.testmod.client.gui.widgets.progress.ProgressIcon;
+import mwk.testmod.client.gui.widgets.progress.ProgressSprite;
 import mwk.testmod.common.block.inventory.base.CrafterMachineMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
@@ -16,22 +20,43 @@ import net.minecraft.world.entity.player.Inventory;
 public abstract class CrafterMachineScreen<T extends CrafterMachineMenu>
         extends BaseMachineScreen<T> {
 
-    private ProgressIcon progressIcon;
+    private final ArrayList<ProgressSprite> progressSprites;
+
     private final WidgetSprites progressIconSprites;
     private final int progressIconX;
     private final int progressIconY;
+    private final ProgressArrowFactory.Type progressArrowType;
+    private final int progressArrows;
+    private final int progressArrowX;
+    private final int progressArrowY;
+    private final int progressArrowSpacing;
+
+    public CrafterMachineScreen(T menu, Inventory playerInventory, Component title,
+            GuiConfig config) {
+        this(menu, playerInventory, title, config.background(), config.energyBarX(),
+                config.energyBarY(), config.imageWidth(), config.imageHeight(),
+                config.progressIconName(), config.progressIconX(), config.progressIconY(),
+                config.progressArrowType(), config.progressArrows(), config.progressArrowX(),
+                config.progressArrowY(), config.progressArrowSpacing());
+    }
 
     public CrafterMachineScreen(T menu, Inventory playerInventory, Component title,
             ResourceLocation texture, int energyBarX, int energyBarY, int imageWidth,
-            int imageHeight, String iconName, int progressIconX, int progressIconY) {
+            int imageHeight, String iconName, int progressIconX, int progressIconY,
+            ProgressArrowFactory.Type progressArrowType, int progressArrows, int progressArrowX,
+            int progressArrowY, int progressArrowSpacing) {
         super(menu, playerInventory, title, texture, energyBarX, energyBarY, imageWidth,
                 imageHeight);
+        this.progressSprites = new ArrayList<>();
         this.progressIconSprites = ProgressIcon.createSprites(iconName);
         this.progressIconX = progressIconX;
         this.progressIconY = progressIconY;
+        this.progressArrowType = progressArrowType;
+        this.progressArrows = progressArrows;
+        this.progressArrowX = progressArrowX;
+        this.progressArrowY = progressArrowY;
+        this.progressArrowSpacing = progressArrowSpacing;
     }
-
-    protected abstract void renderProgress(GuiGraphics guiGraphics);
 
     @Override
     protected void addMachinePanels() {
@@ -41,17 +66,28 @@ public abstract class CrafterMachineScreen<T extends CrafterMachineMenu>
         panelManager.addPanel(new SettingsPanel(menu), PanelSide.RIGHT);
     }
 
+    protected final void addProgressSprite(ProgressSprite progressSprite) {
+        progressSprites.add(progressSprite);
+    }
+
     @Override
     protected void init() {
         super.init();
-        progressIcon = new ProgressIcon(progressIconSprites, menu, this.leftPos + progressIconX,
-                this.topPos + progressIconY);
+        progressSprites.clear();
+        addProgressSprite(new ProgressIcon(progressIconSprites, menu, this.leftPos + progressIconX,
+                this.topPos + progressIconY));
+        for (int i = 0; i < progressArrows; i++) {
+            addProgressSprite(ProgressArrowFactory.create(progressArrowType, menu,
+                    this.leftPos + progressArrowX,
+                    this.topPos + progressArrowY + i * progressArrowSpacing));
+        }
     }
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
         super.renderBg(guiGraphics, partialTick, mouseX, mouseY);
-        progressIcon.render(guiGraphics);
-        renderProgress(guiGraphics);
+        for (ProgressSprite progressSprite : progressSprites) {
+            progressSprite.render(guiGraphics);
+        }
     }
 }

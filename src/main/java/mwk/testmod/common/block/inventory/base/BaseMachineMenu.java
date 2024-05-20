@@ -24,7 +24,7 @@ public class BaseMachineMenu extends EnergyMenu {
     public static final int SLOT_DX = SLOT_SIZE + SLOT_SPACING;
     public static final int SLOT_DY = SLOT_SIZE + SLOT_SPACING;
     public static final int DEFAULT_PLAYER_INVENTORY_X = 8;
-    public static final int DEFAULT_PLAYER_INVENTORY_Y = 91;
+    public static final int DEFAULT_PLAYER_INVENTORY_Y = 111;
 
     private final BlockPos pos;
     private final Block block;

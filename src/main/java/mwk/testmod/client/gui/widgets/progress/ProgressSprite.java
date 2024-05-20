@@ -3,6 +3,7 @@ package mwk.testmod.client.gui.widgets.progress;
 import mwk.testmod.common.block.inventory.base.CrafterMachineMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
 
 public class ProgressSprite {
@@ -64,11 +65,23 @@ public class ProgressSprite {
         render(guiGraphics, menu.getProgress(), menu.getMaxProgress());
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
     public int getWidth() {
         return width;
     }
 
     public int getHeight() {
         return height;
+    }
+
+    public Rect2i getBounds() {
+        return new Rect2i(x, y, width, height);
     }
 }

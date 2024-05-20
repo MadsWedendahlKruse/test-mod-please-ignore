@@ -11,8 +11,6 @@ import net.minecraft.world.entity.player.Inventory;
 
 public abstract class BaseMachineScreen<T extends BaseMachineMenu> extends EnergyScreen<T> {
 
-    public static final int TEXTURE_INVENTORY_WIDTH = 176;
-    public static final int TEXTURE_INVENTORY_HEIGHT = 98;
     public static final int INVENTORY_LABEL_Y_OFFSET = 11;
     public static final int INVETORY_PADDING_X = 8;
     public static final int INVETORY_PADDING_Y = 16;
@@ -84,34 +82,26 @@ public abstract class BaseMachineScreen<T extends BaseMachineMenu> extends Energ
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if (panelManager.mouseReleased(mouseX, mouseY, button)) {
-            return true;
-        }
+        panelManager.mouseReleased(mouseX, mouseY, button);
         return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX,
             double dragY) {
-        if (panelManager.mouseDragged(mouseX, mouseY, button, dragX, dragY)) {
-            return true;
-        }
+        panelManager.mouseDragged(mouseX, mouseY, button, dragX, dragY);
         return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        if (panelManager.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) {
-            return true;
-        }
+        panelManager.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
         return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (panelManager.keyPressed(keyCode, scanCode, modifiers)) {
-            return true;
-        }
+        panelManager.keyPressed(keyCode, scanCode, modifiers);
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
