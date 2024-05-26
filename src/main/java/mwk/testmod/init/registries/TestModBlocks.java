@@ -2,6 +2,7 @@ package mwk.testmod.init.registries;
 
 import java.util.function.Supplier;
 import mwk.testmod.TestMod;
+import mwk.testmod.common.block.cable.CableBlock;
 import mwk.testmod.common.block.entity.CrusherBlockEntity;
 import mwk.testmod.common.block.entity.InductionFurnaceBlockEntity;
 import mwk.testmod.common.block.entity.SeparatorBlockEntity;
@@ -45,6 +46,8 @@ public class TestModBlocks {
 	public static final String TELEPORTER_ID = "teleporter";
 
 	public static final String HOLOGRAM_ID = "hologram";
+
+	public static final String CABLE_ID = "cable";
 
 	// Normal blocks
 	public static final DeferredBlock<Block> ILMENITE_ORE =
@@ -96,6 +99,9 @@ public class TestModBlocks {
 
 	public static final DeferredBlock<HologramBlock> HOLOGRAM =
 			BLOCKS.register(HOLOGRAM_ID, () -> new HologramBlock());
+
+	public static final DeferredBlock<CableBlock> CABLE =
+			registerBlockWithItem("cable", () -> new CableBlock(BlockBehaviour.Properties.of()));
 
 	public static BlockBehaviour.Properties getMachineProperties() {
 		return BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL)

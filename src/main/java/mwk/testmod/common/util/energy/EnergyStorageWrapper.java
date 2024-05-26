@@ -15,11 +15,13 @@ public class EnergyStorageWrapper implements IEnergyStorage {
 
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate) {
+        blockEntity.setChanged();
         return energyStorage.receiveEnergy(maxReceive, simulate);
     }
 
     @Override
     public int extractEnergy(int maxExtract, boolean simulate) {
+        blockEntity.setChanged();
         return energyStorage.extractEnergy(maxExtract, simulate);
     }
 

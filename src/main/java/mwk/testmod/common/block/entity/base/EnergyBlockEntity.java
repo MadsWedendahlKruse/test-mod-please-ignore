@@ -1,7 +1,7 @@
 package mwk.testmod.common.block.entity.base;
 
 import mwk.testmod.common.util.energy.EnergyStorageConsumer;
-import mwk.testmod.common.util.energy.EnergyStorageGenerator;
+import mwk.testmod.common.util.energy.EnergyStorageProducer;
 import mwk.testmod.common.util.energy.EnergyStorageWrapper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,7 +26,7 @@ public class EnergyBlockEntity extends BlockEntity {
 
     // TODO: Overengineered?
     public enum EnergyType {
-        STORAGE, CONSUMER, GENERATOR
+        STORAGE, CONSUMER, PRODUCER
     }
 
     public EnergyBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
@@ -36,7 +36,7 @@ public class EnergyBlockEntity extends BlockEntity {
         this.energyHandler = switch (energyType) {
             case STORAGE -> Lazy.of(() -> new EnergyStorageWrapper(energy, this));
             case CONSUMER -> Lazy.of(() -> new EnergyStorageConsumer(energy, this));
-            case GENERATOR -> Lazy.of(() -> new EnergyStorageGenerator(energy, this));
+            case PRODUCER -> Lazy.of(() -> new EnergyStorageProducer(energy, this));
         };
     }
 

@@ -10,12 +10,6 @@ public class EnergyStorageConsumer extends EnergyStorageWrapper {
     }
 
     @Override
-    public int receiveEnergy(int maxReceive, boolean simulate) {
-        blockEntity.setChanged();
-        return super.receiveEnergy(maxReceive, simulate);
-    }
-
-    @Override
     public int extractEnergy(int maxExtract, boolean simulate) {
         return 0;
     }

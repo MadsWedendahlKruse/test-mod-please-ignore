@@ -8,6 +8,7 @@ import mwk.testmod.client.gui.screen.SeparatorScreen;
 import mwk.testmod.client.render.block_entity.CrusherBlockEntityRenderer;
 import mwk.testmod.client.render.block_entity.SeparatorBlockEntityRenderer;
 import mwk.testmod.client.render.hologram.HologramRenderer;
+import mwk.testmod.common.block.cable.network.CableNetworkManager;
 import mwk.testmod.common.block.multiblock.HologramBlockColor;
 import mwk.testmod.common.network.MachineIOPacket;
 import mwk.testmod.init.registries.TestModBlockEntities;
@@ -38,6 +39,7 @@ import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.event.TickEvent.ServerTickEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
 import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
@@ -122,12 +124,29 @@ public class TestMod {
 		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
 				TestModBlockEntities.CRUSHER_ENTITY_TYPE.get(),
 				(entity, direction) -> entity.getItemHandler(direction));
+		event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
+				TestModBlockEntities.SEPARATOR_ENTITY_TYPE.get(),
+				(entity, direction) -> entity.getEnergyHandler(direction));
+		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
+				TestModBlockEntities.SEPARATOR_ENTITY_TYPE.get(),
+				(entity, direction) -> entity.getItemHandler(direction));
+
+		event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
+				TestModBlockEntities.CABLE_ENTITY_TYPE.get(),
+				(entity, direction) -> entity.getEnergyHandler(direction));
+
 	}
 
 	private void onRegisterPayloadHandlers(RegisterPayloadHandlerEvent event) {
 		final IPayloadRegistrar registrar = event.registrar(MODID);
 		registrar.play(MachineIOPacket.ID, MachineIOPacket::new,
 				handler -> handler.client(MachineIOPacket::handle).server(MachineIOPacket::handle));
+	}
+
+	@SubscribeEvent
+	public void onServerTick(ServerTickEvent event) {
+		// TODO: Maybe this should go somewhere else
+		CableNetworkManager.getInstance().tick();
 	}
 
 	// You can use SubscribeEvent and let the Event Bus discover methods to call

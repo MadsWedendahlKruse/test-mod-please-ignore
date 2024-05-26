@@ -38,6 +38,8 @@ public class TestModBlockLootTables extends BlockLootSubProvider {
         });
 
         dropOther(TestModBlocks.HOLOGRAM.get(), ItemStack.EMPTY.getItem());
+
+        dropSelf(TestModBlocks.CABLE.get());
     }
 
     @Override

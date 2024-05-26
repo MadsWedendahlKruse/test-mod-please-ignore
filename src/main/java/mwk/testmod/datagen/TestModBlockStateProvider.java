@@ -1,6 +1,8 @@
 package mwk.testmod.datagen;
 
 import mwk.testmod.TestMod;
+import mwk.testmod.common.block.cable.CableBlock;
+import mwk.testmod.common.block.cable.ConnectorType;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import mwk.testmod.init.registries.TestModBlocks;
@@ -11,6 +13,7 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class TestModBlockStateProvider extends BlockStateProvider {
@@ -50,6 +53,8 @@ public class TestModBlockStateProvider extends BlockStateProvider {
 				TestModBlocks.SUPER_ASSEMBLER_ID);
 		registerMultiBlockController(TestModBlocks.CRUSHER.get(), TestModBlocks.CRUSHER_ID);
 		registerMultiBlockController(TestModBlocks.SEPARATOR.get(), TestModBlocks.SEPARATOR_ID);
+
+		registerCableBlock(TestModBlocks.CABLE.get());
 	}
 
 	protected void createCubeAll(String modelPath) {
@@ -118,5 +123,40 @@ public class TestModBlockStateProvider extends BlockStateProvider {
 		getVariantBuilder(block).forAllStatesExcept(state -> {
 			return ConfiguredModel.builder().modelFile(model).build();
 		});
+	}
+
+	protected void registerCableBlock(CableBlock cableBlock) {
+		// TOOD: models? It already exists
+		// Create the blockstate for the cable
+		ModelFile modelBase = models().getExistingFile(modLoc("block/cable_base"));
+		ModelFile modelSide = models().getExistingFile(modLoc("block/cable_side"));
+		ModelFile modelSideBlock = models().getExistingFile(modLoc("block/cable_side_block"));
+		MultiPartBlockStateBuilder builder = getMultipartBuilder(cableBlock);
+		builder.part().modelFile(modelBase).addModel().end();
+		// TODO: Try without UV lock?
+		builder.part().modelFile(modelSide).addModel()
+				.condition(CableBlock.NORTH, ConnectorType.CABLE).end();
+		builder.part().modelFile(modelSide).rotationY(90).addModel()
+				.condition(CableBlock.EAST, ConnectorType.CABLE).end();
+		builder.part().modelFile(modelSide).rotationY(180).addModel()
+				.condition(CableBlock.SOUTH, ConnectorType.CABLE).end();
+		builder.part().modelFile(modelSide).rotationY(270).addModel()
+				.condition(CableBlock.WEST, ConnectorType.CABLE).end();
+		builder.part().modelFile(modelSide).rotationX(270).addModel()
+				.condition(CableBlock.UP, ConnectorType.CABLE).end();
+		builder.part().modelFile(modelSide).rotationX(90).addModel()
+				.condition(CableBlock.DOWN, ConnectorType.CABLE).end();
+		builder.part().modelFile(modelSideBlock).addModel()
+				.condition(CableBlock.NORTH, ConnectorType.BLOCK).end();
+		builder.part().modelFile(modelSideBlock).rotationY(90).addModel()
+				.condition(CableBlock.EAST, ConnectorType.BLOCK).end();
+		builder.part().modelFile(modelSideBlock).rotationY(180).addModel()
+				.condition(CableBlock.SOUTH, ConnectorType.BLOCK).end();
+		builder.part().modelFile(modelSideBlock).rotationY(270).addModel()
+				.condition(CableBlock.WEST, ConnectorType.BLOCK).end();
+		builder.part().modelFile(modelSideBlock).rotationX(270).addModel()
+				.condition(CableBlock.UP, ConnectorType.BLOCK).end();
+		builder.part().modelFile(modelSideBlock).rotationX(90).addModel()
+				.condition(CableBlock.DOWN, ConnectorType.BLOCK).end();
 	}
 }

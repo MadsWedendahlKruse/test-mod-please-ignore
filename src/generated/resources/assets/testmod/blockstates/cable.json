@@ -1,0 +1,127 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "testmod:block/cable_base"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/cable_side",
+        "uvlock": false
+      },
+      "when": {
+        "north": "cable"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/cable_side",
+        "uvlock": false,
+        "y": 90
+      },
+      "when": {
+        "east": "cable"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/cable_side",
+        "uvlock": false,
+        "y": 180
+      },
+      "when": {
+        "south": "cable"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/cable_side",
+        "uvlock": false,
+        "y": 270
+      },
+      "when": {
+        "west": "cable"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/cable_side",
+        "uvlock": false,
+        "x": 270
+      },
+      "when": {
+        "up": "cable"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/cable_side",
+        "uvlock": false,
+        "x": 90
+      },
+      "when": {
+        "down": "cable"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/cable_side_block",
+        "uvlock": false
+      },
+      "when": {
+        "north": "block"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/cable_side_block",
+        "uvlock": false,
+        "y": 90
+      },
+      "when": {
+        "east": "block"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/cable_side_block",
+        "uvlock": false,
+        "y": 180
+      },
+      "when": {
+        "south": "block"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/cable_side_block",
+        "uvlock": false,
+        "y": 270
+      },
+      "when": {
+        "west": "block"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/cable_side_block",
+        "uvlock": false,
+        "x": 270
+      },
+      "when": {
+        "up": "block"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/cable_side_block",
+        "uvlock": false,
+        "x": 90
+      },
+      "when": {
+        "down": "block"
+      }
+    }
+  ]
+}
