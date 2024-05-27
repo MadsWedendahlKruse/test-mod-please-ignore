@@ -2,8 +2,8 @@ package mwk.testmod.common.block.cable;
 
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
-import mwk.testmod.TestMod;
 import mwk.testmod.common.block.cable.network.CableNetworkManager;
+import mwk.testmod.common.block.interfaces.ITickable;
 import mwk.testmod.common.block.interfaces.IWrenchable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -12,11 +12,12 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -71,6 +72,20 @@ public class CableBlock extends Block implements EntityBlock, IWrenchable, Simpl
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new CableBlockEntity(pos, state);
+    }
+
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
+            BlockEntityType<T> blockEntityType) {
+        if (level.isClientSide()) {
+            return null;
+        }
+        // Lambda expression that implements the BlockEntityTicker interface.
+        return (lvl, pos, st, be) -> {
+            if (be instanceof ITickable tickable) {
+                tickable.tick();
+            }
+        };
     }
 
     /**
@@ -171,12 +186,22 @@ public class CableBlock extends Block implements EntityBlock, IWrenchable, Simpl
     private static final VoxelShape SHAPE_CABLE_DOWN =
             Shapes.box(CABLE_MIN, 0, CABLE_MIN, CABLE_MAX, CABLE_MIN, CABLE_MAX);
 
-    private static final VoxelShape SHAPE_BLOCK_NORTH = Shapes.box(.2, .2, 0, .8, .8, .1);
-    private static final VoxelShape SHAPE_BLOCK_SOUTH = Shapes.box(.2, .2, .9, .8, .8, 1);
-    private static final VoxelShape SHAPE_BLOCK_WEST = Shapes.box(0, .2, .2, .1, .8, .8);
-    private static final VoxelShape SHAPE_BLOCK_EAST = Shapes.box(.9, .2, .2, 1, .8, .8);
-    private static final VoxelShape SHAPE_BLOCK_UP = Shapes.box(.2, .9, .2, .8, 1, .8);
-    private static final VoxelShape SHAPE_BLOCK_DOWN = Shapes.box(.2, 0, .2, .8, .1, .8);
+    private static final double CONNECTOR_MIN = 4. / 16.;
+    private static final double CONNECTOR_MAX = 12. / 16.;
+    private static final double CONNECTOR_THICKNESS = 4. / 16.;
+
+    private static final VoxelShape SHAPE_BLOCK_NORTH = Shapes.box(CONNECTOR_MIN, CONNECTOR_MIN, 0,
+            CONNECTOR_MAX, CONNECTOR_MAX, CONNECTOR_THICKNESS);
+    private static final VoxelShape SHAPE_BLOCK_SOUTH = Shapes.box(CONNECTOR_MIN, CONNECTOR_MIN,
+            1 - CONNECTOR_THICKNESS, CONNECTOR_MAX, CONNECTOR_MAX, 1);
+    private static final VoxelShape SHAPE_BLOCK_WEST = Shapes.box(0, CONNECTOR_MIN, CONNECTOR_MIN,
+            CONNECTOR_THICKNESS, CONNECTOR_MAX, CONNECTOR_MAX);
+    private static final VoxelShape SHAPE_BLOCK_EAST = Shapes.box(1 - CONNECTOR_THICKNESS,
+            CONNECTOR_MIN, CONNECTOR_MIN, 1, CONNECTOR_MAX, CONNECTOR_MAX);
+    private static final VoxelShape SHAPE_BLOCK_UP = Shapes.box(CONNECTOR_MIN,
+            1 - CONNECTOR_THICKNESS, CONNECTOR_MIN, CONNECTOR_MAX, 1, CONNECTOR_MAX);
+    private static final VoxelShape SHAPE_BLOCK_DOWN = Shapes.box(CONNECTOR_MIN, 0, CONNECTOR_MIN,
+            CONNECTOR_MAX, CONNECTOR_THICKNESS, CONNECTOR_MAX);
 
     private int calculateShapeIndex(ConnectorType north, ConnectorType south, ConnectorType west,
             ConnectorType east, ConnectorType up, ConnectorType down) {
@@ -241,6 +266,9 @@ public class CableBlock extends Block implements EntityBlock, IWrenchable, Simpl
     @Override
     public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter world,
             @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
+        // TODO: When connecting to a MultiBlockEnergyPortBlockEntity, the shape is not
+        // connected to the block. I guess on the client side maybe the energy handler
+        // is null?
         ConnectorType north = getConnectorType(world, pos, Direction.NORTH);
         ConnectorType south = getConnectorType(world, pos, Direction.SOUTH);
         ConnectorType west = getConnectorType(world, pos, Direction.WEST);
@@ -258,9 +286,6 @@ public class CableBlock extends Block implements EntityBlock, IWrenchable, Simpl
         if (state.getValue(BlockStateProperties.WATERLOGGED)) {
             level.getFluidTicks().schedule(
                     new ScheduledTick<>(Fluids.WATER, pos, Fluids.WATER.getTickDelay(level), 0L));
-        }
-        if (!level.isClientSide()) {
-            CableNetworkManager.getInstance().updateNetworks(pos, state, neighborState, direction);
         }
         return calculateState(level, pos, state);
     }

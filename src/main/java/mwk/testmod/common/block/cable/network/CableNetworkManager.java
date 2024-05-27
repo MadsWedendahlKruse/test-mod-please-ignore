@@ -3,47 +3,47 @@ package mwk.testmod.common.block.cable.network;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.ibm.icu.impl.Pair;
 import mwk.testmod.TestMod;
 import mwk.testmod.common.block.cable.CableBlock;
+import mwk.testmod.common.block.cable.CableBlockEntity;
 import mwk.testmod.common.block.cable.ConnectorType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.energy.IEnergyStorage;
 
 /**
  * Singleton class that manages all cable networks in the world.
  */
 public class CableNetworkManager {
 
-    public static final CableNetworkManager INSTANCE = new CableNetworkManager();
+    public static CableNetworkManager instance;
 
     private final Map<BlockPos, CableNetwork> networkMap;
-    private final Map<CableNetwork, Set<BlockPos>> reverseNetworkMap;
 
     private CableNetworkManager() {
         // TODO: Not sure what the best collection type is here
         this.networkMap = new HashMap<>();
-        this.reverseNetworkMap = new HashMap<>();
+    }
+
+    public CableNetworkManager create() {
+        return new CableNetworkManager();
     }
 
     public static CableNetworkManager getInstance() {
-        return INSTANCE;
-    }
-
-    public void tick() {
-        for (CableNetwork network : reverseNetworkMap.keySet()) {
-            network.distributeEnergy();
+        if (instance == null) {
+            instance = new CableNetworkManager();
         }
+        return instance;
     }
 
     /**
@@ -66,28 +66,14 @@ public class CableNetworkManager {
             // Connect to an existing network, merge if necessary
             // TODO: Not sure if this is the best way to find the largest network
             CableNetwork largestNetwork = neighborNetworks.stream().max((n1, n2) -> {
-                return reverseNetworkMap.get(n1).size() - reverseNetworkMap.get(n2).size();
+                return Integer.compare(n1.getSize(), n2.getSize());
             }).get();
             for (CableNetwork network : neighborNetworks) {
                 if (network != largestNetwork) {
-                    mergeNetworks(largestNetwork, network);
+                    mergeNetworks(level, largestNetwork, network);
                 }
             }
-            addCableToNetwork(pos, largestNetwork);
-        }
-        // The network the cable is connected to
-        CableNetwork network = networkMap.get(pos);
-        // Connect neighboring block entities to the network
-        List<Pair<BlockPos, BlockState>> neighbors = getNeighborBlocks(level, pos, state);
-        for (Pair<BlockPos, BlockState> neighbor : neighbors) {
-            // If it's not a cable, it must be a block(?)
-            if (!(neighbor.second.getBlock() instanceof CableBlock)) {
-                BlockPos neighborPos = neighbor.first;
-                // Get the face of the neighbor that is connected to the cable
-                Direction face = Direction.fromDelta(pos.getX() - neighborPos.getX(),
-                        pos.getY() - neighborPos.getY(), pos.getZ() - neighborPos.getZ());
-                network.addBlock(neighbor.first, face);
-            }
+            addCableToNetwork(level, pos, largestNetwork);
         }
     }
 
@@ -105,7 +91,7 @@ public class CableNetworkManager {
         // might be split into multiple networks.
         CableNetwork originalNetwork = networkMap.get(pos);
         if (originalNetwork != null) {
-            removeCableFromNetwork(pos);
+            removeCableFromNetwork(level, pos);
             // If it was connected to more than one cable, we might need to split the network
             List<Pair<BlockPos, BlockState>> neighbors = getNeighborBlocks(level, pos, state);
             int cableCount = neighbors.stream().filter(neighbor -> {
@@ -118,50 +104,13 @@ public class CableNetworkManager {
     }
 
     /**
-     * Updates the networks in the given level after one of the neighboring blocks of a cable has
-     * been placed or removed. This handles adding and removing blocks(machines) from the networks.
+     * Gets the cable network at the given position.
      * 
-     * @param pos The position of the cable whose neighbors have changed.
-     * @param state The state of the cable whose neighbors have changed.
-     * @param neighborState The state of the neighbor that has changed.
-     * @param direction The direction of the neighbor that has changed.
+     * @param pos The position of the cable to get the network of.
+     * @return The cable network at the given position, or null if there is no network.
      */
-    public void updateNetworks(BlockPos pos, BlockState state, BlockState neighborState,
-            Direction direction) {
-        // If the neighbor is a cable, we don't need to do anything
-        if (neighborState.getBlock() instanceof CableBlock) {
-            return;
-        }
-        CableNetwork network = networkMap.get(pos);
-        if (network == null) {
-            return;
-        }
-        BlockPos neighborPos = pos.relative(direction);
-        Direction face = direction.getOpposite();
-        // Check if the cable expects a connection in the given direction
-        if (state.getValue(
-                CableBlock.CONNECTOR_PROPERTIES[direction.ordinal()]) == ConnectorType.BLOCK) {
-            // If the neighbor is air we need to remove the block from the network
-            if (neighborState.isAir()) {
-                network.removeBlock(neighborPos, face);
-            }
-        } else {
-            // If the cable doesn't expect a connection in the given direction, and the neighbor is
-            // a block, we need to add the block to the network
-            network.addBlock(neighborPos, face);
-        }
-    }
-
-    /**
-     * Gets the energy storage of the network the cable at the given position is connected to.
-     * 
-     * @param pos The position of the cable to get the energy storage of.
-     * @return The energy storage of the network the cable is connected to, or null if the cable is
-     *         not connected to a network.
-     */
-    public IEnergyStorage getEnergyStorage(BlockPos pos) {
-        CableNetwork network = networkMap.get(pos);
-        return network != null ? network.getEnergyStorage() : null;
+    public CableNetwork getNetwork(BlockPos pos) {
+        return networkMap.get(pos);
     }
 
     /**
@@ -191,55 +140,50 @@ public class CableNetworkManager {
      * @param pos The position of the cable to create the network at.
      */
     private void createNetwork(ServerLevel level, BlockPos pos) {
-        CableNetwork network = new CableNetwork(level);
+        // TODO: Don't hardcode the transfer rate
+        CableNetwork network = new CableNetwork(1024);
         TestMod.LOGGER.debug("Creating new network " + network + " at " + pos);
-        addCableToNetwork(pos, network);
+        network.setMasterPos(pos);
+        addCableToNetwork(level, pos, network);
     }
 
     /**
-     * Creates a new network with the given positions in the given level.
+     * Adds the cable at the given position to the given network.
      * 
-     * @param level The level to create the network in.
-     * @param positions The positions of the blocks to create the network with.
+     * @param level The level the cable is in.
+     * @param pos The position of the cable to add.
+     * @param network The network to add the cable to.
      */
-    private void createNetwork(ServerLevel level, Set<BlockPos> positions) {
-        CableNetwork network = new CableNetwork(level);
-        TestMod.LOGGER.debug("Creating new network " + network + " at " + positions);
-        for (BlockPos pos : positions) {
-            addCableToNetwork(pos, network);
-        }
-    }
-
-    /**
-     * Adds the block at the given position to the given network.
-     * 
-     * @param pos The position of the block to add.
-     * @param network The network to add the block to.
-     */
-    private void addCableToNetwork(BlockPos pos, CableNetwork network) {
+    private void addCableToNetwork(ServerLevel level, BlockPos pos, CableNetwork network) {
         // Rather be safe than sorry
         if (network != null) {
             TestMod.LOGGER.debug("Adding cable at " + pos + " to network " + network);
             networkMap.put(pos, network);
-            reverseNetworkMap.computeIfAbsent(network, k -> new HashSet<>()).add(pos);
+            network.add(pos);
+        }
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof CableBlockEntity cableBlockEntity) {
+            cableBlockEntity.updateEnergyStorage();
+            blockEntity.invalidateCapabilities();
         }
     }
 
     /**
-     * Removes the block at the given position from its network.
+     * Removes the cable at the given position from its network.
      * 
-     * @param pos The position of the block to remove.
+     * @param level The level the cable is in.
+     * @param pos The position of the cable to remove.
      */
-    private void removeCableFromNetwork(BlockPos pos) {
+    private void removeCableFromNetwork(ServerLevel level, BlockPos pos) {
         CableNetwork network = networkMap.remove(pos);
         if (network != null) {
             TestMod.LOGGER.debug("Removing cable at " + pos + " from network " + network);
-            Set<BlockPos> positions = reverseNetworkMap.get(network);
-            if (positions != null) {
-                positions.remove(pos);
-                if (positions.isEmpty()) {
-                    TestMod.LOGGER.debug("Network " + network + " is now empty, removing");
-                    reverseNetworkMap.remove(network);
+            network.remove(pos);
+            // Find a new master if the current one is removed
+            if (network.isMasterPos(pos)) {
+                network.clearMasterPos();
+                if (network.getSize() > 0) {
+                    network.setMasterPos(network.getPositions().iterator().next());
                 }
             }
         }
@@ -248,24 +192,24 @@ public class CableNetworkManager {
     /**
      * Merges two networks into one.
      *
+     * @param level The level the networks are in.
      * @param network1 The network to merge into.
      * @param network2 The network to merge.
      */
-    private void mergeNetworks(CableNetwork network1, CableNetwork network2) {
+    private void mergeNetworks(ServerLevel level, CableNetwork network1, CableNetwork network2) {
         if (network1 == network2) {
             return;
         }
         TestMod.LOGGER.debug("Merging network " + network1 + " with " + network2);
-        network1.merge(network2);
-        Set<BlockPos> positionsToUpdate = reverseNetworkMap.get(network2);
+        Set<BlockPos> positionsToUpdate = network2.getPositions();
         if (positionsToUpdate != null) {
             // Copy the set to avoid concurrent modification exceptions
             List<BlockPos> positions = new ArrayList<>(positionsToUpdate);
             for (BlockPos pos : positions) {
                 // Remove the block from its current network (old network)
-                removeCableFromNetwork(pos);
+                removeCableFromNetwork(level, pos);
                 // Add the block to the new network
-                addCableToNetwork(pos, network1);
+                addCableToNetwork(level, pos, network1);
             }
         }
     }
@@ -278,7 +222,8 @@ public class CableNetworkManager {
      */
     private void splitNetwork(ServerLevel level, CableNetwork originalNetwork) {
         TestMod.LOGGER.debug("Splitting network " + originalNetwork);
-        Set<BlockPos> positions = reverseNetworkMap.get(originalNetwork);
+        Set<BlockPos> positions = originalNetwork.getPositions();
+        int storedEnergy = originalNetwork.getEnergyStorage().getEnergyStored();
         if (positions != null && !positions.isEmpty()) {
             Set<BlockPos> visited = new HashSet<>();
             for (BlockPos pos : positions) {
@@ -302,7 +247,16 @@ public class CableNetworkManager {
                     }
 
                     if (!newNetworkPositions.isEmpty()) {
-                        createNetwork(level, newNetworkPositions);
+                        Iterator<BlockPos> it = newNetworkPositions.iterator();
+                        BlockPos firstPos = it.next();
+                        createNetwork(level, firstPos);
+                        CableNetwork newNetwork = networkMap.get(firstPos);
+                        while (it.hasNext()) {
+                            addCableToNetwork(level, it.next(), newNetwork);
+                        }
+                        int received =
+                                newNetwork.getEnergyStorage().receiveEnergy(storedEnergy, false);
+                        storedEnergy -= received;
                     }
                 }
             }
@@ -328,5 +282,21 @@ public class CableNetworkManager {
             }
         }
         return neighbors;
+    }
+
+    public void serializeNetworkNBT(BlockPos pos, CompoundTag tag) {
+        CableNetwork network = networkMap.get(pos);
+        if (network != null) {
+            tag.put("network", network.serializeNBT());
+        }
+    }
+
+    public void deserializeNetworkNBT(BlockPos pos, CompoundTag tag) {
+        CableNetwork network = new CableNetwork(0);
+        network.deserializeNBT(tag.getCompound("network"));
+        for (BlockPos position : network.getPositions()) {
+            networkMap.put(position, network);
+        }
+        network.setMasterPos(pos);
     }
 }

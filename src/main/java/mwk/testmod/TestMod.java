@@ -8,7 +8,6 @@ import mwk.testmod.client.gui.screen.SeparatorScreen;
 import mwk.testmod.client.render.block_entity.CrusherBlockEntityRenderer;
 import mwk.testmod.client.render.block_entity.SeparatorBlockEntityRenderer;
 import mwk.testmod.client.render.hologram.HologramRenderer;
-import mwk.testmod.common.block.cable.network.CableNetworkManager;
 import mwk.testmod.common.block.multiblock.HologramBlockColor;
 import mwk.testmod.common.network.MachineIOPacket;
 import mwk.testmod.init.registries.TestModBlockEntities;
@@ -23,6 +22,7 @@ import mwk.testmod.init.registries.TestModSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -39,7 +39,6 @@ import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
-import net.neoforged.neoforge.event.TickEvent.ServerTickEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
 import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
@@ -143,17 +142,13 @@ public class TestMod {
 				handler -> handler.client(MachineIOPacket::handle).server(MachineIOPacket::handle));
 	}
 
-	@SubscribeEvent
-	public void onServerTick(ServerTickEvent event) {
-		// TODO: Maybe this should go somewhere else
-		CableNetworkManager.getInstance().tick();
-	}
-
 	// You can use SubscribeEvent and let the Event Bus discover methods to call
 	@SubscribeEvent
 	public void onServerStarting(ServerStartingEvent event) {
 		// Do something when the server starts
 		LOGGER.info("HELLO from server starting");
+		MinecraftServer server = event.getServer();
+		server.getAllLevels().forEach((level) -> LOGGER.info("LEVEL >> {}", level));
 	}
 
 	// You can use EventBusSubscriber to automatically register all static methods in the class
