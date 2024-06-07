@@ -1,20 +1,27 @@
 package mwk.testmod.common.block.multiblock.entity;
 
+import mwk.testmod.TestMod;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import mwk.testmod.init.registries.TestModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
  * A block entity for a block that is part of a multiblock structure.
  */
 public class MultiBlockPartBlockEntity extends BlockEntity {
+
+    public static final String NBT_TAG_CONTROLLER_POS = "controllerPos";
 
     // The position of the controller block for this multiblock structure.
     protected BlockPos controllerPos;
@@ -45,15 +52,33 @@ public class MultiBlockPartBlockEntity extends BlockEntity {
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         if (controllerPos != null) {
-            tag.putLong("controllerPos", controllerPos.asLong());
+            tag.putLong(NBT_TAG_CONTROLLER_POS, controllerPos.asLong());
         }
     }
 
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
-        if (tag.contains("controllerPos")) {
-            controllerPos = BlockPos.of(tag.getLong("controllerPos"));
+        // TODO: When this is loaded it's not synced with the client
+        if (tag.contains(NBT_TAG_CONTROLLER_POS)) {
+            controllerPos = BlockPos.of(tag.getLong(NBT_TAG_CONTROLLER_POS));
+        }
+    }
+
+    @Override
+    public CompoundTag getUpdateTag() {
+        CompoundTag tag = super.getUpdateTag();
+        if (controllerPos != null) {
+            tag.putLong(NBT_TAG_CONTROLLER_POS, controllerPos.asLong());
+        }
+        return tag;
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundTag tag) {
+        super.handleUpdateTag(tag);
+        if (tag.contains(NBT_TAG_CONTROLLER_POS)) {
+            controllerPos = BlockPos.of(tag.getLong(NBT_TAG_CONTROLLER_POS));
         }
     }
 

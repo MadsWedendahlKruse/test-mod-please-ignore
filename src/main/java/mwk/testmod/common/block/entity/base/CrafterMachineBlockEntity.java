@@ -5,6 +5,7 @@ import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.item.upgrades.SpeedUpgradeItem;
 import mwk.testmod.common.item.upgrades.base.UpgradeItem;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -15,6 +16,8 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.items.IItemHandler;
 
 /**
  * A block entity that can craft items using recipes.
@@ -174,5 +177,32 @@ public abstract class CrafterMachineBlockEntity<T extends Recipe<Container>>
             maxProgress = (int) (maxProgressBase / progressPerTick);
             energyPerTick += energyPerTickBase * speedUpgrade.getEnergyMultiplier();
         }
+    }
+
+    public boolean isFormed() {
+        // We're going all in on multiblocks
+        if (level != null) {
+            BlockState state = getBlockState();
+            if (state.getBlock() instanceof MultiBlockControllerBlock) {
+                return state.getValue(MultiBlockControllerBlock.FORMED);
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public IItemHandler getItemHandler(Direction direction) {
+        if (isFormed()) {
+            return super.getItemHandler(direction);
+        }
+        return null;
+    }
+
+    @Override
+    public IEnergyStorage getEnergyHandler(Direction direction) {
+        if (isFormed()) {
+            return energyHandler.get();
+        }
+        return null;
     }
 }

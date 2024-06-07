@@ -34,6 +34,7 @@ public class CableBlockEntity extends BlockEntity implements ITickable {
 
     @Override
     public void onLoad() {
+        super.onLoad();
         if (level instanceof ServerLevel serverLevel) {
             for (Direction direction : Direction.values()) {
                 BlockPos neigborPos = worldPosition.relative(direction);

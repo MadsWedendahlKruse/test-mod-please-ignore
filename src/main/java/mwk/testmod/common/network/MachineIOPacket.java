@@ -37,7 +37,7 @@ public record MachineIOPacket(Type type, boolean value, BlockPos blockPos)
         return ID;
     }
 
-    public static void handle(final MachineIOPacket packet, PlayPayloadContext context) {
+    public static void handleServer(final MachineIOPacket packet, PlayPayloadContext context) {
         TestMod.LOGGER.debug("Received machine io packet: {}, side: {}", packet,
                 context.level().get().isClientSide());
         Player player = context.player().orElse(null);

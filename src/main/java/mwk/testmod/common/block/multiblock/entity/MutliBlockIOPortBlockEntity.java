@@ -1,6 +1,5 @@
 package mwk.testmod.common.block.multiblock.entity;
 
-import mwk.testmod.TestMod;
 import mwk.testmod.common.block.entity.base.BaseMachineBlockEntity;
 import mwk.testmod.common.block.interfaces.ITickable;
 import mwk.testmod.init.registries.TestModBlockEntities;

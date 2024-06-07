@@ -139,7 +139,7 @@ public class TestMod {
 	private void onRegisterPayloadHandlers(RegisterPayloadHandlerEvent event) {
 		final IPayloadRegistrar registrar = event.registrar(MODID);
 		registrar.play(MachineIOPacket.ID, MachineIOPacket::new,
-				handler -> handler.client(MachineIOPacket::handle).server(MachineIOPacket::handle));
+				handler -> handler.server(MachineIOPacket::handleServer));
 	}
 
 	// You can use SubscribeEvent and let the Event Bus discover methods to call

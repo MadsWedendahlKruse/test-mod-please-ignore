@@ -266,9 +266,6 @@ public class CableBlock extends Block implements EntityBlock, IWrenchable, Simpl
     @Override
     public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter world,
             @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
-        // TODO: When connecting to a MultiBlockEnergyPortBlockEntity, the shape is not
-        // connected to the block. I guess on the client side maybe the energy handler
-        // is null?
         ConnectorType north = getConnectorType(world, pos, Direction.NORTH);
         ConnectorType south = getConnectorType(world, pos, Direction.SOUTH);
         ConnectorType west = getConnectorType(world, pos, Direction.WEST);

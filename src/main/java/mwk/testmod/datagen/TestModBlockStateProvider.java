@@ -133,7 +133,6 @@ public class TestModBlockStateProvider extends BlockStateProvider {
 		ModelFile modelSideBlock = models().getExistingFile(modLoc("block/cable_side_block"));
 		MultiPartBlockStateBuilder builder = getMultipartBuilder(cableBlock);
 		builder.part().modelFile(modelBase).addModel().end();
-		// TODO: Try without UV lock?
 		builder.part().modelFile(modelSide).addModel()
 				.condition(CableBlock.NORTH, ConnectorType.CABLE).end();
 		builder.part().modelFile(modelSide).rotationY(90).addModel()

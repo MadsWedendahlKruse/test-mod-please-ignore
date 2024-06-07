@@ -162,16 +162,16 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
         if (level.getBlockState(pos).getBlock() instanceof MultiBlockPartBlock) {
             level.setBlockAndUpdate(pos, state.setValue(FORMED, isFormed));
         }
-        // The rest is handled on the server side
-        if (level.isClientSide()) {
-            return;
-        }
-        // Update block entity on server side
+        // Update block entity on both sides
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof MultiBlockPartBlockEntity multiBlockEntity) {
             multiBlockEntity.setControllerPos(controllerPos);
             // TODO: Only do this if the entity has capabilities
             blockEntity.invalidateCapabilities();
+        }
+        // The rest is handled on the server side
+        if (level.isClientSide()) {
+            return;
         }
         // Only play the sound for the controller, otherwise we get a sound from each block
         if (state.getBlock() instanceof MultiBlockControllerBlock) {
