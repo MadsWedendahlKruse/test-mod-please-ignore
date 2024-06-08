@@ -1,4 +1,4 @@
-package mwk.testmod.client.render.block_entity;
+package mwk.testmod.client.render.models;
 
 import mwk.testmod.TestMod;
 import net.minecraft.client.Minecraft;

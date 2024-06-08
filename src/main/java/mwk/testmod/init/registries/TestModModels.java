@@ -1,7 +1,7 @@
 package mwk.testmod.init.registries;
 
 import mwk.testmod.TestMod;
-import mwk.testmod.client.render.block_entity.AuxiliaryModel;
+import mwk.testmod.client.render.models.AuxiliaryModel;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.event.ModelEvent;
 

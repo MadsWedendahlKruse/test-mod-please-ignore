@@ -25,6 +25,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * A block that is part of a multiblock structure.
@@ -35,9 +37,6 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
     public static final BooleanProperty FORMED = BooleanProperty.create("formed");
     // The number of particles to spawn when forming or unforming the multiblock structure.
     private static final int NUM_PARTICLES = 10;
-
-    // Random number generator for particle effects.
-    private static final Random RANDOM = RandomUtils.RANDOM;
 
     public MultiBlockPartBlock(Properties properties) {
         // TODO: Not sure if noOcculsion is the best way to do this.
@@ -73,41 +72,41 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
     public static double[] getRandomSurfacePosition(BlockPos pos, double offset) {
         double[] position = new double[3];
         // Pick a random face of the block.
-        int face = RANDOM.nextInt(6);
+        int face = RandomUtils.RANDOM.nextInt(6);
         // Pick a random position on the face of the block.
         position[0] = pos.getX();
         position[1] = pos.getY();
         position[2] = pos.getZ();
         switch (face) {
             case 0:
-                position[0] += RANDOM.nextDouble();
+                position[0] += RandomUtils.RANDOM.nextDouble();
                 position[1] += 1.0 + offset;
-                position[2] += RANDOM.nextDouble();
+                position[2] += RandomUtils.RANDOM.nextDouble();
                 break;
             case 1:
-                position[0] += RANDOM.nextDouble();
+                position[0] += RandomUtils.RANDOM.nextDouble();
                 position[1] += 0.0 - offset;
-                position[2] += RANDOM.nextDouble();
+                position[2] += RandomUtils.RANDOM.nextDouble();
                 break;
             case 2:
-                position[0] += RANDOM.nextDouble();
-                position[1] += RANDOM.nextDouble();
+                position[0] += RandomUtils.RANDOM.nextDouble();
+                position[1] += RandomUtils.RANDOM.nextDouble();
                 position[2] += 1.0 + offset;
                 break;
             case 3:
-                position[0] += RANDOM.nextDouble();
-                position[1] += RANDOM.nextDouble();
+                position[0] += RandomUtils.RANDOM.nextDouble();
+                position[1] += RandomUtils.RANDOM.nextDouble();
                 position[2] += 0.0 - offset;
                 break;
             case 4:
                 position[0] += 1.0 + offset;
-                position[1] += RANDOM.nextDouble();
-                position[2] += RANDOM.nextDouble();
+                position[1] += RandomUtils.RANDOM.nextDouble();
+                position[2] += RandomUtils.RANDOM.nextDouble();
                 break;
             case 5:
                 position[0] += 0.0 - offset;
-                position[1] += RANDOM.nextDouble();
-                position[2] += RANDOM.nextDouble();
+                position[1] += RandomUtils.RANDOM.nextDouble();
+                position[2] += RandomUtils.RANDOM.nextDouble();
                 break;
             default:
                 break;
@@ -189,7 +188,7 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
      * @param partPos The position of the multiblock part.
      * @return The position of the multilblock controller.
      */
-    private BlockPos getControllerPos(Level level, BlockPos partPos) {
+    private BlockPos getControllerPos(BlockGetter level, BlockPos partPos) {
         BlockEntity blockEntity = level.getBlockEntity(partPos);
         if (blockEntity instanceof MultiBlockPartBlockEntity) {
             return ((MultiBlockPartBlockEntity) blockEntity).getControllerPos();
@@ -273,5 +272,31 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
             }
         }
         return false;
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos,
+            CollisionContext context) {
+        if (state.getValue(FORMED)) {
+            BlockPos controllerPos = getControllerPos(level, pos);
+            if (controllerPos != null) {
+                BlockState controllerState = level.getBlockState(controllerPos);
+                if (controllerState.getBlock() instanceof MultiBlockControllerBlock controller) {
+                    VoxelShape controllerShape =
+                            controller.getShape(controllerState, level, controllerPos, context);
+                    BlockPos controllerOffset = controllerPos.subtract(pos);
+                    return controllerShape.move(controllerOffset.getX(), controllerOffset.getY(),
+                            controllerOffset.getZ());
+                }
+            }
+        }
+        return super.getShape(state, level, pos, context);
+    }
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos,
+            CollisionContext pContext) {
+        // TODO Auto-generated method stub
+        return super.getCollisionShape(pState, pLevel, pPos, pContext);
     }
 }

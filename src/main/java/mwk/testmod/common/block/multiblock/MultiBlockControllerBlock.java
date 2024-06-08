@@ -40,6 +40,7 @@ import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -97,9 +98,31 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
         };
     }
 
+    /**
+     * Get the shape of the multiblock structure when it is formed.
+     * 
+     * @param state The state of the controller block. This is only used to get the direction the
+     *        controller block is facing, and does not check if the multiblock structure is formed.
+     * @return The shape of the multiblock structure when it is formed.
+     */
+    public VoxelShape getFormedShape(BlockState state) {
+        if (blueprint != null) {
+            AABB aabb = blueprint.getAABB(null, state.getValue(FACING));
+            return Block.box(aabb.minX * 16, aabb.minY * 16, aabb.minZ * 16, aabb.maxX * 16,
+                    aabb.maxY * 16, aabb.maxZ * 16);
+        }
+        return null;
+    }
+
     @Override
-    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos,
-            CollisionContext pContext) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos,
+            CollisionContext context) {
+        if (state.getValue(FORMED)) {
+            VoxelShape formedShape = getFormedShape(state);
+            if (formedShape != null) {
+                return formedShape;
+            }
+        }
         // TODO: Dirty fix for faces of the model becoming invisible when a block is placed
         // next to the controller block.
         final double OFFSET = 0.001;
@@ -269,11 +292,13 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
             Player player, InteractionHand hand, BlockHitResult hit) {
         Inventory inventory = player.getInventory();
         BlueprintState blueprintState = blueprint.getState(level, pos);
+        // If the blueprint is complete, notify the player and return.
         if (blueprintState.isComplete()) {
             player.displayClientMessage(Component.translatable(
                     TestModLanguageProvider.KEY_INFO_CONTROLLER_BLUEPRINT_COMPLETE), true);
             return InteractionResult.FAIL;
         }
+        // Otherwise, iterate over the missing blocks and attempt to place them.
         for (BlueprintBlockInfo blockInfo : blueprintState.getMissingBlocks()) {
             BlockPos blockInfoPos = blockInfo.getAbsolutePosition(pos, state.getValue(FACING));
             ItemStack expectedItemStack = blockInfo.getExpectedItemStack();
@@ -313,7 +338,7 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
                     if (result != InteractionResult.FAIL) {
                         // Notify the blueprint hologram that a block has been placed.
                         // Would be cool if this happened automatically, but
-                        // BlockEvent.EntityPlaceEvent only gets fired when an entity
+                        // BlockEvent.EntityPlaceEvent only gets fired when an *entity*
                         // places a block, and there's not another alternative.
                         HologramClientEvents.checkHologramUpdate(blockInfoPos);
                     }
