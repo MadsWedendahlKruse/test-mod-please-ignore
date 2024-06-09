@@ -1,11 +1,14 @@
 package mwk.testmod.common.block.multiblock;
 
+import java.util.List;
 import java.util.function.BiFunction;
 import mwk.testmod.TestMod;
 import mwk.testmod.client.events.HologramClientEvents;
+import mwk.testmod.client.render.RenderUtils.UnpackedQuad;
 import mwk.testmod.client.render.hologram.HologramRenderer;
 import mwk.testmod.client.render.hologram.events.ClearIfCurrentEvent;
 import mwk.testmod.client.render.hologram.events.WrenchEvent;
+import mwk.testmod.client.render.models.AuxiliaryModel;
 import mwk.testmod.common.block.entity.base.BaseMachineBlockEntity;
 import mwk.testmod.common.block.interfaces.ITickable;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintBlockInfo;
@@ -13,6 +16,7 @@ import mwk.testmod.common.block.multiblock.blueprint.BlueprintState;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
 import mwk.testmod.datagen.TestModLanguageProvider;
 import mwk.testmod.init.registries.TestModItems;
+import mwk.testmod.init.registries.TestModModels;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -44,6 +48,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.common.util.Lazy;
 
 /**
  * The controller block of a multiblock structure.
@@ -58,6 +63,8 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
     // The blueprint for the multiblock structure.
     private MultiBlockBlueprint blueprint;
     private final BiFunction<BlockPos, BlockState, BlockEntity> blockEntityFactory;
+    // The model of the formed multiblock structure.
+    private final Lazy<AuxiliaryModel> formedModel;
 
     public MultiBlockControllerBlock(Properties properties,
             BiFunction<BlockPos, BlockState, BlockEntity> blockEntityFactory) {
@@ -65,6 +72,7 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
         registerDefaultState(
                 defaultBlockState().setValue(FACING, Direction.NORTH).setValue(WORKING, false));
         this.blockEntityFactory = blockEntityFactory;
+        this.formedModel = Lazy.of(() -> TestModModels.SEPARATOR_WIREFRAME);
     }
 
     @Override
@@ -387,5 +395,9 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
             return InteractionResult.sidedSuccess(level.isClientSide());
         }
         return super.use(state, level, pos, player, hand, hit);
+    }
+
+    public List<UnpackedQuad> getFormedQuads() {
+        return formedModel.get().getQuads();
     }
 }

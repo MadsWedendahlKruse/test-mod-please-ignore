@@ -188,7 +188,7 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
      * @param partPos The position of the multiblock part.
      * @return The position of the multilblock controller.
      */
-    private BlockPos getControllerPos(BlockGetter level, BlockPos partPos) {
+    public BlockPos getControllerPos(BlockGetter level, BlockPos partPos) {
         BlockEntity blockEntity = level.getBlockEntity(partPos);
         if (blockEntity instanceof MultiBlockPartBlockEntity) {
             return ((MultiBlockPartBlockEntity) blockEntity).getControllerPos();
@@ -291,12 +291,5 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
             }
         }
         return super.getShape(state, level, pos, context);
-    }
-
-    @Override
-    public VoxelShape getCollisionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos,
-            CollisionContext pContext) {
-        // TODO Auto-generated method stub
-        return super.getCollisionShape(pState, pLevel, pPos, pContext);
     }
 }

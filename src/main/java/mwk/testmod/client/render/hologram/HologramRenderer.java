@@ -103,9 +103,7 @@ public class HologramRenderer {
         poseStack.pushPose();
         // Translate to the render position
         Camera camera = event.getCamera();
-        Vec3 camPos = camera.getPosition();
-        Vec3 renderPos = moveAnimation.getValue();
-        poseStack.translate(renderPos.x - camPos.x, renderPos.y - camPos.y, renderPos.z - camPos.z);
+        RenderUtils.setupWorldRenderPoseStack(poseStack, camera, moveAnimation.getValue());
 
         // Rotate the hologram to the correct facing
         float rotation = rotateAnimation.getValue();
@@ -127,16 +125,10 @@ public class HologramRenderer {
                 : blueprintState.getIncorrectBlocks().isEmpty() ? HologramColor.CYAN
                         : HologramColor.RED;
         AABB aabb = blueprint.getAABB();
-        hologramGeometryRenderer.drawAABB(poseStack, aabb, outlineColor.getFloatColor(), 1.0F);
-        hologramGeometryRenderer.drawBlockOutline(poseStack, outlineColor.getFloatColor(), 1.0F);
-        // TODO: Unfinished attempt to draw the hologram with a projection
-        // Vec3 lookDir = minecraft.player.getLookAngle();
-        // Vec3 camPosRelative =
-        // camPos.subtract(controllerPos.getX(), controllerPos.getY(), controllerPos.getZ());
-        // Vector3f upDirF = camera.getUpVector();
-        // Vec3 upDir = new Vec3(upDirF.x(), upDirF.y(), upDirF.z());
-        // hologramGeometryRenderer.drawAABBWithProjection(poseStack, aabb, outlineColor, 1.0F,
-        // camPosRelative, lookDir, upDir);
+        hologramGeometryRenderer.drawAABB(poseStack, camera, aabb, outlineColor.getFloatColor(),
+                1.0F);
+        hologramGeometryRenderer.drawBlockOutline(poseStack, camera, outlineColor.getFloatColor(),
+                1.0F);
 
         // Move to top left corner of the controller block
         poseStack.translate(1.0F, 1.0F, 0.0F);

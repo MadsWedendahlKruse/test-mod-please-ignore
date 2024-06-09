@@ -74,6 +74,8 @@ public final class MultiBlockBlueprint {
         this.minCorner = new BlockPos(minX, minY, minZ);
         this.maxCorner = new BlockPos(maxX, maxY, maxZ);
         this.controller.setBlueprint(this);
+
+        // TODO: Should the blueprint also store the wireframe model for the multiblock structure?
     }
 
     /**

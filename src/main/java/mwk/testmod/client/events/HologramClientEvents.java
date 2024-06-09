@@ -26,11 +26,11 @@ import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.event.TickEvent.ClientTickEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 
-@Mod.EventBusSubscriber(modid = TestMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE,
-        value = Dist.CLIENT)
 /**
  * Client-side events for rendering holograms and handling hologram projectors.
  */
+@Mod.EventBusSubscriber(modid = TestMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE,
+        value = Dist.CLIENT)
 public class HologramClientEvents {
 
     private static final double HOLOGRAM_PLACE_DISTANCE = 20.0;
