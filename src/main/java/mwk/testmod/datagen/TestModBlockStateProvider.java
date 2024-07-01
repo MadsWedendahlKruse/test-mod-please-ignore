@@ -1,5 +1,6 @@
 package mwk.testmod.datagen;
 
+import java.io.Serializable;
 import mwk.testmod.TestMod;
 import mwk.testmod.common.block.cable.CableBlock;
 import mwk.testmod.common.block.cable.ConnectorType;
@@ -9,6 +10,7 @@ import mwk.testmod.init.registries.TestModBlocks;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
@@ -24,6 +26,15 @@ public class TestModBlockStateProvider extends BlockStateProvider {
 
 	private enum CubeModel {
 		CUBE_ALL, CUBE_COLUMN
+	}
+
+	private enum ControllerType implements StringRepresentable {
+		MACHINE, GENERATOR;
+
+		@Override
+		public String getSerializedName() {
+			return name().toLowerCase();
+		}
 	}
 
 	@Override
@@ -47,12 +58,17 @@ public class TestModBlockStateProvider extends BlockStateProvider {
 		registerMultiBlockPart(TestModBlocks.COPPER_COIL.get(), TestModBlocks.COPPER_COIL_ID,
 				CubeModel.CUBE_COLUMN);
 
+		registerMultiBlockController(TestModBlocks.REDSTONE_GENERATOR.get(),
+				TestModBlocks.REDSTONE_GENERATOR_ID, ControllerType.GENERATOR);
+
 		registerMultiBlockController(TestModBlocks.INDUCTION_FURNACE.get(),
-				TestModBlocks.INDUCTION_FURNACE_ID);
+				TestModBlocks.INDUCTION_FURNACE_ID, ControllerType.MACHINE);
 		registerMultiBlockController(TestModBlocks.SUPER_ASSEMBLER.get(),
-				TestModBlocks.SUPER_ASSEMBLER_ID);
-		registerMultiBlockController(TestModBlocks.CRUSHER.get(), TestModBlocks.CRUSHER_ID);
-		registerMultiBlockController(TestModBlocks.SEPARATOR.get(), TestModBlocks.SEPARATOR_ID);
+				TestModBlocks.SUPER_ASSEMBLER_ID, ControllerType.MACHINE);
+		registerMultiBlockController(TestModBlocks.CRUSHER.get(), TestModBlocks.CRUSHER_ID,
+				ControllerType.MACHINE);
+		registerMultiBlockController(TestModBlocks.SEPARATOR.get(), TestModBlocks.SEPARATOR_ID,
+				ControllerType.MACHINE);
 
 		registerCableBlock(TestModBlocks.CABLE.get());
 	}
@@ -87,10 +103,16 @@ public class TestModBlockStateProvider extends BlockStateProvider {
 		});
 	}
 
-	protected void registerMultiBlockController(MultiBlockControllerBlock block, String name) {
+	protected void registerMultiBlockController(MultiBlockControllerBlock block, String name,
+			ControllerType type) {
 		String modelPath = "block/" + name;
+		String controllerType = type.getSerializedName();
 		// Create the model for the block
 		models().withExistingParent(modelPath, "testmod:block/multiblock_controller")
+				.texture("particle", "block/controller_top_" + controllerType)
+				.texture("front", "block/controller_front_" + controllerType)
+				.texture("side", "block/controller_side_" + controllerType)
+				.texture("top", "block/controller_top_" + controllerType)
 				.texture("screen", "block/controller_screen_" + name);
 		// Create the model for the item
 		itemModels().getBuilder(name).parent(models().getExistingFile(modLoc(modelPath)));

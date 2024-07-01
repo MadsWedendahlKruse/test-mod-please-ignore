@@ -54,7 +54,6 @@ public class MultiBlockPartBlockEntity extends BlockEntity {
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
-        // TODO: When this is loaded it's not synced with the client
         if (tag.contains(NBT_TAG_CONTROLLER_POS)) {
             controllerPos = BlockPos.of(tag.getLong(NBT_TAG_CONTROLLER_POS));
         }

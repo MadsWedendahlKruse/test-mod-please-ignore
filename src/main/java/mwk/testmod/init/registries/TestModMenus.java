@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import mwk.testmod.TestMod;
 import mwk.testmod.common.block.inventory.CrusherMenu;
 import mwk.testmod.common.block.inventory.InductionFurnaceMenu;
+import mwk.testmod.common.block.inventory.RedstoneGeneratorMenu;
 import mwk.testmod.common.block.inventory.SeparatorMenu;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.inventory.MenuType;
@@ -32,6 +33,12 @@ public class TestModMenus {
 	public static final Supplier<MenuType<SeparatorMenu>> SEPARATOR_MENU =
 			MENUS.register(TestModBlocks.SEPARATOR_ID, () -> IMenuTypeExtension.create((windowId,
 					inv, data) -> new SeparatorMenu(windowId, inv.player, data.readBlockPos())));
+
+	public static final Supplier<MenuType<RedstoneGeneratorMenu>> REDSTONE_GENERATOR_MENU =
+			MENUS.register(TestModBlocks.REDSTONE_GENERATOR_ID,
+					() -> IMenuTypeExtension
+							.create((windowId, inv, data) -> new RedstoneGeneratorMenu(windowId,
+									inv.player, data.readBlockPos())));
 
 	public static void register(IEventBus modEventBus) {
 		MENUS.register(modEventBus);

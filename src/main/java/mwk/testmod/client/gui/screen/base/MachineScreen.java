@@ -1,15 +1,17 @@
 package mwk.testmod.client.gui.screen.base;
 
 import java.util.Collection;
+import mwk.testmod.client.gui.widgets.panels.base.MachinePanel;
 import mwk.testmod.client.gui.widgets.panels.base.PanelManager;
-import mwk.testmod.common.block.inventory.base.BaseMachineMenu;
+import mwk.testmod.client.gui.widgets.panels.base.PanelSide;
+import mwk.testmod.common.block.inventory.base.MachineMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
-public abstract class BaseMachineScreen<T extends BaseMachineMenu> extends EnergyScreen<T> {
+public abstract class MachineScreen<T extends MachineMenu> extends EnergyScreen<T> {
 
     public static final int INVENTORY_LABEL_Y_OFFSET = 11;
     public static final int INVETORY_PADDING_X = 8;
@@ -19,7 +21,7 @@ public abstract class BaseMachineScreen<T extends BaseMachineMenu> extends Energ
     protected T menu;
     protected PanelManager panelManager;
 
-    public BaseMachineScreen(T menu, Inventory playerInventory, Component title,
+    public MachineScreen(T menu, Inventory playerInventory, Component title,
             ResourceLocation texture, int energyBarX, int energyBarY, int imageWidth,
             int imageHeight) {
         super(menu, playerInventory, title, energyBarX, energyBarY);
@@ -29,6 +31,14 @@ public abstract class BaseMachineScreen<T extends BaseMachineMenu> extends Energ
         this.imageHeight = imageHeight;
         this.inventoryLabelX = menu.playerInventoryX;
         this.inventoryLabelY = menu.playerInventoryY - INVENTORY_LABEL_Y_OFFSET;
+    }
+
+    protected void addMachinePanel(MachinePanel panel) {
+        panelManager.addPanel(panel);
+    }
+
+    protected void addMachinePanel(MachinePanel panel, PanelSide side) {
+        panelManager.addPanel(panel, side);
     }
 
     protected abstract void addMachinePanels();

@@ -17,8 +17,8 @@ import mwk.testmod.TestMod;
 import mwk.testmod.client.gui.screen.CrusherScreen;
 import mwk.testmod.client.gui.screen.InductionFurnaceScreen;
 import mwk.testmod.client.gui.screen.SeparatorScreen;
-import mwk.testmod.client.gui.screen.base.BaseMachineScreen;
-import mwk.testmod.client.gui.screen.base.CrafterMachineScreen;
+import mwk.testmod.client.gui.screen.base.MachineScreen;
+import mwk.testmod.client.gui.screen.base.ProcessingScreen;
 import mwk.testmod.client.gui.screen.config.GuiConfig;
 import mwk.testmod.client.gui.screen.config.GuiConfigs;
 import mwk.testmod.client.gui.widgets.progress.ProgressArrow;
@@ -87,7 +87,7 @@ public class JEITestModPlugin implements IModPlugin {
         return clickAreas;
     }
 
-    private <T extends CrafterMachineScreen<?>> void registerClickArea(
+    private <T extends ProcessingScreen<?>> void registerClickArea(
             IGuiHandlerRegistration registration, Class<? extends T> containerScreenClass,
             GuiConfig config, RecipeType<?> recipeType) {
         for (Rect2i clickArea : getRecipeClickAreas(config)) {
@@ -102,7 +102,7 @@ public class JEITestModPlugin implements IModPlugin {
             @Override
             public Collection<Rect2i> getGuiExtraAreas() {
                 Minecraft minecraft = Minecraft.getInstance();
-                if (minecraft.screen instanceof BaseMachineScreen machineScreen) {
+                if (minecraft.screen instanceof MachineScreen machineScreen) {
                     return machineScreen.getGuiExtraAreas();
                 }
                 return Collections.emptyList();

@@ -1,6 +1,6 @@
 package mwk.testmod.common.block.multiblock.entity;
 
-import mwk.testmod.common.block.entity.base.BaseMachineBlockEntity;
+import mwk.testmod.common.block.entity.base.MachineBlockEntity;
 import mwk.testmod.common.block.interfaces.ITickable;
 import mwk.testmod.init.registries.TestModBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -23,7 +23,7 @@ public class MutliBlockIOPortBlockEntity extends MultiBlockPartBlockEntity imple
     public IItemHandler getItemHandler(Direction direction) {
         if (isFormed()) {
             BlockEntity controllerEntity = level.getBlockEntity(controllerPos);
-            if (controllerEntity instanceof BaseMachineBlockEntity machine) {
+            if (controllerEntity instanceof MachineBlockEntity machine) {
                 return input ? machine.getInputHandler(direction, false)
                         : machine.getOutputHandler(direction);
             }
@@ -37,7 +37,7 @@ public class MutliBlockIOPortBlockEntity extends MultiBlockPartBlockEntity imple
             return;
         }
         BlockEntity controllerEntity = level.getBlockEntity(controllerPos);
-        if (controllerEntity instanceof BaseMachineBlockEntity machine) {
+        if (controllerEntity instanceof MachineBlockEntity machine) {
             if (input) {
                 machine.pullInput(this.worldPosition);
             } else {

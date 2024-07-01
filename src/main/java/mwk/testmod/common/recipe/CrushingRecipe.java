@@ -1,6 +1,6 @@
 package mwk.testmod.common.recipe;
 
-import mwk.testmod.common.recipe.base.OneToOneItemStackRecipe;
+import mwk.testmod.common.recipe.base.crafter.OneToOneItemStackRecipe;
 import mwk.testmod.init.registries.TestModRecipeSerializers;
 import mwk.testmod.init.registries.TestModRecipeTypes;
 import net.minecraft.world.item.ItemStack;

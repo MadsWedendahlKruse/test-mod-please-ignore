@@ -16,7 +16,7 @@ import mwk.testmod.client.gui.widgets.EnergyBar;
 import mwk.testmod.client.gui.widgets.progress.ProgressArrow;
 import mwk.testmod.client.gui.widgets.progress.ProgressIcon;
 import mwk.testmod.client.render.RenderUtils;
-import mwk.testmod.common.block.inventory.base.CrafterMachineMenu;
+import mwk.testmod.common.block.inventory.base.ProcessingMenu;
 import mwk.testmod.common.util.inventory.ItemSlotGridHelper;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.NonNullList;
@@ -171,7 +171,7 @@ public abstract class BaseRecipeCategory<T extends Recipe<?>> implements IRecipe
 
     @FunctionalInterface
     public interface ProgressArrowFactory {
-        ProgressArrow create(CrafterMachineMenu menu, int x, int y);
+        ProgressArrow create(ProcessingMenu menu, int x, int y);
     }
 
 }

@@ -1,6 +1,6 @@
 package mwk.testmod.common.block.inventory.base;
 
-import mwk.testmod.common.block.entity.base.BaseMachineBlockEntity;
+import mwk.testmod.common.block.entity.base.MachineBlockEntity;
 import mwk.testmod.common.network.MachineIOPacket;
 import mwk.testmod.common.util.inventory.ItemSlotGridHelper;
 import mwk.testmod.common.util.inventory.MachineIOContainerData;
@@ -17,7 +17,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-public class BaseMachineMenu extends EnergyMenu {
+public class MachineMenu extends EnergyMenu {
 
     public static final int SLOT_SIZE = 16;
     public static final int SLOT_SPACING = 2;
@@ -28,7 +28,7 @@ public class BaseMachineMenu extends EnergyMenu {
 
     private final BlockPos pos;
     private final Block block;
-    private final BaseMachineBlockEntity blockEntity;
+    private final MachineBlockEntity blockEntity;
 
     public final int inputSlots;
     public final int outputSlots;
@@ -47,14 +47,14 @@ public class BaseMachineMenu extends EnergyMenu {
     private int upgradeSlotsX;
     private int upgradeSlotsY;
 
-    protected BaseMachineMenu(MenuType<?> menuType, int containerId, Player player, BlockPos pos,
+    protected MachineMenu(MenuType<?> menuType, int containerId, Player player, BlockPos pos,
             int playerInventoryX, int playerInventoryY, int inputSlotsX, int inputSlotsY,
             int outputSlotsX, int outputSlotsY) {
         super(menuType, containerId, player, pos);
         this.pos = pos;
         this.block = player.level().getBlockState(pos).getBlock();
         BlockEntity blockEntity = player.level().getBlockEntity(pos);
-        if (blockEntity instanceof BaseMachineBlockEntity machineBlockEntity) {
+        if (blockEntity instanceof MachineBlockEntity machineBlockEntity) {
             this.blockEntity = machineBlockEntity;
             this.playerInventoryX = playerInventoryX;
             this.playerInventoryY = playerInventoryY;
@@ -252,7 +252,7 @@ public class BaseMachineMenu extends EnergyMenu {
                 .send(new MachineIOPacket(MachineIOPacket.Type.AUTO_INSERT, autoInsert, pos));
     }
 
-    public BaseMachineBlockEntity getBlockEntity() {
+    public MachineBlockEntity getBlockEntity() {
         return blockEntity;
     }
 }

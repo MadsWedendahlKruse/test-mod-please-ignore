@@ -6,7 +6,7 @@ import mwk.testmod.client.events.HologramClientEvents;
 import mwk.testmod.client.render.hologram.HologramRenderer;
 import mwk.testmod.client.render.hologram.events.ClearIfCurrentEvent;
 import mwk.testmod.client.render.hologram.events.WrenchEvent;
-import mwk.testmod.common.block.entity.base.BaseMachineBlockEntity;
+import mwk.testmod.common.block.entity.base.MachineBlockEntity;
 import mwk.testmod.common.block.interfaces.ITickable;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintBlockInfo;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintState;
@@ -106,6 +106,8 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
      * @return The shape of the multiblock structure when it is formed.
      */
     public VoxelShape getFormedShape(BlockState state) {
+        // TODO: This should be cached. It should also be a proper box for each block, not just a
+        // bounding box, so that we can have more complex shapes.
         if (blueprint != null) {
             AABB aabb = blueprint.getAABB(null, state.getValue(FACING));
             return Block.box(aabb.minX * 16, aabb.minY * 16, aabb.minZ * 16, aabb.maxX * 16,
@@ -261,7 +263,7 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
         }
         HologramRenderer.getInstance()
                 .setEvent(new ClearIfCurrentEvent(blueprint, pos, state.getValue(FACING)));
-        if (level.getBlockEntity(pos) instanceof BaseMachineBlockEntity blockEntity) {
+        if (level.getBlockEntity(pos) instanceof MachineBlockEntity blockEntity) {
             Containers.dropContents(level, pos, blockEntity.getDrops());
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
@@ -361,18 +363,21 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
         if (player.getItemInHand(hand).getItem() == TestModItems.WRENCH_ITEM.get()) {
             return InteractionResult.PASS;
         }
-        // Explain to the player how to view the blueprint.
         boolean isCurrentBlueprint = HologramRenderer.getInstance().isCurrentBlueprint(pos,
                 blueprint, state.getValue(FACING));
         boolean isFormed = state.getValue(FORMED);
         if (!isFormed) {
+            // If the player right clicks the controller block...
             if (!isCurrentBlueprint) {
+                // ...and it's not the current blueprint, explain how to view the blueprint.
                 player.displayClientMessage(Component.translatable(
                         TestModLanguageProvider.KEY_INFO_CONTROLLER_BLUEPRINT_HELP), true);
             } else {
+                // ...and it is the current blueprint, attempt to build the multiblock structure.
                 return attemptBuildMultiBlock(state, level, pos, player, hand, hit);
             }
         } else {
+            // Open the menu if the multiblock structure is formed.
             if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
                 BlockEntity blockEntity = level.getBlockEntity(pos);
                 TestMod.LOGGER.debug("Opening menu for " + blockEntity);

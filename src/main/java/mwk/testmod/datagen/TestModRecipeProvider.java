@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import mwk.testmod.TestMod;
 import mwk.testmod.common.recipe.CrushingRecipe;
+import mwk.testmod.common.recipe.RedstoneGeneratorRecipe;
 import mwk.testmod.common.recipe.SeparationRecipe;
 import mwk.testmod.common.util.TestModTags;
 import mwk.testmod.init.registries.TestModItems;
@@ -36,6 +37,7 @@ public class TestModRecipeProvider extends RecipeProvider {
 		registerCookingRecipes(recipeOutput);
 		registerCrushingRecipes(recipeOutput);
 		registerSeparationRecipes(recipeOutput);
+		registerRedstoneGeneratorRecipes(recipeOutput);
 	}
 
 	private void registerShapelessRecipes(RecipeOutput recipeOutput) {
@@ -111,13 +113,28 @@ public class TestModRecipeProvider extends RecipeProvider {
 
 	private void registerSeparationRecipes(RecipeOutput recipeOutput) {
 		registerSeparationRecipe(recipeOutput, "steel_dust_separation",
-				Ingredient.of(TestModItems.STEEL_DUST),
+				Ingredient.of(TestModTags.Items.STEEL_DUST),
 				new ArrayList<ItemStack>(Arrays.asList(new ItemStack(TestModItems.IRON_DUST.get()),
 						new ItemStack(TestModItems.COAL_DUST.get()))));
 		registerSeparationRecipe(recipeOutput, "ilmenite_dust_separation",
-				Ingredient.of(TestModItems.ILMENITE_DUST),
+				Ingredient.of(TestModTags.Items.ILMENITE_DUST),
 				new ArrayList<ItemStack>(
 						Arrays.asList(new ItemStack(TestModItems.TITANIUM_DUST.get()),
 								new ItemStack(TestModItems.IRON_DUST.get()))));
+	}
+
+	private static final int ENERGY_PER_REDSTONE = 16384;
+
+	private void registerRedstoneGeneratorRecipe(RecipeOutput recipeOutput, String name,
+			Ingredient input, int energy) {
+		recipeOutput.accept(new ResourceLocation(TestMod.MODID, name),
+				new RedstoneGeneratorRecipe(input, energy), null);
+	}
+
+	private void registerRedstoneGeneratorRecipes(RecipeOutput recipeOutput) {
+		registerRedstoneGeneratorRecipe(recipeOutput, "energy_from_redstone_dust",
+				Ingredient.of(Items.REDSTONE), ENERGY_PER_REDSTONE);
+		registerRedstoneGeneratorRecipe(recipeOutput, "energy_from_redstone_block",
+				Ingredient.of(Blocks.REDSTONE_BLOCK), ENERGY_PER_REDSTONE * 9);
 	}
 }

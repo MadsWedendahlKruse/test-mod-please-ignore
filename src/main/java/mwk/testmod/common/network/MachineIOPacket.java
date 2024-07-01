@@ -1,8 +1,8 @@
 package mwk.testmod.common.network;
 
 import mwk.testmod.TestMod;
-import mwk.testmod.common.block.entity.base.BaseMachineBlockEntity;
-import mwk.testmod.common.block.inventory.base.BaseMachineMenu;
+import mwk.testmod.common.block.entity.base.MachineBlockEntity;
+import mwk.testmod.common.block.inventory.base.MachineMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -41,13 +41,12 @@ public record MachineIOPacket(Type type, boolean value, BlockPos blockPos)
         TestMod.LOGGER.debug("Received machine io packet: {}, side: {}", packet,
                 context.level().get().isClientSide());
         Player player = context.player().orElse(null);
-        if (!(player instanceof ServerPlayer)
-                || !(player.containerMenu instanceof BaseMachineMenu)) {
+        if (!(player instanceof ServerPlayer) || !(player.containerMenu instanceof MachineMenu)) {
             return;
         }
         context.workHandler().execute(() -> {
             BlockEntity blockEntity = player.level().getBlockEntity(packet.blockPos());
-            if (blockEntity instanceof BaseMachineBlockEntity machineBlockEntity) {
+            if (blockEntity instanceof MachineBlockEntity machineBlockEntity) {
                 switch (packet.type()) {
                     case AUTO_INSERT -> machineBlockEntity.setAutoInsert(packet.value());
                     case AUTO_EJECT -> machineBlockEntity.setAutoEject(packet.value());

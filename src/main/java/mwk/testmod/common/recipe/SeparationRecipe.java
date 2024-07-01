@@ -1,7 +1,7 @@
 package mwk.testmod.common.recipe;
 
 import java.util.List;
-import mwk.testmod.common.recipe.base.OneToManyItemStackRecipe;
+import mwk.testmod.common.recipe.base.crafter.OneToManyItemStackRecipe;
 import mwk.testmod.init.registries.TestModRecipeSerializers;
 import mwk.testmod.init.registries.TestModRecipeTypes;
 import net.minecraft.world.item.ItemStack;

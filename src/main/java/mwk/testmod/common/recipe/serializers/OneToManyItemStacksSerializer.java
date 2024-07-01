@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import mwk.testmod.common.recipe.base.OneToManyItemStackRecipe;
+import mwk.testmod.common.recipe.base.crafter.OneToManyItemStackRecipe;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;

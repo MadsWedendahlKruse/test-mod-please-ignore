@@ -26,7 +26,7 @@ import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 /**
  * A block entity that stores energy and also has an inventory.
  */
-public abstract class BaseMachineBlockEntity extends EnergyBlockEntity
+public abstract class MachineBlockEntity extends EnergyBlockEntity
         implements MenuProvider, IUpgradable, IDescripable {
 
     public static final String NBT_TAG_INVENTORY = "inventory";
@@ -50,7 +50,7 @@ public abstract class BaseMachineBlockEntity extends EnergyBlockEntity
     private boolean autoInsert;
     private boolean autoEject;
 
-    public BaseMachineBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
+    public MachineBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
             int maxEnergy, EnergyType energyType, int inputSlots, int outputSlots,
             int upgradeSlots) {
         super(type, pos, state, new EnergyStorage(maxEnergy), energyType);
@@ -243,7 +243,7 @@ public abstract class BaseMachineBlockEntity extends EnergyBlockEntity
         }
         for (Direction direction : Direction.values()) {
             IItemHandler handler = level.getCapability(Capabilities.ItemHandler.BLOCK,
-                    pos.relative(direction), direction);
+                    pos.relative(direction), direction.getOpposite());
             if (handler == null) {
                 continue;
             }
@@ -275,7 +275,7 @@ public abstract class BaseMachineBlockEntity extends EnergyBlockEntity
         }
         for (Direction direction : Direction.values()) {
             IItemHandler handler = level.getCapability(Capabilities.ItemHandler.BLOCK,
-                    pos.relative(direction), direction);
+                    pos.relative(direction), direction.getOpposite());
             if (handler == null) {
                 continue;
             }

@@ -1,6 +1,6 @@
 package mwk.testmod.client.gui.widgets.progress;
 
-import mwk.testmod.common.block.inventory.base.CrafterMachineMenu;
+import mwk.testmod.common.block.inventory.base.ProcessingMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.renderer.Rect2i;
@@ -11,7 +11,7 @@ public class ProgressSprite {
     public static final int MAX_PROGRESS_REDUCTION = 3;
 
     private final WidgetSprites sprites;
-    private final CrafterMachineMenu menu;
+    private final ProcessingMenu menu;
     private final int x;
     private final int y;
     private final int width;
@@ -20,7 +20,7 @@ public class ProgressSprite {
     private final int backgroundOffsetX;
     private final int backgroundOffsetY;
 
-    public ProgressSprite(WidgetSprites sprites, CrafterMachineMenu menu, int x, int y, int width,
+    public ProgressSprite(WidgetSprites sprites, ProcessingMenu menu, int x, int y, int width,
             int height, boolean horizontal, int backgroundOffsetX, int backgroundOffsetY) {
         this.sprites = sprites;
         this.menu = menu;

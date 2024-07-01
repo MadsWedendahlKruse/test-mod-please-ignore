@@ -14,6 +14,10 @@ public class EnergyStorageProducer extends EnergyStorageWrapper {
         return 0;
     }
 
+    public int generateEnergy(int maxGenerate, boolean simulate) {
+        return super.receiveEnergy(maxGenerate, simulate);
+    }
+
     @Override
     public boolean canReceive() {
         return false;

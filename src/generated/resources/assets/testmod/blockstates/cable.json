@@ -7,8 +7,7 @@
     },
     {
       "apply": {
-        "model": "testmod:block/cable_side",
-        "uvlock": false
+        "model": "testmod:block/cable_side"
       },
       "when": {
         "north": "cable"
@@ -17,7 +16,6 @@
     {
       "apply": {
         "model": "testmod:block/cable_side",
-        "uvlock": false,
         "y": 90
       },
       "when": {
@@ -27,7 +25,6 @@
     {
       "apply": {
         "model": "testmod:block/cable_side",
-        "uvlock": false,
         "y": 180
       },
       "when": {
@@ -37,7 +34,6 @@
     {
       "apply": {
         "model": "testmod:block/cable_side",
-        "uvlock": false,
         "y": 270
       },
       "when": {
@@ -47,7 +43,6 @@
     {
       "apply": {
         "model": "testmod:block/cable_side",
-        "uvlock": false,
         "x": 270
       },
       "when": {
@@ -57,7 +52,6 @@
     {
       "apply": {
         "model": "testmod:block/cable_side",
-        "uvlock": false,
         "x": 90
       },
       "when": {
@@ -66,8 +60,7 @@
     },
     {
       "apply": {
-        "model": "testmod:block/cable_side_block",
-        "uvlock": false
+        "model": "testmod:block/cable_side_block"
       },
       "when": {
         "north": "block"
@@ -76,7 +69,6 @@
     {
       "apply": {
         "model": "testmod:block/cable_side_block",
-        "uvlock": false,
         "y": 90
       },
       "when": {
@@ -86,7 +78,6 @@
     {
       "apply": {
         "model": "testmod:block/cable_side_block",
-        "uvlock": false,
         "y": 180
       },
       "when": {
@@ -96,7 +87,6 @@
     {
       "apply": {
         "model": "testmod:block/cable_side_block",
-        "uvlock": false,
         "y": 270
       },
       "when": {
@@ -106,7 +96,6 @@
     {
       "apply": {
         "model": "testmod:block/cable_side_block",
-        "uvlock": false,
         "x": 270
       },
       "when": {
@@ -116,7 +105,6 @@
     {
       "apply": {
         "model": "testmod:block/cable_side_block",
-        "uvlock": false,
         "x": 90
       },
       "when": {

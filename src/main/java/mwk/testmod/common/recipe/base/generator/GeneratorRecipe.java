@@ -1,17 +1,21 @@
-package mwk.testmod.common.recipe.base;
+package mwk.testmod.common.recipe.base.generator;
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
 
-public abstract class OneInputItemStackRecipe implements Recipe<Container> {
+public abstract class GeneratorRecipe implements Recipe<Container> {
 
     private final Ingredient input;
+    private final int energy;
 
-    protected OneInputItemStackRecipe(Ingredient input) {
+    public GeneratorRecipe(Ingredient input, int energy) {
         this.input = input;
+        this.energy = energy;
     }
 
     @Override
@@ -34,7 +38,25 @@ public abstract class OneInputItemStackRecipe implements Recipe<Container> {
         return ingredients;
     }
 
+    @Override
+    public ItemStack assemble(Container pContainer, RegistryAccess pRegistryAccess) {
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    public ItemStack getResultItem(RegistryAccess pRegistryAccess) {
+        return ItemStack.EMPTY;
+    }
+
+    public ItemStack getResultItem() {
+        return getResultItem(null);
+    }
+
     public Ingredient getInput() {
         return input;
+    }
+
+    public int getEnergy() {
+        return energy;
     }
 }

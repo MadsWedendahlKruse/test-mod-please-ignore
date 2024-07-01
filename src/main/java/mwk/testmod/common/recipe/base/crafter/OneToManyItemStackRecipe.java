@@ -1,4 +1,4 @@
-package mwk.testmod.common.recipe.base;
+package mwk.testmod.common.recipe.base.crafter;
 
 import java.util.List;
 import net.minecraft.core.RegistryAccess;

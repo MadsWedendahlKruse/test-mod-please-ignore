@@ -30,7 +30,7 @@ public class EnergyContainerData implements ContainerData {
     public int get(int index) {
         return switch (index) {
             case 0 -> blockEntity.getEnergyStored() & FIRST_16_BITS;
-            case 1 -> (blockEntity.getEnergyStored() >> 16) & LAST_16_BITS;
+            case 1 -> (blockEntity.getEnergyStored() >> 16) & FIRST_16_BITS;
             default -> 0;
         };
     }

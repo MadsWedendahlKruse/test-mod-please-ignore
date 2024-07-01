@@ -12,6 +12,7 @@
     "testmod:crusher",
     "testmod:separator",
     "testmod:teleporter",
+    "testmod:redstone_generator",
     "testmod:ilmenite_ore",
     "testmod:deepslate_ilmenite_ore"
   ]

@@ -2,7 +2,7 @@ package mwk.testmod.common.recipe.serializers;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import mwk.testmod.common.recipe.base.OneToOneItemStackRecipe;
+import mwk.testmod.common.recipe.base.crafter.OneToOneItemStackRecipe;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;

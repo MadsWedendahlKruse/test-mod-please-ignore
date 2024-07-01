@@ -4,6 +4,7 @@ import mwk.testmod.TestMod;
 import mwk.testmod.common.block.cable.CableBlockEntity;
 import mwk.testmod.common.block.entity.CrusherBlockEntity;
 import mwk.testmod.common.block.entity.InductionFurnaceBlockEntity;
+import mwk.testmod.common.block.entity.RedstoneGeneratorBlockEntity;
 import mwk.testmod.common.block.entity.SeparatorBlockEntity;
 import mwk.testmod.common.block.entity.TeleporterBlockEntity;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
@@ -71,6 +72,11 @@ public class TestModBlockEntities {
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CableBlockEntity>> CABLE_ENTITY_TYPE =
 			BLOCK_ENTITY_TYPES.register(TestModBlocks.CABLE_ID, () -> BlockEntityType.Builder
 					.of(CableBlockEntity::new, TestModBlocks.CABLE.get()).build(null));
+
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RedstoneGeneratorBlockEntity>> REDSTONE_GENERATOR_ENTITY_TYPE =
+			BLOCK_ENTITY_TYPES.register(TestModBlocks.REDSTONE_GENERATOR_ID,
+					() -> BlockEntityType.Builder.of(RedstoneGeneratorBlockEntity::new,
+							TestModBlocks.REDSTONE_GENERATOR.get()).build(null));
 
 	public static void register(IEventBus modEventBus) {
 		BLOCK_ENTITY_TYPES.register(modEventBus);

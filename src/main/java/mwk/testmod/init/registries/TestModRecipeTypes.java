@@ -2,6 +2,7 @@ package mwk.testmod.init.registries;
 
 import mwk.testmod.TestMod;
 import mwk.testmod.common.recipe.CrushingRecipe;
+import mwk.testmod.common.recipe.RedstoneGeneratorRecipe;
 import mwk.testmod.common.recipe.SeparationRecipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -16,10 +17,16 @@ public class TestModRecipeTypes {
     public static final DeferredRegister<RecipeType<?>> RECIPE_TYPES =
             DeferredRegister.create(Registries.RECIPE_TYPE, TestMod.MODID);
 
+    // Crafter Recipes
     public static final DeferredHolder<RecipeType<?>, RecipeType<CrushingRecipe>> CRUSHING =
             RECIPE_TYPES.register("crushing", () -> new RecipeType<CrushingRecipe>() {});
     public static final DeferredHolder<RecipeType<?>, RecipeType<SeparationRecipe>> SEPARATION =
             RECIPE_TYPES.register("separation", () -> new RecipeType<SeparationRecipe>() {});
+
+    // Generator Recipes
+    public static final DeferredHolder<RecipeType<?>, RecipeType<RedstoneGeneratorRecipe>> REDSTONE_GENERATOR =
+            RECIPE_TYPES.register("redstone_generator",
+                    () -> new RecipeType<RedstoneGeneratorRecipe>() {});
 
     public static void register(IEventBus modEventBus) {
         RECIPE_TYPES.register(modEventBus);

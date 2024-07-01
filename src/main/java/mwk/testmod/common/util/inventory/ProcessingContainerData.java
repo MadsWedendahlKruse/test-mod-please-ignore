@@ -1,15 +1,15 @@
 package mwk.testmod.common.util.inventory;
 
-import mwk.testmod.common.block.entity.base.CrafterMachineBlockEntity;
-import mwk.testmod.common.block.inventory.base.CrafterMachineMenu;
+import mwk.testmod.common.block.entity.base.processing.ProcessingBlockEntity;
+import mwk.testmod.common.block.inventory.base.ProcessingMenu;
 import net.minecraft.world.inventory.ContainerData;
 
-public class CrafterContainerData implements ContainerData {
+public class ProcessingContainerData implements ContainerData {
 
-    private final CrafterMachineBlockEntity<?> blockEntity;
-    private final CrafterMachineMenu menu;
+    private final ProcessingBlockEntity<?> blockEntity;
+    private final ProcessingMenu menu;
 
-    public CrafterContainerData(CrafterMachineBlockEntity<?> blockEntity, CrafterMachineMenu menu) {
+    public ProcessingContainerData(ProcessingBlockEntity<?> blockEntity, ProcessingMenu menu) {
         this.blockEntity = blockEntity;
         this.menu = menu;
     }

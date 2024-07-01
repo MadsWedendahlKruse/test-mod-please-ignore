@@ -23,7 +23,6 @@ public class MutliBlockIOPortBlock extends MultiBlockPartBlock {
         return new MutliBlockIOPortBlockEntity(pos, state, input);
     }
 
-
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
             BlockEntityType<T> blockEntityType) {

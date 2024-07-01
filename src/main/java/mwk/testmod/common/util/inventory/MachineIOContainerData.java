@@ -1,15 +1,15 @@
 package mwk.testmod.common.util.inventory;
 
-import mwk.testmod.common.block.entity.base.BaseMachineBlockEntity;
-import mwk.testmod.common.block.inventory.base.BaseMachineMenu;
+import mwk.testmod.common.block.entity.base.MachineBlockEntity;
+import mwk.testmod.common.block.inventory.base.MachineMenu;
 import net.minecraft.world.inventory.ContainerData;
 
 public class MachineIOContainerData implements ContainerData {
 
-    private final BaseMachineBlockEntity blockEntity;
-    private final BaseMachineMenu menu;
+    private final MachineBlockEntity blockEntity;
+    private final MachineMenu menu;
 
-    public MachineIOContainerData(BaseMachineBlockEntity blockEntity, BaseMachineMenu menu) {
+    public MachineIOContainerData(MachineBlockEntity blockEntity, MachineMenu menu) {
         this.blockEntity = blockEntity;
         this.menu = menu;
     }

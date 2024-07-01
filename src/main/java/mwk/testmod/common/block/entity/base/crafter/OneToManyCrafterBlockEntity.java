@@ -1,4 +1,4 @@
-package mwk.testmod.common.block.entity.base;
+package mwk.testmod.common.block.entity.base.crafter;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,23 +11,22 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-public abstract class OneToManyCrafterMachineBlockEntity<T extends SeparationRecipe>
-        extends SingleCrafterMachineBlockEntity<T> {
+public abstract class OneToManyCrafterBlockEntity<T extends SeparationRecipe>
+        extends SingleCrafterBlockEntity<T> {
 
-    protected OneToManyCrafterMachineBlockEntity(BlockEntityType<?> type, BlockPos pos,
-            BlockState state, int maxEnergy, int energyPerTick, int inputSlots, int outputSlots,
-            int upgradeSlots, int maxProgress, RecipeType<T> recipeType, SoundEvent sound,
-            int soundDuration) {
+    protected OneToManyCrafterBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
+            int maxEnergy, int energyPerTick, int inputSlots, int outputSlots, int upgradeSlots,
+            int maxProgress, RecipeType<T> recipeType, SoundEvent sound, int soundDuration) {
         super(type, pos, state, maxEnergy, energyPerTick, inputSlots, outputSlots, upgradeSlots,
                 maxProgress, recipeType, sound, soundDuration);
     }
 
     @Override
-    protected boolean isRecipeValid(Optional<RecipeHolder<T>> recipe) {
-        if (recipe.isEmpty()) {
+    protected boolean canProcessRecipe(T recipe) {
+        if (recipe == null) {
             return false;
         }
-        List<ItemStack> results = recipe.get().value().getOutputs();
+        List<ItemStack> results = recipe.getOutputs();
         for (int i = 0; i < results.size(); i++) {
             ItemStack result = results.get(i);
             // Index 0 is the input slot
@@ -39,8 +38,8 @@ public abstract class OneToManyCrafterMachineBlockEntity<T extends SeparationRec
     }
 
     @Override
-    protected void craftItem(Optional<RecipeHolder<T>> recipe) {
-        List<ItemStack> results = recipe.get().value().getOutputs();
+    protected void processItem(T recipe) {
+        List<ItemStack> results = recipe.getOutputs();
         // Index 0 is the input slot
         this.inventory.extractItem(0, 1, false);
         for (int i = 0; i < results.size(); i++) {

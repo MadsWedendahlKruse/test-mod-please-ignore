@@ -1,4 +1,4 @@
-package mwk.testmod.common.block.entity.base;
+package mwk.testmod.common.block.entity.base.crafter;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -18,12 +18,12 @@ import net.minecraft.world.level.block.state.BlockState;
  * A block entity that can craft mutliple recipes of the same type in parallel, e.g. a furnace that
  * can smelt multiple items at the same time.
  */
-public abstract class ParallelCrafterMachineBlockEntity<T extends Recipe<Container>>
-        extends CrafterMachineBlockEntity<T> {
+public abstract class ParallelCrafterBlockEntity<T extends Recipe<Container>>
+        extends CrafterBlockEntity<T> {
 
-    protected ParallelCrafterMachineBlockEntity(BlockEntityType<?> type, BlockPos pos,
-            BlockState state, int maxEnergy, int energyPerTick, int itemSlots, int upgradeSlots,
-            int maxProgress, RecipeType<T> recipeType, SoundEvent sound, int soundDuration) {
+    protected ParallelCrafterBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
+            int maxEnergy, int energyPerTick, int itemSlots, int upgradeSlots, int maxProgress,
+            RecipeType<T> recipeType, SoundEvent sound, int soundDuration) {
         super(type, pos, state, maxEnergy, energyPerTick, itemSlots, itemSlots, upgradeSlots,
                 maxProgress, recipeType, sound, soundDuration);
     }
@@ -50,6 +50,7 @@ public abstract class ParallelCrafterMachineBlockEntity<T extends Recipe<Contain
                 // Only increase progress once per tick
                 if (increaseProgress) {
                     increaseProgress();
+                    consumeEnergy();
                     setChanged();
                     setWorking(true);
                     increaseProgress = false;

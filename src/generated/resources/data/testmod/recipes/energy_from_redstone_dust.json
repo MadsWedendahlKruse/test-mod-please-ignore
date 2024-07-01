@@ -1,0 +1,7 @@
+{
+  "type": "testmod:redstone_generator",
+  "energy": 16384,
+  "input": {
+    "item": "minecraft:redstone"
+  }
+}

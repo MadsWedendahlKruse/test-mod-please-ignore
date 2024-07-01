@@ -2,7 +2,6 @@ package mwk.testmod.client.gui.screen.base;
 
 import java.util.ArrayList;
 import mwk.testmod.client.gui.screen.config.GuiConfig;
-import mwk.testmod.client.gui.widgets.panels.EnergyPanel;
 import mwk.testmod.client.gui.widgets.panels.InfoPanel;
 import mwk.testmod.client.gui.widgets.panels.SettingsPanel;
 import mwk.testmod.client.gui.widgets.panels.UpgradePanel;
@@ -10,15 +9,14 @@ import mwk.testmod.client.gui.widgets.panels.base.PanelSide;
 import mwk.testmod.client.gui.widgets.progress.ProgressArrowFactory;
 import mwk.testmod.client.gui.widgets.progress.ProgressIcon;
 import mwk.testmod.client.gui.widgets.progress.ProgressSprite;
-import mwk.testmod.common.block.inventory.base.CrafterMachineMenu;
+import mwk.testmod.common.block.inventory.base.ProcessingMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
-public abstract class CrafterMachineScreen<T extends CrafterMachineMenu>
-        extends BaseMachineScreen<T> {
+public abstract class ProcessingScreen<T extends ProcessingMenu> extends MachineScreen<T> {
 
     private final ArrayList<ProgressSprite> progressSprites;
 
@@ -31,8 +29,7 @@ public abstract class CrafterMachineScreen<T extends CrafterMachineMenu>
     private final int progressArrowY;
     private final int progressArrowSpacing;
 
-    public CrafterMachineScreen(T menu, Inventory playerInventory, Component title,
-            GuiConfig config) {
+    public ProcessingScreen(T menu, Inventory playerInventory, Component title, GuiConfig config) {
         this(menu, playerInventory, title, config.background(), config.energyBarX(),
                 config.energyBarY(), config.imageWidth(), config.imageHeight(),
                 config.progressIconName(), config.progressIconX(), config.progressIconY(),
@@ -40,7 +37,7 @@ public abstract class CrafterMachineScreen<T extends CrafterMachineMenu>
                 config.progressArrowY(), config.progressArrowSpacing());
     }
 
-    public CrafterMachineScreen(T menu, Inventory playerInventory, Component title,
+    public ProcessingScreen(T menu, Inventory playerInventory, Component title,
             ResourceLocation texture, int energyBarX, int energyBarY, int imageWidth,
             int imageHeight, String iconName, int progressIconX, int progressIconY,
             ProgressArrowFactory.Type progressArrowType, int progressArrows, int progressArrowX,
@@ -60,10 +57,9 @@ public abstract class CrafterMachineScreen<T extends CrafterMachineMenu>
 
     @Override
     protected void addMachinePanels() {
-        panelManager.addPanel(new InfoPanel(menu.getBlockEntity()), PanelSide.LEFT);
-        panelManager.addPanel(new EnergyPanel(menu), PanelSide.LEFT);
-        panelManager.addPanel(new UpgradePanel(menu), PanelSide.RIGHT);
-        panelManager.addPanel(new SettingsPanel(menu), PanelSide.RIGHT);
+        addMachinePanel(new InfoPanel(menu.getBlockEntity()), PanelSide.LEFT);
+        addMachinePanel(new UpgradePanel(menu), PanelSide.RIGHT);
+        addMachinePanel(new SettingsPanel(menu), PanelSide.RIGHT);
     }
 
     protected final void addProgressSprite(ProgressSprite progressSprite) {

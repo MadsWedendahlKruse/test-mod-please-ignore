@@ -13,10 +13,13 @@ import net.minecraft.client.resources.model.BakedModel;
 public class CrusherBlockEntityRenderer extends MultiBlockEntityRenderer<CrusherBlockEntity> {
 
 	// Offset of the rotors relative to the block entity
-	public static final float[] ROTOR_FRONT_OFFSET = new float[] {0.5F, 2.5F, 1};
-	public static final float[] ROTOR_BACK_OFFSET = new float[] {0.5F, 2.5F, 2};
-	public static final float ROTOR_FRONT_ROT_Y = (float) Math.PI / 2;
-	public static final float ROTOR_BACK_ROT_Y = -(float) Math.PI / 2;
+	// Rotors are only two blocks wide, so we need two of them on each side
+	public static final float[] ROTOR_OFFSET_FRONT_1 = {-0.5F, 2, 1};
+	public static final float[] ROTOR_OFFSET_FRONT_2 = {1.5F, 2, 1};
+	public static final float[] ROTOR_OFFSET_BACK_1 = {-0.5F, 2, 2};
+	public static final float[] ROTOR_OFFSET_BACK_2 = {1.5F, 2, 2};
+	public static final float ROTOR_ROT_FRONT_Y = (float) Math.PI / 2;
+	public static final float ROTOR_ROT_BACK_Y = -(float) Math.PI / 2;
 
 	public CrusherBlockEntityRenderer(BlockEntityRendererProvider.Context context) {}
 
@@ -28,9 +31,13 @@ public class CrusherBlockEntityRenderer extends MultiBlockEntityRenderer<Crusher
 			crusherEntity.updateRotorAnimation();
 		}
 		BakedModel rotorModel = TestModModels.CRUSHER_ROTOR.getBakedModel();
-		renderRotor(poseStack, multiBufferSource, rotorModel, ROTOR_FRONT_OFFSET, ROTOR_FRONT_ROT_Y,
+		renderRotor(poseStack, multiBufferSource, rotorModel, ROTOR_OFFSET_FRONT_1,
+				ROTOR_ROT_FRONT_Y, crusherEntity.getRotorAngle(), combinedLight, combinedOverlay);
+		renderRotor(poseStack, multiBufferSource, rotorModel, ROTOR_OFFSET_FRONT_2,
+				ROTOR_ROT_FRONT_Y, crusherEntity.getRotorAngle(), combinedLight, combinedOverlay);
+		renderRotor(poseStack, multiBufferSource, rotorModel, ROTOR_OFFSET_BACK_1, ROTOR_ROT_BACK_Y,
 				crusherEntity.getRotorAngle(), combinedLight, combinedOverlay);
-		renderRotor(poseStack, multiBufferSource, rotorModel, ROTOR_BACK_OFFSET, ROTOR_BACK_ROT_Y,
+		renderRotor(poseStack, multiBufferSource, rotorModel, ROTOR_OFFSET_BACK_2, ROTOR_ROT_BACK_Y,
 				crusherEntity.getRotorAngle(), combinedLight, combinedOverlay);
 	}
 

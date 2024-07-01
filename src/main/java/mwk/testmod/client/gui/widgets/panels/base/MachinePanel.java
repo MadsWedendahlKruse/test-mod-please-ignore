@@ -216,18 +216,10 @@ public abstract class MachinePanel extends AbstractWidget {
         if (!open && isMouseOver(mouseX, mouseY)) {
             guiGraphics.renderTooltip(font, getMessage(), mouseX, mouseY);
         }
-        // Only draw as many letters as fit into the panel
-        int stringOffset = iconWidth + 2 * iconPaddingX;
-        int stringSpace = width - stringOffset;
-        String message = getMessage().getString();
-        if (!animationFinished()) {
-            openText = "";
-            while (font.width(openText) < stringSpace && openText.length() < message.length()) {
-                openText += message.charAt(openText.length());
-            }
+        if (animationWidth.isFinished()) {
+            guiGraphics.drawString(font, openText, getX() + iconWidth + 2 * iconPaddingX,
+                    getY() + iconPaddingY + 4, ColorUtils.TEXT_WHITE);
         }
-        guiGraphics.drawString(font, openText, getX() + stringOffset, getY() + iconPaddingY + 4,
-                ColorUtils.TEXT_WHITE);
         // Only render open if the animations are finished
         // TODO: Reveal it gradually? Would be cool, but not sure if it's worth the effort
         if (isOpenFully()) {
@@ -238,9 +230,5 @@ public abstract class MachinePanel extends AbstractWidget {
     @Override
     protected void updateWidgetNarration(NarrationElementOutput pNarrationElementOutput) {
         // TODO Auto-generated method stub
-    }
-
-    private boolean animationFinished() {
-        return animationWidth.isFinished() && animationHeight.isFinished();
     }
 }

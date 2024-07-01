@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import mwk.testmod.client.gui.screen.CrusherScreen;
 import mwk.testmod.client.gui.screen.InductionFurnaceScreen;
+import mwk.testmod.client.gui.screen.RedstoneGeneratorScreen;
 import mwk.testmod.client.gui.screen.SeparatorScreen;
 import mwk.testmod.client.render.block_entity.CrusherBlockEntityRenderer;
 import mwk.testmod.client.render.block_entity.SeparatorBlockEntityRenderer;
@@ -169,6 +170,9 @@ public class TestMod {
 						InductionFurnaceScreen::new);
 				MenuScreens.register(TestModMenus.CRUSHER_MENU.get(), CrusherScreen::new);
 				MenuScreens.register(TestModMenus.SEPARATOR_MENU.get(), SeparatorScreen::new);
+
+				MenuScreens.register(TestModMenus.REDSTONE_GENERATOR_MENU.get(),
+						RedstoneGeneratorScreen::new);
 			});
 		}
 

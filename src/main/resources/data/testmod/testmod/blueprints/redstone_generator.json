@@ -1,0 +1,18 @@
+{
+    "layers": [
+        [
+            "Xb",
+            "Eb"
+        ],
+        [
+            "bb",
+            "Ib"
+        ]
+    ],
+    "key": {
+        "X": "testmod:redstone_generator",
+        "I": "testmod:machine_input_port",
+        "E": "testmod:machine_energy_port",
+        "b": "testmod:machine_frame_basic"
+    }
+}

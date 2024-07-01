@@ -1,5 +1,7 @@
-package mwk.testmod.common.block.entity.base;
+package mwk.testmod.common.block.entity.base.processing;
 
+import mwk.testmod.TestMod;
+import mwk.testmod.common.block.entity.base.MachineBlockEntity;
 import mwk.testmod.common.block.interfaces.ITickable;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.item.upgrades.SpeedUpgradeItem;
@@ -10,9 +12,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,20 +24,23 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.IItemHandler;
 
 /**
- * A block entity that can craft items using recipes.
+ * A block entity that can process items in some way, e.g. a furnace or a generator.
  */
-public abstract class CrafterMachineBlockEntity<T extends Recipe<Container>>
-        extends BaseMachineBlockEntity implements ITickable {
+public abstract class ProcessingBlockEntity<T extends Recipe<Container>> extends MachineBlockEntity
+        implements ITickable {
 
     public static final String NBT_TAG_PROGRESS = "progress";
 
     protected final RecipeType<T> recipeType;
+    // We only need to look up the recipe if the input slots have changed
+    protected SimpleContainer latestInputs;
+    protected T latestRecipe;
 
-    private int progress;
-    private int maxProgress;
+    protected int progress;
+    protected int maxProgress;
     // Storing the progress per tick as a float makes applying upgrades easier
-    private float progressPerTick;
-    private int energyPerTick;
+    protected float progressPerTick;
+    protected int energyPerTick;
     // Base values before upgrades
     public final int maxProgressBase;
     public final int energyPerTickBase;
@@ -42,11 +49,11 @@ public abstract class CrafterMachineBlockEntity<T extends Recipe<Container>>
     private final int soundDuration; // in ticks
     private long soundStart; // in ticks
 
-    protected CrafterMachineBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
-            int maxEnergy, int energyPerTick, int inputSlots, int outputSlots, int upgradeSlots,
-            int maxProgress, RecipeType<T> recipeType, SoundEvent sound, int soundDuration) {
-        super(type, pos, state, maxEnergy, EnergyType.CONSUMER, inputSlots, outputSlots,
-                upgradeSlots);
+    protected ProcessingBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
+            int maxEnergy, int energyPerTick, EnergyType energyType, int inputSlots,
+            int outputSlots, int upgradeSlots, int maxProgress, RecipeType<T> recipeType,
+            SoundEvent sound, int soundDuration) {
+        super(type, pos, state, maxEnergy, energyType, inputSlots, outputSlots, upgradeSlots);
         this.recipeType = recipeType;
         this.progress = 0;
         this.maxProgress = maxProgress;
@@ -65,6 +72,9 @@ public abstract class CrafterMachineBlockEntity<T extends Recipe<Container>>
 
     protected void increaseProgress() {
         progress++;
+    }
+
+    protected void consumeEnergy() {
         energy.extractEnergy(energyPerTick, false);
     }
 
@@ -97,11 +107,85 @@ public abstract class CrafterMachineBlockEntity<T extends Recipe<Container>>
         }
     }
 
+    /**
+     * This method should return the current recipe that can be crafted given the current inventory.
+     * 
+     * @return The current recipe that can be crafted.
+     */
+    protected T getCurrentRecipe() {
+        SimpleContainer container = new SimpleContainer(this.inputSlots);
+        for (int i = 0; i < this.inputSlots; i++) {
+            container.setItem(i, this.inventory.getStackInSlot(i));
+        }
+        if (latestInputs != null) {
+            // Check if the items in the input slots have changed
+            boolean changed = false;
+            for (int i = 0; i < this.inputSlots; i++) {
+                if (!container.getItem(i).is(latestInputs.getItem(i).getItem())) {
+                    changed = true;
+                    break;
+                }
+            }
+            if (!changed) {
+                return latestRecipe;
+            }
+        } else {
+            latestInputs = container;
+        }
+        // Check if the items in the input slots match the latest recipe
+        if (latestRecipe != null && latestRecipe.matches(container, level)) {
+            return latestRecipe;
+        }
+        TestMod.LOGGER.debug("Getting new recipe");
+        latestRecipe = this.level.getRecipeManager().getRecipeFor(this.recipeType, container, level)
+                .map(RecipeHolder::value).orElse(null);
+        latestInputs = container;
+        return latestRecipe;
+    }
+
+    /**
+     * This method checks if the given recipe can be processed in the current state. This is mostly
+     * used for crafting recipes to check if the result can be inserted into the output slot(s).
+     * 
+     * @param recipe The recipe to check.
+     * @return True if the recipe can be processed, false otherwise.
+     */
+    protected boolean canProcessRecipe(T recipe) {
+        if (recipe == null) {
+            return false;
+        }
+        ItemStack result = recipe.getResultItem(null);
+        if (result.isEmpty()) {
+            // If the item is empty we don't have to check if it can be inserted
+            return true;
+        }
+        return canInsertItemIntoSlot(inputSlots, result.getItem(), result.getCount());
+    }
+
+    /**
+     * This method is responsible for crafting the item. It should also handle the removal of the
+     * input items and the insertion of the output items.
+     * 
+     * @param recipe The recipe to craft.
+     */
+    protected void processItem(T recipe) {
+        for (int i = 0; i < inputSlots; i++) {
+            this.inventory.extractItem(i, 1, false);
+        }
+        ItemStack result = recipe.getResultItem(null);
+        if (result.isEmpty()) {
+            return;
+        }
+        this.inventory.setStackInSlot(inputSlots, new ItemStack(result.getItem(),
+                this.inventory.getStackInSlot(inputSlots).getCount() + result.getCount()));
+    }
+
     @Override
     protected boolean isInputValid(int slot, ItemStack stack) {
         if (slot >= inputSlots) {
             return false;
         }
+        // TODO: Can we cache this?
         return this.level.getRecipeManager().getAllRecipesFor(recipeType).stream()
                 .anyMatch(recipe -> {
                     return recipe.value().getIngredients().stream().anyMatch(ingredient -> {
@@ -161,22 +245,6 @@ public abstract class CrafterMachineBlockEntity<T extends Recipe<Container>>
             return true;
         }
         return false;
-    }
-
-    @Override
-    protected void resetUpgrades() {
-        maxProgress = maxProgressBase;
-        progressPerTick = 1.0F;
-        energyPerTick = energyPerTickBase;
-    }
-
-    @Override
-    protected void installUpgrade(UpgradeItem upgrade) {
-        if (upgrade instanceof SpeedUpgradeItem speedUpgrade) {
-            progressPerTick += speedUpgrade.getSpeedMultiplier();
-            maxProgress = (int) (maxProgressBase / progressPerTick);
-            energyPerTick += energyPerTickBase * speedUpgrade.getEnergyMultiplier();
-        }
     }
 
     public boolean isFormed() {

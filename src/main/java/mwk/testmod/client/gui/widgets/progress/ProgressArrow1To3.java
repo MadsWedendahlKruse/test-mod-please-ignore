@@ -1,7 +1,7 @@
 package mwk.testmod.client.gui.widgets.progress;
 
 import mwk.testmod.TestMod;
-import mwk.testmod.common.block.inventory.base.CrafterMachineMenu;
+import mwk.testmod.common.block.inventory.base.ProcessingMenu;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.resources.ResourceLocation;
 
@@ -14,7 +14,7 @@ public class ProgressArrow1To3 extends ProgressArrow {
     public static final int WIDTH = 36;
     public static final int HEIGHT = 46;
 
-    public ProgressArrow1To3(CrafterMachineMenu menu, int x, int y) {
+    public ProgressArrow1To3(ProcessingMenu menu, int x, int y) {
         super(PROGRESS_ARROW_1_TO_3_SPRITES, menu, x, y, WIDTH, HEIGHT);
     }
 

@@ -3,7 +3,7 @@ package mwk.testmod.client.gui.widgets.panels;
 import mwk.testmod.TestMod;
 import mwk.testmod.client.gui.widgets.TextScrollWidget;
 import mwk.testmod.client.gui.widgets.panels.base.MachinePanel;
-import mwk.testmod.common.block.entity.base.BaseMachineBlockEntity;
+import mwk.testmod.common.block.entity.base.MachineBlockEntity;
 import mwk.testmod.datagen.TestModLanguageProvider;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -19,7 +19,7 @@ public class InfoPanel extends MachinePanel {
 
 	private final TextScrollWidget textScrollWidget;
 
-	public InfoPanel(BaseMachineBlockEntity machine) {
+	public InfoPanel(MachineBlockEntity machine) {
 		super(WIDTH, HEIGHT, Component.translatable(TestModLanguageProvider.KEY_WIDGET_PANEL_INFO),
 				COLOR, ICON);
 		this.textScrollWidget = new TextScrollWidget(0, 0, WIDTH, HEIGHT,

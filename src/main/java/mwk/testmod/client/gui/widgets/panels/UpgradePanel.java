@@ -3,7 +3,7 @@ package mwk.testmod.client.gui.widgets.panels;
 import mwk.testmod.TestMod;
 import mwk.testmod.client.gui.widgets.panels.base.MachinePanel;
 import mwk.testmod.client.render.RenderUtils;
-import mwk.testmod.common.block.inventory.base.BaseMachineMenu;
+import mwk.testmod.common.block.inventory.base.MachineMenu;
 import mwk.testmod.common.util.inventory.ItemSlotGridHelper;
 import mwk.testmod.datagen.TestModLanguageProvider;
 import net.minecraft.client.gui.GuiGraphics;
@@ -19,9 +19,9 @@ public class UpgradePanel extends MachinePanel {
 
     private static final ItemSlotGridHelper GRID_HELPER = ItemSlotGridHelper.ROWS_2;
 
-    private final BaseMachineMenu menu;
+    private final MachineMenu menu;
 
-    public UpgradePanel(BaseMachineMenu menu) {
+    public UpgradePanel(MachineMenu menu) {
         super(GRID_HELPER.getWidth(menu.upgradeSlots) + 2 * PADDING,
                 GRID_HELPER.getHeight(menu.upgradeSlots) + 2 * PADDING,
                 Component.translatable(TestModLanguageProvider.KEY_WIDGET_PANEL_UPGRADE), COLOR,

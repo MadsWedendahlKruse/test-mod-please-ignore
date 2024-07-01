@@ -11,6 +11,7 @@
     "testmod:super_assembler",
     "testmod:crusher",
     "testmod:separator",
-    "testmod:teleporter"
+    "testmod:teleporter",
+    "testmod:redstone_generator"
   ]
 }

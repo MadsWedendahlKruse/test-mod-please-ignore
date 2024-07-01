@@ -1,7 +1,7 @@
 {
   "type": "testmod:separation",
   "input": {
-    "item": "testmod:dust_steel"
+    "tag": "forge:dusts/steel"
   },
   "outputs": [
     {

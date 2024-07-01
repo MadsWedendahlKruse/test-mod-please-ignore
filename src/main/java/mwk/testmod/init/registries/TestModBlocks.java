@@ -5,6 +5,7 @@ import mwk.testmod.TestMod;
 import mwk.testmod.common.block.cable.CableBlock;
 import mwk.testmod.common.block.entity.CrusherBlockEntity;
 import mwk.testmod.common.block.entity.InductionFurnaceBlockEntity;
+import mwk.testmod.common.block.entity.RedstoneGeneratorBlockEntity;
 import mwk.testmod.common.block.entity.SeparatorBlockEntity;
 import mwk.testmod.common.block.entity.TeleporterBlockEntity;
 import mwk.testmod.common.block.multiblock.HologramBlock;
@@ -45,6 +46,8 @@ public class TestModBlocks {
 	public static final String SEPARATOR_ID = "separator";
 	public static final String TELEPORTER_ID = "teleporter";
 
+	public static final String REDSTONE_GENERATOR_ID = "redstone_generator";
+
 	public static final String HOLOGRAM_ID = "hologram";
 
 	public static final String CABLE_ID = "cable";
@@ -77,7 +80,8 @@ public class TestModBlocks {
 	public static final DeferredBlock<MultiBlockPartBlock> COPPER_COIL = registerBlockWithItem(
 			COPPER_COIL_ID, () -> new MultiBlockPartBlock(getMachineProperties()));
 
-	// Multiblock controllers
+	// --- Multiblock controllers ---
+	// Crafters
 	public static final DeferredBlock<MultiBlockControllerBlock> INDUCTION_FURNACE =
 			registerBlockWithItem(INDUCTION_FURNACE_ID,
 					() -> new MultiBlockControllerBlock(getMachineProperties(),
@@ -96,6 +100,13 @@ public class TestModBlocks {
 	public static final DeferredBlock<MultiBlockControllerBlock> TELEPORTER = registerBlockWithItem(
 			TELEPORTER_ID, () -> new MultiBlockControllerBlock(getMachineProperties(),
 					TeleporterBlockEntity::new));
+
+	// Generators
+	public static final DeferredBlock<MultiBlockControllerBlock> REDSTONE_GENERATOR =
+			registerBlockWithItem(REDSTONE_GENERATOR_ID,
+					() -> new MultiBlockControllerBlock(getMachineProperties(),
+							RedstoneGeneratorBlockEntity::new));
+	// ---
 
 	public static final DeferredBlock<HologramBlock> HOLOGRAM =
 			BLOCKS.register(HOLOGRAM_ID, () -> new HologramBlock());
