@@ -2,65 +2,65 @@
   "multipart": [
     {
       "apply": {
-        "model": "testmod:block/cable_base"
+        "model": "testmod:block/conduit_base_energy"
       }
     },
     {
       "apply": {
-        "model": "testmod:block/cable_side"
+        "model": "testmod:block/conduit_side_energy"
       },
       "when": {
-        "north": "cable"
+        "north": "conduit"
       }
     },
     {
       "apply": {
-        "model": "testmod:block/cable_side",
+        "model": "testmod:block/conduit_side_energy",
         "y": 90
       },
       "when": {
-        "east": "cable"
+        "east": "conduit"
       }
     },
     {
       "apply": {
-        "model": "testmod:block/cable_side",
+        "model": "testmod:block/conduit_side_energy",
         "y": 180
       },
       "when": {
-        "south": "cable"
+        "south": "conduit"
       }
     },
     {
       "apply": {
-        "model": "testmod:block/cable_side",
+        "model": "testmod:block/conduit_side_energy",
         "y": 270
       },
       "when": {
-        "west": "cable"
+        "west": "conduit"
       }
     },
     {
       "apply": {
-        "model": "testmod:block/cable_side",
+        "model": "testmod:block/conduit_side_energy",
         "x": 270
       },
       "when": {
-        "up": "cable"
+        "up": "conduit"
       }
     },
     {
       "apply": {
-        "model": "testmod:block/cable_side",
+        "model": "testmod:block/conduit_side_energy",
         "x": 90
       },
       "when": {
-        "down": "cable"
+        "down": "conduit"
       }
     },
     {
       "apply": {
-        "model": "testmod:block/cable_side_block"
+        "model": "testmod:block/conduit_side_block_energy"
       },
       "when": {
         "north": "block"
@@ -68,7 +68,7 @@
     },
     {
       "apply": {
-        "model": "testmod:block/cable_side_block",
+        "model": "testmod:block/conduit_side_block_energy",
         "y": 90
       },
       "when": {
@@ -77,7 +77,7 @@
     },
     {
       "apply": {
-        "model": "testmod:block/cable_side_block",
+        "model": "testmod:block/conduit_side_block_energy",
         "y": 180
       },
       "when": {
@@ -86,7 +86,7 @@
     },
     {
       "apply": {
-        "model": "testmod:block/cable_side_block",
+        "model": "testmod:block/conduit_side_block_energy",
         "y": 270
       },
       "when": {
@@ -95,7 +95,7 @@
     },
     {
       "apply": {
-        "model": "testmod:block/cable_side_block",
+        "model": "testmod:block/conduit_side_block_energy",
         "x": 270
       },
       "when": {
@@ -104,7 +104,7 @@
     },
     {
       "apply": {
-        "model": "testmod:block/cable_side_block",
+        "model": "testmod:block/conduit_side_block_energy",
         "x": 90
       },
       "when": {

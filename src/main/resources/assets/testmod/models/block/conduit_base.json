@@ -1,8 +1,8 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "testmod:block/cable",
-		"particle": "testmod:block/cable"
+		"0": "testmod:block/conduit",
+		"particle": "testmod:block/conduit"
 	},
 	"elements": [
 		{
@@ -28,19 +28,11 @@
 			"rotation": [60, 45, 0],
 			"scale": [0.5, 0.5, 0.5]
 		},
-		"firstperson_righthand": {
-			"rotation": [0, 45, 0],
-			"scale": [0.75, 0.75, 0.75]
-		},
-		"firstperson_lefthand": {
-			"rotation": [0, 45, 0],
-			"scale": [0.75, 0.75, 0.75]
-		},
 		"ground": {
 			"scale": [0.5, 0.5, 0.5]
 		},
 		"gui": {
-			"rotation": [30, 45, 0],
+			"rotation": [36, 45, 0],
 			"scale": [1.25, 1.25, 1.25]
 		}
 	}

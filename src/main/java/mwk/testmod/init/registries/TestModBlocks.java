@@ -2,7 +2,8 @@ package mwk.testmod.init.registries;
 
 import java.util.function.Supplier;
 import mwk.testmod.TestMod;
-import mwk.testmod.common.block.cable.CableBlock;
+import mwk.testmod.common.block.conduit.ConduitBlock;
+import mwk.testmod.common.block.conduit.ConduitType;
 import mwk.testmod.common.block.entity.CrusherBlockEntity;
 import mwk.testmod.common.block.entity.InductionFurnaceBlockEntity;
 import mwk.testmod.common.block.entity.RedstoneGeneratorBlockEntity;
@@ -50,7 +51,9 @@ public class TestModBlocks {
 
 	public static final String HOLOGRAM_ID = "hologram";
 
-	public static final String CABLE_ID = "cable";
+	public static final String CONDUIT_ITEM_ID = "conduit_item";
+	public static final String CONDUIT_FLUID_ID = "conduit_fluid";
+	public static final String CONDUIT_ENERGY_ID = "conduit_energy";
 
 	// Normal blocks
 	public static final DeferredBlock<Block> ILMENITE_ORE =
@@ -111,8 +114,16 @@ public class TestModBlocks {
 	public static final DeferredBlock<HologramBlock> HOLOGRAM =
 			BLOCKS.register(HOLOGRAM_ID, () -> new HologramBlock());
 
-	public static final DeferredBlock<CableBlock> CABLE =
-			registerBlockWithItem("cable", () -> new CableBlock(BlockBehaviour.Properties.of()));
+	// Conduits
+	public static final DeferredBlock<ConduitBlock> CONDUIT_ITEM =
+			registerBlockWithItem(CONDUIT_ITEM_ID,
+					() -> new ConduitBlock(BlockBehaviour.Properties.of(), ConduitType.ITEM));
+	public static final DeferredBlock<ConduitBlock> CONDUIT_FLUID =
+			registerBlockWithItem(CONDUIT_FLUID_ID,
+					() -> new ConduitBlock(BlockBehaviour.Properties.of(), ConduitType.FLUID));
+	public static final DeferredBlock<ConduitBlock> CONDUIT_ENERGY =
+			registerBlockWithItem(CONDUIT_ENERGY_ID,
+					() -> new ConduitBlock(BlockBehaviour.Properties.of(), ConduitType.ENERGY));
 
 	public static BlockBehaviour.Properties getMachineProperties() {
 		return BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL)

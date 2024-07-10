@@ -98,6 +98,8 @@ public class PanelManager {
                     openPanelsHeight += panel.getHeightOpen();
                     if (panelClicked) {
                         clickedPanelIndex = i;
+                        // We have to take into account the y-position of the clicked panel
+                        openPanelsHeight += panel.getY() - menuTop;
                     }
                 }
             }

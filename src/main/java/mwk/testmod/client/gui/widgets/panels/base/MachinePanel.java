@@ -216,9 +216,10 @@ public abstract class MachinePanel extends AbstractWidget {
         if (!open && isMouseOver(mouseX, mouseY)) {
             guiGraphics.renderTooltip(font, getMessage(), mouseX, mouseY);
         }
-        if (animationWidth.isFinished()) {
-            guiGraphics.drawString(font, openText, getX() + iconWidth + 2 * iconPaddingX,
-                    getY() + iconPaddingY + 4, ColorUtils.TEXT_WHITE);
+        if (open && animationWidth.isFinished()) {
+            guiGraphics.drawString(font, getMessage().getString(),
+                    getX() + iconWidth + 2 * iconPaddingX, getY() + iconPaddingY + 4,
+                    ColorUtils.TEXT_WHITE);
         }
         // Only render open if the animations are finished
         // TODO: Reveal it gradually? Would be cool, but not sure if it's worth the effort

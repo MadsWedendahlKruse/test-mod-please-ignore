@@ -62,7 +62,7 @@ public abstract class GeneratorBlockEntity<T extends GeneratorRecipe>
     }
 
     protected void generateEnergy() {
-        energy.receiveEnergy(energyGeneratedPerTick, false);
+        energyStorage.receiveEnergy(energyGeneratedPerTick, false);
     }
 
     public void pushEnergy(BlockPos pos) {
@@ -70,15 +70,16 @@ public abstract class GeneratorBlockEntity<T extends GeneratorRecipe>
             return;
         }
         for (Direction direction : Direction.values()) {
-            IEnergyStorage target = level.getCapability(Capabilities.EnergyStorage.BLOCK,
+            // TODO: Capability cache
+            IEnergyStorage receiver = level.getCapability(Capabilities.EnergyStorage.BLOCK,
                     pos.relative(direction), direction.getOpposite());
-            if (target == null) {
+            if (receiver == null || receiver == this.getEnergyStorage(direction)) {
                 continue;
             }
             // We don't want to transfer more energy than we have
             int maxTransfer = Math.min(getEnergyStored(), energyPerTick);
-            int received = target.receiveEnergy(maxTransfer, false);
-            energy.extractEnergy(received, false);
+            int received = receiver.receiveEnergy(maxTransfer, false);
+            energyStorage.extractEnergy(received, false);
         }
     }
 

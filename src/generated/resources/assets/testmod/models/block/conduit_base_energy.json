@@ -1,0 +1,9 @@
+{
+  "parent": "testmod:block/conduit_base",
+  "ambientocclusion": false,
+  "render_type": "minecraft:solid",
+  "textures": {
+    "0": "testmod:block/conduit_energy",
+    "particle": "testmod:block/conduit_energy"
+  }
+}

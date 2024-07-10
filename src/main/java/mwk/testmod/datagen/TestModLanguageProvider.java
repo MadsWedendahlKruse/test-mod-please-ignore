@@ -114,7 +114,9 @@ public class TestModLanguageProvider extends LanguageProvider {
 		add(TestModBlocks.CRUSHER.get(), "Crusher");
 		add(TestModBlocks.SEPARATOR.get(), "Separator");
 		add(TestModBlocks.REDSTONE_GENERATOR.get(), "Redstone Generator");
-
+		add(TestModBlocks.CONDUIT_ITEM.get(), "Item Conduit");
+		add(TestModBlocks.CONDUIT_FLUID.get(), "Fluid Conduit");
+		add(TestModBlocks.CONDUIT_ENERGY.get(), "Energy Conduit");
 		// TEMPORARY DESCRIPTIONS
 		add(KEY_DESCRIPTION_MISSING, "No description available.");
 		add(KEY_DESCRIPTION_SUPER_ASSEMBLER,

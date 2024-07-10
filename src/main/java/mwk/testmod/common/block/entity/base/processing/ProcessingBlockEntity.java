@@ -75,7 +75,7 @@ public abstract class ProcessingBlockEntity<T extends Recipe<Container>> extends
     }
 
     protected void consumeEnergy() {
-        energy.extractEnergy(energyPerTick, false);
+        energyStorage.extractEnergy(energyPerTick, false);
     }
 
     protected boolean hasProgressFinished() {
@@ -83,7 +83,7 @@ public abstract class ProcessingBlockEntity<T extends Recipe<Container>> extends
     }
 
     protected boolean hasEnergy() {
-        return energy.getEnergyStored() >= energyPerTick;
+        return energyStorage.getEnergyStored() >= energyPerTick;
     }
 
     protected boolean canInsertItemIntoSlot(int slot, Item item, int count) {
@@ -267,9 +267,9 @@ public abstract class ProcessingBlockEntity<T extends Recipe<Container>> extends
     }
 
     @Override
-    public IEnergyStorage getEnergyHandler(Direction direction) {
+    public IEnergyStorage getEnergyStorage(Direction direction) {
         if (isFormed()) {
-            return energyHandler.get();
+            return energyWrapper.get();
         }
         return null;
     }

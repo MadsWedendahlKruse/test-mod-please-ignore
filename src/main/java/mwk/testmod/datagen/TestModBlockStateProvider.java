@@ -2,11 +2,13 @@ package mwk.testmod.datagen;
 
 import java.io.Serializable;
 import mwk.testmod.TestMod;
-import mwk.testmod.common.block.cable.CableBlock;
-import mwk.testmod.common.block.cable.ConnectorType;
+import mwk.testmod.common.block.conduit.ConduitBlock;
+import mwk.testmod.common.block.conduit.ConduitType;
+import mwk.testmod.common.block.conduit.ConnectorType;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import mwk.testmod.init.registries.TestModBlocks;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -70,7 +72,9 @@ public class TestModBlockStateProvider extends BlockStateProvider {
 		registerMultiBlockController(TestModBlocks.SEPARATOR.get(), TestModBlocks.SEPARATOR_ID,
 				ControllerType.MACHINE);
 
-		registerCableBlock(TestModBlocks.CABLE.get());
+		registerConduitBlock(TestModBlocks.CONDUIT_ITEM.get(), "minecraft:solid");
+		registerConduitBlock(TestModBlocks.CONDUIT_FLUID.get(), "minecraft:cutout");
+		registerConduitBlock(TestModBlocks.CONDUIT_ENERGY.get(), "minecraft:solid");
 	}
 
 	protected void createCubeAll(String modelPath) {
@@ -147,37 +151,55 @@ public class TestModBlockStateProvider extends BlockStateProvider {
 		});
 	}
 
-	protected void registerCableBlock(CableBlock cableBlock) {
-		// TOOD: models? It already exists
-		// Create the blockstate for the cable
-		ModelFile modelBase = models().getExistingFile(modLoc("block/cable_base"));
-		ModelFile modelSide = models().getExistingFile(modLoc("block/cable_side"));
-		ModelFile modelSideBlock = models().getExistingFile(modLoc("block/cable_side_block"));
-		MultiPartBlockStateBuilder builder = getMultipartBuilder(cableBlock);
+	protected void registerConduitBlock(ConduitBlock conduitBlock, String renderType) {
+		String type = conduitBlock.getType().name().toLowerCase();
+		// Create the models for the conduit block
+		String texturePath = "block/conduit_" + type;
+		String modelPathBase = "block/conduit_base_" + type;
+		String modelPathSide = "block/conduit_side_" + type;
+		String modelPathSideBlock = "block/conduit_side_block_" + type;
+		models().withExistingParent(modelPathBase, "testmod:block/conduit_base")
+				.texture("0", texturePath).texture("particle", texturePath).ao(false)
+				.renderType(renderType);
+		models().withExistingParent(modelPathSide, "testmod:block/conduit_side")
+				.texture("0", texturePath).texture("particle", texturePath).ao(false)
+				.renderType(renderType);
+		models().withExistingParent(modelPathSideBlock, "testmod:block/conduit_side_block")
+				.texture("0", texturePath).texture("particle", texturePath).ao(false)
+				.renderType(renderType);
+		// Create the item model for the conduit
+		itemModels().getBuilder("item/conduit_" + type)
+				.parent(models().getExistingFile(modLoc("item/conduit"))).texture("0", texturePath)
+				.texture("particle", texturePath);
+		// Create the blockstate for the conduit
+		ModelFile modelBase = models().getExistingFile(modLoc(modelPathBase));
+		ModelFile modelSide = models().getExistingFile(modLoc(modelPathSide));
+		ModelFile modelSideBlock = models().getExistingFile(modLoc(modelPathSideBlock));
+		MultiPartBlockStateBuilder builder = getMultipartBuilder(conduitBlock);
 		builder.part().modelFile(modelBase).addModel().end();
 		builder.part().modelFile(modelSide).addModel()
-				.condition(CableBlock.NORTH, ConnectorType.CABLE).end();
+				.condition(ConduitBlock.NORTH, ConnectorType.CONDUIT).end();
 		builder.part().modelFile(modelSide).rotationY(90).addModel()
-				.condition(CableBlock.EAST, ConnectorType.CABLE).end();
+				.condition(ConduitBlock.EAST, ConnectorType.CONDUIT).end();
 		builder.part().modelFile(modelSide).rotationY(180).addModel()
-				.condition(CableBlock.SOUTH, ConnectorType.CABLE).end();
+				.condition(ConduitBlock.SOUTH, ConnectorType.CONDUIT).end();
 		builder.part().modelFile(modelSide).rotationY(270).addModel()
-				.condition(CableBlock.WEST, ConnectorType.CABLE).end();
+				.condition(ConduitBlock.WEST, ConnectorType.CONDUIT).end();
 		builder.part().modelFile(modelSide).rotationX(270).addModel()
-				.condition(CableBlock.UP, ConnectorType.CABLE).end();
+				.condition(ConduitBlock.UP, ConnectorType.CONDUIT).end();
 		builder.part().modelFile(modelSide).rotationX(90).addModel()
-				.condition(CableBlock.DOWN, ConnectorType.CABLE).end();
+				.condition(ConduitBlock.DOWN, ConnectorType.CONDUIT).end();
 		builder.part().modelFile(modelSideBlock).addModel()
-				.condition(CableBlock.NORTH, ConnectorType.BLOCK).end();
+				.condition(ConduitBlock.NORTH, ConnectorType.BLOCK).end();
 		builder.part().modelFile(modelSideBlock).rotationY(90).addModel()
-				.condition(CableBlock.EAST, ConnectorType.BLOCK).end();
+				.condition(ConduitBlock.EAST, ConnectorType.BLOCK).end();
 		builder.part().modelFile(modelSideBlock).rotationY(180).addModel()
-				.condition(CableBlock.SOUTH, ConnectorType.BLOCK).end();
+				.condition(ConduitBlock.SOUTH, ConnectorType.BLOCK).end();
 		builder.part().modelFile(modelSideBlock).rotationY(270).addModel()
-				.condition(CableBlock.WEST, ConnectorType.BLOCK).end();
+				.condition(ConduitBlock.WEST, ConnectorType.BLOCK).end();
 		builder.part().modelFile(modelSideBlock).rotationX(270).addModel()
-				.condition(CableBlock.UP, ConnectorType.BLOCK).end();
+				.condition(ConduitBlock.UP, ConnectorType.BLOCK).end();
 		builder.part().modelFile(modelSideBlock).rotationX(90).addModel()
-				.condition(CableBlock.DOWN, ConnectorType.BLOCK).end();
+				.condition(ConduitBlock.DOWN, ConnectorType.BLOCK).end();
 	}
 }

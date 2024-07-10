@@ -1,8 +1,9 @@
-package mwk.testmod.common.block.cable;
+package mwk.testmod.common.block.conduit;
 
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
-import mwk.testmod.common.block.cable.network.CableNetworkManager;
+
+import mwk.testmod.common.block.conduit.network.base.ConduitNetworkManager;
 import mwk.testmod.common.block.interfaces.ITickable;
 import mwk.testmod.common.block.interfaces.IWrenchable;
 import net.minecraft.core.BlockPos;
@@ -29,13 +30,12 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.ticks.ScheduledTick;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.energy.IEnergyStorage;
 
 /**
  * Almost all of this is taken from https://www.mcjty.eu/docs/1.20.4_neo/ep5#introduction
  */
-public class CableBlock extends Block implements EntityBlock, IWrenchable, SimpleWaterloggedBlock {
+public class ConduitBlock extends Block
+        implements EntityBlock, IWrenchable, SimpleWaterloggedBlock {
 
     // Same order as Direction.values()
     public static final EnumProperty<ConnectorType> DOWN =
@@ -53,10 +53,13 @@ public class CableBlock extends Block implements EntityBlock, IWrenchable, Simpl
     public static final EnumProperty<ConnectorType>[] CONNECTOR_PROPERTIES =
             new EnumProperty[] {DOWN, UP, NORTH, SOUTH, WEST, EAST};
 
-    public CableBlock(Properties properties) {
+    private final ConduitType type;
+
+    public ConduitBlock(Properties properties, ConduitType type) {
         super(properties.noOcclusion());
         makeShapes();
         registerDefaultState(defaultBlockState().setValue(BlockStateProperties.WATERLOGGED, false));
+        this.type = type;
     }
 
     @Override
@@ -71,7 +74,11 @@ public class CableBlock extends Block implements EntityBlock, IWrenchable, Simpl
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new CableBlockEntity(pos, state);
+        return type.getBlockEntity(pos, state);
+    }
+
+    public ConduitType getType() {
+        return type;
     }
 
     @Override
@@ -96,8 +103,8 @@ public class CableBlock extends Block implements EntityBlock, IWrenchable, Simpl
         BlockPos pos = connectorPos.relative(facing);
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
-        if (block instanceof CableBlock) {
-            return ConnectorType.CABLE;
+        if (block instanceof ConduitBlock other && other.getType() == type) {
+            return ConnectorType.CONDUIT;
         } else if (isConnectable(world, connectorPos, facing)) {
             return ConnectorType.BLOCK;
         } else {
@@ -106,7 +113,7 @@ public class CableBlock extends Block implements EntityBlock, IWrenchable, Simpl
     }
 
     /**
-     * Check if the block at the given position is connectable to the cable.
+     * Check if the block at the given position is connectable to the conduit.
      */
     public boolean isConnectable(BlockGetter world, BlockPos connectorPos, Direction facing) {
         BlockPos pos = connectorPos.relative(facing);
@@ -118,12 +125,9 @@ public class CableBlock extends Block implements EntityBlock, IWrenchable, Simpl
         if (blockEntity == null) {
             return false;
         }
-        IEnergyStorage energyStorage = blockEntity.getLevel()
-                .getCapability(Capabilities.EnergyStorage.BLOCK, pos, facing.getOpposite());
-        if (energyStorage == null) {
-            return false;
-        }
-        return true;
+        Direction opposite = facing.getOpposite();
+        Level level = blockEntity.getLevel();
+        return level.getCapability(type.getCapability(), pos, opposite) != null;
     }
 
     @Nonnull
@@ -147,7 +151,7 @@ public class CableBlock extends Block implements EntityBlock, IWrenchable, Simpl
                 BlockStateProperties.WATERLOGGED,
                 level.getFluidState(pos).getType() == Fluids.WATER);
         if (level instanceof ServerLevel serverLevel) {
-            CableNetworkManager.getInstance().connectToNetwork(serverLevel, pos, state);
+            ConduitNetworkManager.getInstance().connectToNetwork(serverLevel, pos, state);
         }
         return state;
     }
@@ -164,27 +168,27 @@ public class CableBlock extends Block implements EntityBlock, IWrenchable, Simpl
             boolean movedByPiston) {
         super.onRemove(state, level, pos, newState, movedByPiston);
         if (level instanceof ServerLevel serverLevel && newState.getBlock() != state.getBlock()) {
-            CableNetworkManager.getInstance().disconnectFromNetwork(serverLevel, pos, state);
+            ConduitNetworkManager.getInstance().disconnectFromNetwork(serverLevel, pos, state);
         }
     }
 
     private static VoxelShape[] shapeCache = null;
 
-    private static final double CABLE_MIN = 5. / 16.;
-    private static final double CABLE_MAX = 11. / 16.;
+    private static final double CONDUIT_MIN = 5. / 16.;
+    private static final double CONDUIT_MAX = 11. / 16.;
 
-    private static final VoxelShape SHAPE_CABLE_NORTH =
-            Shapes.box(CABLE_MIN, CABLE_MIN, 0, CABLE_MAX, CABLE_MAX, CABLE_MIN);
-    private static final VoxelShape SHAPE_CABLE_SOUTH =
-            Shapes.box(CABLE_MIN, CABLE_MIN, CABLE_MAX, CABLE_MAX, CABLE_MAX, 1);
-    private static final VoxelShape SHAPE_CABLE_WEST =
-            Shapes.box(0, CABLE_MIN, CABLE_MIN, CABLE_MIN, CABLE_MAX, CABLE_MAX);
-    private static final VoxelShape SHAPE_CABLE_EAST =
-            Shapes.box(CABLE_MAX, CABLE_MIN, CABLE_MIN, 1, CABLE_MAX, CABLE_MAX);
-    private static final VoxelShape SHAPE_CABLE_UP =
-            Shapes.box(CABLE_MIN, CABLE_MAX, CABLE_MIN, CABLE_MAX, 1, CABLE_MAX);
-    private static final VoxelShape SHAPE_CABLE_DOWN =
-            Shapes.box(CABLE_MIN, 0, CABLE_MIN, CABLE_MAX, CABLE_MIN, CABLE_MAX);
+    private static final VoxelShape SHAPE_CONDUIT_NORTH =
+            Shapes.box(CONDUIT_MIN, CONDUIT_MIN, 0, CONDUIT_MAX, CONDUIT_MAX, CONDUIT_MIN);
+    private static final VoxelShape SHAPE_CONDUIT_SOUTH =
+            Shapes.box(CONDUIT_MIN, CONDUIT_MIN, CONDUIT_MAX, CONDUIT_MAX, CONDUIT_MAX, 1);
+    private static final VoxelShape SHAPE_CONDUIT_WEST =
+            Shapes.box(0, CONDUIT_MIN, CONDUIT_MIN, CONDUIT_MIN, CONDUIT_MAX, CONDUIT_MAX);
+    private static final VoxelShape SHAPE_CONDUIT_EAST =
+            Shapes.box(CONDUIT_MAX, CONDUIT_MIN, CONDUIT_MIN, 1, CONDUIT_MAX, CONDUIT_MAX);
+    private static final VoxelShape SHAPE_CONDUIT_UP =
+            Shapes.box(CONDUIT_MIN, CONDUIT_MAX, CONDUIT_MIN, CONDUIT_MAX, 1, CONDUIT_MAX);
+    private static final VoxelShape SHAPE_CONDUIT_DOWN =
+            Shapes.box(CONDUIT_MIN, 0, CONDUIT_MIN, CONDUIT_MAX, CONDUIT_MIN, CONDUIT_MAX);
 
     private static final double CONNECTOR_MIN = 4. / 16.;
     private static final double CONNECTOR_MAX = 12. / 16.;
@@ -239,23 +243,23 @@ public class CableBlock extends Block implements EntityBlock, IWrenchable, Simpl
 
     private VoxelShape makeShape(ConnectorType north, ConnectorType south, ConnectorType west,
             ConnectorType east, ConnectorType up, ConnectorType down) {
-        VoxelShape shape =
-                Shapes.box(CABLE_MIN, CABLE_MIN, CABLE_MIN, CABLE_MAX, CABLE_MAX, CABLE_MAX);
-        shape = combineShape(shape, north, SHAPE_CABLE_NORTH, SHAPE_BLOCK_NORTH);
-        shape = combineShape(shape, south, SHAPE_CABLE_SOUTH, SHAPE_BLOCK_SOUTH);
-        shape = combineShape(shape, west, SHAPE_CABLE_WEST, SHAPE_BLOCK_WEST);
-        shape = combineShape(shape, east, SHAPE_CABLE_EAST, SHAPE_BLOCK_EAST);
-        shape = combineShape(shape, up, SHAPE_CABLE_UP, SHAPE_BLOCK_UP);
-        shape = combineShape(shape, down, SHAPE_CABLE_DOWN, SHAPE_BLOCK_DOWN);
+        VoxelShape shape = Shapes.box(CONDUIT_MIN, CONDUIT_MIN, CONDUIT_MIN, CONDUIT_MAX,
+                CONDUIT_MAX, CONDUIT_MAX);
+        shape = combineShape(shape, north, SHAPE_CONDUIT_NORTH, SHAPE_BLOCK_NORTH);
+        shape = combineShape(shape, south, SHAPE_CONDUIT_SOUTH, SHAPE_BLOCK_SOUTH);
+        shape = combineShape(shape, west, SHAPE_CONDUIT_WEST, SHAPE_BLOCK_WEST);
+        shape = combineShape(shape, east, SHAPE_CONDUIT_EAST, SHAPE_BLOCK_EAST);
+        shape = combineShape(shape, up, SHAPE_CONDUIT_UP, SHAPE_BLOCK_UP);
+        shape = combineShape(shape, down, SHAPE_CONDUIT_DOWN, SHAPE_BLOCK_DOWN);
         return shape;
     }
 
     private VoxelShape combineShape(VoxelShape shape, ConnectorType connectorType,
-            VoxelShape cableShape, VoxelShape blockShape) {
-        if (connectorType == ConnectorType.CABLE) {
-            return Shapes.join(shape, cableShape, BooleanOp.OR);
+            VoxelShape conduitShape, VoxelShape blockShape) {
+        if (connectorType == ConnectorType.CONDUIT) {
+            return Shapes.join(shape, conduitShape, BooleanOp.OR);
         } else if (connectorType == ConnectorType.BLOCK) {
-            return Shapes.join(shape, Shapes.join(blockShape, cableShape, BooleanOp.OR),
+            return Shapes.join(shape, Shapes.join(blockShape, conduitShape, BooleanOp.OR),
                     BooleanOp.OR);
         } else {
             return shape;

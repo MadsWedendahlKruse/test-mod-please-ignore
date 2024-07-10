@@ -112,28 +112,37 @@ public class TestMod {
 				TestModBlockEntities.MULTI_OUTPUT_PORT_ENTITY_TYPE.get(),
 				(entity, direction) -> entity.getItemHandler(direction));
 
-		event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
-				TestModBlockEntities.INDUCTION_FURNACE_ENTITY_TYPE.get(),
-				(entity, direction) -> entity.getEnergyHandler(direction));
-		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
-				TestModBlockEntities.INDUCTION_FURNACE_ENTITY_TYPE.get(),
-				(entity, direction) -> entity.getItemHandler(direction));
-		event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
-				TestModBlockEntities.CRUSHER_ENTITY_TYPE.get(),
-				(entity, direction) -> entity.getEnergyHandler(direction));
-		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
-				TestModBlockEntities.CRUSHER_ENTITY_TYPE.get(),
-				(entity, direction) -> entity.getItemHandler(direction));
-		event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
-				TestModBlockEntities.SEPARATOR_ENTITY_TYPE.get(),
-				(entity, direction) -> entity.getEnergyHandler(direction));
-		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
-				TestModBlockEntities.SEPARATOR_ENTITY_TYPE.get(),
-				(entity, direction) -> entity.getItemHandler(direction));
+		// Could be argued that the controllers shouldn't have capabilities, since it's the
+		// ports that have the capabilities
 
+		// event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
+		// TestModBlockEntities.INDUCTION_FURNACE_ENTITY_TYPE.get(),
+		// (entity, direction) -> entity.getEnergyStorage(direction));
+		// event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
+		// TestModBlockEntities.INDUCTION_FURNACE_ENTITY_TYPE.get(),
+		// (entity, direction) -> entity.getItemHandler(direction));
+		// event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
+		// TestModBlockEntities.CRUSHER_ENTITY_TYPE.get(),
+		// (entity, direction) -> entity.getEnergyStorage(direction));
+		// event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
+		// TestModBlockEntities.CRUSHER_ENTITY_TYPE.get(),
+		// (entity, direction) -> entity.getItemHandler(direction));
+		// event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
+		// TestModBlockEntities.SEPARATOR_ENTITY_TYPE.get(),
+		// (entity, direction) -> entity.getEnergyStorage(direction));
+		// event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
+		// TestModBlockEntities.SEPARATOR_ENTITY_TYPE.get(),
+		// (entity, direction) -> entity.getItemHandler(direction));
+
+		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
+				TestModBlockEntities.CONDUIT_ITEM_ENTITY_TYPE.get(),
+				(entity, direction) -> entity.getItemHandler(direction));
+		event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
+				TestModBlockEntities.CONDUIT_FLUID_ENTITY_TYPE.get(),
+				(entity, direction) -> entity.getFluidHandler(direction));
 		event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
-				TestModBlockEntities.CABLE_ENTITY_TYPE.get(),
-				(entity, direction) -> entity.getEnergyHandler(direction));
+				TestModBlockEntities.CONDUIT_ENERGY_ENTITY_TYPE.get(),
+				(entity, direction) -> entity.getEnergyStorage(direction));
 
 	}
 

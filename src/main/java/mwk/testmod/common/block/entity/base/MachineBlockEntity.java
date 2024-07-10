@@ -244,7 +244,7 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
         for (Direction direction : Direction.values()) {
             IItemHandler handler = level.getCapability(Capabilities.ItemHandler.BLOCK,
                     pos.relative(direction), direction.getOpposite());
-            if (handler == null) {
+            if (handler == null || handler == this.getItemHandler(direction)) {
                 continue;
             }
             for (int i = outputHandler.getStartSlot(); i < outputHandler.getEndSlot(); i++) {
@@ -276,7 +276,7 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
         for (Direction direction : Direction.values()) {
             IItemHandler handler = level.getCapability(Capabilities.ItemHandler.BLOCK,
                     pos.relative(direction), direction.getOpposite());
-            if (handler == null) {
+            if (handler == null || handler == this.getItemHandler(direction)) {
                 continue;
             }
             for (int i = 0; i < handler.getSlots(); i++) {

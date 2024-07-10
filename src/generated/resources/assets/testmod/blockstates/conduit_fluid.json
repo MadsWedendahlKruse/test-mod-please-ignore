@@ -1,0 +1,115 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "testmod:block/conduit_base_fluid"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_side_fluid"
+      },
+      "when": {
+        "north": "conduit"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_side_fluid",
+        "y": 90
+      },
+      "when": {
+        "east": "conduit"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_side_fluid",
+        "y": 180
+      },
+      "when": {
+        "south": "conduit"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_side_fluid",
+        "y": 270
+      },
+      "when": {
+        "west": "conduit"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_side_fluid",
+        "x": 270
+      },
+      "when": {
+        "up": "conduit"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_side_fluid",
+        "x": 90
+      },
+      "when": {
+        "down": "conduit"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_side_block_fluid"
+      },
+      "when": {
+        "north": "block"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_side_block_fluid",
+        "y": 90
+      },
+      "when": {
+        "east": "block"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_side_block_fluid",
+        "y": 180
+      },
+      "when": {
+        "south": "block"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_side_block_fluid",
+        "y": 270
+      },
+      "when": {
+        "west": "block"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_side_block_fluid",
+        "x": 270
+      },
+      "when": {
+        "up": "block"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_side_block_fluid",
+        "x": 90
+      },
+      "when": {
+        "down": "block"
+      }
+    }
+  ]
+}

@@ -1,7 +1,9 @@
 package mwk.testmod.init.registries;
 
 import mwk.testmod.TestMod;
-import mwk.testmod.common.block.cable.CableBlockEntity;
+import mwk.testmod.common.block.conduit.EnergyConduitBlockEntity;
+import mwk.testmod.common.block.conduit.FluidConduitBlockEntity;
+import mwk.testmod.common.block.conduit.ItemConduitBlockEntity;
 import mwk.testmod.common.block.entity.CrusherBlockEntity;
 import mwk.testmod.common.block.entity.InductionFurnaceBlockEntity;
 import mwk.testmod.common.block.entity.RedstoneGeneratorBlockEntity;
@@ -69,9 +71,21 @@ public class TestModBlockEntities {
 			BLOCK_ENTITY_TYPES.register(TestModBlocks.TELEPORTER_ID, () -> BlockEntityType.Builder
 					.of(TeleporterBlockEntity::new, TestModBlocks.TELEPORTER.get()).build(null));
 
-	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CableBlockEntity>> CABLE_ENTITY_TYPE =
-			BLOCK_ENTITY_TYPES.register(TestModBlocks.CABLE_ID, () -> BlockEntityType.Builder
-					.of(CableBlockEntity::new, TestModBlocks.CABLE.get()).build(null));
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ItemConduitBlockEntity>> CONDUIT_ITEM_ENTITY_TYPE =
+			BLOCK_ENTITY_TYPES.register(TestModBlocks.CONDUIT_ITEM_ID, () -> BlockEntityType.Builder
+					.of(ItemConduitBlockEntity::new, TestModBlocks.CONDUIT_ITEM.get()).build(null));
+
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EnergyConduitBlockEntity>> CONDUIT_ENERGY_ENTITY_TYPE =
+			BLOCK_ENTITY_TYPES.register(TestModBlocks.CONDUIT_ENERGY_ID,
+					() -> BlockEntityType.Builder
+							.of(EnergyConduitBlockEntity::new, TestModBlocks.CONDUIT_ENERGY.get())
+							.build(null));
+
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FluidConduitBlockEntity>> CONDUIT_FLUID_ENTITY_TYPE =
+			BLOCK_ENTITY_TYPES.register(TestModBlocks.CONDUIT_FLUID_ID,
+					() -> BlockEntityType.Builder
+							.of(FluidConduitBlockEntity::new, TestModBlocks.CONDUIT_FLUID.get())
+							.build(null));
 
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RedstoneGeneratorBlockEntity>> REDSTONE_GENERATOR_ENTITY_TYPE =
 			BLOCK_ENTITY_TYPES.register(TestModBlocks.REDSTONE_GENERATOR_ID,

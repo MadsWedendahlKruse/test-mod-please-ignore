@@ -1,4 +1,7 @@
 {
+  "block.testmod.conduit_energy": "Energy Conduit",
+  "block.testmod.conduit_fluid": "Fluid Conduit",
+  "block.testmod.conduit_item": "Item Conduit",
   "block.testmod.copper_coil": "Copper Coil",
   "block.testmod.crusher": "Crusher",
   "block.testmod.deepslate_ilmenite_ore": "Deepslate Ilmenite Ore",

@@ -1,10 +1,10 @@
-package mwk.testmod.common.block.cable;
+package mwk.testmod.common.block.conduit;
 
 import javax.annotation.Nonnull;
 import net.minecraft.util.StringRepresentable;
 
 public enum ConnectorType implements StringRepresentable {
-    NONE, CABLE, BLOCK;
+    NONE, CONDUIT, BLOCK;
 
     public static final ConnectorType[] VALUES = values();
 

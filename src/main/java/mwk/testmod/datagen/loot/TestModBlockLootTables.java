@@ -2,6 +2,7 @@ package mwk.testmod.datagen.loot;
 
 import java.util.Set;
 import java.util.stream.Collectors;
+import mwk.testmod.common.block.conduit.ConduitBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import mwk.testmod.init.registries.TestModBlocks;
 import mwk.testmod.init.registries.TestModItems;
@@ -35,11 +36,12 @@ public class TestModBlockLootTables extends BlockLootSubProvider {
             if (entry.get() instanceof MultiBlockPartBlock) {
                 dropSelf(entry.get());
             }
+            if (entry.get() instanceof ConduitBlock) {
+                dropSelf(entry.get());
+            }
         });
 
         dropOther(TestModBlocks.HOLOGRAM.get(), ItemStack.EMPTY.getItem());
-
-        dropSelf(TestModBlocks.CABLE.get());
     }
 
     @Override

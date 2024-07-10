@@ -1,0 +1,9 @@
+{
+  "parent": "testmod:block/conduit_side",
+  "ambientocclusion": false,
+  "render_type": "minecraft:solid",
+  "textures": {
+    "0": "testmod:block/conduit_item",
+    "particle": "testmod:block/conduit_item"
+  }
+}

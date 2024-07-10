@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "testmod:cable"
+          "name": "testmod:conduit_fluid"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "testmod:blocks/cable"
+  "random_sequence": "testmod:blocks/conduit_fluid"
 }

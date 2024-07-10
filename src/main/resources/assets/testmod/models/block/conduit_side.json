@@ -1,8 +1,8 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "testmod:block/cable",
-		"particle": "testmod:block/cable"
+		"0": "testmod:block/conduit",
+		"particle": "testmod:block/conduit"
 	},
 	"elements": [
 		{

@@ -22,7 +22,7 @@ public class MultiBlockEnergyPortBlockEntity extends MultiBlockPartBlockEntity
         if (isFormed()) {
             BlockEntity controllerEntity = level.getBlockEntity(controllerPos);
             if (controllerEntity instanceof EnergyBlockEntity energyEntity) {
-                return energyEntity.getEnergyHandler(direction);
+                return energyEntity.getEnergyStorage(direction);
             }
         }
         return null;

@@ -21,8 +21,8 @@ public class EnergyBlockEntity extends BlockEntity {
 
     public static final String NBT_TAG_ENERGY = "energy";
 
-    protected final EnergyStorage energy;
-    protected final Lazy<IEnergyStorage> energyHandler;
+    protected final EnergyStorage energyStorage;
+    protected final Lazy<IEnergyStorage> energyWrapper;
 
     // TODO: Overengineered?
     public enum EnergyType {
@@ -32,8 +32,8 @@ public class EnergyBlockEntity extends BlockEntity {
     public EnergyBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
             EnergyStorage energy, EnergyType energyType) {
         super(type, pos, state);
-        this.energy = energy;
-        this.energyHandler = switch (energyType) {
+        this.energyStorage = energy;
+        this.energyWrapper = switch (energyType) {
             case STORAGE -> Lazy.of(() -> new EnergyStorageWrapper(energy, this));
             case CONSUMER -> Lazy.of(() -> new EnergyStorageConsumer(energy, this));
             case PRODUCER -> Lazy.of(() -> new EnergyStorageProducer(energy, this));
@@ -43,26 +43,26 @@ public class EnergyBlockEntity extends BlockEntity {
     @Override
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
-        tag.put(NBT_TAG_ENERGY, energy.serializeNBT());
+        tag.put(NBT_TAG_ENERGY, energyStorage.serializeNBT());
     }
 
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
         if (tag.contains(NBT_TAG_ENERGY)) {
-            energy.deserializeNBT(IntTag.valueOf(tag.getInt(NBT_TAG_ENERGY)));
+            energyStorage.deserializeNBT(IntTag.valueOf(tag.getInt(NBT_TAG_ENERGY)));
         }
     }
 
     public int getEnergyStored() {
-        return energy.getEnergyStored();
+        return energyStorage.getEnergyStored();
     }
 
     public int getMaxEnergyStored() {
-        return energy.getMaxEnergyStored();
+        return energyStorage.getMaxEnergyStored();
     }
 
-    public IEnergyStorage getEnergyHandler(Direction direction) {
-        return energyHandler.get();
+    public IEnergyStorage getEnergyStorage(Direction direction) {
+        return energyWrapper.get();
     }
 }
