@@ -20,10 +20,12 @@ import net.neoforged.neoforge.common.util.INBTSerializable;
  * Base class for all conduit networks. This class is responsible for managing the network data and
  * serializing it to disk.
  * 
+ * @param <C> The type of capability that the network will be using, e.g. IEnergyStorage for energy
+ *        networks, IFluidHandler for fluid networks, IItemHandler for item networks.
  * @param <T> The type of payload that the network will be transferring, e.g. ItemStack for item
  *        networks, FluidStack for fluid networks, Integer for energy networks.
  */
-public abstract class ConduitNetwork<T> implements INBTSerializable<CompoundTag> {
+public abstract class ConduitNetwork<C, T> implements INBTSerializable<CompoundTag> {
 
     public static final String NBT_TAG_SIZE = "size";
     public static final String NBT_TAG_POS = "pos";
@@ -129,15 +131,14 @@ public abstract class ConduitNetwork<T> implements INBTSerializable<CompoundTag>
     /**
      * Transfers the payload to the receiver. This is where the actual transfer of the payload
      * should happen. This method should also handle the case where the payload is too large for the
-     * receiver to handle. This method has to check if the receiver is an instance of the expected
-     * capability, e.g. IEnergyStorage for energy networks (TODO: Not very nice).
+     * receiver to handle.
      * 
      * @param receiver The receiver of the payload.
      * @param payload The payload to transfer.
      * @param simulate If the transfer should be simulated.
      * @return The payload that has been received by the receiver.
      */
-    protected abstract T transferPayload(@NotNull Object receiver, T payload, boolean simulate);
+    protected abstract T transferPayload(@NotNull C receiver, T payload, boolean simulate);
 
     /**
      * Aggregates the payloads that have been received by the receivers in the network. This method
@@ -172,13 +173,20 @@ public abstract class ConduitNetwork<T> implements INBTSerializable<CompoundTag>
      * @return The payload that has been received by the receivers in the network.
      */
     public T receivePayload(ServerLevel level, BlockPos start, T payload, boolean simulate) {
+
+        if (isPayloadEmpty(payload)) {
+            return payload;
+        }
+
+        // The initial aggregate of the payloads that have been received by the receivers
+        T payloadAggregate = createEmptyPayload(payload);
+
+        // BFS to find receiver(s) for the payload
         Queue<BlockPos> queue = new ArrayDeque<>();
         Set<BlockPos> visited = new HashSet<>();
 
         queue.add(start);
         visited.add(start);
-
-        T payloadAggregate = createEmptyPayload(payload);
 
         while (!queue.isEmpty() && !isPayloadEmpty(payload)) {
             BlockPos current = queue.poll();
@@ -193,7 +201,7 @@ public abstract class ConduitNetwork<T> implements INBTSerializable<CompoundTag>
                 if (ConduitNetworkManager.getInstance().getNetwork(neighbor) != null) {
                     continue;
                 }
-                var receiver = level.getCapability(type.getCapability(), neighbor,
+                C receiver = level.getCapability(type.getCapability(), neighbor,
                         direction.getOpposite());
                 if (receiver == null) {
                     continue;

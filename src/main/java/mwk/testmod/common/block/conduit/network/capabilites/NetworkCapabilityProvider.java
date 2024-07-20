@@ -4,7 +4,7 @@ import mwk.testmod.common.block.conduit.network.base.ConduitNetwork;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 
-public class NetworkCapabilityProvider<T extends ConduitNetwork<?>> {
+public class NetworkCapabilityProvider<T extends ConduitNetwork<?, ?>> {
 
     // Reference to the world this capability provider belongs to
     protected final ServerLevel level;

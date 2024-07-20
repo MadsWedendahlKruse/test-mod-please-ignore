@@ -11,7 +11,7 @@ import net.neoforged.neoforge.items.IItemHandler;
  * EnergyStorage, where they would return the received payload, the ItemHandler will return the
  * remaining payload, so that's why some of the methods are implemented differently.
  */
-public class ItemConduitNetwork extends ConduitNetwork<ItemStack> {
+public class ItemConduitNetwork extends ConduitNetwork<IItemHandler, ItemStack> {
 
     public ItemConduitNetwork() {
         super(ConduitType.ITEM);
@@ -38,20 +38,17 @@ public class ItemConduitNetwork extends ConduitNetwork<ItemStack> {
     }
 
     @Override
-    protected ItemStack transferPayload(@NotNull Object receiver, ItemStack payload,
+    protected ItemStack transferPayload(@NotNull IItemHandler receiver, ItemStack payload,
             boolean simulate) {
-        if (receiver instanceof IItemHandler handler) {
-            // I guess we have to attempt to insert into all slots?
-            ItemStack remaining = payload.copy();
-            for (int i = 0; i < handler.getSlots(); i++) {
-                remaining = handler.insertItem(i, payload, simulate);
-                if (remaining.isEmpty()) {
-                    return ItemStack.EMPTY;
-                }
+        // I guess we have to attempt to insert into all slots?
+        ItemStack remaining = payload.copy();
+        for (int i = 0; i < receiver.getSlots(); i++) {
+            remaining = receiver.insertItem(i, payload, simulate);
+            if (remaining.isEmpty()) {
+                return ItemStack.EMPTY;
             }
-            return remaining;
         }
-        return payload.copy();
+        return remaining;
     }
 
 }

@@ -5,7 +5,7 @@ import mwk.testmod.common.block.conduit.ConduitType;
 import mwk.testmod.common.block.conduit.network.base.ConduitNetwork;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 
-public class EnergyConduitNetwork extends ConduitNetwork<Integer> {
+public class EnergyConduitNetwork extends ConduitNetwork<IEnergyStorage, Integer> {
 
     public EnergyConduitNetwork() {
         super(ConduitType.ENERGY);
@@ -33,11 +33,9 @@ public class EnergyConduitNetwork extends ConduitNetwork<Integer> {
     }
 
     @Override
-    protected Integer transferPayload(@NotNull Object receiver, Integer payload, boolean simulate) {
-        if (receiver instanceof IEnergyStorage storage) {
-            return storage.receiveEnergy(payload, simulate);
-        }
-        return 0;
+    protected Integer transferPayload(@NotNull IEnergyStorage receiver, Integer payload,
+            boolean simulate) {
+        return receiver.receiveEnergy(payload, simulate);
     }
 
 }

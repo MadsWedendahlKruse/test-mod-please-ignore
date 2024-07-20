@@ -1,13 +1,18 @@
 package mwk.testmod.common.block.conduit.network;
 
 import org.jetbrains.annotations.NotNull;
+import mwk.testmod.TestMod;
 import mwk.testmod.common.block.conduit.ConduitType;
+import mwk.testmod.common.block.conduit.FluidConduitBlockEntity;
 import mwk.testmod.common.block.conduit.network.base.ConduitNetwork;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 
-public class FluidConduitNetwork extends ConduitNetwork<FluidStack> {
+public class FluidConduitNetwork extends ConduitNetwork<IFluidHandler, FluidStack> {
 
     public FluidConduitNetwork() {
         super(ConduitType.FLUID);
@@ -42,15 +47,27 @@ public class FluidConduitNetwork extends ConduitNetwork<FluidStack> {
     }
 
     @Override
-    protected FluidStack transferPayload(@NotNull Object receiver, FluidStack payload,
+    protected FluidStack transferPayload(@NotNull IFluidHandler receiver, FluidStack payload,
             boolean simulate) {
-        // TODO: This seems completely different from the other implementations
-        if (receiver instanceof IFluidHandler handler) {
-            FluidAction action = simulate ? FluidAction.SIMULATE : FluidAction.EXECUTE;
-            int amount = handler.fill(payload, action);
-            return new FluidStack(payload.getFluid(), amount);
-        }
-        return FluidStack.EMPTY;
+        FluidAction action = simulate ? FluidAction.SIMULATE : FluidAction.EXECUTE;
+        int amount = receiver.fill(payload, action);
+        return new FluidStack(payload.getFluid(), amount);
     }
 
+    @Override
+    public FluidStack receivePayload(ServerLevel level, BlockPos start, FluidStack payload,
+            boolean simulate) {
+        FluidStack received = super.receivePayload(level, start, payload, simulate);
+        if (!isPayloadEmpty(received)) {
+            for (BlockPos pos : getPositions()) {
+                if (level.getBlockEntity(pos) instanceof FluidConduitBlockEntity conduit) {
+                    conduit.setFluidStack(received);
+                    // TODO: Use a custom packet for performance instead of a block update
+                    level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos),
+                            Block.UPDATE_CLIENTS);
+                }
+            }
+        }
+        return received;
+    }
 }

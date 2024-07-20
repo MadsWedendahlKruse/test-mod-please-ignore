@@ -13,7 +13,6 @@ import com.ibm.icu.impl.Pair;
 import mwk.testmod.TestMod;
 import mwk.testmod.common.block.conduit.ConduitBlock;
 import mwk.testmod.common.block.conduit.ConduitBlockEntity;
-import mwk.testmod.common.block.conduit.EnergyConduitBlockEntity;
 import mwk.testmod.common.block.conduit.network.EnergyConduitNetwork;
 import mwk.testmod.common.block.conduit.network.FluidConduitNetwork;
 import mwk.testmod.common.block.conduit.network.ItemConduitNetwork;
@@ -33,7 +32,7 @@ public class ConduitNetworkManager {
 
     public static ConduitNetworkManager instance;
 
-    private final Map<BlockPos, ConduitNetwork<?>> networkMap;
+    private final Map<BlockPos, ConduitNetwork<?, ?>> networkMap;
 
     private ConduitNetworkManager() {
         // TODO: Not sure what the best collection type is here
@@ -64,17 +63,17 @@ public class ConduitNetworkManager {
             return;
         }
         ConduitType type = conduitBlock.getType();
-        Set<ConduitNetwork<?>> neighborNetworks = getNeighborNetworks(pos, type);
+        Set<ConduitNetwork<?, ?>> neighborNetworks = getNeighborNetworks(pos, type);
         if (neighborNetworks.isEmpty()) {
             // Create a new network
             createNetwork(level, pos, type);
         } else {
             // Connect to an existing network, merge if necessary
             // TODO: Not sure if this is the best way to find the largest network
-            ConduitNetwork<?> largestNetwork = neighborNetworks.stream().max((n1, n2) -> {
+            ConduitNetwork<?, ?> largestNetwork = neighborNetworks.stream().max((n1, n2) -> {
                 return Integer.compare(n1.getSize(), n2.getSize());
             }).get();
-            for (ConduitNetwork<?> network : neighborNetworks) {
+            for (ConduitNetwork<?, ?> network : neighborNetworks) {
                 if (network != largestNetwork) {
                     mergeNetworks(level, largestNetwork, network);
                 }
@@ -95,7 +94,7 @@ public class ConduitNetworkManager {
         // Remove the block from its current network. If the block was alone in its
         // network, the network will be removed as well. If the block was part of a larger network,
         // the network might be split into multiple networks.
-        ConduitNetwork<?> originalNetwork = getNetwork(pos);
+        ConduitNetwork<?, ?> originalNetwork = getNetwork(pos);
         if (originalNetwork != null) {
             removeConduitFromNetwork(level, pos);
             // If it was connected to more than one conduit, we might need to split the
@@ -116,7 +115,7 @@ public class ConduitNetworkManager {
      * @param pos The position of the conduit to get the network of.
      * @return The conduit network at the given position, or null if there is no network.
      */
-    public ConduitNetwork<?> getNetwork(BlockPos pos) {
+    public ConduitNetwork<?, ?> getNetwork(BlockPos pos) {
         return networkMap.get(pos);
     }
 
@@ -128,12 +127,12 @@ public class ConduitNetworkManager {
      * @param type The type of neighbors to get.
      * @return A set of all neighboring networks.
      */
-    private Set<ConduitNetwork<?>> getNeighborNetworks(BlockPos pos, ConduitType type) {
-        Set<ConduitNetwork<?>> neighbors = new HashSet<>();
-        ConduitNetwork<?> network = networkMap.get(pos);
+    private Set<ConduitNetwork<?, ?>> getNeighborNetworks(BlockPos pos, ConduitType type) {
+        Set<ConduitNetwork<?, ?>> neighbors = new HashSet<>();
+        ConduitNetwork<?, ?> network = networkMap.get(pos);
         for (Direction direction : Direction.values()) {
             BlockPos neighborPos = pos.relative(direction);
-            ConduitNetwork<?> neighbor = networkMap.get(neighborPos);
+            ConduitNetwork<?, ?> neighbor = networkMap.get(neighborPos);
             if (neighbor != null && neighbor != network && neighbor.getType() == type) {
                 neighbors.add(neighbor);
             }
@@ -149,7 +148,7 @@ public class ConduitNetworkManager {
      * @param type The type of the conduit to create the network for.
      */
     private void createNetwork(ServerLevel level, BlockPos pos, ConduitType type) {
-        ConduitNetwork<?> network = switch (type) {
+        ConduitNetwork<?, ?> network = switch (type) {
             // TODO: Factory?
             case ITEM -> new ItemConduitNetwork();
             case FLUID -> new FluidConduitNetwork();
@@ -167,7 +166,8 @@ public class ConduitNetworkManager {
      * @param pos The position of the conduit to add.
      * @param network The network to add the conduit to.
      */
-    private void addConduitToNetwork(ServerLevel level, BlockPos pos, ConduitNetwork<?> network) {
+    private void addConduitToNetwork(ServerLevel level, BlockPos pos,
+            ConduitNetwork<?, ?> network) {
         // Rather be safe than sorry
         if (network == null) {
             return;
@@ -190,7 +190,7 @@ public class ConduitNetworkManager {
      */
     private void removeConduitFromNetwork(ServerLevel level, BlockPos pos) {
         // ConduitNetwork network = networkMap.remove(pos);
-        ConduitNetwork<?> network = networkMap.remove(pos);
+        ConduitNetwork<?, ?> network = networkMap.remove(pos);
         if (network == null) {
             return;
         }
@@ -212,8 +212,8 @@ public class ConduitNetworkManager {
      * @param network1 The network to merge into.
      * @param network2 The network to merge.
      */
-    private void mergeNetworks(ServerLevel level, ConduitNetwork<?> network1,
-            ConduitNetwork<?> network2) {
+    private void mergeNetworks(ServerLevel level, ConduitNetwork<?, ?> network1,
+            ConduitNetwork<?, ?> network2) {
         if (network1 == network2) {
             return;
         }
@@ -237,7 +237,7 @@ public class ConduitNetworkManager {
      * @param level The level the network is in.
      * @param originalNetwork The network to split.
      */
-    private void splitNetwork(ServerLevel level, ConduitNetwork<?> originalNetwork) {
+    private void splitNetwork(ServerLevel level, ConduitNetwork<?, ?> originalNetwork) {
         TestMod.LOGGER.debug("Splitting network " + originalNetwork);
 
         Set<BlockPos> positions = originalNetwork.getPositions();
@@ -269,7 +269,7 @@ public class ConduitNetworkManager {
                     Iterator<BlockPos> it = newNetworkPositions.iterator();
                     BlockPos firstPos = it.next();
                     createNetwork(level, firstPos, originalNetwork.getType());
-                    ConduitNetwork<?> newNetwork = networkMap.get(firstPos);
+                    ConduitNetwork<?, ?> newNetwork = networkMap.get(firstPos);
                     while (it.hasNext()) {
                         addConduitToNetwork(level, it.next(), newNetwork);
                     }
@@ -300,14 +300,14 @@ public class ConduitNetworkManager {
     }
 
     public void serializeNetworkNBT(BlockPos pos, CompoundTag tag) {
-        ConduitNetwork<?> network = networkMap.get(pos);
+        ConduitNetwork<?, ?> network = networkMap.get(pos);
         if (network != null) {
             tag.put("network", network.serializeNBT());
         }
     }
 
     public void deserializeNetworkNBT(BlockPos pos, CompoundTag tag, ConduitType type) {
-        ConduitNetwork<?> network = switch (type) {
+        ConduitNetwork<?, ?> network = switch (type) {
             // TODO: Factory?
             case ITEM -> new ItemConduitNetwork();
             case FLUID -> new FluidConduitNetwork();

@@ -32,7 +32,7 @@ public class HologramRenderer {
     private BlueprintState blueprintState;
     private BlockPos controllerPos;
     private Direction facing;
-    boolean locked = false;
+    private boolean locked = false;
 
     private HologramBlockRenderer hologramBlockRenderer;
     private HologramItemRenderer hologramItemRenderer;

@@ -8,6 +8,7 @@ import mwk.testmod.client.gui.screen.RedstoneGeneratorScreen;
 import mwk.testmod.client.gui.screen.SeparatorScreen;
 import mwk.testmod.client.render.block_entity.CrusherBlockEntityRenderer;
 import mwk.testmod.client.render.block_entity.SeparatorBlockEntityRenderer;
+import mwk.testmod.client.render.conduit.FluidConduitBlockEntityRenderer;
 import mwk.testmod.client.render.hologram.HologramRenderer;
 import mwk.testmod.common.block.multiblock.HologramBlockColor;
 import mwk.testmod.common.network.MachineIOPacket;
@@ -196,6 +197,9 @@ public class TestMod {
 					(context) -> new CrusherBlockEntityRenderer(context));
 			event.registerBlockEntityRenderer(TestModBlockEntities.SEPARATOR_ENTITY_TYPE.get(),
 					(context) -> new SeparatorBlockEntityRenderer(context));
+
+			event.registerBlockEntityRenderer(TestModBlockEntities.CONDUIT_FLUID_ENTITY_TYPE.get(),
+					(context) -> new FluidConduitBlockEntityRenderer(context));
 		}
 
 		@SubscribeEvent

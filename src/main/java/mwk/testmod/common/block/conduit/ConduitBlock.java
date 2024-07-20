@@ -174,38 +174,38 @@ public class ConduitBlock extends Block
 
     private static VoxelShape[] shapeCache = null;
 
-    private static final double CONDUIT_MIN = 5. / 16.;
-    private static final double CONDUIT_MAX = 11. / 16.;
+    public static final float CONDUIT_MIN = 5F / 16F;
+    public static final float CONDUIT_MAX = 11F / 16F;
 
-    private static final VoxelShape SHAPE_CONDUIT_NORTH =
-            Shapes.box(CONDUIT_MIN, CONDUIT_MIN, 0, CONDUIT_MAX, CONDUIT_MAX, CONDUIT_MIN);
-    private static final VoxelShape SHAPE_CONDUIT_SOUTH =
-            Shapes.box(CONDUIT_MIN, CONDUIT_MIN, CONDUIT_MAX, CONDUIT_MAX, CONDUIT_MAX, 1);
-    private static final VoxelShape SHAPE_CONDUIT_WEST =
-            Shapes.box(0, CONDUIT_MIN, CONDUIT_MIN, CONDUIT_MIN, CONDUIT_MAX, CONDUIT_MAX);
-    private static final VoxelShape SHAPE_CONDUIT_EAST =
-            Shapes.box(CONDUIT_MAX, CONDUIT_MIN, CONDUIT_MIN, 1, CONDUIT_MAX, CONDUIT_MAX);
-    private static final VoxelShape SHAPE_CONDUIT_UP =
-            Shapes.box(CONDUIT_MIN, CONDUIT_MAX, CONDUIT_MIN, CONDUIT_MAX, 1, CONDUIT_MAX);
-    private static final VoxelShape SHAPE_CONDUIT_DOWN =
+    public static final VoxelShape SHAPE_CONDUIT_DOWN =
             Shapes.box(CONDUIT_MIN, 0, CONDUIT_MIN, CONDUIT_MAX, CONDUIT_MIN, CONDUIT_MAX);
+    public static final VoxelShape SHAPE_CONDUIT_UP =
+            Shapes.box(CONDUIT_MIN, CONDUIT_MAX, CONDUIT_MIN, CONDUIT_MAX, 1, CONDUIT_MAX);
+    public static final VoxelShape SHAPE_CONDUIT_NORTH =
+            Shapes.box(CONDUIT_MIN, CONDUIT_MIN, 0, CONDUIT_MAX, CONDUIT_MAX, CONDUIT_MIN);
+    public static final VoxelShape SHAPE_CONDUIT_SOUTH =
+            Shapes.box(CONDUIT_MIN, CONDUIT_MIN, CONDUIT_MAX, CONDUIT_MAX, CONDUIT_MAX, 1);
+    public static final VoxelShape SHAPE_CONDUIT_WEST =
+            Shapes.box(0, CONDUIT_MIN, CONDUIT_MIN, CONDUIT_MIN, CONDUIT_MAX, CONDUIT_MAX);
+    public static final VoxelShape SHAPE_CONDUIT_EAST =
+            Shapes.box(CONDUIT_MAX, CONDUIT_MIN, CONDUIT_MIN, 1, CONDUIT_MAX, CONDUIT_MAX);
 
-    private static final double CONNECTOR_MIN = 4. / 16.;
-    private static final double CONNECTOR_MAX = 12. / 16.;
-    private static final double CONNECTOR_THICKNESS = 4. / 16.;
+    public static final float CONNECTOR_MIN = 4F / 16F;
+    public static final float CONNECTOR_MAX = 12F / 16F;
+    public static final float CONNECTOR_THICKNESS = 4F / 16F;
 
-    private static final VoxelShape SHAPE_BLOCK_NORTH = Shapes.box(CONNECTOR_MIN, CONNECTOR_MIN, 0,
-            CONNECTOR_MAX, CONNECTOR_MAX, CONNECTOR_THICKNESS);
-    private static final VoxelShape SHAPE_BLOCK_SOUTH = Shapes.box(CONNECTOR_MIN, CONNECTOR_MIN,
-            1 - CONNECTOR_THICKNESS, CONNECTOR_MAX, CONNECTOR_MAX, 1);
-    private static final VoxelShape SHAPE_BLOCK_WEST = Shapes.box(0, CONNECTOR_MIN, CONNECTOR_MIN,
-            CONNECTOR_THICKNESS, CONNECTOR_MAX, CONNECTOR_MAX);
-    private static final VoxelShape SHAPE_BLOCK_EAST = Shapes.box(1 - CONNECTOR_THICKNESS,
-            CONNECTOR_MIN, CONNECTOR_MIN, 1, CONNECTOR_MAX, CONNECTOR_MAX);
-    private static final VoxelShape SHAPE_BLOCK_UP = Shapes.box(CONNECTOR_MIN,
-            1 - CONNECTOR_THICKNESS, CONNECTOR_MIN, CONNECTOR_MAX, 1, CONNECTOR_MAX);
-    private static final VoxelShape SHAPE_BLOCK_DOWN = Shapes.box(CONNECTOR_MIN, 0, CONNECTOR_MIN,
+    public static final VoxelShape SHAPE_BLOCK_DOWN = Shapes.box(CONNECTOR_MIN, 0, CONNECTOR_MIN,
             CONNECTOR_MAX, CONNECTOR_THICKNESS, CONNECTOR_MAX);
+    public static final VoxelShape SHAPE_BLOCK_UP = Shapes.box(CONNECTOR_MIN,
+            1 - CONNECTOR_THICKNESS, CONNECTOR_MIN, CONNECTOR_MAX, 1, CONNECTOR_MAX);
+    public static final VoxelShape SHAPE_BLOCK_NORTH = Shapes.box(CONNECTOR_MIN, CONNECTOR_MIN, 0,
+            CONNECTOR_MAX, CONNECTOR_MAX, CONNECTOR_THICKNESS);
+    public static final VoxelShape SHAPE_BLOCK_SOUTH = Shapes.box(CONNECTOR_MIN, CONNECTOR_MIN,
+            1 - CONNECTOR_THICKNESS, CONNECTOR_MAX, CONNECTOR_MAX, 1);
+    public static final VoxelShape SHAPE_BLOCK_WEST = Shapes.box(0, CONNECTOR_MIN, CONNECTOR_MIN,
+            CONNECTOR_THICKNESS, CONNECTOR_MAX, CONNECTOR_MAX);
+    public static final VoxelShape SHAPE_BLOCK_EAST = Shapes.box(1 - CONNECTOR_THICKNESS,
+            CONNECTOR_MIN, CONNECTOR_MIN, 1, CONNECTOR_MAX, CONNECTOR_MAX);
 
     private int calculateShapeIndex(ConnectorType north, ConnectorType south, ConnectorType west,
             ConnectorType east, ConnectorType up, ConnectorType down) {

@@ -21,7 +21,7 @@ public abstract class ConduitBlockEntity<T> extends BlockEntity implements ITick
 
     // Cache for the energy storage capabilities of the neighboring blocks
     private final BlockCapabilityCache<T, Direction>[] connections;
-    protected ConduitNetwork<?> network;
+    protected ConduitNetwork<?, ?> network;
     protected ConduitType conduitType;
     // One conduit is in charge of serializing the network data
     private boolean isMaster;
@@ -40,7 +40,8 @@ public abstract class ConduitBlockEntity<T> extends BlockEntity implements ITick
     @Override
     public void onLoad() {
         super.onLoad();
-        ConduitNetwork<?> network = ConduitNetworkManager.getInstance().getNetwork(worldPosition);
+        ConduitNetwork<?, ?> network =
+                ConduitNetworkManager.getInstance().getNetwork(worldPosition);
         if (network != null) {
             setNetwork(network);
             BlockPos masterPos = network.getMasterPos();
@@ -111,7 +112,7 @@ public abstract class ConduitBlockEntity<T> extends BlockEntity implements ITick
         return true;
     }
 
-    public void setNetwork(ConduitNetwork<?> network) {
+    public void setNetwork(ConduitNetwork<?, ?> network) {
         this.network = network;
         this.conduitType = network.getType();
     }
