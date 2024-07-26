@@ -1,4 +1,4 @@
-package mwk.testmod.common.util.inventory;
+package mwk.testmod.common.util.inventory.handler;
 
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.ItemStackHandler;

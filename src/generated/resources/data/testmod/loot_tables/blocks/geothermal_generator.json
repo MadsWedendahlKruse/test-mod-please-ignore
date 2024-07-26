@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "testmod:machine_input_port"
+          "name": "testmod:geothermal_generator"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "testmod:blocks/machine_input_port"
+  "random_sequence": "testmod:blocks/geothermal_generator"
 }

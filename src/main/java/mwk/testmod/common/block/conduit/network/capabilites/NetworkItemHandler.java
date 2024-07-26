@@ -31,7 +31,6 @@ public class NetworkItemHandler extends NetworkCapabilityProvider<ItemConduitNet
 
     @Override
     public int getSlots() {
-        // Doesn't work if this is 0 for some reason
         return 1;
     }
 

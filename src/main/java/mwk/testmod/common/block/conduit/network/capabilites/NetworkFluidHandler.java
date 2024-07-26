@@ -40,15 +40,13 @@ public class NetworkFluidHandler extends NetworkCapabilityProvider<FluidConduitN
     }
 
     @Override
-    public FluidStack drain(FluidStack arg0, FluidAction arg1) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'drain'");
+    public FluidStack drain(FluidStack stack, FluidAction action) {
+        return FluidStack.EMPTY;
     }
 
     @Override
-    public FluidStack drain(int arg0, FluidAction arg1) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'drain'");
+    public FluidStack drain(int amount, FluidAction action) {
+        return FluidStack.EMPTY;
     }
 
 }

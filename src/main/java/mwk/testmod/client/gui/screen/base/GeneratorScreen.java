@@ -13,6 +13,9 @@ import net.minecraft.world.entity.player.Inventory;
 
 public class GeneratorScreen<T extends ProcessingMenu> extends ProcessingScreen<T> {
 
+    public static final int TEXT_LEFT = 94;
+    public static final int TEXT_TOP = 25;
+
     public GeneratorScreen(T menu, Inventory playerInventory, Component title, GuiConfig config) {
         super(menu, playerInventory, title, config);
     }
@@ -52,9 +55,9 @@ public class GeneratorScreen<T extends ProcessingMenu> extends ProcessingScreen<
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
         super.renderBg(guiGraphics, partialTick, mouseX, mouseY);
-        GuiUtils.renderTextElements(guiGraphics, font, getTextElements(menu), this.leftPos + 76,
-                this.topPos + 25, ColorUtils.TEXT_YELLOW, ColorUtils.TEXT_WHITE,
-                font.lineHeight + 1);
+        GuiUtils.renderTextElements(guiGraphics, font, getTextElements(menu),
+                this.leftPos + TEXT_LEFT, this.topPos + TEXT_TOP, ColorUtils.TEXT_YELLOW,
+                ColorUtils.TEXT_WHITE, font.lineHeight + 1);
     }
 
 }

@@ -5,6 +5,7 @@ import mwk.testmod.TestMod;
 import mwk.testmod.common.block.conduit.ConduitBlock;
 import mwk.testmod.common.block.conduit.ConduitType;
 import mwk.testmod.common.block.entity.CrusherBlockEntity;
+import mwk.testmod.common.block.entity.GeothermalGeneratorBlockEntity;
 import mwk.testmod.common.block.entity.InductionFurnaceBlockEntity;
 import mwk.testmod.common.block.entity.RedstoneGeneratorBlockEntity;
 import mwk.testmod.common.block.entity.SeparatorBlockEntity;
@@ -13,7 +14,9 @@ import mwk.testmod.common.block.multiblock.HologramBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockEnergyPortBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
-import mwk.testmod.common.block.multiblock.MutliBlockIOPortBlock;
+import mwk.testmod.common.block.multiblock.entity.MultiBlockFluidIOPortBlockEntity;
+import mwk.testmod.common.block.multiblock.entity.MultiBlockItemIOPortBlockEntity;
+import mwk.testmod.common.block.multiblock.MultiBlockIOPortBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
@@ -36,8 +39,10 @@ public class TestModBlocks {
 	public static final String MACHINE_FRAME_BASIC_ID = "machine_frame_basic";
 	public static final String MACHINE_FRAME_REINFORCED_ID = "machine_frame_reinforced";
 	public static final String MACHINE_FRAME_ADVANCED_ID = "machine_frame_advanced";
-	public static final String MACHINE_INPUT_PORT_ID = "machine_input_port";
-	public static final String MACHINE_OUTPUT_PORT_ID = "machine_output_port";
+	public static final String MACHINE_ITEM_INPUT_PORT_ID = "machine_item_input_port";
+	public static final String MACHINE_ITEM_OUTPUT_PORT_ID = "machine_item_output_port";
+	public static final String MACHINE_FLUID_INPUT_PORT_ID = "machine_fluid_input_port";
+	public static final String MACHINE_FLUID_OUTPUT_PORT_ID = "machine_fluid_output_port";
 	public static final String MACHINE_ENERGY_PORT_ID = "machine_energy_port";
 	public static final String COPPER_COIL_ID = "copper_coil";
 
@@ -48,6 +53,7 @@ public class TestModBlocks {
 	public static final String TELEPORTER_ID = "teleporter";
 
 	public static final String REDSTONE_GENERATOR_ID = "redstone_generator";
+	public static final String GEOTHERMAL_GENERATOR_ID = "geothermal_generator";
 
 	public static final String HOLOGRAM_ID = "hologram";
 
@@ -71,12 +77,22 @@ public class TestModBlocks {
 	public static final DeferredBlock<MultiBlockPartBlock> MACHINE_FRAME_ADVANCED =
 			registerBlockWithItem(MACHINE_FRAME_ADVANCED_ID,
 					() -> new MultiBlockPartBlock(getMachineProperties()));
-	public static final DeferredBlock<MutliBlockIOPortBlock> MACHINE_INPUT_PORT =
-			registerBlockWithItem(MACHINE_INPUT_PORT_ID,
-					() -> new MutliBlockIOPortBlock(getMachineProperties(), true));
-	public static final DeferredBlock<MutliBlockIOPortBlock> MACHINE_OUTPUT_PORT =
-			registerBlockWithItem(MACHINE_OUTPUT_PORT_ID,
-					() -> new MutliBlockIOPortBlock(getMachineProperties(), false));
+	public static final DeferredBlock<MultiBlockIOPortBlock> MACHINE_ITEM_INPUT_PORT =
+			registerBlockWithItem(MACHINE_ITEM_INPUT_PORT_ID,
+					() -> new MultiBlockIOPortBlock(getMachineProperties(), true,
+							MultiBlockItemIOPortBlockEntity::new));
+	public static final DeferredBlock<MultiBlockIOPortBlock> MACHINE_ITEM_OUTPUT_PORT =
+			registerBlockWithItem(MACHINE_ITEM_OUTPUT_PORT_ID,
+					() -> new MultiBlockIOPortBlock(getMachineProperties(), false,
+							MultiBlockItemIOPortBlockEntity::new));
+	public static final DeferredBlock<MultiBlockIOPortBlock> MACHINE_FLUID_INPUT_PORT =
+			registerBlockWithItem(MACHINE_FLUID_INPUT_PORT_ID,
+					() -> new MultiBlockIOPortBlock(getMachineProperties(), true,
+							MultiBlockFluidIOPortBlockEntity::new));
+	public static final DeferredBlock<MultiBlockIOPortBlock> MACHINE_FLUID_OUTPUT_PORT =
+			registerBlockWithItem(MACHINE_FLUID_OUTPUT_PORT_ID,
+					() -> new MultiBlockIOPortBlock(getMachineProperties(), false,
+							MultiBlockFluidIOPortBlockEntity::new));
 	public static final DeferredBlock<MultiBlockEnergyPortBlock> MACHINE_ENERGY_PORT =
 			registerBlockWithItem(MACHINE_ENERGY_PORT_ID,
 					() -> new MultiBlockEnergyPortBlock(getMachineProperties()));
@@ -109,6 +125,10 @@ public class TestModBlocks {
 			registerBlockWithItem(REDSTONE_GENERATOR_ID,
 					() -> new MultiBlockControllerBlock(getMachineProperties(),
 							RedstoneGeneratorBlockEntity::new));
+	public static final DeferredBlock<MultiBlockControllerBlock> GEOTHERMAL_GENERATOR =
+			registerBlockWithItem(GEOTHERMAL_GENERATOR_ID,
+					() -> new MultiBlockControllerBlock(getMachineProperties(),
+							GeothermalGeneratorBlockEntity::new));
 	// ---
 
 	public static final DeferredBlock<HologramBlock> HOLOGRAM =

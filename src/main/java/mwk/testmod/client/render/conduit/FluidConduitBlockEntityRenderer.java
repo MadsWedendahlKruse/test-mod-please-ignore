@@ -40,7 +40,9 @@ public class FluidConduitBlockEntityRenderer
             ConduitBlock.CONDUIT_MIN + FLUID_OFFSET, ConduitBlock.CONDUIT_MAX + FLUID_OFFSET,
             ConduitBlock.CONDUIT_MIN + FLUID_OFFSET, ConduitBlock.CONDUIT_MAX - FLUID_OFFSET,
             1 - FLUID_OFFSET, ConduitBlock.CONDUIT_MAX - FLUID_OFFSET);
-    private static final Vertex[] FLUID_VERTICES_NORTH = RenderUtils.getCubeVertices(
+    // temp public
+    public static final Vertex[] FLUID_VERTICES_NORTH = RenderUtils.getCubeVertices(
+            // private static final Vertex[] FLUID_VERTICES_NORTH = RenderUtils.getCubeVertices(
             ConduitBlock.CONDUIT_MIN + FLUID_OFFSET, ConduitBlock.CONDUIT_MIN + FLUID_OFFSET,
             0 + FLUID_OFFSET, ConduitBlock.CONDUIT_MAX - FLUID_OFFSET,
             ConduitBlock.CONDUIT_MAX - FLUID_OFFSET, ConduitBlock.CONDUIT_MIN - FLUID_OFFSET);
@@ -84,6 +86,7 @@ public class FluidConduitBlockEntityRenderer
     public void render(FluidConduitBlockEntity conduitEntity, float partialTick,
             PoseStack poseStack, MultiBufferSource multiBufferSource, int combinedLight,
             int combinedOverlay) {
+        // TODO: Make the conduit emit light based on the fluid (e.g. lava emits light)
         FluidStack fluidStack = conduitEntity.getFluidStack();
         // TODO: Would be cool if the fluid was animated
         renderFluidInConduit(conduitEntity, poseStack, multiBufferSource, fluidStack, combinedLight,

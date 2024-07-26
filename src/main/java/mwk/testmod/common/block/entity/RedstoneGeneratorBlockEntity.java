@@ -18,7 +18,8 @@ public class RedstoneGeneratorBlockEntity extends GeneratorBlockEntity<RedstoneG
 
     public RedstoneGeneratorBlockEntity(BlockPos pos, BlockState state) {
         super(TestModBlockEntities.REDSTONE_GENERATOR_ENTITY_TYPE.get(), pos, state, 100_000, 128,
-                1, 0, 6, TestModRecipeTypes.REDSTONE_GENERATOR.get(), null, 0);
+                1, 0, 6, EMPTY_TANKS, EMPTY_TANKS, TestModRecipeTypes.REDSTONE_GENERATOR.get(),
+                null, 0);
     }
 
     @Override

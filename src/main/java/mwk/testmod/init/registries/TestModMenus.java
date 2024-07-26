@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import mwk.testmod.TestMod;
 import mwk.testmod.common.block.inventory.CrusherMenu;
+import mwk.testmod.common.block.inventory.GeothermalGeneratorMenu;
 import mwk.testmod.common.block.inventory.InductionFurnaceMenu;
 import mwk.testmod.common.block.inventory.RedstoneGeneratorMenu;
 import mwk.testmod.common.block.inventory.SeparatorMenu;
@@ -38,6 +39,12 @@ public class TestModMenus {
 			MENUS.register(TestModBlocks.REDSTONE_GENERATOR_ID,
 					() -> IMenuTypeExtension
 							.create((windowId, inv, data) -> new RedstoneGeneratorMenu(windowId,
+									inv.player, data.readBlockPos())));
+
+	public static final Supplier<MenuType<GeothermalGeneratorMenu>> GEOTHERMAL_GENERATOR_MENU =
+			MENUS.register(TestModBlocks.GEOTHERMAL_GENERATOR_ID,
+					() -> IMenuTypeExtension
+							.create((windowId, inv, data) -> new GeothermalGeneratorMenu(windowId,
 									inv.player, data.readBlockPos())));
 
 	public static void register(IEventBus modEventBus) {

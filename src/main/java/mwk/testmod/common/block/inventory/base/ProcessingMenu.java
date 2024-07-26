@@ -1,7 +1,7 @@
 package mwk.testmod.common.block.inventory.base;
 
 import mwk.testmod.common.block.entity.base.processing.ProcessingBlockEntity;
-import mwk.testmod.common.util.inventory.ProcessingContainerData;
+import mwk.testmod.common.util.inventory.container_data.ProcessingContainerData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;

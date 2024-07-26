@@ -12,10 +12,10 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import mwk.testmod.client.animations.LoopingAnimationFloat;
 import mwk.testmod.client.animations.base.FixedAnimation.Function;
+import mwk.testmod.client.gui.GuiUtils;
 import mwk.testmod.client.gui.widgets.EnergyBar;
 import mwk.testmod.client.gui.widgets.progress.ProgressArrow;
 import mwk.testmod.client.gui.widgets.progress.ProgressIcon;
-import mwk.testmod.client.render.RenderUtils;
 import mwk.testmod.common.block.inventory.base.ProcessingMenu;
 import mwk.testmod.common.util.inventory.ItemSlotGridHelper;
 import net.minecraft.client.gui.GuiGraphics;
@@ -140,7 +140,7 @@ public abstract class BaseRecipeCategory<T extends Recipe<?>> implements IRecipe
         int barX = PADDING;
         int barY = PADDING + 1;
         // Render item slot border around the energy bar
-        RenderUtils.renderItemSlot(guiGraphics, barX, barY, EnergyBar.WIDTH + 2, fullBarHeight + 2);
+        GuiUtils.renderItemSlot(guiGraphics, barX, barY, EnergyBar.WIDTH + 2, fullBarHeight + 2);
         guiGraphics.blitSprite(EnergyBar.SPRITE_EMPTY, EnergyBar.WIDTH, EnergyBar.HEIGHT, 0,
                 EnergyBar.HEIGHT - fullBarHeight, barX, barY, EnergyBar.WIDTH, fullBarHeight);
         guiGraphics.blitSprite(EnergyBar.SPRITE_FULL, EnergyBar.WIDTH, EnergyBar.HEIGHT, 0,
@@ -157,12 +157,12 @@ public abstract class BaseRecipeCategory<T extends Recipe<?>> implements IRecipe
         for (int i = 0; i < inputSlots; i++) {
             ItemSlotGridHelper.SlotPosition slotPosition =
                     ItemSlotGridHelper.ROWS_3.getSlotPosition(inputX, inputY, i);
-            RenderUtils.renderItemSlot(guiGraphics, slotPosition.x(), slotPosition.y());
+            GuiUtils.renderItemSlot(guiGraphics, slotPosition.x(), slotPosition.y());
         }
         for (int i = 0; i < outputSlots; i++) {
             ItemSlotGridHelper.SlotPosition slotPosition =
                     ItemSlotGridHelper.ROWS_3.getSlotPosition(outputX, outputY, i);
-            RenderUtils.renderItemSlot(guiGraphics, slotPosition.x(), slotPosition.y());
+            GuiUtils.renderItemSlot(guiGraphics, slotPosition.x(), slotPosition.y());
         }
         int progress = PROGRESS_ANIMATION.getValue().intValue();
         progressArrow.render(guiGraphics, progress, MAX_PROGRESS);

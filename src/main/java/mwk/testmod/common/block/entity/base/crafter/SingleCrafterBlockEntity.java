@@ -13,9 +13,11 @@ public abstract class SingleCrafterBlockEntity<T extends Recipe<Container>>
 
     protected SingleCrafterBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
             int maxEnergy, int energyPerTick, int inputSlots, int outputSlots, int upgradeSlots,
-            int maxProgress, RecipeType<T> recipeType, SoundEvent sound, int soundDuration) {
+            int[] inputTankCapacities, int[] outputTankCapacities, int maxProgress,
+            RecipeType<T> recipeType, SoundEvent sound, int soundDuration) {
         super(type, pos, state, maxEnergy, energyPerTick, inputSlots, outputSlots, upgradeSlots,
-                maxProgress, recipeType, sound, soundDuration);
+                inputTankCapacities, outputTankCapacities, maxProgress, recipeType, sound,
+                soundDuration);
     }
 
     @Override
@@ -31,7 +33,7 @@ public abstract class SingleCrafterBlockEntity<T extends Recipe<Container>>
             setWorking(true);
             setChanged();
             if (hasProgressFinished()) {
-                processItem(recipe);
+                processRecipe(recipe);
                 resetProgress();
             }
         } else {

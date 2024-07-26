@@ -22,9 +22,12 @@ public class TestModConfig {
 	public static final ModConfigSpec.IntValue MACHINE_ENERGY_CAPACITY_DEFAULT =
 			BUILDER.comment("The default energy capacity for machines")
 					.defineInRange("powerCapacityDefault", 50000, 0, Integer.MAX_VALUE);
-	public static final ModConfigSpec.IntValue MACHINE_IO_SPEED_DEFAULT =
+	public static final ModConfigSpec.IntValue MACHINE_ITEM_IO_SPEED_DEFAULT =
 			BUILDER.comment("The default item transfer speed for machines")
-					.defineInRange("ioSpeedDefault", 4, 0, Integer.MAX_VALUE);
+					.defineInRange("itemIoSpeedDefault", 4, 0, Integer.MAX_VALUE);
+	public static final ModConfigSpec.IntValue MACHINE_FLUID_IO_SPEED_DEFAULT =
+			BUILDER.comment("The default fluid transfer speed for machines")
+					.defineInRange("fluidIoSpeedDefault", 100, 0, Integer.MAX_VALUE);
 
 	private static final ModConfigSpec.BooleanValue LOG_DIRT = BUILDER
 			.comment("Whether to log the dirt block on common setup").define("logDirtBlock", true);

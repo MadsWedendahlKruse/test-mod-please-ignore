@@ -22,11 +22,12 @@ public abstract class GeneratorBlockEntity<T extends GeneratorRecipe>
 
     protected GeneratorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
             int maxEnergy, int energyGeneratedPerTick, int inputSlots, int outputSlots,
-            int upgradeSlots, RecipeType<T> recipeType, SoundEvent sound, int soundDuration) {
+            int upgradeSlots, int[] inputTankCapacities, int[] outputTankCapacities,
+            RecipeType<T> recipeType, SoundEvent sound, int soundDuration) {
         // The generator can output twice as much energy as it can generate
         super(type, pos, state, maxEnergy, 2 * energyGeneratedPerTick, EnergyType.PRODUCER,
-                inputSlots, outputSlots, upgradeSlots, Integer.MAX_VALUE, recipeType, sound,
-                soundDuration);
+                inputSlots, outputSlots, upgradeSlots, inputTankCapacities, outputTankCapacities,
+                Integer.MAX_VALUE, recipeType, sound, soundDuration);
         this.energyGeneratedPerTick = energyGeneratedPerTick;
     }
 
@@ -46,7 +47,7 @@ public abstract class GeneratorBlockEntity<T extends GeneratorRecipe>
                 setWorking(true);
                 // TODO: What if they're not multiples of each other?
                 maxProgress = recipe.getEnergy() / energyGeneratedPerTick;
-                processItem(recipe);
+                processRecipe(recipe);
             } else {
                 setWorking(false);
                 return;

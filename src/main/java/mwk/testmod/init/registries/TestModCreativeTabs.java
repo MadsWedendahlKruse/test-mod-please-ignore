@@ -52,8 +52,8 @@ public class TestModCreativeTabs {
 			event.accept(TestModBlocks.MACHINE_FRAME_BASIC.get());
 			event.accept(TestModBlocks.MACHINE_FRAME_REINFORCED.get());
 			event.accept(TestModBlocks.MACHINE_FRAME_ADVANCED.get());
-			event.accept(TestModBlocks.MACHINE_INPUT_PORT.get());
-			event.accept(TestModBlocks.MACHINE_OUTPUT_PORT.get());
+			event.accept(TestModBlocks.MACHINE_ITEM_INPUT_PORT.get());
+			event.accept(TestModBlocks.MACHINE_ITEM_OUTPUT_PORT.get());
 			event.accept(TestModBlocks.MACHINE_ENERGY_PORT.get());
 			event.accept(TestModBlocks.COPPER_COIL.get());
 			event.accept(TestModBlocks.INDUCTION_FURNACE.get());

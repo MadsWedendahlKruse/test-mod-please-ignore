@@ -19,8 +19,10 @@ public abstract class ConduitBlockEntity<T> extends BlockEntity implements ITick
     public static final String NBT_TAG_MASTER = "isMaster";
     public static final String NBT_TAG_CONDUIT_TYPE = "conduitType";
 
-    // Cache for the energy storage capabilities of the neighboring blocks
+    // Cache for the capabilities of the neighboring blocks
     private final BlockCapabilityCache<T, Direction>[] connections;
+    private boolean capsInvalidated;
+    // The network this conduit is part of
     protected ConduitNetwork<?, ?> network;
     protected ConduitType conduitType;
     // One conduit is in charge of serializing the network data
@@ -58,7 +60,6 @@ public abstract class ConduitBlockEntity<T> extends BlockEntity implements ITick
                         () -> !this.isRemoved(), () -> onCapInvalidated());
             }
         }
-        // updateEnergyStorage();
     }
 
     @Override
@@ -75,23 +76,17 @@ public abstract class ConduitBlockEntity<T> extends BlockEntity implements ITick
             // We need to query the capability to trigger the invalidation callback
             T cap = connection.getCapability();
         }
-        // // We don't want the conduit to feed energy back into itself
-        // if (connectionEnergyStorage == null || connectionEnergyStorage ==
-        // energyStorage) {
-        // continue;
-        // }
-        // int energyToReceive = Math.min(1024, energyStorage.getEnergyStored());
-        // int energyReceived = connectionEnergyStorage.receiveEnergy(energyToReceive,
-        // false);
-        // energyStorage.extractEnergy(energyReceived, false);
-        // if (energyReceived > 0) {
-        // setChanged();
-        // }
-        // }
+        if (capsInvalidated) {
+            capsInvalidated = false;
+            updateBlockState();
+        }
     }
 
     private void onCapInvalidated() {
-        // hasConnectionsValid = false;
+        capsInvalidated = true;
+    }
+
+    private void updateBlockState() {
         BlockState state = this.getBlockState();
         if (state.getBlock() instanceof ConduitBlock conduitBlock) {
             MinecraftServer server = level.getServer();

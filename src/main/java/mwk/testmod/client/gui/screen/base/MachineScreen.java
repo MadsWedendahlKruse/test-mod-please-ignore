@@ -1,15 +1,18 @@
 package mwk.testmod.client.gui.screen.base;
 
 import java.util.Collection;
+import mwk.testmod.client.gui.widgets.FluidBar;
 import mwk.testmod.client.gui.widgets.panels.base.MachinePanel;
 import mwk.testmod.client.gui.widgets.panels.base.PanelManager;
 import mwk.testmod.client.gui.widgets.panels.base.PanelSide;
+import mwk.testmod.common.block.entity.base.MachineBlockEntity;
 import mwk.testmod.common.block.inventory.base.MachineMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 public abstract class MachineScreen<T extends MachineMenu> extends EnergyScreen<T> {
 
@@ -20,6 +23,7 @@ public abstract class MachineScreen<T extends MachineMenu> extends EnergyScreen<
     protected ResourceLocation texture;
     protected T menu;
     protected PanelManager panelManager;
+    private FluidBar[] fluidBars;
 
     public MachineScreen(T menu, Inventory playerInventory, Component title,
             ResourceLocation texture, int energyBarX, int energyBarY, int imageWidth,
@@ -49,6 +53,19 @@ public abstract class MachineScreen<T extends MachineMenu> extends EnergyScreen<
         panelManager = new PanelManager(this.leftPos, this.topPos, this.imageWidth,
                 this.imageHeight, 0, 10);
         addMachinePanels();
+        MachineBlockEntity machine = menu.getBlockEntity();
+        final int inputTanks = machine.getInputTanks();
+        final int outputTanks = machine.getOutputTanks();
+        fluidBars = new FluidBar[inputTanks + outputTanks];
+        for (int i = 0; i < inputTanks; i++) {
+            fluidBars[i] = new FluidBar(machine.getInputFluidHandler(null), i, this.leftPos + 35,
+                    this.topPos + 27);
+        }
+        for (int i = 0; i < outputTanks; i++) {
+            int tankIdx = i + inputTanks;
+            fluidBars[tankIdx] = new FluidBar(machine.getOutputFluidHandler(null), tankIdx,
+                    this.leftPos + 35, this.topPos + 27);
+        }
     }
 
     @Override
@@ -61,6 +78,9 @@ public abstract class MachineScreen<T extends MachineMenu> extends EnergyScreen<
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
+        for (FluidBar fluidBar : fluidBars) {
+            fluidBar.render(guiGraphics, mouseX, mouseY, partialTick);
+        }
         renderTooltip(guiGraphics, mouseX, mouseY);
     }
 

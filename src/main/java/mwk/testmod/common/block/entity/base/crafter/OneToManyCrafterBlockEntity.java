@@ -1,12 +1,10 @@
 package mwk.testmod.common.block.entity.base.crafter;
 
 import java.util.List;
-import java.util.Optional;
 import mwk.testmod.common.recipe.SeparationRecipe;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -18,7 +16,7 @@ public abstract class OneToManyCrafterBlockEntity<T extends SeparationRecipe>
             int maxEnergy, int energyPerTick, int inputSlots, int outputSlots, int upgradeSlots,
             int maxProgress, RecipeType<T> recipeType, SoundEvent sound, int soundDuration) {
         super(type, pos, state, maxEnergy, energyPerTick, inputSlots, outputSlots, upgradeSlots,
-                maxProgress, recipeType, sound, soundDuration);
+                EMPTY_TANKS, EMPTY_TANKS, maxProgress, recipeType, sound, soundDuration);
     }
 
     @Override
@@ -29,7 +27,7 @@ public abstract class OneToManyCrafterBlockEntity<T extends SeparationRecipe>
         List<ItemStack> results = recipe.getOutputs();
         for (int i = 0; i < results.size(); i++) {
             ItemStack result = results.get(i);
-            // Index 0 is the input slot
+            // Index 0 is the input slot, so we start at index 1
             if (!canInsertItemIntoSlot(i + 1, result.getItem(), result.getCount())) {
                 return false;
             }
@@ -38,7 +36,7 @@ public abstract class OneToManyCrafterBlockEntity<T extends SeparationRecipe>
     }
 
     @Override
-    protected void processItem(T recipe) {
+    protected void processRecipe(T recipe) {
         List<ItemStack> results = recipe.getOutputs();
         // Index 0 is the input slot
         this.inventory.extractItem(0, 1, false);

@@ -51,9 +51,11 @@ public abstract class ProcessingBlockEntity<T extends Recipe<Container>> extends
 
     protected ProcessingBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
             int maxEnergy, int energyPerTick, EnergyType energyType, int inputSlots,
-            int outputSlots, int upgradeSlots, int maxProgress, RecipeType<T> recipeType,
-            SoundEvent sound, int soundDuration) {
-        super(type, pos, state, maxEnergy, energyType, inputSlots, outputSlots, upgradeSlots);
+            int outputSlots, int upgradeSlots, int[] inputTankCapacities,
+            int[] outputTankCapacities, int maxProgress, RecipeType<T> recipeType, SoundEvent sound,
+            int soundDuration) {
+        super(type, pos, state, maxEnergy, energyType, inputSlots, outputSlots, upgradeSlots,
+                inputTankCapacities, outputTankCapacities);
         this.recipeType = recipeType;
         this.progress = 0;
         this.maxProgress = maxProgress;
@@ -168,7 +170,7 @@ public abstract class ProcessingBlockEntity<T extends Recipe<Container>> extends
      * 
      * @param recipe The recipe to craft.
      */
-    protected void processItem(T recipe) {
+    protected void processRecipe(T recipe) {
         for (int i = 0; i < inputSlots; i++) {
             this.inventory.extractItem(i, 1, false);
         }
@@ -181,7 +183,7 @@ public abstract class ProcessingBlockEntity<T extends Recipe<Container>> extends
     }
 
     @Override
-    protected boolean isInputValid(int slot, ItemStack stack) {
+    protected boolean isInputItemValid(int slot, ItemStack stack) {
         if (slot >= inputSlots) {
             return false;
         }

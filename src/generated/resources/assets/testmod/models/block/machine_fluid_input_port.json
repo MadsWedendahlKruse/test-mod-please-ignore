@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "testmod:block/machine_fluid_input_port"
+  }
+}

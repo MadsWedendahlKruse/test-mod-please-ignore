@@ -3,6 +3,7 @@ package mwk.testmod;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import mwk.testmod.client.gui.screen.CrusherScreen;
+import mwk.testmod.client.gui.screen.GeothermalGeneratorScreen;
 import mwk.testmod.client.gui.screen.InductionFurnaceScreen;
 import mwk.testmod.client.gui.screen.RedstoneGeneratorScreen;
 import mwk.testmod.client.gui.screen.SeparatorScreen;
@@ -107,11 +108,17 @@ public class TestMod {
 				TestModBlockEntities.MULTI_ENERGY_PORT_ENTITY_TYPE.get(),
 				(entity, direction) -> entity.getEnergyHandler(direction));
 		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
-				TestModBlockEntities.MULTI_INPUT_PORT_ENTITY_TYPE.get(),
+				TestModBlockEntities.MULTI_ITEM_INPUT_PORT_ENTITY_TYPE.get(),
 				(entity, direction) -> entity.getItemHandler(direction));
 		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
-				TestModBlockEntities.MULTI_OUTPUT_PORT_ENTITY_TYPE.get(),
+				TestModBlockEntities.MULTI_ITEM_OUTPUT_PORT_ENTITY_TYPE.get(),
 				(entity, direction) -> entity.getItemHandler(direction));
+		event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
+				TestModBlockEntities.MULTI_FLUID_INPUT_PORT_ENTITY_TYPE.get(),
+				(entity, direction) -> entity.getFluidHandler(direction));
+		event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
+				TestModBlockEntities.MULTI_FLUID_OUTPUT_PORT_ENTITY_TYPE.get(),
+				(entity, direction) -> entity.getFluidHandler(direction));
 
 		// Could be argued that the controllers shouldn't have capabilities, since it's the
 		// ports that have the capabilities
@@ -183,6 +190,8 @@ public class TestMod {
 
 				MenuScreens.register(TestModMenus.REDSTONE_GENERATOR_MENU.get(),
 						RedstoneGeneratorScreen::new);
+				MenuScreens.register(TestModMenus.GEOTHERMAL_GENERATOR_MENU.get(),
+						GeothermalGeneratorScreen::new);
 			});
 		}
 

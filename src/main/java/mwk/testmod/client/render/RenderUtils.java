@@ -1,13 +1,17 @@
 package mwk.testmod.client.render;
 
-import org.codehaus.plexus.util.dag.Vertex;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import mwk.testmod.TestMod;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.material.Fluid;
+import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 public class RenderUtils {
 
@@ -31,36 +35,6 @@ public class RenderUtils {
             default:
                 return 0.0F;
         }
-    }
-
-    public static final ResourceLocation ITEM_SLOT_SPRITE =
-            new ResourceLocation(TestMod.MODID, "widget/item_slot");
-    public static final int ITEM_SLOT_SIZE = 18;
-
-    /**
-     * Renders an item slot sprite at the given position. The position is the top-left corner of the
-     * item slot, meaning the border sprite will be rendered 1 pixel to the left and 1 pixel above
-     * the given position. The width and height can be used to render e.g. the border of an energy
-     * bar
-     *
-     * @param guiGraphics the graphics object to render with
-     * @param x the x position to render the item slot at
-     * @param y the y position to render the item slot at
-     * @param width the width of the item slot
-     * @param height the height of the item slot
-     */
-    public static void renderItemSlot(GuiGraphics guiGraphics, int x, int y, int width,
-            int height) {
-        // -1 to account for the border of the item slot sprite
-        guiGraphics.blitSprite(ITEM_SLOT_SPRITE, x - 1, y - 1, width, height);
-    }
-
-    /**
-     * Renders an item slot with the default size of 18x18 at the given position. See
-     * {@link #renderItemSlot(GuiGraphics, int, int, int, int)}
-     */
-    public static void renderItemSlot(GuiGraphics guiGraphics, int x, int y) {
-        renderItemSlot(guiGraphics, x, y, ITEM_SLOT_SIZE, ITEM_SLOT_SIZE);
     }
 
     /**
@@ -116,12 +90,10 @@ public class RenderUtils {
      */
     public static void renderCube(PoseStack poseStack, VertexConsumer vertexBuilder,
             Vertex[] vertices, TextureAtlasSprite sprite, int color, int light, int overlay) {
-        poseStack.pushPose();
         for (int i = 0; i < vertices.length; i += 4) {
             drawQuad(vertexBuilder, poseStack, sprite, vertices[i], vertices[i + 1],
                     vertices[i + 2], vertices[i + 3], color, light, overlay);
         }
-        poseStack.popPose();
     }
 
     /**
@@ -165,5 +137,30 @@ public class RenderUtils {
         vertexBuilder.vertex(poseStack.last().pose(), vertex.x(), vertex.y(), vertex.z())
                 .color(color).uv(sprite.getU(vertex.u()), sprite.getV(vertex.v()))
                 .overlayCoords(overlay).uv2(light).normal(0, 0, 0).endVertex();
+    }
+
+    /**
+     * Returns the texture for the given fluid.
+     * 
+     * @param fluid the fluid to get the texture for
+     * @param flowing whether to get the flowing texture or the still texture
+     * @return the texture for the fluid
+     */
+    public static TextureAtlasSprite getFluidTexture(Fluid fluid, boolean flowing) {
+        IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluid);
+        ResourceLocation texture =
+                flowing ? renderProperties.getFlowingTexture() : renderProperties.getStillTexture();
+        return Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(texture);
+    }
+
+    /**
+     * Returns the texture for the given fluid stack.
+     * 
+     * @param fluidStack the fluid stack to get the texture for
+     * @param flowing whether to get the flowing texture or the still texture
+     * @return the texture for the fluid stack
+     */
+    public static TextureAtlasSprite getFluidTexture(FluidStack fluidStack, boolean flowing) {
+        return getFluidTexture(fluidStack.getFluid(), flowing);
     }
 }

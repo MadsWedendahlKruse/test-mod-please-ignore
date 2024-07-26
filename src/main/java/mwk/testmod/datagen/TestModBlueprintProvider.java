@@ -30,8 +30,8 @@ public class TestModBlueprintProvider extends DatapackBuiltinEntriesProvider {
                     layers.add(List.of("rrr", "IrI", "rrr"));
                     Map<String, String> blockMap = new HashMap<>();
                     blockMap.put("X", "testmod:crusher");
-                    blockMap.put("I", "testmod:machine_input_port");
-                    blockMap.put("O", "testmod:machine_output_port");
+                    blockMap.put("I", "testmod:machine_item_input_port");
+                    blockMap.put("O", "testmod:machine_item_output_port");
                     blockMap.put("E", "testmod:machine_energy_port");
                     blockMap.put("b", "testmod:machine_frame_basic");
                     blockMap.put("r", "testmod:machine_frame_reinforced");

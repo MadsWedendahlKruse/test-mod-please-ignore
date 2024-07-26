@@ -25,7 +25,7 @@ public abstract class ParallelCrafterBlockEntity<T extends Recipe<Container>>
             int maxEnergy, int energyPerTick, int itemSlots, int upgradeSlots, int maxProgress,
             RecipeType<T> recipeType, SoundEvent sound, int soundDuration) {
         super(type, pos, state, maxEnergy, energyPerTick, itemSlots, itemSlots, upgradeSlots,
-                maxProgress, recipeType, sound, soundDuration);
+                EMPTY_TANKS, EMPTY_TANKS, maxProgress, recipeType, sound, soundDuration);
     }
 
     public final void tick() {

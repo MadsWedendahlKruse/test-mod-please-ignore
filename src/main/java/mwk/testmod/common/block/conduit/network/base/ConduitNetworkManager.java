@@ -178,7 +178,8 @@ public class ConduitNetworkManager {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof ConduitBlockEntity<?> conduitBlockEntity) {
             conduitBlockEntity.setNetwork(network);
-            blockEntity.invalidateCapabilities();
+            // TODO: Why are we invalidating caps for the block entity we just placed?
+            // blockEntity.invalidateCapabilities();
         }
     }
 

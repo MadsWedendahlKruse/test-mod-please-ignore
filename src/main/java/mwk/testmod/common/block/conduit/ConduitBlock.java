@@ -2,7 +2,7 @@ package mwk.testmod.common.block.conduit;
 
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
-
+import mwk.testmod.TestMod;
 import mwk.testmod.common.block.conduit.network.base.ConduitNetworkManager;
 import mwk.testmod.common.block.interfaces.ITickable;
 import mwk.testmod.common.block.interfaces.IWrenchable;
@@ -23,6 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.BooleanOp;
@@ -170,6 +171,19 @@ public class ConduitBlock extends Block
         if (level instanceof ServerLevel serverLevel && newState.getBlock() != state.getBlock()) {
             ConduitNetworkManager.getInstance().disconnectFromNetwork(serverLevel, pos, state);
         }
+    }
+
+    @Override
+    public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
+        // TODO: This correctly increases the light level, but it doesn't decrease it when the
+        // fluid is removed from the conduit
+        // if (level.getBlockEntity(pos) instanceof FluidConduitBlockEntity fluidConduit) {
+        // Fluid fluid = fluidConduit.getFluidStack().getFluid();
+        // int light = fluid.getFluidType().getLightLevel();
+        // TestMod.LOGGER.debug("Fluid " + fluid + " emits light " + light);
+        // return fluidConduit.getFluidStack().getFluid().getFluidType().getLightLevel();
+        // }
+        return super.getLightEmission(state, level, pos);
     }
 
     private static VoxelShape[] shapeCache = null;

@@ -1,4 +1,4 @@
-package mwk.testmod.common.util.inventory;
+package mwk.testmod.common.util.inventory.container_data;
 
 import mwk.testmod.common.block.entity.base.EnergyBlockEntity;
 import mwk.testmod.common.block.inventory.base.EnergyMenu;

@@ -5,6 +5,7 @@ import mwk.testmod.common.block.conduit.EnergyConduitBlockEntity;
 import mwk.testmod.common.block.conduit.FluidConduitBlockEntity;
 import mwk.testmod.common.block.conduit.ItemConduitBlockEntity;
 import mwk.testmod.common.block.entity.CrusherBlockEntity;
+import mwk.testmod.common.block.entity.GeothermalGeneratorBlockEntity;
 import mwk.testmod.common.block.entity.InductionFurnaceBlockEntity;
 import mwk.testmod.common.block.entity.RedstoneGeneratorBlockEntity;
 import mwk.testmod.common.block.entity.SeparatorBlockEntity;
@@ -12,7 +13,8 @@ import mwk.testmod.common.block.entity.TeleporterBlockEntity;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import mwk.testmod.common.block.multiblock.entity.MultiBlockEnergyPortBlockEntity;
 import mwk.testmod.common.block.multiblock.entity.MultiBlockPartBlockEntity;
-import mwk.testmod.common.block.multiblock.entity.MutliBlockIOPortBlockEntity;
+import mwk.testmod.common.block.multiblock.entity.MultiBlockFluidIOPortBlockEntity;
+import mwk.testmod.common.block.multiblock.entity.MultiBlockItemIOPortBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -40,19 +42,35 @@ public class TestModBlockEntities {
 					() -> BlockEntityType.Builder.of(MultiBlockEnergyPortBlockEntity::new,
 							TestModBlocks.MACHINE_ENERGY_PORT.get()).build(null));
 
-	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MutliBlockIOPortBlockEntity>> MULTI_INPUT_PORT_ENTITY_TYPE =
-			BLOCK_ENTITY_TYPES.register(TestModBlocks.MACHINE_INPUT_PORT_ID,
-					() -> BlockEntityType.Builder
-							.of((blockPos, blockState) -> new MutliBlockIOPortBlockEntity(blockPos,
-									blockState, true), TestModBlocks.MACHINE_INPUT_PORT.get())
-							.build(null));
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MultiBlockItemIOPortBlockEntity>> MULTI_ITEM_INPUT_PORT_ENTITY_TYPE =
+			BLOCK_ENTITY_TYPES
+					.register(TestModBlocks.MACHINE_ITEM_INPUT_PORT_ID,
+							() -> BlockEntityType.Builder.of(
+									(blockPos, blockState) -> new MultiBlockItemIOPortBlockEntity(
+											blockPos, blockState, true),
+									TestModBlocks.MACHINE_ITEM_INPUT_PORT.get()).build(null));
 
-	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MutliBlockIOPortBlockEntity>> MULTI_OUTPUT_PORT_ENTITY_TYPE =
-			BLOCK_ENTITY_TYPES.register(TestModBlocks.MACHINE_OUTPUT_PORT_ID,
-					() -> BlockEntityType.Builder
-							.of((blockPos, blockState) -> new MutliBlockIOPortBlockEntity(blockPos,
-									blockState, false), TestModBlocks.MACHINE_OUTPUT_PORT.get())
-							.build(null));
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MultiBlockItemIOPortBlockEntity>> MULTI_ITEM_OUTPUT_PORT_ENTITY_TYPE =
+			BLOCK_ENTITY_TYPES.register(TestModBlocks.MACHINE_ITEM_OUTPUT_PORT_ID,
+					() -> BlockEntityType.Builder.of(
+							(blockPos, blockState) -> new MultiBlockItemIOPortBlockEntity(blockPos,
+									blockState, false),
+							TestModBlocks.MACHINE_ITEM_OUTPUT_PORT.get()).build(null));
+
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MultiBlockFluidIOPortBlockEntity>> MULTI_FLUID_INPUT_PORT_ENTITY_TYPE =
+			BLOCK_ENTITY_TYPES
+					.register(TestModBlocks.MACHINE_FLUID_INPUT_PORT_ID,
+							() -> BlockEntityType.Builder.of(
+									(blockPos, blockState) -> new MultiBlockFluidIOPortBlockEntity(
+											blockPos, blockState, true),
+									TestModBlocks.MACHINE_FLUID_INPUT_PORT.get()).build(null));
+
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MultiBlockFluidIOPortBlockEntity>> MULTI_FLUID_OUTPUT_PORT_ENTITY_TYPE =
+			BLOCK_ENTITY_TYPES.register(TestModBlocks.MACHINE_FLUID_OUTPUT_PORT_ID,
+					() -> BlockEntityType.Builder.of(
+							(blockPos, blockState) -> new MultiBlockFluidIOPortBlockEntity(blockPos,
+									blockState, false),
+							TestModBlocks.MACHINE_FLUID_OUTPUT_PORT.get()).build(null));
 
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<InductionFurnaceBlockEntity>> INDUCTION_FURNACE_ENTITY_TYPE =
 			BLOCK_ENTITY_TYPES.register(TestModBlocks.INDUCTION_FURNACE_ID,
@@ -71,6 +89,16 @@ public class TestModBlockEntities {
 			BLOCK_ENTITY_TYPES.register(TestModBlocks.TELEPORTER_ID, () -> BlockEntityType.Builder
 					.of(TeleporterBlockEntity::new, TestModBlocks.TELEPORTER.get()).build(null));
 
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RedstoneGeneratorBlockEntity>> REDSTONE_GENERATOR_ENTITY_TYPE =
+			BLOCK_ENTITY_TYPES.register(TestModBlocks.REDSTONE_GENERATOR_ID,
+					() -> BlockEntityType.Builder.of(RedstoneGeneratorBlockEntity::new,
+							TestModBlocks.REDSTONE_GENERATOR.get()).build(null));
+
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GeothermalGeneratorBlockEntity>> GEOTHERMAL_GENERATOR_ENTITY_TYPE =
+			BLOCK_ENTITY_TYPES.register(TestModBlocks.GEOTHERMAL_GENERATOR_ID,
+					() -> BlockEntityType.Builder.of(GeothermalGeneratorBlockEntity::new,
+							TestModBlocks.GEOTHERMAL_GENERATOR.get()).build(null));
+
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ItemConduitBlockEntity>> CONDUIT_ITEM_ENTITY_TYPE =
 			BLOCK_ENTITY_TYPES.register(TestModBlocks.CONDUIT_ITEM_ID, () -> BlockEntityType.Builder
 					.of(ItemConduitBlockEntity::new, TestModBlocks.CONDUIT_ITEM.get()).build(null));
@@ -86,11 +114,6 @@ public class TestModBlockEntities {
 					() -> BlockEntityType.Builder
 							.of(FluidConduitBlockEntity::new, TestModBlocks.CONDUIT_FLUID.get())
 							.build(null));
-
-	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RedstoneGeneratorBlockEntity>> REDSTONE_GENERATOR_ENTITY_TYPE =
-			BLOCK_ENTITY_TYPES.register(TestModBlocks.REDSTONE_GENERATOR_ID,
-					() -> BlockEntityType.Builder.of(RedstoneGeneratorBlockEntity::new,
-							TestModBlocks.REDSTONE_GENERATOR.get()).build(null));
 
 	public static void register(IEventBus modEventBus) {
 		BLOCK_ENTITY_TYPES.register(modEventBus);

@@ -52,6 +52,9 @@ public class TestModLanguageProvider extends LanguageProvider {
 			"widget.testmod.hologram_projector.buttons";
 	public static final String KEY_WIDGET_ENERGY_BAR = "widget.testmod.energy_bar";
 	public static final String KEY_WIDGET_ENERGY_BAR_TOOLTIP = "widget.testmod.energy_bar.tooltip";
+	public static final String KEY_WIDGET_FLUID_BAR = "widget.testmod.fluid_bar";
+	public static final String KEY_WIDGET_FLUID_BAR_TOOLTIP = "widget.testmod.fluid_bar.tooltip";
+	public static final String KEY_WIDGET_FLUID_EMPTY = "widget.testmod.fluid.empty";
 	public static final String KEY_WIDGET_PANEL_INFO = "widget.testmod.panel.info";
 	public static final String KEY_WIDGET_PANEL_ENERGY = "widget.testmod.panel.energy";
 	public static final String KEY_WIDGET_PANEL_ENERGY_USAGE_TITLE =
@@ -105,8 +108,10 @@ public class TestModLanguageProvider extends LanguageProvider {
 		add(TestModBlocks.MACHINE_FRAME_BASIC.get(), "Basic Machine Frame");
 		add(TestModBlocks.MACHINE_FRAME_REINFORCED.get(), "Reinforced Machine Frame");
 		add(TestModBlocks.MACHINE_FRAME_ADVANCED.get(), "Advanced Machine Frame");
-		add(TestModBlocks.MACHINE_INPUT_PORT.get(), "Machine Input Port");
-		add(TestModBlocks.MACHINE_OUTPUT_PORT.get(), "Machine Output Port");
+		add(TestModBlocks.MACHINE_ITEM_INPUT_PORT.get(), "Machine Item Input Port");
+		add(TestModBlocks.MACHINE_ITEM_OUTPUT_PORT.get(), "Machine Item Output Port");
+		add(TestModBlocks.MACHINE_FLUID_INPUT_PORT.get(), "Machine Fluid Input Port");
+		add(TestModBlocks.MACHINE_FLUID_OUTPUT_PORT.get(), "Machine Fluid Output Port");
 		add(TestModBlocks.MACHINE_ENERGY_PORT.get(), "Machine Energy Port");
 		add(TestModBlocks.COPPER_COIL.get(), "Copper Coil");
 		add(TestModBlocks.SUPER_ASSEMBLER.get(), "Super Assembler");
@@ -114,6 +119,7 @@ public class TestModLanguageProvider extends LanguageProvider {
 		add(TestModBlocks.CRUSHER.get(), "Crusher");
 		add(TestModBlocks.SEPARATOR.get(), "Separator");
 		add(TestModBlocks.REDSTONE_GENERATOR.get(), "Redstone Generator");
+		add(TestModBlocks.GEOTHERMAL_GENERATOR.get(), "Geothermal Generator");
 		add(TestModBlocks.CONDUIT_ITEM.get(), "Item Conduit");
 		add(TestModBlocks.CONDUIT_FLUID.get(), "Fluid Conduit");
 		add(TestModBlocks.CONDUIT_ENERGY.get(), "Energy Conduit");
@@ -162,6 +168,9 @@ public class TestModLanguageProvider extends LanguageProvider {
 		add(KEY_WIDGET_HOLOGRAM_PROJECTOR_BUTTONS, "Buttons");
 		add(KEY_WIDGET_ENERGY_BAR, "Energy");
 		add(KEY_WIDGET_ENERGY_BAR_TOOLTIP, "%s/%s FE");
+		add(KEY_WIDGET_FLUID_BAR, "Fluid");
+		add(KEY_WIDGET_FLUID_BAR_TOOLTIP, "%s: %s/%s mB");
+		add(KEY_WIDGET_FLUID_EMPTY, "Empty");
 		add(KEY_WIDGET_PANEL_INFO, "Info");
 		add(KEY_WIDGET_PANEL_ENERGY, "Energy");
 		add(KEY_WIDGET_PANEL_ENERGY_USAGE_TITLE, "Usage");

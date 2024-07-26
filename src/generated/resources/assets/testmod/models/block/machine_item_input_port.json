@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "testmod:block/machine_output_port"
+    "all": "testmod:block/machine_item_input_port"
   }
 }

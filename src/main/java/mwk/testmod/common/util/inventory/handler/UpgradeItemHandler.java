@@ -1,4 +1,4 @@
-package mwk.testmod.common.util.inventory;
+package mwk.testmod.common.util.inventory.handler;
 
 import mwk.testmod.common.block.interfaces.IUpgradable;
 import mwk.testmod.common.item.upgrades.base.UpgradeItem;

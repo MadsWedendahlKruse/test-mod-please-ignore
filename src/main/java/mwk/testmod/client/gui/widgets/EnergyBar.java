@@ -1,8 +1,7 @@
 package mwk.testmod.client.gui.widgets;
 
-import java.util.Locale;
-import com.ibm.icu.text.NumberFormat;
 import mwk.testmod.TestMod;
+import mwk.testmod.client.gui.GuiUtils;
 import mwk.testmod.common.block.inventory.base.EnergyMenu;
 import mwk.testmod.datagen.TestModLanguageProvider;
 import net.minecraft.client.Minecraft;
@@ -18,8 +17,6 @@ import net.minecraft.resources.ResourceLocation;
  */
 public class EnergyBar extends AbstractWidget {
 
-	private static final NumberFormat NUMBER_FORMAT = NumberFormat.getNumberInstance(Locale.US);
-
 	public static final ResourceLocation SPRITE_EMPTY =
 			new ResourceLocation(TestMod.MODID, "widget/energy_bar_empty");
 	public static final ResourceLocation SPRITE_FULL =
@@ -29,7 +26,7 @@ public class EnergyBar extends AbstractWidget {
 	public static final int HEIGHT = 52;
 
 	private final EnergyMenu menu;
-	private Font font;
+	private final Font font;
 
 	public EnergyBar(EnergyMenu menu, int x, int y) {
 		this(menu, x, y, WIDTH, HEIGHT);
@@ -59,7 +56,8 @@ public class EnergyBar extends AbstractWidget {
 		if (isMouseOver(mouseX, mouseY)) {
 			guiGraphics.renderTooltip(this.font,
 					Component.translatable(TestModLanguageProvider.KEY_WIDGET_ENERGY_BAR_TOOLTIP,
-							NUMBER_FORMAT.format(energy), NUMBER_FORMAT.format(maxEnergy)),
+							GuiUtils.NUMBER_FORMAT.format(energy),
+							GuiUtils.NUMBER_FORMAT.format(maxEnergy)),
 					mouseX, mouseY);
 		}
 	}

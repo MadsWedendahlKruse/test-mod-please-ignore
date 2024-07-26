@@ -1,8 +1,8 @@
 package mwk.testmod.client.gui.widgets.panels;
 
 import mwk.testmod.TestMod;
+import mwk.testmod.client.gui.GuiUtils;
 import mwk.testmod.client.gui.widgets.panels.base.MachinePanel;
-import mwk.testmod.client.render.RenderUtils;
 import mwk.testmod.common.block.inventory.base.MachineMenu;
 import mwk.testmod.common.util.inventory.ItemSlotGridHelper;
 import mwk.testmod.datagen.TestModLanguageProvider;
@@ -36,7 +36,7 @@ public class UpgradePanel extends MachinePanel {
         for (int i = 0; i < menu.upgradeSlots; i++) {
             ItemSlotGridHelper.SlotPosition slotPosition =
                     GRID_HELPER.getSlotPosition(startX, startY, i);
-            RenderUtils.renderItemSlot(guiGraphics, slotPosition.x(), slotPosition.y());
+            GuiUtils.renderItemSlot(guiGraphics, slotPosition.x(), slotPosition.y());
         }
     }
 

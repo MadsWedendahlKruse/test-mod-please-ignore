@@ -45,4 +45,9 @@ public class GuiConfigs {
 			ENERGY_BAR_X, ENERGY_BAR_Y, IMAGE_WIDTH, IMAGE_HEIGHT, "energy", 45, 63,
 			ProgressArrowFactory.Type.SINGLE, 0, 0, 0, 0);
 
+	public static final GuiConfig GEOTHERMAL_GENERATOR = new GuiConfig(
+			new ResourceLocation(TestMod.MODID, "textures/gui/container/geothermal_generator.png"),
+			ENERGY_BAR_X, ENERGY_BAR_Y, IMAGE_WIDTH, IMAGE_HEIGHT, "energy", 63, 46,
+			ProgressArrowFactory.Type.SINGLE, 0, 0, 0, 0);
+
 }

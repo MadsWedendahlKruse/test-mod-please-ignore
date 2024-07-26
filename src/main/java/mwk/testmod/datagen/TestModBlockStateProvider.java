@@ -1,14 +1,11 @@
 package mwk.testmod.datagen;
 
-import java.io.Serializable;
 import mwk.testmod.TestMod;
 import mwk.testmod.common.block.conduit.ConduitBlock;
-import mwk.testmod.common.block.conduit.ConduitType;
 import mwk.testmod.common.block.conduit.ConnectorType;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import mwk.testmod.init.registries.TestModBlocks;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -51,10 +48,14 @@ public class TestModBlockStateProvider extends BlockStateProvider {
 				TestModBlocks.MACHINE_FRAME_REINFORCED_ID, CubeModel.CUBE_ALL);
 		registerMultiBlockPart(TestModBlocks.MACHINE_FRAME_ADVANCED.get(),
 				TestModBlocks.MACHINE_FRAME_ADVANCED_ID, CubeModel.CUBE_ALL);
-		registerMultiBlockPart(TestModBlocks.MACHINE_INPUT_PORT.get(),
-				TestModBlocks.MACHINE_INPUT_PORT_ID, CubeModel.CUBE_ALL);
-		registerMultiBlockPart(TestModBlocks.MACHINE_OUTPUT_PORT.get(),
-				TestModBlocks.MACHINE_OUTPUT_PORT_ID, CubeModel.CUBE_ALL);
+		registerMultiBlockPart(TestModBlocks.MACHINE_ITEM_INPUT_PORT.get(),
+				TestModBlocks.MACHINE_ITEM_INPUT_PORT_ID, CubeModel.CUBE_ALL);
+		registerMultiBlockPart(TestModBlocks.MACHINE_ITEM_OUTPUT_PORT.get(),
+				TestModBlocks.MACHINE_ITEM_OUTPUT_PORT_ID, CubeModel.CUBE_ALL);
+		registerMultiBlockPart(TestModBlocks.MACHINE_FLUID_INPUT_PORT.get(),
+				TestModBlocks.MACHINE_FLUID_INPUT_PORT_ID, CubeModel.CUBE_ALL);
+		registerMultiBlockPart(TestModBlocks.MACHINE_FLUID_OUTPUT_PORT.get(),
+				TestModBlocks.MACHINE_FLUID_OUTPUT_PORT_ID, CubeModel.CUBE_ALL);
 		registerMultiBlockPart(TestModBlocks.MACHINE_ENERGY_PORT.get(),
 				TestModBlocks.MACHINE_ENERGY_PORT_ID, CubeModel.CUBE_ALL);
 		registerMultiBlockPart(TestModBlocks.COPPER_COIL.get(), TestModBlocks.COPPER_COIL_ID,

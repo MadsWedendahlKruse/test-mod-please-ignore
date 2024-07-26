@@ -16,9 +16,11 @@ public abstract class CrafterBlockEntity<T extends Recipe<Container>>
 
     protected CrafterBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
             int maxEnergy, int energyPerTick, int inputSlots, int outputSlots, int upgradeSlots,
-            int maxProgress, RecipeType<T> recipeType, SoundEvent sound, int soundDuration) {
+            int[] inputTankCapacities, int[] outputTankCapacities, int maxProgress,
+            RecipeType<T> recipeType, SoundEvent sound, int soundDuration) {
         super(type, pos, state, maxEnergy, energyPerTick, EnergyType.CONSUMER, inputSlots,
-                outputSlots, upgradeSlots, maxProgress, recipeType, sound, soundDuration);
+                outputSlots, upgradeSlots, inputTankCapacities, outputTankCapacities, maxProgress,
+                recipeType, sound, soundDuration);
         // TODO Auto-generated constructor stub
     }
 

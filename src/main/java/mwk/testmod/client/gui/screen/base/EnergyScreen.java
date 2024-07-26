@@ -27,7 +27,11 @@ public class EnergyScreen<T extends EnergyMenu> extends AbstractContainerScreen<
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {}
+
+    @Override
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
         energyBar.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 }

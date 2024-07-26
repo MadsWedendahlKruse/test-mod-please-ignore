@@ -3,7 +3,7 @@ package mwk.testmod.common.block.inventory.base;
 import mwk.testmod.common.block.entity.base.MachineBlockEntity;
 import mwk.testmod.common.network.MachineIOPacket;
 import mwk.testmod.common.util.inventory.ItemSlotGridHelper;
-import mwk.testmod.common.util.inventory.MachineIOContainerData;
+import mwk.testmod.common.util.inventory.container_data.MachineIOContainerData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -13,6 +13,8 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -34,6 +36,8 @@ public class MachineMenu extends EnergyMenu {
     public final int outputSlots;
     public final int upgradeSlots;
     public final int machineInventorySize;
+    public final int inputTanks;
+    public final int outputTanks;
     private boolean upgradesVisible = true;
     private boolean autoEject;
     private boolean autoInsert;
@@ -63,6 +67,8 @@ public class MachineMenu extends EnergyMenu {
             this.outputSlots = machineBlockEntity.getOutputSlots();
             this.upgradeSlots = machineBlockEntity.getUpgradeSlots();
             this.machineInventorySize = machineBlockEntity.getInventorySize();
+            this.inputTanks = machineBlockEntity.getInputTanks();
+            this.outputTanks = machineBlockEntity.getOutputTanks();
             this.inputSlotsX = inputSlotsX;
             this.inputSlotsY = inputSlotsY;
             this.outputSlotsX = outputSlotsX;
@@ -99,14 +105,14 @@ public class MachineMenu extends EnergyMenu {
     }
 
     protected void addInputOutputSlots() {
-        addItemHandlerSlots(blockEntity.getInputHandler(null, true), inputSlots, 0, inputSlotsX,
+        addItemHandlerSlots(blockEntity.getInputItemHandler(null, true), inputSlots, 0, inputSlotsX,
                 inputSlotsY, ItemSlotGridHelper.ROWS_3);
-        addItemHandlerSlots(blockEntity.getOutputHandler(null), outputSlots, inputSlots,
+        addItemHandlerSlots(blockEntity.getOutputItemHandler(null), outputSlots, inputSlots,
                 outputSlotsX, outputSlotsY, ItemSlotGridHelper.ROWS_3);
     }
 
     protected void addUpgradeSlots(int upgradeX, int upgradeY) {
-        addItemHandlerSlots(blockEntity.getUpgradeHandler(null), upgradeSlots,
+        addItemHandlerSlots(blockEntity.getUpgradeItemHandler(null), upgradeSlots,
                 inputSlots + outputSlots, upgradeX, upgradeY, ItemSlotGridHelper.ROWS_2,
                 () -> upgradesVisible);
     }

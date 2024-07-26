@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "formed=false": {
+      "model": "testmod:block/machine_item_input_port"
+    },
+    "formed=true": {
+      "model": "testmod:block/empty"
+    }
+  }
+}

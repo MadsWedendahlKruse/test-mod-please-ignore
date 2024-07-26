@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 
 /**
@@ -111,6 +112,14 @@ public class MultiBlockPartBlockEntity extends BlockEntity {
      * be overridden by subclasses that need to provide an item handler, e.g. item ports.
      */
     public IItemHandler getItemHandler(Direction direction) {
+        return null;
+    }
+
+    /**
+     * Get the fluid handler for the multiblock structure. By default this returns null. This should
+     * be overridden by subclasses that need to provide a fluid handler, e.g. fluid ports.
+     */
+    public IFluidHandler getFluidHandler(Direction direction) {
         return null;
     }
 }

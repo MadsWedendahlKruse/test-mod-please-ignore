@@ -3,8 +3,10 @@
     "testmod:machine_frame_basic",
     "testmod:machine_frame_reinforced",
     "testmod:machine_frame_advanced",
-    "testmod:machine_input_port",
-    "testmod:machine_output_port",
+    "testmod:machine_item_input_port",
+    "testmod:machine_item_output_port",
+    "testmod:machine_fluid_input_port",
+    "testmod:machine_fluid_output_port",
     "testmod:machine_energy_port",
     "testmod:copper_coil",
     "testmod:induction_furnace",
@@ -13,6 +15,7 @@
     "testmod:separator",
     "testmod:teleporter",
     "testmod:redstone_generator",
+    "testmod:geothermal_generator",
     "testmod:ilmenite_ore",
     "testmod:deepslate_ilmenite_ore"
   ]
