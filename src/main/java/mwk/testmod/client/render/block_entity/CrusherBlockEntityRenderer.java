@@ -2,6 +2,7 @@ package mwk.testmod.client.render.block_entity;
 
 import org.joml.Quaternionf;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import mwk.testmod.common.block.entity.CrusherBlockEntity;
 import mwk.testmod.common.util.RandomUtils;
 import mwk.testmod.init.registries.TestModModels;
@@ -48,9 +49,9 @@ public class CrusherBlockEntityRenderer extends MultiBlockEntityRenderer<Crusher
 		poseStack.translate(offset[0], offset[1], offset[2]);
 		poseStack.mulPose(new Quaternionf().rotationY(rotY));
 		poseStack.mulPose(new Quaternionf().rotationZ(angle));
-		rotorModel.getQuads(null, null, RandomUtils.RANDOM_SOURCE)
-				.forEach(quad -> multiBufferSource.getBuffer(RenderType.solid()).putBulkData(
-						poseStack.last(), quad, 1, 1, 1, combinedLight, combinedOverlay));
+		VertexConsumer buffer = multiBufferSource.getBuffer(RenderType.solid());
+		rotorModel.getQuads(null, null, RandomUtils.RANDOM_SOURCE).forEach(quad -> buffer
+				.putBulkData(poseStack.last(), quad, 1, 1, 1, combinedLight, combinedOverlay));
 		poseStack.popPose();
 	}
 }

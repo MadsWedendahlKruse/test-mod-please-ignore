@@ -1,0 +1,8 @@
+{
+  "type": "testmod:geothermal_generator",
+  "energy": 131072,
+  "input": {
+    "Amount": 1000,
+    "FluidName": "minecraft:lava"
+  }
+}

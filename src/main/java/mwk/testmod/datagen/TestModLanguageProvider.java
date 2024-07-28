@@ -18,6 +18,8 @@ public class TestModLanguageProvider extends LanguageProvider {
 	public static final String KEY_DESCRIPTION_SEPARATOR = "description.testmod.separator";
 	public static final String KEY_DESCRIPTION_REDSTONE_GENERATOR =
 			"description.testmod.redstone_generator";
+	public static final String KEY_DESCRIPTION_GEOTHERMAL_GENERATOR =
+			"description.testmod.geothermal_generator";
 	// Creative tabs
 	public static final String KEY_CREATIVE_TAB = "itemGroup.testmod";
 	// Info
@@ -135,6 +137,8 @@ public class TestModLanguageProvider extends LanguageProvider {
 				"A machine designed to separate mixed materials into their individual components. Essential for efficient ore processing and preparation in advanced manufacturing systems.");
 		add(KEY_DESCRIPTION_REDSTONE_GENERATOR,
 				"A machine that generates energy from redstone. Useful for providing power to machines and systems in remote locations or where other power sources are unavailable.");
+		add(KEY_DESCRIPTION_GEOTHERMAL_GENERATOR,
+				"A machine that generates energy from the heat of lava. Useful for providing power to machines and systems in remote locations or where other power sources are unavailable.");
 		// Items
 		add(TestModItems.WRENCH_ITEM.get(), "Wrench");
 		add(TestModItems.HOLOGRAM_PROJECTOR_ITEM.get(), "Hologram Projector");
@@ -190,7 +194,7 @@ public class TestModLanguageProvider extends LanguageProvider {
 		add(KEY_WIDGET_GENERATOR_OUTPUT_TITLE, "Output");
 		add(KEY_WIDGET_GENERATOR_OUTPUT_TEXT, "  %s FE/t");
 		add(KEY_WIDGET_GENERATOR_DURATION_TITLE, "Duration");
-		add(KEY_WIDGET_GENERATOR_DURATION_TEXT, "  %s s");
+		add(KEY_WIDGET_GENERATOR_DURATION_TEXT, "  %s");
 		// Sounds (subtitles)
 		add(KEY_SUBTITLE_MULTIBLOCK_FORM, "Multiblock forms");
 		add(KEY_SUBTITLE_MULTIBLOCK_CRUSHER, "Crusher crushes");

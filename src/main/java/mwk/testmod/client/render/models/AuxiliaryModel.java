@@ -19,8 +19,8 @@ public class AuxiliaryModel {
 
     public BakedModel getBakedModel() {
         if (bakedModel == null) {
-            bakedModel = Minecraft.getInstance().getBlockRenderer().getBlockModelShaper()
-                    .getModelManager().getModel(new ResourceLocation(TestMod.MODID, modelPath));
+            bakedModel = Minecraft.getInstance().getModelManager()
+                    .getModel(new ResourceLocation(TestMod.MODID, modelPath));
         }
         return bakedModel;
     }

@@ -61,9 +61,6 @@ public class TestModBlockStateProvider extends BlockStateProvider {
 		registerMultiBlockPart(TestModBlocks.COPPER_COIL.get(), TestModBlocks.COPPER_COIL_ID,
 				CubeModel.CUBE_COLUMN);
 
-		registerMultiBlockController(TestModBlocks.REDSTONE_GENERATOR.get(),
-				TestModBlocks.REDSTONE_GENERATOR_ID, ControllerType.GENERATOR);
-
 		registerMultiBlockController(TestModBlocks.INDUCTION_FURNACE.get(),
 				TestModBlocks.INDUCTION_FURNACE_ID, ControllerType.MACHINE);
 		registerMultiBlockController(TestModBlocks.SUPER_ASSEMBLER.get(),
@@ -72,6 +69,11 @@ public class TestModBlockStateProvider extends BlockStateProvider {
 				ControllerType.MACHINE);
 		registerMultiBlockController(TestModBlocks.SEPARATOR.get(), TestModBlocks.SEPARATOR_ID,
 				ControllerType.MACHINE);
+
+		registerMultiBlockController(TestModBlocks.REDSTONE_GENERATOR.get(),
+				TestModBlocks.REDSTONE_GENERATOR_ID, ControllerType.GENERATOR);
+		registerMultiBlockController(TestModBlocks.GEOTHERMAL_GENERATOR.get(),
+				TestModBlocks.GEOTHERMAL_GENERATOR_ID, ControllerType.GENERATOR);
 
 		registerConduitBlock(TestModBlocks.CONDUIT_ITEM.get(), "minecraft:solid");
 		registerConduitBlock(TestModBlocks.CONDUIT_FLUID.get(), "minecraft:cutout");

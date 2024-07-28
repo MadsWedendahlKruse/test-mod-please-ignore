@@ -2,9 +2,11 @@ package mwk.testmod.init.registries;
 
 import mwk.testmod.TestMod;
 import mwk.testmod.common.recipe.CrushingRecipe;
+import mwk.testmod.common.recipe.GeothermalGeneratorRecipe;
 import mwk.testmod.common.recipe.RedstoneGeneratorRecipe;
 import mwk.testmod.common.recipe.SeparationRecipe;
-import mwk.testmod.common.recipe.serializers.GeneratorRecipeSerializer;
+import mwk.testmod.common.recipe.serializers.GeneratorFluidRecipeSerializer;
+import mwk.testmod.common.recipe.serializers.GeneratorItemRecipeSerializer;
 import mwk.testmod.common.recipe.serializers.OneToManyItemStacksSerializer;
 import mwk.testmod.common.recipe.serializers.OneToOneItemStackSerializer;
 import net.minecraft.core.registries.Registries;
@@ -31,7 +33,10 @@ public class TestModRecipeSerializers {
 	// Generator Recipes
 	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> REDSTONE_GENERATOR_RECIPE_SERIALIZER =
 			RECIPE_SERIALIZERS.register("redstone_generator",
-					() -> new GeneratorRecipeSerializer<>(RedstoneGeneratorRecipe::new));
+					() -> new GeneratorItemRecipeSerializer<>(RedstoneGeneratorRecipe::new));
+	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> GEOTHERMAL_GENERATOR_RECIPE_SERIALIZER =
+			RECIPE_SERIALIZERS.register("geothermal_generator",
+					() -> new GeneratorFluidRecipeSerializer<>(GeothermalGeneratorRecipe::new));
 
 	public static void register(IEventBus modEventBus) {
 		RECIPE_SERIALIZERS.register(modEventBus);

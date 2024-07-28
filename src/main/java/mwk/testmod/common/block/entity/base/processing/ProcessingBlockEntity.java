@@ -6,8 +6,12 @@ import mwk.testmod.common.block.interfaces.ITickable;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.item.upgrades.SpeedUpgradeItem;
 import mwk.testmod.common.item.upgrades.base.UpgradeItem;
+import mwk.testmod.common.recipe.base.FluidRecipe;
+import mwk.testmod.common.util.inventory.SimpleFluidContainer;
+import mwk.testmod.common.util.inventory.SimpleItemFluidContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -15,12 +19,15 @@ import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.items.IItemHandler;
 
 /**
@@ -32,8 +39,9 @@ public abstract class ProcessingBlockEntity<T extends Recipe<Container>> extends
     public static final String NBT_TAG_PROGRESS = "progress";
 
     protected final RecipeType<T> recipeType;
-    // We only need to look up the recipe if the input slots have changed
-    protected SimpleContainer latestInputs;
+    // We only need to look up the recipe if the input slots/tank have changed
+    protected Container latestItemInputs;
+    protected SimpleFluidContainer latestFluidInputs;
     protected T latestRecipe;
 
     protected int progress;
@@ -94,6 +102,13 @@ public abstract class ProcessingBlockEntity<T extends Recipe<Container>> extends
                         .getSlotLimit(slot));
     }
 
+    protected boolean canInsertFluidIntoTank(int tank, FluidStack fluid) {
+        return fluidTanks.getFluidInTank(tank).isEmpty()
+                || fluidTanks.getFluidInTank(tank).isFluidEqual(fluid)
+                        && fluidTanks.getFluidInTank(tank).getAmount()
+                                + fluid.getAmount() <= fluidTanks.getTankCapacity(tank);
+    }
+
     protected void playSound() {
         if (sound == null || soundDuration == 0) {
             return;
@@ -109,39 +124,90 @@ public abstract class ProcessingBlockEntity<T extends Recipe<Container>> extends
         }
     }
 
+    private SimpleContainer createItemContainer() {
+        SimpleContainer itemContainer = new SimpleContainer(this.inputSlots);
+        for (int i = 0; i < this.inputSlots; i++) {
+            itemContainer.setItem(i, this.inventory.getStackInSlot(i));
+        }
+        return itemContainer;
+    }
+
+    private SimpleFluidContainer createFluidContainer(boolean copy) {
+        SimpleFluidContainer fluidContainer = new SimpleFluidContainer(this.inputTanks);
+        for (int i = 0; i < this.inputTanks; i++) {
+            if (copy) {
+                fluidContainer.setFluid(i, this.fluidTanks.getFluidInTank(i).copy());
+            } else {
+                fluidContainer.setFluid(i, this.fluidTanks.getFluidInTank(i));
+            }
+        }
+        return fluidContainer;
+    }
+
+    private boolean itemInputsChanged(SimpleContainer itemContainer) {
+        if (latestItemInputs == null) {
+            return true;
+        }
+        for (int i = 0; i < this.inputSlots; i++) {
+            ItemStack containerItem = itemContainer.getItem(i);
+            ItemStack latestItem = latestItemInputs.getItem(i);
+            if (!containerItem.is(latestItem.getItem())) {
+                return true;
+            }
+            // TODO: We need something like this to handle recipes where the count of the input
+            // items matters
+            // if (containerItem.getCount() != latestItem.getCount()) {
+            // return true;
+            // }
+        }
+        return false;
+    }
+
+    private boolean fluidInputsChanged(SimpleFluidContainer fluidContainer) {
+        if (latestFluidInputs == null) {
+            return true;
+        }
+        for (int i = 0; i < fluidContainer.getSize(); i++) {
+            FluidStack containerFluid = fluidContainer.getFluid(i);
+            FluidStack latestFluid = latestFluidInputs.getFluid(i);
+            if (!containerFluid.isFluidEqual(latestFluid)) {
+                return true;
+            }
+            if (containerFluid.getAmount() != latestFluid.getAmount()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * This method should return the current recipe that can be crafted given the current inventory.
      * 
      * @return The current recipe that can be crafted.
      */
     protected T getCurrentRecipe() {
-        SimpleContainer container = new SimpleContainer(this.inputSlots);
-        for (int i = 0; i < this.inputSlots; i++) {
-            container.setItem(i, this.inventory.getStackInSlot(i));
-        }
-        if (latestInputs != null) {
-            // Check if the items in the input slots have changed
-            boolean changed = false;
-            for (int i = 0; i < this.inputSlots; i++) {
-                if (!container.getItem(i).is(latestInputs.getItem(i).getItem())) {
-                    changed = true;
-                    break;
-                }
-            }
-            if (!changed) {
-                return latestRecipe;
-            }
-        } else {
-            latestInputs = container;
-        }
-        // Check if the items in the input slots match the latest recipe
-        if (latestRecipe != null && latestRecipe.matches(container, level)) {
+        SimpleContainer itemContainer = createItemContainer();
+        SimpleFluidContainer fluidContainer = createFluidContainer(false);
+        // Check if the input items or fluids have changed
+        if (!(itemInputsChanged(itemContainer) || fluidInputsChanged(fluidContainer))) {
             return latestRecipe;
         }
-        TestMod.LOGGER.debug("Getting new recipe");
-        latestRecipe = this.level.getRecipeManager().getRecipeFor(this.recipeType, container, level)
-                .map(RecipeHolder::value).orElse(null);
-        latestInputs = container;
+        // Check if the input items and fluids match the latest recipe
+        SimpleItemFluidContainer combinedContainer =
+                new SimpleItemFluidContainer(itemContainer, fluidContainer);
+        if (latestRecipe != null && latestRecipe.matches(combinedContainer, level)) {
+            return latestRecipe;
+        }
+        latestRecipe = this.level.getRecipeManager()
+                .getRecipeFor(this.recipeType, combinedContainer, level).map(RecipeHolder::value)
+                .orElse(null);
+        TestMod.LOGGER.debug("Got new recipe from recipe manager: " + latestRecipe);
+        latestItemInputs = itemContainer;
+        // TODO: We need to copy the fluid stack here, otherwise we end up saving references to the
+        // input tanks in the latestFluidInputs, and then they're always identical. We don't need to
+        // do this for the item stacks, but I don't know why. For performance reasons we only copy
+        // the fluid when saving the latestFluidInputs
+        latestFluidInputs = createFluidContainer(true);
         return latestRecipe;
     }
 
@@ -156,12 +222,16 @@ public abstract class ProcessingBlockEntity<T extends Recipe<Container>> extends
         if (recipe == null) {
             return false;
         }
-        ItemStack result = recipe.getResultItem(null);
-        if (result.isEmpty()) {
-            // If the item is empty we don't have to check if it can be inserted
-            return true;
+        ItemStack itemResult = recipe.getResultItem(null);
+        boolean canInsertItem = itemResult.isEmpty()
+                || canInsertItemIntoSlot(outputSlots, itemResult.getItem(), itemResult.getCount());
+        boolean canInsertFluid = true;
+        if (recipe instanceof FluidRecipe fluidRecipe) {
+            FluidStack fluidResult = fluidRecipe.getFluidResult();
+            canInsertFluid =
+                    fluidResult.isEmpty() || canInsertFluidIntoTank(outputTanks, fluidResult);
         }
-        return canInsertItemIntoSlot(inputSlots, result.getItem(), result.getCount());
+        return canInsertItem && canInsertFluid;
     }
 
     /**
@@ -171,15 +241,27 @@ public abstract class ProcessingBlockEntity<T extends Recipe<Container>> extends
      * @param recipe The recipe to craft.
      */
     protected void processRecipe(T recipe) {
-        for (int i = 0; i < inputSlots; i++) {
-            this.inventory.extractItem(i, 1, false);
+        NonNullList<Ingredient> ingredients = recipe.getIngredients();
+        for (int i = 0; i < ingredients.size(); i++) {
+            // TODO: Ingredients can have multiple items???
+            ItemStack ingredient = ingredients.get(i).getItems()[0];
+            this.inventory.extractItem(i, ingredient.getCount(), false);
         }
         ItemStack result = recipe.getResultItem(null);
-        if (result.isEmpty()) {
-            return;
+        if (!result.isEmpty()) {
+            this.inventory.setStackInSlot(inputSlots, new ItemStack(result.getItem(),
+                    this.inventory.getStackInSlot(inputSlots).getCount() + result.getCount()));
         }
-        this.inventory.setStackInSlot(inputSlots, new ItemStack(result.getItem(),
-                this.inventory.getStackInSlot(inputSlots).getCount() + result.getCount()));
+        if (recipe instanceof FluidRecipe fluidRecipe) {
+            NonNullList<FluidStack> fluidIngredients = fluidRecipe.getFluidIngredients();
+            for (int i = 0; i < inputTanks; i++) {
+                this.fluidTanks.drain(i, fluidIngredients.get(i), FluidAction.EXECUTE);
+            }
+            FluidStack fluidResult = fluidRecipe.getFluidResult();
+            if (!fluidResult.isEmpty()) {
+                this.fluidTanks.fill(inputTanks, fluidResult, FluidAction.EXECUTE);
+            }
+        }
     }
 
     @Override

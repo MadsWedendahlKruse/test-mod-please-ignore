@@ -2,7 +2,6 @@ package mwk.testmod.common.block.conduit;
 
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
-import mwk.testmod.TestMod;
 import mwk.testmod.common.block.conduit.network.base.ConduitNetworkManager;
 import mwk.testmod.common.block.interfaces.ITickable;
 import mwk.testmod.common.block.interfaces.IWrenchable;
@@ -23,7 +22,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.BooleanOp;

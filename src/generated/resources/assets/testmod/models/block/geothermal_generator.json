@@ -1,0 +1,10 @@
+{
+  "parent": "testmod:block/multiblock_controller",
+  "textures": {
+    "front": "testmod:block/controller_front_generator",
+    "particle": "testmod:block/controller_top_generator",
+    "screen": "testmod:block/controller_screen_geothermal_generator",
+    "side": "testmod:block/controller_side_generator",
+    "top": "testmod:block/controller_top_generator"
+  }
+}

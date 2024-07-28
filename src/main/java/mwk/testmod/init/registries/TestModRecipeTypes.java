@@ -2,6 +2,7 @@ package mwk.testmod.init.registries;
 
 import mwk.testmod.TestMod;
 import mwk.testmod.common.recipe.CrushingRecipe;
+import mwk.testmod.common.recipe.GeothermalGeneratorRecipe;
 import mwk.testmod.common.recipe.RedstoneGeneratorRecipe;
 import mwk.testmod.common.recipe.SeparationRecipe;
 import net.minecraft.core.registries.Registries;
@@ -27,6 +28,9 @@ public class TestModRecipeTypes {
     public static final DeferredHolder<RecipeType<?>, RecipeType<RedstoneGeneratorRecipe>> REDSTONE_GENERATOR =
             RECIPE_TYPES.register("redstone_generator",
                     () -> new RecipeType<RedstoneGeneratorRecipe>() {});
+    public static final DeferredHolder<RecipeType<?>, RecipeType<GeothermalGeneratorRecipe>> GEOTHERMAL_GENERATOR =
+            RECIPE_TYPES.register("geothermal_generator",
+                    () -> new RecipeType<GeothermalGeneratorRecipe>() {});
 
     public static void register(IEventBus modEventBus) {
         RECIPE_TYPES.register(modEventBus);

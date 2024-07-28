@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 public class TestModConfig {
 	private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
+	// Machine config
 	public static final ModConfigSpec.IntValue MACHINE_ENERGY_CAPACITY_DEFAULT =
 			BUILDER.comment("The default energy capacity for machines")
 					.defineInRange("powerCapacityDefault", 50000, 0, Integer.MAX_VALUE);

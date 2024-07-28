@@ -2,17 +2,18 @@ package mwk.testmod.common.recipe.serializers;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import mwk.testmod.common.recipe.base.generator.GeneratorRecipe;
+import mwk.testmod.common.recipe.base.generator.GeneratorItemRecipe;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
-public class GeneratorRecipeSerializer<T extends GeneratorRecipe> implements RecipeSerializer<T> {
+public class GeneratorItemRecipeSerializer<T extends GeneratorItemRecipe>
+        implements RecipeSerializer<T> {
 
     private final RecipeFactory<T> factory;
     private Codec<T> codec;
 
-    public GeneratorRecipeSerializer(RecipeFactory<T> factory) {
+    public GeneratorItemRecipeSerializer(RecipeFactory<T> factory) {
         this.factory = factory;
     }
 
@@ -20,8 +21,9 @@ public class GeneratorRecipeSerializer<T extends GeneratorRecipe> implements Rec
     public Codec<T> codec() {
         if (codec == null) {
             codec = RecordCodecBuilder.create(instance -> instance
-                    .group(Ingredient.CODEC.fieldOf("input").forGetter(GeneratorRecipe::getInput),
-                            Codec.INT.fieldOf("energy").forGetter(GeneratorRecipe::getEnergy))
+                    .group(Ingredient.CODEC.fieldOf("input")
+                            .forGetter(GeneratorItemRecipe::getInput),
+                            Codec.INT.fieldOf("energy").forGetter(GeneratorItemRecipe::getEnergy))
                     .apply(instance, factory::create));
         }
         return codec;
@@ -40,7 +42,8 @@ public class GeneratorRecipeSerializer<T extends GeneratorRecipe> implements Rec
         buffer.writeInt(recipe.getEnergy());
     }
 
-    public interface RecipeFactory<T extends GeneratorRecipe> {
+    @FunctionalInterface
+    public interface RecipeFactory<T extends GeneratorItemRecipe> {
         T create(Ingredient input, int energy);
     }
 }

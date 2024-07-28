@@ -2,7 +2,7 @@ package mwk.testmod.common.block.entity;
 
 import mwk.testmod.common.block.entity.base.generator.GeneratorBlockEntity;
 import mwk.testmod.common.block.inventory.GeothermalGeneratorMenu;
-import mwk.testmod.common.recipe.RedstoneGeneratorRecipe;
+import mwk.testmod.common.recipe.GeothermalGeneratorRecipe;
 import mwk.testmod.datagen.TestModLanguageProvider;
 import mwk.testmod.init.registries.TestModBlockEntities;
 import mwk.testmod.init.registries.TestModBlocks;
@@ -16,13 +16,23 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
 
-// TODO: Update to correct recipe type
-public class GeothermalGeneratorBlockEntity extends GeneratorBlockEntity<RedstoneGeneratorRecipe> {
+public class GeothermalGeneratorBlockEntity
+        extends GeneratorBlockEntity<GeothermalGeneratorRecipe> {
 
     public GeothermalGeneratorBlockEntity(BlockPos pos, BlockState state) {
         super(TestModBlockEntities.GEOTHERMAL_GENERATOR_ENTITY_TYPE.get(), pos, state, 100_000, 128,
-                1, 0, 6, new int[] {10_000}, EMPTY_TANKS,
-                TestModRecipeTypes.REDSTONE_GENERATOR.get(), null, 0);
+                0, 0, 6, new int[] {10_000}, EMPTY_TANKS,
+                TestModRecipeTypes.GEOTHERMAL_GENERATOR.get(), null, 0);
+    }
+
+    @Override
+    protected GeothermalGeneratorRecipe getCurrentRecipe() {
+        return super.getCurrentRecipe();
+    }
+
+    @Override
+    protected void processRecipe(GeothermalGeneratorRecipe recipe) {
+        super.processRecipe(recipe);
     }
 
     @Override
@@ -38,8 +48,7 @@ public class GeothermalGeneratorBlockEntity extends GeneratorBlockEntity<Redston
 
     @Override
     public String getDescriptionKey() {
-        // TODO: Update this to the correct key
-        return TestModLanguageProvider.KEY_DESCRIPTION_REDSTONE_GENERATOR;
+        return TestModLanguageProvider.KEY_DESCRIPTION_GEOTHERMAL_GENERATOR;
     }
 
     @Override

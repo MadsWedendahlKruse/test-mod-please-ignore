@@ -1,7 +1,6 @@
 package mwk.testmod.common.block.conduit.network;
 
 import org.jetbrains.annotations.NotNull;
-import mwk.testmod.TestMod;
 import mwk.testmod.common.block.conduit.ConduitType;
 import mwk.testmod.common.block.conduit.FluidConduitBlockEntity;
 import mwk.testmod.common.block.conduit.network.base.ConduitNetwork;

@@ -7,13 +7,15 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 
-public abstract class GeneratorBlockEntity<T extends GeneratorRecipe>
+public abstract class GeneratorBlockEntity<T extends Recipe<Container>>
         extends ProcessingBlockEntity<T> {
 
     public static final String NBT_TAG_MAX_PROGRESS = "maxProgress";
@@ -43,10 +45,15 @@ public abstract class GeneratorBlockEntity<T extends GeneratorRecipe>
         }
         if (progress == 0) {
             T recipe = getCurrentRecipe();
+            // This should never fail, but it won't compile without the check
+            // TODO: This doesn't pass the vibe check
+            if (!(recipe instanceof GeneratorRecipe generatorRecipe)) {
+                return;
+            }
             if (canProcessRecipe(recipe)) {
                 setWorking(true);
                 // TODO: What if they're not multiples of each other?
-                maxProgress = recipe.getEnergy() / energyGeneratedPerTick;
+                maxProgress = generatorRecipe.getEnergy() / energyGeneratedPerTick;
                 processRecipe(recipe);
             } else {
                 setWorking(false);

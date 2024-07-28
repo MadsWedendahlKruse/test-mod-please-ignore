@@ -5,7 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import mwk.testmod.TestMod;
+import mwk.testmod.TestModConfig;
 import mwk.testmod.common.recipe.CrushingRecipe;
+import mwk.testmod.common.recipe.GeothermalGeneratorRecipe;
 import mwk.testmod.common.recipe.RedstoneGeneratorRecipe;
 import mwk.testmod.common.recipe.SeparationRecipe;
 import mwk.testmod.common.util.TestModTags;
@@ -23,6 +25,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Fluids;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 public class TestModRecipeProvider extends RecipeProvider {
 
@@ -38,6 +42,7 @@ public class TestModRecipeProvider extends RecipeProvider {
 		registerCrushingRecipes(recipeOutput);
 		registerSeparationRecipes(recipeOutput);
 		registerRedstoneGeneratorRecipes(recipeOutput);
+		registerGeothermalGeneratorRecipes(recipeOutput);
 	}
 
 	private void registerShapelessRecipes(RecipeOutput recipeOutput) {
@@ -123,13 +128,13 @@ public class TestModRecipeProvider extends RecipeProvider {
 								new ItemStack(TestModItems.IRON_DUST.get()))));
 	}
 
-	private static final int ENERGY_PER_REDSTONE = 16384;
-
 	private void registerRedstoneGeneratorRecipe(RecipeOutput recipeOutput, String name,
 			Ingredient input, int energy) {
 		recipeOutput.accept(new ResourceLocation(TestMod.MODID, name),
 				new RedstoneGeneratorRecipe(input, energy), null);
 	}
+
+	private static final int ENERGY_PER_REDSTONE = 16384;
 
 	private void registerRedstoneGeneratorRecipes(RecipeOutput recipeOutput) {
 		registerRedstoneGeneratorRecipe(recipeOutput, "energy_from_redstone_dust",
@@ -137,4 +142,18 @@ public class TestModRecipeProvider extends RecipeProvider {
 		registerRedstoneGeneratorRecipe(recipeOutput, "energy_from_redstone_block",
 				Ingredient.of(Blocks.REDSTONE_BLOCK), ENERGY_PER_REDSTONE * 9);
 	}
+
+	private static final int ENERGY_PER_LAVA_BUCKET = 131072;
+
+	private void registerGeothermalGeneratorRecipe(RecipeOutput recipeOutput, String name,
+			FluidStack input, int energy) {
+		recipeOutput.accept(new ResourceLocation(TestMod.MODID, name),
+				new GeothermalGeneratorRecipe(input, energy), null);
+	}
+
+	private void registerGeothermalGeneratorRecipes(RecipeOutput recipeOutput) {
+		registerGeothermalGeneratorRecipe(recipeOutput, "energy_from_lava_bucket",
+				new FluidStack(Fluids.LAVA, 1000), ENERGY_PER_LAVA_BUCKET);
+	}
+
 }

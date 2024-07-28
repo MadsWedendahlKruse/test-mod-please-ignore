@@ -1,26 +1,26 @@
 package mwk.testmod.common.recipe;
 
-import mwk.testmod.common.recipe.base.generator.GeneratorItemRecipe;
+import mwk.testmod.common.recipe.base.generator.GeneratorFluidRecipe;
 import mwk.testmod.init.registries.TestModRecipeSerializers;
 import mwk.testmod.init.registries.TestModRecipeTypes;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.neoforged.neoforge.fluids.FluidStack;
 
-public class RedstoneGeneratorRecipe extends GeneratorItemRecipe {
+public class GeothermalGeneratorRecipe extends GeneratorFluidRecipe {
 
-    public RedstoneGeneratorRecipe(Ingredient input, int energy) {
+    public GeothermalGeneratorRecipe(FluidStack input, int energy) {
         super(input, energy);
     }
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return TestModRecipeSerializers.REDSTONE_GENERATOR_RECIPE_SERIALIZER.get();
+        return TestModRecipeSerializers.GEOTHERMAL_GENERATOR_RECIPE_SERIALIZER.get();
     }
 
     @Override
     public RecipeType<?> getType() {
-        return TestModRecipeTypes.REDSTONE_GENERATOR.get();
+        return TestModRecipeTypes.GEOTHERMAL_GENERATOR.get();
     }
 
 }

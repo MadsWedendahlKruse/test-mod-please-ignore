@@ -1,6 +1,5 @@
 package mwk.testmod.common.block.multiblock.entity;
 
-import mwk.testmod.TestMod;
 import mwk.testmod.common.block.entity.base.MachineBlockEntity;
 import mwk.testmod.init.registries.TestModBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -11,7 +10,6 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 public class MultiBlockFluidIOPortBlockEntity extends MultiBlockIOPortBlockEntity {
 
-    // TODO: Conduits don't connect to this port for some reason
     public MultiBlockFluidIOPortBlockEntity(BlockPos pos, BlockState state, boolean input) {
         super(input ? TestModBlockEntities.MULTI_FLUID_INPUT_PORT_ENTITY_TYPE.get()
                 : TestModBlockEntities.MULTI_FLUID_OUTPUT_PORT_ENTITY_TYPE.get(), pos, state, input,
