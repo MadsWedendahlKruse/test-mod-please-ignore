@@ -1,4 +1,6 @@
 # Made in Blockbench 4.10.4
 newmtl m_80b75796-12b9-5397-0ec8-78dfc3631d82
 map_Kd testmod:block/geothermal_generator
+newmtl m_16eb2b39-0d66-1cbf-c48d-e8ed04550191
+map_Kd testmod:block/geothermal_generator_working
 newmtl none

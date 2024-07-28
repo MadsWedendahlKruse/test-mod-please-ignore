@@ -45,15 +45,10 @@ public abstract class GeneratorBlockEntity<T extends Recipe<Container>>
         }
         if (progress == 0) {
             T recipe = getCurrentRecipe();
-            // This should never fail, but it won't compile without the check
-            // TODO: This doesn't pass the vibe check
-            if (!(recipe instanceof GeneratorRecipe generatorRecipe)) {
-                return;
-            }
             if (canProcessRecipe(recipe)) {
                 setWorking(true);
                 // TODO: What if they're not multiples of each other?
-                maxProgress = generatorRecipe.getEnergy() / energyGeneratedPerTick;
+                maxProgress = ((GeneratorRecipe) recipe).getEnergy() / energyGeneratedPerTick;
                 processRecipe(recipe);
             } else {
                 setWorking(false);
@@ -63,6 +58,12 @@ public abstract class GeneratorBlockEntity<T extends Recipe<Container>>
         increaseProgress();
         generateEnergy();
         setChanged();
+    }
+
+    @Override
+    protected boolean canProcessRecipe(T recipe) {
+        // This should never fail, but just in case
+        return recipe instanceof GeneratorRecipe && super.canProcessRecipe(recipe);
     }
 
     protected boolean canGenerateEnergy() {

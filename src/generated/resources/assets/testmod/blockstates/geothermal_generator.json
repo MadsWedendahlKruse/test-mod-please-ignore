@@ -13,7 +13,7 @@
       "y": 90
     },
     "facing=east,formed=true,working=true": {
-      "model": "testmod:multiblock/geothermal_generator",
+      "model": "testmod:multiblock/geothermal_generator_working",
       "y": 90
     },
     "facing=north,formed=false,working=false": {
@@ -26,7 +26,7 @@
       "model": "testmod:multiblock/geothermal_generator"
     },
     "facing=north,formed=true,working=true": {
-      "model": "testmod:multiblock/geothermal_generator"
+      "model": "testmod:multiblock/geothermal_generator_working"
     },
     "facing=south,formed=false,working=false": {
       "model": "testmod:block/geothermal_generator",
@@ -41,7 +41,7 @@
       "y": 180
     },
     "facing=south,formed=true,working=true": {
-      "model": "testmod:multiblock/geothermal_generator",
+      "model": "testmod:multiblock/geothermal_generator_working",
       "y": 180
     },
     "facing=west,formed=false,working=false": {
@@ -57,7 +57,7 @@
       "y": 270
     },
     "facing=west,formed=true,working=true": {
-      "model": "testmod:multiblock/geothermal_generator",
+      "model": "testmod:multiblock/geothermal_generator_working",
       "y": 270
     }
   }

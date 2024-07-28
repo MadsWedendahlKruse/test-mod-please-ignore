@@ -1,0 +1,6 @@
+# Made in Blockbench 4.10.4
+newmtl m_b8f75ac5-1afb-abd8-f637-b0c318fada61
+map_Kd testmod:block/redstone_generator
+newmtl m_edaafa65-091e-7090-f075-3ed763dd7598
+map_Kd testmod:block/redstone_generator_working
+newmtl none

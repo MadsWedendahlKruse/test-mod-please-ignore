@@ -71,9 +71,9 @@ public class TestModBlockStateProvider extends BlockStateProvider {
 				ControllerType.MACHINE);
 
 		registerMultiBlockController(TestModBlocks.REDSTONE_GENERATOR.get(),
-				TestModBlocks.REDSTONE_GENERATOR_ID, ControllerType.GENERATOR);
+				TestModBlocks.REDSTONE_GENERATOR_ID, ControllerType.GENERATOR, true);
 		registerMultiBlockController(TestModBlocks.GEOTHERMAL_GENERATOR.get(),
-				TestModBlocks.GEOTHERMAL_GENERATOR_ID, ControllerType.GENERATOR);
+				TestModBlocks.GEOTHERMAL_GENERATOR_ID, ControllerType.GENERATOR, true);
 
 		registerConduitBlock(TestModBlocks.CONDUIT_ITEM.get(), "minecraft:solid");
 		registerConduitBlock(TestModBlocks.CONDUIT_FLUID.get(), "minecraft:cutout");
@@ -110,32 +110,48 @@ public class TestModBlockStateProvider extends BlockStateProvider {
 		});
 	}
 
-	protected void registerMultiBlockController(MultiBlockControllerBlock block, String name,
-			ControllerType type) {
-		String modelPath = "block/" + name;
+	protected void createControllerBlockModel(String name, String modelPath, ControllerType type) {
 		String controllerType = type.getSerializedName();
-		// Create the model for the block
 		models().withExistingParent(modelPath, "testmod:block/multiblock_controller")
 				.texture("particle", "block/controller_top_" + controllerType)
 				.texture("front", "block/controller_front_" + controllerType)
 				.texture("side", "block/controller_side_" + controllerType)
 				.texture("top", "block/controller_top_" + controllerType)
 				.texture("screen", "block/controller_screen_" + name);
-		// Create the model for the item
 		itemModels().getBuilder(name).parent(models().getExistingFile(modLoc(modelPath)));
+	}
+
+	protected int getRotationY(Direction dir) {
+		return switch (dir) {
+			case EAST -> 90;
+			case SOUTH -> 180;
+			case WEST -> 270;
+			default -> 0;
+		};
+	}
+
+	protected void registerMultiBlockController(MultiBlockControllerBlock block, String name,
+			ControllerType type) {
+		registerMultiBlockController(block, name, type, false);
+	}
+
+	protected void registerMultiBlockController(MultiBlockControllerBlock block, String name,
+			ControllerType type, boolean modelForWorking) {
+		String modelPath = "block/" + name;
+		createControllerBlockModel(name, modelPath, type);
 		// Create the blockstate for the block
 		ModelFile modelUnformed = models().getExistingFile(modLoc(modelPath));
 		ModelFile modelFormed = models().getExistingFile(modLoc("multiblock/" + name));
+		ModelFile modelFormedWorking = modelForWorking
+				? models().getExistingFile(modLoc("multiblock/" + name + "_working"))
+				: null;
 		getVariantBuilder(block).forAllStatesExcept(state -> {
-			Direction dir = state.getValue(MultiBlockControllerBlock.FACING);
 			boolean formed = state.getValue(MultiBlockControllerBlock.FORMED);
-			int yRotation = switch (dir) {
-				case EAST -> 90;
-				case SOUTH -> 180;
-				case WEST -> 270;
-				default -> 0;
-			};
-			ModelFile model = formed ? modelFormed : modelUnformed;
+			boolean working = state.getValue(MultiBlockControllerBlock.WORKING);
+			int yRotation = getRotationY(state.getValue(MultiBlockControllerBlock.FACING));
+			ModelFile model =
+					formed ? (working && modelForWorking ? modelFormedWorking : modelFormed)
+							: modelUnformed;
 			return ConfiguredModel.builder().modelFile(model).rotationY(yRotation).build();
 		});
 	}
