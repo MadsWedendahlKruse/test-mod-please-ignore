@@ -25,10 +25,12 @@ public class BlueprintList extends AbstractScrollWidget {
     public static final int DEFAULT_PADDING = 4;
     public static final int DEFAULT_SPACING = 2;
 
-    private ArrayList<BlueprintButton> buttons = new ArrayList<BlueprintButton>();
-    private ResourceKey<MultiBlockBlueprint> blueprintKey = null;
-    private int padding;
-    private int spacing;
+    private final ArrayList<BlueprintButton> buttons;
+    private String searchFilter;
+    private ArrayList<BlueprintButton> filteredButtons;
+    private ResourceKey<MultiBlockBlueprint> blueprintKey;
+    private final int padding;
+    private final int spacing;
 
     public BlueprintList(int x, int y, int width, int height, Component message) {
         this(x, y, width, height, DEFAULT_PADDING, DEFAULT_SPACING, message);
@@ -37,6 +39,9 @@ public class BlueprintList extends AbstractScrollWidget {
     public BlueprintList(int x, int y, int width, int height, int padding, int spacing,
             Component message) {
         super(x, y, width - SCROLL_BAR_WIDTH, height, message);
+        this.buttons = new ArrayList<BlueprintButton>();
+        // Inital filter is empty
+        filter("");
         this.padding = padding;
         this.spacing = spacing;
         addBlueprintButton(
@@ -52,9 +57,13 @@ public class BlueprintList extends AbstractScrollWidget {
                 });
     }
 
+    private int getButtonY(int index) {
+        return getY() + index * (Button.DEFAULT_HEIGHT + spacing) + spacing;
+    }
+
     private void addBlueprintButton(Component buttonLabel,
             ResourceKey<MultiBlockBlueprint> blueprintKey) {
-        buttons.add(new BlueprintButton(getX() + padding / 2, getY() + getInnerHeight(),
+        buttons.add(new BlueprintButton(getX() + padding / 2, getButtonY(buttons.size()),
                 width - padding, Button.DEFAULT_HEIGHT, buttonLabel, (pButton) -> {
                     this.blueprintKey = blueprintKey;
                 }));
@@ -62,6 +71,26 @@ public class BlueprintList extends AbstractScrollWidget {
 
     public ResourceKey<MultiBlockBlueprint> getBlueprintKey() {
         return blueprintKey;
+    }
+
+    /**
+     * Filters the buttons based on the given filter. The filter is case-insensitive and only
+     * searches for the filter in the button's message.
+     * 
+     * @param filter The filter to apply to the buttons
+     */
+    public void filter(String filter) {
+        searchFilter = filter.toLowerCase();
+        filteredButtons = new ArrayList<BlueprintButton>();
+        int index = 0;
+        for (BlueprintButton button : buttons) {
+            if (searchFilter == null || searchFilter.isEmpty()
+                    || button.getMessage().getString().toLowerCase().contains(searchFilter)) {
+                button.setY(getButtonY(index));
+                filteredButtons.add(button);
+                index++;
+            }
+        }
     }
 
     @Override
@@ -83,13 +112,13 @@ public class BlueprintList extends AbstractScrollWidget {
     @Override
     protected void renderContents(GuiGraphics guiGraphics, int mouseX, int mouseY,
             float partialTick) {
-        for (Button button : buttons) {
+        for (Button button : filteredButtons) {
             button.render(guiGraphics, mouseX, mouseY + (int) scrollAmount(), partialTick);
         }
     }
 
     public boolean buttonClicked(double pMouseX, double pMouseY, int pButton) {
-        for (Button button : buttons) {
+        for (Button button : filteredButtons) {
             if (button.mouseClicked(pMouseX, pMouseY + scrollAmount(), pButton)) {
                 return true;
             }
@@ -99,7 +128,7 @@ public class BlueprintList extends AbstractScrollWidget {
 
     @Override
     public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
-        for (Button button : buttons) {
+        for (Button button : filteredButtons) {
             if (button.mouseClicked(pMouseX, pMouseY + scrollAmount(), pButton)) {
                 return true;
             }
@@ -109,7 +138,7 @@ public class BlueprintList extends AbstractScrollWidget {
 
     @Override
     public void mouseMoved(double pMouseX, double pMouseY) {
-        for (Button button : buttons) {
+        for (Button button : filteredButtons) {
             if (button.isMouseOver(pMouseX, pMouseY + scrollAmount())) {
                 button.onPress();
             }

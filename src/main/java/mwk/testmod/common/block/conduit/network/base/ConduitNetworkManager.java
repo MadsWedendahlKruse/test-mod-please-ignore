@@ -13,9 +13,6 @@ import com.ibm.icu.impl.Pair;
 import mwk.testmod.TestMod;
 import mwk.testmod.common.block.conduit.ConduitBlock;
 import mwk.testmod.common.block.conduit.ConduitBlockEntity;
-import mwk.testmod.common.block.conduit.network.EnergyConduitNetwork;
-import mwk.testmod.common.block.conduit.network.FluidConduitNetwork;
-import mwk.testmod.common.block.conduit.network.ItemConduitNetwork;
 import mwk.testmod.common.block.conduit.ConduitType;
 import mwk.testmod.common.block.conduit.ConnectorType;
 import net.minecraft.core.BlockPos;
@@ -57,8 +54,7 @@ public class ConduitNetworkManager {
      */
     public void connectToNetwork(ServerLevel level, BlockPos pos, BlockState state) {
         // Depending on the number of neighboring networks, we either create a new
-        // network, connect
-        // to an existing network, or merge multiple networks
+        // network, connect to an existing network, or merge multiple networks
         if (!(state.getBlock() instanceof ConduitBlock conduitBlock)) {
             return;
         }
@@ -148,12 +144,7 @@ public class ConduitNetworkManager {
      * @param type The type of the conduit to create the network for.
      */
     private void createNetwork(ServerLevel level, BlockPos pos, ConduitType type) {
-        ConduitNetwork<?, ?> network = switch (type) {
-            // TODO: Factory?
-            case ITEM -> new ItemConduitNetwork();
-            case FLUID -> new FluidConduitNetwork();
-            case ENERGY -> new EnergyConduitNetwork();
-        };
+        ConduitNetwork<?, ?> network = type.createNetwork();
         TestMod.LOGGER.debug("Creating new network " + network + " at " + pos);
         network.setMasterPos(pos);
         addConduitToNetwork(level, pos, network);
@@ -178,8 +169,6 @@ public class ConduitNetworkManager {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof ConduitBlockEntity<?> conduitBlockEntity) {
             conduitBlockEntity.setNetwork(network);
-            // TODO: Why are we invalidating caps for the block entity we just placed?
-            // blockEntity.invalidateCapabilities();
         }
     }
 
@@ -308,12 +297,7 @@ public class ConduitNetworkManager {
     }
 
     public void deserializeNetworkNBT(BlockPos pos, CompoundTag tag, ConduitType type) {
-        ConduitNetwork<?, ?> network = switch (type) {
-            // TODO: Factory?
-            case ITEM -> new ItemConduitNetwork();
-            case FLUID -> new FluidConduitNetwork();
-            case ENERGY -> new EnergyConduitNetwork();
-        };
+        ConduitNetwork<?, ?> network = type.createNetwork();
         network.deserializeNBT(tag.getCompound("network"));
         for (BlockPos position : network.getPositions()) {
             networkMap.put(position, network);

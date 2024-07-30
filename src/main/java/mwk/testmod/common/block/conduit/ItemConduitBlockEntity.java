@@ -1,6 +1,5 @@
 package mwk.testmod.common.block.conduit;
 
-import mwk.testmod.TestMod;
 import mwk.testmod.common.block.conduit.network.ItemConduitNetwork;
 import mwk.testmod.common.block.conduit.network.capabilites.NetworkItemHandler;
 import mwk.testmod.init.registries.TestModBlockEntities;

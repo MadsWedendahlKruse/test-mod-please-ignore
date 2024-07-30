@@ -22,6 +22,8 @@ import mwk.testmod.init.registries.TestModBlueprints;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.LightTexture;
@@ -42,6 +44,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+/**
+ * The screen for the hologram projector. It displays a list of blueprints on the right side and a
+ * 3D model of the selected blueprint on the left side. The user can manipulate the model using
+ * buttons. The screen is opened by right-clicking with the hologram projector in hand.
+ * 
+ * TODO: This class is a monster
+ */
 public class HologramProjectorScreen extends Screen {
 
     // Rotating 3D model of the blueprint
@@ -74,8 +83,12 @@ public class HologramProjectorScreen extends Screen {
             + (BLUEPRINT_MATERIALS_ITEM_ROWS + 1) * BLUEPRINT_MODEL_BUTTON_SPACING;
     private static final int BLUEPRINT_X_OFFSET = 10;
 
+    // The list of blueprints
     private static final int BLUEPRINT_LIST_WIDTH = BLUEPRINT_MODEL_WIDTH;
     private static final int BLUEPRINT_LIST_HEIGHT = BLUEPRINT_HEIGHT;
+    private static final int BLUEPRINT_SEARCH_HEIGHT = Button.DEFAULT_HEIGHT;
+    // For some reason the search box is a bit wider than the width in the constructor
+    private static final int BLUEPRINT_SEARCH_WIDTH = BLUEPRINT_LIST_WIDTH - 8;
 
     private static final ResourceLocation BACKGROUND_TEXTURE =
             new ResourceLocation(TestMod.MODID, "textures/gui/hologram_projector.png");
@@ -87,6 +100,7 @@ public class HologramProjectorScreen extends Screen {
             + 2 * BLUEPRINT_X_OFFSET + 2 * BACKGROUND_PADDING;
     private static final int BACKGROUND_HEIGHT = BLUEPRINT_HEIGHT + 2 * BACKGROUND_PADDING;
 
+    private EditBox searchBox;
     private BlueprintList blueprintList;
     private OnOffButton pauseAutoSpinButton;
     private OnOffButton counterClockwiseButton;
@@ -125,9 +139,18 @@ public class HologramProjectorScreen extends Screen {
             TestMod.LOGGER.error("No hologram projector found in either hand");
             return;
         }
+        this.searchBox = new EditBox(minecraft.font, this.width / 2 + BLUEPRINT_X_OFFSET,
+                this.height / 2 - BLUEPRINT_LIST_HEIGHT / 2, BLUEPRINT_SEARCH_WIDTH,
+                BLUEPRINT_SEARCH_HEIGHT, Component.translatable(
+                        TestModLanguageProvider.KEY_WIDGET_HOLOGRAM_PROJECTOR_SEARCH));
+        this.addRenderableWidget(this.searchBox);
+
         this.blueprintList = new BlueprintList(this.width / 2 + BLUEPRINT_X_OFFSET,
-                this.height / 2 - BLUEPRINT_LIST_HEIGHT / 2, BLUEPRINT_LIST_WIDTH,
-                BLUEPRINT_LIST_HEIGHT, Component.translatable(
+                this.height / 2 - BLUEPRINT_LIST_HEIGHT / 2 + BLUEPRINT_SEARCH_HEIGHT
+                        + BLUEPRINT_MODEL_BUTTON_SPACING,
+                BLUEPRINT_LIST_WIDTH,
+                BLUEPRINT_LIST_HEIGHT - (BLUEPRINT_SEARCH_HEIGHT - BLUEPRINT_MODEL_BUTTON_SPACING),
+                Component.translatable(
                         TestModLanguageProvider.KEY_WIDGET_HOLOGRAM_PROJECTOR_BLUEPRINTS));
         this.addRenderableWidget(this.blueprintList);
 
@@ -235,6 +258,7 @@ public class HologramProjectorScreen extends Screen {
             HologramProjectorItem.setBlueprintKey(hologramProjector,
                     blueprintList.getBlueprintKey());
             this.onClose();
+            return true;
         }
         return super.mouseClicked(pMouseX, pMouseY, pButton);
     }
@@ -264,6 +288,10 @@ public class HologramProjectorScreen extends Screen {
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
+
+        // Ensure the search box is focused so the user can start typing right away
+        setFocused(searchBox);
+        blueprintList.filter(searchBox.getValue());
 
         BlockRenderDispatcher blockRenderer = Minecraft.getInstance().getBlockRenderer();
         BufferSource bufferSource = guiGraphics.bufferSource();

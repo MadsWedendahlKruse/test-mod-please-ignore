@@ -48,6 +48,8 @@ public class TestModLanguageProvider extends LanguageProvider {
 	// Widgets
 	public static final String KEY_WIDGET_HOLOGRAM_PROJECTOR_NONE =
 			"widget.testmod.hologram_projector.none";
+	public static final String KEY_WIDGET_HOLOGRAM_PROJECTOR_SEARCH =
+			"widget.testmod.hologram_projector.search";
 	public static final String KEY_WIDGET_HOLOGRAM_PROJECTOR_BLUEPRINTS =
 			"widget.testmod.hologram_projector.blueprints";
 	public static final String KEY_WIDGET_HOLOGRAM_PROJECTOR_BUTTONS =
@@ -168,6 +170,7 @@ public class TestModLanguageProvider extends LanguageProvider {
 		add(KEY_INFO_HOLOGRAM_PROJECTOR_UNLOCKED, "Blueprint position unlocked");
 		// Widgets
 		add(KEY_WIDGET_HOLOGRAM_PROJECTOR_NONE, "None");
+		add(KEY_WIDGET_HOLOGRAM_PROJECTOR_SEARCH, "Search");
 		add(KEY_WIDGET_HOLOGRAM_PROJECTOR_BLUEPRINTS, "Blueprints");
 		add(KEY_WIDGET_HOLOGRAM_PROJECTOR_BUTTONS, "Buttons");
 		add(KEY_WIDGET_ENERGY_BAR, "Energy");
