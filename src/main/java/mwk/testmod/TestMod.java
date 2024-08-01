@@ -7,8 +7,10 @@ import mwk.testmod.client.gui.screen.GeothermalGeneratorScreen;
 import mwk.testmod.client.gui.screen.InductionFurnaceScreen;
 import mwk.testmod.client.gui.screen.RedstoneGeneratorScreen;
 import mwk.testmod.client.gui.screen.SeparatorScreen;
+import mwk.testmod.client.gui.screen.StirlingGeneratorScreen;
 import mwk.testmod.client.render.block_entity.CrusherBlockEntityRenderer;
 import mwk.testmod.client.render.block_entity.SeparatorBlockEntityRenderer;
+import mwk.testmod.client.render.block_entity.StirlingGeneratorBlockEntityRenderer;
 import mwk.testmod.client.render.conduit.FluidConduitBlockEntityRenderer;
 import mwk.testmod.client.render.hologram.HologramRenderer;
 import mwk.testmod.common.block.multiblock.HologramBlockColor;
@@ -103,7 +105,6 @@ public class TestMod {
 	}
 
 	private void registerCapabilities(RegisterCapabilitiesEvent event) {
-		// TODO: This seems like a quite cumbersome way to register capabilities
 		event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
 				TestModBlockEntities.MULTI_ENERGY_PORT_ENTITY_TYPE.get(),
 				(entity, direction) -> entity.getEnergyHandler(direction));
@@ -119,28 +120,6 @@ public class TestMod {
 		event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
 				TestModBlockEntities.MULTI_FLUID_OUTPUT_PORT_ENTITY_TYPE.get(),
 				(entity, direction) -> entity.getFluidHandler(direction));
-
-		// Could be argued that the controllers shouldn't have capabilities, since it's the
-		// ports that have the capabilities
-
-		// event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
-		// TestModBlockEntities.INDUCTION_FURNACE_ENTITY_TYPE.get(),
-		// (entity, direction) -> entity.getEnergyStorage(direction));
-		// event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
-		// TestModBlockEntities.INDUCTION_FURNACE_ENTITY_TYPE.get(),
-		// (entity, direction) -> entity.getItemHandler(direction));
-		// event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
-		// TestModBlockEntities.CRUSHER_ENTITY_TYPE.get(),
-		// (entity, direction) -> entity.getEnergyStorage(direction));
-		// event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
-		// TestModBlockEntities.CRUSHER_ENTITY_TYPE.get(),
-		// (entity, direction) -> entity.getItemHandler(direction));
-		// event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
-		// TestModBlockEntities.SEPARATOR_ENTITY_TYPE.get(),
-		// (entity, direction) -> entity.getEnergyStorage(direction));
-		// event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
-		// TestModBlockEntities.SEPARATOR_ENTITY_TYPE.get(),
-		// (entity, direction) -> entity.getItemHandler(direction));
 
 		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
 				TestModBlockEntities.CONDUIT_ITEM_ENTITY_TYPE.get(),
@@ -192,6 +171,8 @@ public class TestMod {
 						RedstoneGeneratorScreen::new);
 				MenuScreens.register(TestModMenus.GEOTHERMAL_GENERATOR_MENU.get(),
 						GeothermalGeneratorScreen::new);
+				MenuScreens.register(TestModMenus.STIRLING_GENERATOR_MENU.get(),
+						StirlingGeneratorScreen::new);
 			});
 		}
 
@@ -206,6 +187,9 @@ public class TestMod {
 					(context) -> new CrusherBlockEntityRenderer(context));
 			event.registerBlockEntityRenderer(TestModBlockEntities.SEPARATOR_ENTITY_TYPE.get(),
 					(context) -> new SeparatorBlockEntityRenderer(context));
+			event.registerBlockEntityRenderer(
+					TestModBlockEntities.STIRLING_GENERATOR_ENTITY_TYPE.get(),
+					(context) -> new StirlingGeneratorBlockEntityRenderer(context));
 
 			event.registerBlockEntityRenderer(TestModBlockEntities.CONDUIT_FLUID_ENTITY_TYPE.get(),
 					(context) -> new FluidConduitBlockEntityRenderer(context));

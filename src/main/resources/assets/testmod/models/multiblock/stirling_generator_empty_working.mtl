@@ -1,0 +1,6 @@
+# Made in Blockbench 4.10.4
+newmtl m_9e764203-3af4-ec6f-569d-a3ca5fa5b169
+map_Kd testmod:block/stirling_generator
+newmtl m_85de0d38-0990-cb7a-143c-bb8c00ed46a7
+map_Kd testmod:block/stirling_generator_working
+newmtl none

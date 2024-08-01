@@ -1,0 +1,7 @@
+{
+  "type": "testmod:stirling_generator",
+  "energy": 160000,
+  "input": {
+    "item": "minecraft:coal_block"
+  }
+}

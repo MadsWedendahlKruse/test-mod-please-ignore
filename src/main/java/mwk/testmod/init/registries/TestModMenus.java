@@ -1,13 +1,13 @@
 package mwk.testmod.init.registries;
 
 import java.util.function.Supplier;
-
 import mwk.testmod.TestMod;
 import mwk.testmod.common.block.inventory.CrusherMenu;
 import mwk.testmod.common.block.inventory.GeothermalGeneratorMenu;
 import mwk.testmod.common.block.inventory.InductionFurnaceMenu;
 import mwk.testmod.common.block.inventory.RedstoneGeneratorMenu;
 import mwk.testmod.common.block.inventory.SeparatorMenu;
+import mwk.testmod.common.block.inventory.StirlingGeneratorMenu;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.bus.api.IEventBus;
@@ -45,6 +45,12 @@ public class TestModMenus {
 			MENUS.register(TestModBlocks.GEOTHERMAL_GENERATOR_ID,
 					() -> IMenuTypeExtension
 							.create((windowId, inv, data) -> new GeothermalGeneratorMenu(windowId,
+									inv.player, data.readBlockPos())));
+
+	public static final Supplier<MenuType<StirlingGeneratorMenu>> STIRLING_GENERATOR_MENU =
+			MENUS.register(TestModBlocks.STIRLING_GENERATOR_ID,
+					() -> IMenuTypeExtension
+							.create((windowId, inv, data) -> new StirlingGeneratorMenu(windowId,
 									inv.player, data.readBlockPos())));
 
 	public static void register(IEventBus modEventBus) {

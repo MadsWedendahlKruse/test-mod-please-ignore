@@ -30,25 +30,24 @@ public class GeneratorScreen<T extends ProcessingMenu> extends ProcessingScreen<
     protected static GuiTextElement[] getTextElements(ProcessingMenu menu) {
         int energyPerTick = menu.getEnergyPerTick();
         int remainingTicks = menu.getMaxProgress() - menu.getProgress();
-        // TOOO: Super dirty hacks
-        int energyGeneratedPerTick = energyPerTick / 2;
         String ticksString = ticksToClock(remainingTicks);
         if (remainingTicks == Integer.MAX_VALUE) {
-            energyGeneratedPerTick = 0;
+            energyPerTick = 0;
             ticksString = "--:--";
         }
+        int totalEnergy = energyPerTick * menu.getMaxProgress();
 
         GuiTextElement[] elements = new GuiTextElement[3];
-        elements[0] =
+        elements[0] = new GuiTextElement(TestModLanguageProvider.KEY_WIDGET_GENERATOR_ENERGY_TITLE,
+                TestModLanguageProvider.KEY_WIDGET_GENERATOR_ENERGY_TEXT,
+                GuiUtils.NUMBER_FORMAT.format(totalEnergy));
+        elements[1] =
                 new GuiTextElement(TestModLanguageProvider.KEY_WIDGET_GENERATOR_GENERATING_TITLE,
                         TestModLanguageProvider.KEY_WIDGET_GENERATOR_GENERATING_TEXT,
-                        GuiUtils.NUMBER_FORMAT.format(energyGeneratedPerTick));
-        elements[1] =
+                        GuiUtils.NUMBER_FORMAT.format(energyPerTick));
+        elements[2] =
                 new GuiTextElement(TestModLanguageProvider.KEY_WIDGET_GENERATOR_DURATION_TITLE,
                         TestModLanguageProvider.KEY_WIDGET_GENERATOR_DURATION_TEXT, ticksString);
-        elements[2] = new GuiTextElement(TestModLanguageProvider.KEY_WIDGET_GENERATOR_OUTPUT_TITLE,
-                TestModLanguageProvider.KEY_WIDGET_GENERATOR_OUTPUT_TEXT,
-                GuiUtils.NUMBER_FORMAT.format(energyPerTick));
         return elements;
     }
 

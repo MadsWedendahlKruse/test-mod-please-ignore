@@ -1,5 +1,6 @@
 package mwk.testmod.common.block.entity;
 
+import mwk.testmod.TestModConfig;
 import mwk.testmod.common.block.entity.base.generator.GeneratorBlockEntity;
 import mwk.testmod.common.block.inventory.RedstoneGeneratorMenu;
 import mwk.testmod.common.recipe.RedstoneGeneratorRecipe;
@@ -17,9 +18,10 @@ import net.minecraft.world.level.block.state.BlockState;
 public class RedstoneGeneratorBlockEntity extends GeneratorBlockEntity<RedstoneGeneratorRecipe> {
 
     public RedstoneGeneratorBlockEntity(BlockPos pos, BlockState state) {
-        super(TestModBlockEntities.REDSTONE_GENERATOR_ENTITY_TYPE.get(), pos, state, 100_000, 128,
-                1, 0, 6, EMPTY_TANKS, EMPTY_TANKS, TestModRecipeTypes.REDSTONE_GENERATOR.get(),
-                null, 0);
+        super(TestModBlockEntities.REDSTONE_GENERATOR_ENTITY_TYPE.get(), pos, state,
+                TestModConfig.GENERATOR_ENERGY_CAPACITY_DEFAULT.get(),
+                TestModConfig.GENERATOR_REDSTONE_ENERGY_PER_TICK.get(), 1, 0, 6, EMPTY_TANKS,
+                EMPTY_TANKS, TestModRecipeTypes.REDSTONE_GENERATOR.get(), null, 0);
     }
 
     @Override

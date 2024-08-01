@@ -1,0 +1,7 @@
+{
+  "type": "testmod:stirling_generator",
+  "energy": 1500,
+  "input": {
+    "item": "minecraft:bamboo_mosaic_slab"
+  }
+}

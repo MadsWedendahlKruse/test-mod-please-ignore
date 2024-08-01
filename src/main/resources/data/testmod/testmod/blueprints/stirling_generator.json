@@ -1,0 +1,18 @@
+{
+    "layers": [
+        [
+            "Xb",
+            "EI"
+        ],
+        [
+            "bb",
+            "bb"
+        ]
+    ],
+    "key": {
+        "X": "testmod:stirling_generator",
+        "I": "testmod:machine_item_input_port",
+        "E": "testmod:machine_energy_port",
+        "b": "testmod:machine_frame_basic"
+    }
+}

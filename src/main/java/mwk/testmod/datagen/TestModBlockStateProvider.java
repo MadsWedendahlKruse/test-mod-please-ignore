@@ -74,6 +74,8 @@ public class TestModBlockStateProvider extends BlockStateProvider {
 				TestModBlocks.REDSTONE_GENERATOR_ID, ControllerType.GENERATOR, true);
 		registerMultiBlockController(TestModBlocks.GEOTHERMAL_GENERATOR.get(),
 				TestModBlocks.GEOTHERMAL_GENERATOR_ID, ControllerType.GENERATOR, true);
+		registerMultiBlockController(TestModBlocks.STIRLING_GENERATOR.get(),
+				TestModBlocks.STIRLING_GENERATOR_ID, ControllerType.GENERATOR, true);
 
 		registerConduitBlock(TestModBlocks.CONDUIT_ITEM.get(), "minecraft:solid");
 		registerConduitBlock(TestModBlocks.CONDUIT_FLUID.get(), "minecraft:cutout");

@@ -1,0 +1,7 @@
+{
+  "type": "testmod:stirling_generator",
+  "energy": 2000,
+  "input": {
+    "item": "minecraft:wooden_shovel"
+  }
+}

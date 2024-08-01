@@ -2,11 +2,11 @@ package mwk.testmod.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import mwk.testmod.TestMod;
+import mwk.testmod.common.util.RandomUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
@@ -35,6 +35,12 @@ public class RenderUtils {
             default:
                 return 0.0F;
         }
+    }
+
+    public static void renderModel(PoseStack poseStack, VertexConsumer buffer, BakedModel model,
+            int combinedLight, int combinedOverlay) {
+        model.getQuads(null, null, RandomUtils.RANDOM_SOURCE).forEach(quad -> buffer
+                .putBulkData(poseStack.last(), quad, 1, 1, 1, combinedLight, combinedOverlay));
     }
 
     /**

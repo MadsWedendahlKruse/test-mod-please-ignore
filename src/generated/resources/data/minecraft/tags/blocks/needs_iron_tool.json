@@ -15,6 +15,7 @@
     "testmod:separator",
     "testmod:teleporter",
     "testmod:redstone_generator",
-    "testmod:geothermal_generator"
+    "testmod:geothermal_generator",
+    "testmod:stirling_generator"
   ]
 }

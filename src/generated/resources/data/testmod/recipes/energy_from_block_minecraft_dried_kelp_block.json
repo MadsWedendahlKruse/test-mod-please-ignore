@@ -1,0 +1,7 @@
+{
+  "type": "testmod:stirling_generator",
+  "energy": 40010,
+  "input": {
+    "item": "minecraft:dried_kelp_block"
+  }
+}

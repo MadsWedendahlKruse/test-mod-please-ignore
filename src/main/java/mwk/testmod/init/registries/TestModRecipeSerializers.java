@@ -5,6 +5,7 @@ import mwk.testmod.common.recipe.CrushingRecipe;
 import mwk.testmod.common.recipe.GeothermalGeneratorRecipe;
 import mwk.testmod.common.recipe.RedstoneGeneratorRecipe;
 import mwk.testmod.common.recipe.SeparationRecipe;
+import mwk.testmod.common.recipe.StirlingGeneratorRecipe;
 import mwk.testmod.common.recipe.serializers.GeneratorFluidRecipeSerializer;
 import mwk.testmod.common.recipe.serializers.GeneratorItemRecipeSerializer;
 import mwk.testmod.common.recipe.serializers.OneToManyItemStacksSerializer;
@@ -37,6 +38,9 @@ public class TestModRecipeSerializers {
 	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> GEOTHERMAL_GENERATOR_RECIPE_SERIALIZER =
 			RECIPE_SERIALIZERS.register("geothermal_generator",
 					() -> new GeneratorFluidRecipeSerializer<>(GeothermalGeneratorRecipe::new));
+	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> STIRLING_GENERATOR_RECIPE_SERIALIZER =
+			RECIPE_SERIALIZERS.register("stirling_generator",
+					() -> new GeneratorItemRecipeSerializer<>(StirlingGeneratorRecipe::new));
 
 	public static void register(IEventBus modEventBus) {
 		RECIPE_SERIALIZERS.register(modEventBus);

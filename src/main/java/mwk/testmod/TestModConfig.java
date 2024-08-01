@@ -1,5 +1,8 @@
 package mwk.testmod;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -7,10 +10,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
-
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 // An example config class. This is not required, but it's a good idea to have one to keep your
 // config organized.
@@ -22,13 +21,29 @@ public class TestModConfig {
 	// Machine config
 	public static final ModConfigSpec.IntValue MACHINE_ENERGY_CAPACITY_DEFAULT =
 			BUILDER.comment("The default energy capacity for machines")
-					.defineInRange("powerCapacityDefault", 50000, 0, Integer.MAX_VALUE);
+					.defineInRange("machinePowerCapacityDefault", 50_000, 0, Integer.MAX_VALUE);
 	public static final ModConfigSpec.IntValue MACHINE_ITEM_IO_SPEED_DEFAULT =
 			BUILDER.comment("The default item transfer speed for machines")
 					.defineInRange("itemIoSpeedDefault", 4, 0, Integer.MAX_VALUE);
 	public static final ModConfigSpec.IntValue MACHINE_FLUID_IO_SPEED_DEFAULT =
 			BUILDER.comment("The default fluid transfer speed for machines")
 					.defineInRange("fluidIoSpeedDefault", 100, 0, Integer.MAX_VALUE);
+	// Generator config
+	public static final ModConfigSpec.IntValue GENERATOR_ENERGY_CAPACITY_DEFAULT =
+			BUILDER.comment("The default energy capacity for generators")
+					.defineInRange("generatorPowerCapacityDefault", 100_000, 0, Integer.MAX_VALUE);
+	public static final ModConfigSpec.IntValue GENERATOR_REDSTONE_ENERGY_PER_TICK =
+			BUILDER.comment("The default energy generated per tick for redstone generators")
+					.defineInRange("generatorEnergyPerTickRedstone", 128, 0, Integer.MAX_VALUE);
+	public static final ModConfigSpec.IntValue GENERATOR_GEOTHERMAL_ENERGY_PER_TICK =
+			BUILDER.comment("The default energy generated per tick for geothermal generators")
+					.defineInRange("generatorEnergyPerTickGeothermal", 128, 0, Integer.MAX_VALUE);
+	public static final ModConfigSpec.IntValue GENERATOR_GEOTHERMAL_TANK_CAPACITY =
+			BUILDER.comment("The default tank capacity for geothermal generators")
+					.defineInRange("generatorTankCapacityGeothermal", 10_000, 0, Integer.MAX_VALUE);
+	public static final ModConfigSpec.IntValue GENERATOR_STIRLING_ENERGY_PER_TICK =
+			BUILDER.comment("The default energy generated per tick for stirling generators")
+					.defineInRange("generatorEnergyPerTickStirling", 64, 0, Integer.MAX_VALUE);
 
 	private static final ModConfigSpec.BooleanValue LOG_DIRT = BUILDER
 			.comment("Whether to log the dirt block on common setup").define("logDirtBlock", true);

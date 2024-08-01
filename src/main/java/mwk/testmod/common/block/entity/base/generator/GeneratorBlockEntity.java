@@ -20,17 +20,13 @@ public abstract class GeneratorBlockEntity<T extends Recipe<Container>>
 
     public static final String NBT_TAG_MAX_PROGRESS = "maxProgress";
 
-    private int energyGeneratedPerTick;
-
     protected GeneratorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
             int maxEnergy, int energyGeneratedPerTick, int inputSlots, int outputSlots,
             int upgradeSlots, int[] inputTankCapacities, int[] outputTankCapacities,
             RecipeType<T> recipeType, SoundEvent sound, int soundDuration) {
-        // The generator can output twice as much energy as it can generate
-        super(type, pos, state, maxEnergy, 2 * energyGeneratedPerTick, EnergyType.PRODUCER,
-                inputSlots, outputSlots, upgradeSlots, inputTankCapacities, outputTankCapacities,
+        super(type, pos, state, maxEnergy, energyGeneratedPerTick, EnergyType.PRODUCER, inputSlots,
+                outputSlots, upgradeSlots, inputTankCapacities, outputTankCapacities,
                 Integer.MAX_VALUE, recipeType, sound, soundDuration);
-        this.energyGeneratedPerTick = energyGeneratedPerTick;
     }
 
     @Override
@@ -48,7 +44,7 @@ public abstract class GeneratorBlockEntity<T extends Recipe<Container>>
             if (canProcessRecipe(recipe)) {
                 setWorking(true);
                 // TODO: What if they're not multiples of each other?
-                maxProgress = ((GeneratorRecipe) recipe).getEnergy() / energyGeneratedPerTick;
+                maxProgress = ((GeneratorRecipe) recipe).getEnergy() / energyPerTick;
                 processRecipe(recipe);
             } else {
                 setWorking(false);
@@ -67,11 +63,11 @@ public abstract class GeneratorBlockEntity<T extends Recipe<Container>>
     }
 
     protected boolean canGenerateEnergy() {
-        return getEnergyStored() + energyGeneratedPerTick < getMaxEnergyStored();
+        return getEnergyStored() + energyPerTick < getMaxEnergyStored();
     }
 
     protected void generateEnergy() {
-        energyStorage.receiveEnergy(energyGeneratedPerTick, false);
+        energyStorage.receiveEnergy(energyPerTick, false);
     }
 
     public void pushEnergy(BlockPos pos) {
@@ -86,14 +82,12 @@ public abstract class GeneratorBlockEntity<T extends Recipe<Container>>
                 continue;
             }
             // We don't want to transfer more energy than we have
-            int maxTransfer = Math.min(getEnergyStored(), energyPerTick);
+            // Generator can push twice as much energy as it can generate so we don't
+            // end up with a full buffer that never gets emptied
+            int maxTransfer = Math.min(getEnergyStored(), 2 * energyPerTick);
             int received = receiver.receiveEnergy(maxTransfer, false);
             energyStorage.extractEnergy(received, false);
         }
-    }
-
-    public int getEnergyGeneratedPerTick() {
-        return energyGeneratedPerTick;
     }
 
     @Override

@@ -5,6 +5,7 @@ import mwk.testmod.common.recipe.CrushingRecipe;
 import mwk.testmod.common.recipe.GeothermalGeneratorRecipe;
 import mwk.testmod.common.recipe.RedstoneGeneratorRecipe;
 import mwk.testmod.common.recipe.SeparationRecipe;
+import mwk.testmod.common.recipe.StirlingGeneratorRecipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.neoforged.bus.api.IEventBus;
@@ -31,6 +32,9 @@ public class TestModRecipeTypes {
     public static final DeferredHolder<RecipeType<?>, RecipeType<GeothermalGeneratorRecipe>> GEOTHERMAL_GENERATOR =
             RECIPE_TYPES.register("geothermal_generator",
                     () -> new RecipeType<GeothermalGeneratorRecipe>() {});
+    public static final DeferredHolder<RecipeType<?>, RecipeType<StirlingGeneratorRecipe>> STIRLING_GENERATOR =
+            RECIPE_TYPES.register("stirling_generator",
+                    () -> new RecipeType<StirlingGeneratorRecipe>() {});
 
     public static void register(IEventBus modEventBus) {
         RECIPE_TYPES.register(modEventBus);

@@ -1,0 +1,7 @@
+{
+  "type": "testmod:stirling_generator",
+  "energy": 3000,
+  "input": {
+    "tag": "minecraft:wooden_fences"
+  }
+}

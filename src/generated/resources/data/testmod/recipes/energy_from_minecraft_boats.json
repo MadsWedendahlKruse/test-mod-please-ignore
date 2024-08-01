@@ -1,0 +1,7 @@
+{
+  "type": "testmod:stirling_generator",
+  "energy": 12000,
+  "input": {
+    "tag": "minecraft:boats"
+  }
+}

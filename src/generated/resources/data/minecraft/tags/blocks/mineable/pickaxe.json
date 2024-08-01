@@ -16,6 +16,7 @@
     "testmod:teleporter",
     "testmod:redstone_generator",
     "testmod:geothermal_generator",
+    "testmod:stirling_generator",
     "testmod:ilmenite_ore",
     "testmod:deepslate_ilmenite_ore"
   ]

@@ -20,6 +20,8 @@ public class TestModLanguageProvider extends LanguageProvider {
 			"description.testmod.redstone_generator";
 	public static final String KEY_DESCRIPTION_GEOTHERMAL_GENERATOR =
 			"description.testmod.geothermal_generator";
+	public static final String KEY_DESCRIPTION_STIRLING_GENERATOR =
+			"description.testmod.stirling_generator";
 	// Creative tabs
 	public static final String KEY_CREATIVE_TAB = "itemGroup.testmod";
 	// Info
@@ -85,9 +87,9 @@ public class TestModLanguageProvider extends LanguageProvider {
 			"widget.testmod.generator.generating_title";
 	public static final String KEY_WIDGET_GENERATOR_GENERATING_TEXT =
 			"widget.testmod.generator.generating_text";
-	public static final String KEY_WIDGET_GENERATOR_OUTPUT_TITLE =
+	public static final String KEY_WIDGET_GENERATOR_ENERGY_TITLE =
 			"widget.testmod.generator.output_title";
-	public static final String KEY_WIDGET_GENERATOR_OUTPUT_TEXT =
+	public static final String KEY_WIDGET_GENERATOR_ENERGY_TEXT =
 			"widget.testmod.generator.output_text";
 	public static final String KEY_WIDGET_GENERATOR_DURATION_TITLE =
 			"widget.testmod.generator.duration_title";
@@ -124,6 +126,7 @@ public class TestModLanguageProvider extends LanguageProvider {
 		add(TestModBlocks.SEPARATOR.get(), "Separator");
 		add(TestModBlocks.REDSTONE_GENERATOR.get(), "Redstone Generator");
 		add(TestModBlocks.GEOTHERMAL_GENERATOR.get(), "Geothermal Generator");
+		add(TestModBlocks.STIRLING_GENERATOR.get(), "Stirling Generator");
 		add(TestModBlocks.CONDUIT_ITEM.get(), "Item Conduit");
 		add(TestModBlocks.CONDUIT_FLUID.get(), "Fluid Conduit");
 		add(TestModBlocks.CONDUIT_ENERGY.get(), "Energy Conduit");
@@ -141,6 +144,8 @@ public class TestModLanguageProvider extends LanguageProvider {
 				"A machine that generates energy from redstone. Useful for providing power to machines and systems in remote locations or where other power sources are unavailable.");
 		add(KEY_DESCRIPTION_GEOTHERMAL_GENERATOR,
 				"A machine that generates energy from the heat of lava. Useful for providing power to machines and systems in remote locations or where other power sources are unavailable.");
+		add(KEY_DESCRIPTION_STIRLING_GENERATOR,
+				"A machine that generates energy from solid fuels. Useful as an intial power source for the early stages of industrial development.");
 		// Items
 		add(TestModItems.WRENCH_ITEM.get(), "Wrench");
 		add(TestModItems.HOLOGRAM_PROJECTOR_ITEM.get(), "Hologram Projector");
@@ -192,10 +197,10 @@ public class TestModLanguageProvider extends LanguageProvider {
 		add(KEY_WIDGET_AUTO_EJECT_TOOLTIP, "Auto eject: %s");
 		add(KEY_WIDGET_TOOLTIP_ON, "ON");
 		add(KEY_WIDGET_TOOLTIP_OFF, "OFF");
+		add(KEY_WIDGET_GENERATOR_ENERGY_TITLE, "Energy");
+		add(KEY_WIDGET_GENERATOR_ENERGY_TEXT, "  %s FE");
 		add(KEY_WIDGET_GENERATOR_GENERATING_TITLE, "Generating");
 		add(KEY_WIDGET_GENERATOR_GENERATING_TEXT, "  %s FE/t");
-		add(KEY_WIDGET_GENERATOR_OUTPUT_TITLE, "Output");
-		add(KEY_WIDGET_GENERATOR_OUTPUT_TEXT, "  %s FE/t");
 		add(KEY_WIDGET_GENERATOR_DURATION_TITLE, "Duration");
 		add(KEY_WIDGET_GENERATOR_DURATION_TEXT, "  %s");
 		// Sounds (subtitles)

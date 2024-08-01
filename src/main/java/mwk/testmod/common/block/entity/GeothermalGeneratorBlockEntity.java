@@ -1,5 +1,6 @@
 package mwk.testmod.common.block.entity;
 
+import mwk.testmod.TestModConfig;
 import mwk.testmod.common.block.entity.base.generator.GeneratorBlockEntity;
 import mwk.testmod.common.block.inventory.GeothermalGeneratorMenu;
 import mwk.testmod.common.recipe.GeothermalGeneratorRecipe;
@@ -20,8 +21,10 @@ public class GeothermalGeneratorBlockEntity
         extends GeneratorBlockEntity<GeothermalGeneratorRecipe> {
 
     public GeothermalGeneratorBlockEntity(BlockPos pos, BlockState state) {
-        super(TestModBlockEntities.GEOTHERMAL_GENERATOR_ENTITY_TYPE.get(), pos, state, 100_000, 128,
-                0, 0, 6, new int[] {10_000}, EMPTY_TANKS,
+        super(TestModBlockEntities.GEOTHERMAL_GENERATOR_ENTITY_TYPE.get(), pos, state,
+                TestModConfig.GENERATOR_ENERGY_CAPACITY_DEFAULT.get(),
+                TestModConfig.GENERATOR_GEOTHERMAL_ENERGY_PER_TICK.get(), 0, 0, 6,
+                new int[] {TestModConfig.GENERATOR_GEOTHERMAL_TANK_CAPACITY.get()}, EMPTY_TANKS,
                 TestModRecipeTypes.GEOTHERMAL_GENERATOR.get(), null, 0);
     }
 

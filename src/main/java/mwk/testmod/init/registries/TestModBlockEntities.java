@@ -9,12 +9,13 @@ import mwk.testmod.common.block.entity.GeothermalGeneratorBlockEntity;
 import mwk.testmod.common.block.entity.InductionFurnaceBlockEntity;
 import mwk.testmod.common.block.entity.RedstoneGeneratorBlockEntity;
 import mwk.testmod.common.block.entity.SeparatorBlockEntity;
+import mwk.testmod.common.block.entity.StirlingGeneratorBlockEntity;
 import mwk.testmod.common.block.entity.TeleporterBlockEntity;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import mwk.testmod.common.block.multiblock.entity.MultiBlockEnergyPortBlockEntity;
-import mwk.testmod.common.block.multiblock.entity.MultiBlockPartBlockEntity;
 import mwk.testmod.common.block.multiblock.entity.MultiBlockFluidIOPortBlockEntity;
 import mwk.testmod.common.block.multiblock.entity.MultiBlockItemIOPortBlockEntity;
+import mwk.testmod.common.block.multiblock.entity.MultiBlockPartBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -98,6 +99,11 @@ public class TestModBlockEntities {
 			BLOCK_ENTITY_TYPES.register(TestModBlocks.GEOTHERMAL_GENERATOR_ID,
 					() -> BlockEntityType.Builder.of(GeothermalGeneratorBlockEntity::new,
 							TestModBlocks.GEOTHERMAL_GENERATOR.get()).build(null));
+
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StirlingGeneratorBlockEntity>> STIRLING_GENERATOR_ENTITY_TYPE =
+			BLOCK_ENTITY_TYPES.register(TestModBlocks.STIRLING_GENERATOR_ID,
+					() -> BlockEntityType.Builder.of(StirlingGeneratorBlockEntity::new,
+							TestModBlocks.STIRLING_GENERATOR.get()).build(null));
 
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ItemConduitBlockEntity>> CONDUIT_ITEM_ENTITY_TYPE =
 			BLOCK_ENTITY_TYPES.register(TestModBlocks.CONDUIT_ITEM_ID, () -> BlockEntityType.Builder

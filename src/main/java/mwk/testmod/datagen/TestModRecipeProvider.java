@@ -5,11 +5,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import mwk.testmod.TestMod;
-import mwk.testmod.TestModConfig;
 import mwk.testmod.common.recipe.CrushingRecipe;
 import mwk.testmod.common.recipe.GeothermalGeneratorRecipe;
 import mwk.testmod.common.recipe.RedstoneGeneratorRecipe;
 import mwk.testmod.common.recipe.SeparationRecipe;
+import mwk.testmod.common.recipe.StirlingGeneratorRecipe;
 import mwk.testmod.common.util.TestModTags;
 import mwk.testmod.init.registries.TestModItems;
 import net.minecraft.core.HolderLookup.Provider;
@@ -20,6 +20,9 @@ import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -43,6 +46,7 @@ public class TestModRecipeProvider extends RecipeProvider {
 		registerSeparationRecipes(recipeOutput);
 		registerRedstoneGeneratorRecipes(recipeOutput);
 		registerGeothermalGeneratorRecipes(recipeOutput);
+		registerStirlingGeneratorRecipes(recipeOutput);
 	}
 
 	private void registerShapelessRecipes(RecipeOutput recipeOutput) {
@@ -154,6 +158,107 @@ public class TestModRecipeProvider extends RecipeProvider {
 	private void registerGeothermalGeneratorRecipes(RecipeOutput recipeOutput) {
 		registerGeothermalGeneratorRecipe(recipeOutput, "energy_from_lava_bucket",
 				new FluidStack(Fluids.LAVA, 1000), ENERGY_PER_LAVA_BUCKET);
+	}
+
+	private static final int ENERGY_PER_BURN_TIME = 10;
+
+	private void registerStirlingGeneratorRecipe(RecipeOutput recipeOutput, String name,
+			Ingredient input, int energy) {
+		recipeOutput.accept(new ResourceLocation(TestMod.MODID, name),
+				new StirlingGeneratorRecipe(input, energy), null);
+	}
+
+	private void registerStirlingGeneratorRecipe(RecipeOutput recipeOutput, ItemLike item,
+			int burnTime) {
+		String itemName = item.asItem().getDescriptionId().replace('.', '_');
+		registerStirlingGeneratorRecipe(recipeOutput, "energy_from_" + itemName,
+				Ingredient.of(item), burnTime * ENERGY_PER_BURN_TIME);
+	}
+
+	private void registerStirlingGeneratorRecipe(RecipeOutput recipeOutput, TagKey<Item> tag,
+			int burnTime) {
+		String tagString = tag.location().toString().replace(':', '_').replace('/', '_');
+		registerStirlingGeneratorRecipe(recipeOutput, "energy_from_" + tagString,
+				Ingredient.of(tag), burnTime * ENERGY_PER_BURN_TIME);
+	}
+
+	private void registerStirlingGeneratorRecipes(RecipeOutput recipeOutput) {
+		// First solutions was the snippet below, but for some reason it skipped the
+		// tags
+
+		// TODO: Not sure if I vibe with this solution
+		// Map<Item, Integer> fuelBurnTime = AbstractFurnaceBlockEntity.getFuel();
+		// for (Map.Entry<Item, Integer> entry : fuelBurnTime.entrySet()) {
+		// Item item = entry.getKey();
+		// // Lava buckets are handled by the geothermal generator
+		// // TODO: This is a bit of a hack, but it works for now
+		// if (item == Items.LAVA_BUCKET) {
+		// continue;
+		// }
+		// registerStirlingGeneratorRecipe(recipeOutput, "energy_from_" + item.getDescriptionId(),
+		// Ingredient.of(item), entry.getValue() * ENERGY_PER_BURN_TIME);
+		// }
+
+		// Second solution is copied directly from AbstracyFurnaceBlockEntity
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.COAL_BLOCK, 16000);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Items.BLAZE_ROD, 2400);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Items.COAL, 1600);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Items.CHARCOAL, 1600);
+		registerStirlingGeneratorRecipe(recipeOutput, (TagKey) ItemTags.LOGS, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (TagKey) ItemTags.BAMBOO_BLOCKS, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (TagKey) ItemTags.PLANKS, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.BAMBOO_MOSAIC, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (TagKey) ItemTags.WOODEN_STAIRS, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.BAMBOO_MOSAIC_STAIRS, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (TagKey) ItemTags.WOODEN_SLABS, 150);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.BAMBOO_MOSAIC_SLAB, 150);
+		registerStirlingGeneratorRecipe(recipeOutput, (TagKey) ItemTags.WOODEN_TRAPDOORS, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (TagKey) ItemTags.WOODEN_PRESSURE_PLATES,
+				300);
+		registerStirlingGeneratorRecipe(recipeOutput, (TagKey) ItemTags.WOODEN_FENCES, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (TagKey) ItemTags.FENCE_GATES, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.NOTE_BLOCK, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.BOOKSHELF, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.CHISELED_BOOKSHELF, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.LECTERN, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.JUKEBOX, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.CHEST, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.TRAPPED_CHEST, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.CRAFTING_TABLE, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.DAYLIGHT_DETECTOR, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (TagKey) ItemTags.BANNERS, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Items.BOW, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Items.FISHING_ROD, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.LADDER, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (TagKey) ItemTags.SIGNS, 200);
+		registerStirlingGeneratorRecipe(recipeOutput, (TagKey) ItemTags.HANGING_SIGNS, 800);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Items.WOODEN_SHOVEL, 200);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Items.WOODEN_SWORD, 200);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Items.WOODEN_HOE, 200);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Items.WOODEN_AXE, 200);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Items.WOODEN_PICKAXE, 200);
+		registerStirlingGeneratorRecipe(recipeOutput, (TagKey) ItemTags.WOODEN_DOORS, 200);
+		registerStirlingGeneratorRecipe(recipeOutput, (TagKey) ItemTags.BOATS, 1200);
+		registerStirlingGeneratorRecipe(recipeOutput, (TagKey) ItemTags.WOOL, 100);
+		registerStirlingGeneratorRecipe(recipeOutput, (TagKey) ItemTags.WOODEN_BUTTONS, 100);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Items.STICK, 100);
+		registerStirlingGeneratorRecipe(recipeOutput, (TagKey) ItemTags.SAPLINGS, 100);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Items.BOWL, 100);
+		registerStirlingGeneratorRecipe(recipeOutput, (TagKey) ItemTags.WOOL_CARPETS, 67);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.DRIED_KELP_BLOCK, 4001);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Items.CROSSBOW, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.BAMBOO, 50);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.DEAD_BUSH, 100);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.SCAFFOLDING, 50);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.LOOM, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.BARREL, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.CARTOGRAPHY_TABLE, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.FLETCHING_TABLE, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.SMITHING_TABLE, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.COMPOSTER, 300);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.AZALEA, 100);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.FLOWERING_AZALEA, 100);
+		registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.MANGROVE_ROOTS, 300);
 	}
 
 }

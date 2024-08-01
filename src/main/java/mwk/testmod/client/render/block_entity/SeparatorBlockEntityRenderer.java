@@ -3,8 +3,8 @@ package mwk.testmod.client.render.block_entity;
 import org.joml.Quaternionf;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import mwk.testmod.client.render.RenderUtils;
 import mwk.testmod.common.block.entity.SeparatorBlockEntity;
-import mwk.testmod.common.util.RandomUtils;
 import mwk.testmod.init.registries.TestModModels;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -29,8 +29,7 @@ public class SeparatorBlockEntityRenderer extends MultiBlockEntityRenderer<Separ
         poseStack.translate(SPINNER_OFFSET[0], SPINNER_OFFSET[1], SPINNER_OFFSET[2]);
         poseStack.mulPose(new Quaternionf().rotationY(blockEntity.getSpinnerAngle()));
         VertexConsumer buffer = multiBufferSource.getBuffer(RenderType.solid());
-        spinnerModel.getQuads(null, null, RandomUtils.RANDOM_SOURCE).forEach(quad -> buffer
-                .putBulkData(poseStack.last(), quad, 1, 1, 1, combinedLight, combinedOverlay));
+        RenderUtils.renderModel(poseStack, buffer, spinnerModel, combinedLight, combinedOverlay);
         poseStack.popPose();
     }
 

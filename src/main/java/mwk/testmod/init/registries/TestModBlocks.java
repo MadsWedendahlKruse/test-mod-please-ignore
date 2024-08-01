@@ -9,14 +9,15 @@ import mwk.testmod.common.block.entity.GeothermalGeneratorBlockEntity;
 import mwk.testmod.common.block.entity.InductionFurnaceBlockEntity;
 import mwk.testmod.common.block.entity.RedstoneGeneratorBlockEntity;
 import mwk.testmod.common.block.entity.SeparatorBlockEntity;
+import mwk.testmod.common.block.entity.StirlingGeneratorBlockEntity;
 import mwk.testmod.common.block.entity.TeleporterBlockEntity;
 import mwk.testmod.common.block.multiblock.HologramBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockEnergyPortBlock;
+import mwk.testmod.common.block.multiblock.MultiBlockIOPortBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import mwk.testmod.common.block.multiblock.entity.MultiBlockFluidIOPortBlockEntity;
 import mwk.testmod.common.block.multiblock.entity.MultiBlockItemIOPortBlockEntity;
-import mwk.testmod.common.block.multiblock.MultiBlockIOPortBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
@@ -54,6 +55,7 @@ public class TestModBlocks {
 
 	public static final String REDSTONE_GENERATOR_ID = "redstone_generator";
 	public static final String GEOTHERMAL_GENERATOR_ID = "geothermal_generator";
+	public static final String STIRLING_GENERATOR_ID = "stirling_generator";
 
 	public static final String HOLOGRAM_ID = "hologram";
 
@@ -129,6 +131,10 @@ public class TestModBlocks {
 			registerBlockWithItem(GEOTHERMAL_GENERATOR_ID,
 					() -> new MultiBlockControllerBlock(getMachineProperties(),
 							GeothermalGeneratorBlockEntity::new));
+	public static final DeferredBlock<MultiBlockControllerBlock> STIRLING_GENERATOR =
+			registerBlockWithItem(STIRLING_GENERATOR_ID,
+					() -> new MultiBlockControllerBlock(getMachineProperties(),
+							StirlingGeneratorBlockEntity::new));
 	// ---
 
 	public static final DeferredBlock<HologramBlock> HOLOGRAM =

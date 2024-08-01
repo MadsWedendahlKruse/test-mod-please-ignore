@@ -1,0 +1,7 @@
+{
+  "type": "testmod:stirling_generator",
+  "energy": 670,
+  "input": {
+    "tag": "minecraft:wool_carpets"
+  }
+}
