@@ -1,0 +1,10 @@
+{
+  "flip_v": true,
+  "loader": "neoforge:obj",
+  "model": "testmod:models/multiblock/redstone_generator.obj",
+  "textures": {
+    "base": "testmod:block/redstone_generator",
+    "particle": "testmod:block/machine_frame_advanced",
+    "working": "testmod:block/redstone_generator_working"
+  }
+}

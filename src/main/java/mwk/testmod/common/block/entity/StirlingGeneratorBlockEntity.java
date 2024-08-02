@@ -23,13 +23,12 @@ public class StirlingGeneratorBlockEntity extends GeneratorBlockEntity<StirlingG
 
     public StirlingGeneratorBlockEntity(BlockPos pos, BlockState state) {
         super(TestModBlockEntities.STIRLING_GENERATOR_ENTITY_TYPE.get(), pos, state,
-                TestModConfig.GENERATOR_ENERGY_CAPACITY_DEFAULT.get(),
-                TestModConfig.GENERATOR_STIRLING_ENERGY_PER_TICK.get(), 1, 0, 6, EMPTY_TANKS,
-                EMPTY_TANKS, TestModRecipeTypes.STIRLING_GENERATOR.get(), null, 0);
+            TestModConfig.GENERATOR_ENERGY_CAPACITY_DEFAULT.get(),
+            TestModConfig.GENERATOR_STIRLING_ENERGY_PER_TICK.get(), 1, 0, 6, EMPTY_TANKS,
+            EMPTY_TANKS, TestModRecipeTypes.STIRLING_GENERATOR.get(), null, 0);
         flywheelAnimation = new PerpetualAnimationFloat(FLYWHEEL_SPEED);
         flywheelAnimation.start();
     }
-
 
     @Override
     public Component getDisplayName() {
@@ -38,7 +37,7 @@ public class StirlingGeneratorBlockEntity extends GeneratorBlockEntity<StirlingG
 
     @Override
     public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory,
-            Player player) {
+        Player player) {
         return new StirlingGeneratorMenu(containerId, player, worldPosition);
     }
 

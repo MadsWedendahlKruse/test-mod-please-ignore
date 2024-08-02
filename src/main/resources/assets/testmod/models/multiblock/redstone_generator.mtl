@@ -1,4 +1,6 @@
-# Made in Blockbench 4.10.3
+# Made in Blockbench 4.10.4
 newmtl m_b8f75ac5-1afb-abd8-f637-b0c318fada61
-map_Kd testmod:block/redstone_generator
+map_Kd #base
+newmtl m_091ef0d2-be44-6f04-3fd5-ff0fbecc86f1
+map_Kd #working
 newmtl none

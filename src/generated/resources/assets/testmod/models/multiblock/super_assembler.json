@@ -1,0 +1,9 @@
+{
+  "flip_v": true,
+  "loader": "neoforge:obj",
+  "model": "testmod:models/multiblock/super_assembler.obj",
+  "textures": {
+    "base": "testmod:block/super_assembler",
+    "particle": "testmod:block/machine_frame_advanced"
+  }
+}

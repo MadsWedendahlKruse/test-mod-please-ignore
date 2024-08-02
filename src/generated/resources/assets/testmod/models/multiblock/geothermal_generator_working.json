@@ -1,0 +1,10 @@
+{
+  "flip_v": true,
+  "loader": "neoforge:obj",
+  "model": "testmod:models/multiblock/geothermal_generator.obj",
+  "textures": {
+    "base": "testmod:block/geothermal_generator",
+    "particle": "testmod:block/machine_frame_advanced",
+    "working": "testmod:block/geothermal_generator_working"
+  }
+}

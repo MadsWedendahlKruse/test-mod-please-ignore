@@ -1,8 +1,0 @@
-{
-    "loader": "neoforge:obj",
-    "flip_v": true,
-    "model": "testmod:models/multiblock/stirling_generator_empty_working.obj",
-    "textures": {
-        "particle": "testmod:block/machine_frame_advanced"
-    }
-}

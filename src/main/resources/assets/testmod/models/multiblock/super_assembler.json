@@ -1,8 +1,0 @@
-{
-    "loader": "neoforge:obj",
-    "flip_v": true,
-    "model": "testmod:models/multiblock/test_machine.obj",
-    "textures": {
-        "particle": "testmod:block/machine_frame_advanced"
-    }
-}

@@ -1,0 +1,9 @@
+{
+  "flip_v": true,
+  "loader": "neoforge:obj",
+  "model": "testmod:models/multiblock/induction_furnace.obj",
+  "textures": {
+    "base": "testmod:block/induction_furnace",
+    "particle": "testmod:block/machine_frame_advanced"
+  }
+}

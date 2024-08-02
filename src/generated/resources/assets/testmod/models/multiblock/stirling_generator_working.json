@@ -1,0 +1,10 @@
+{
+  "flip_v": true,
+  "loader": "neoforge:obj",
+  "model": "testmod:models/multiblock/stirling_generator.obj",
+  "textures": {
+    "base": "testmod:block/stirling_generator",
+    "particle": "testmod:block/machine_frame_advanced",
+    "working": "testmod:block/stirling_generator_working"
+  }
+}

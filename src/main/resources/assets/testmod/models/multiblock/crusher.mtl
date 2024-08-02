@@ -1,4 +1,4 @@
 # Made in Blockbench 4.10.3
 newmtl m_b0071ded-1acf-c10c-ee8f-cf5b502fd610
-map_Kd testmod:block/crusher
+map_Kd #base
 newmtl none
