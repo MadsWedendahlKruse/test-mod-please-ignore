@@ -2,36 +2,30 @@ package mwk.testmod.common.block.multiblock;
 
 import java.util.function.BiFunction;
 import mwk.testmod.TestMod;
-import mwk.testmod.client.events.HologramClientEvents;
 import mwk.testmod.client.render.hologram.HologramRenderer;
 import mwk.testmod.client.render.hologram.events.ClearIfCurrentEvent;
 import mwk.testmod.client.render.hologram.events.WrenchEvent;
 import mwk.testmod.common.block.entity.base.MachineBlockEntity;
 import mwk.testmod.common.block.interfaces.ITickable;
-import mwk.testmod.common.block.multiblock.blueprint.BlueprintBlockInfo;
-import mwk.testmod.common.block.multiblock.blueprint.BlueprintState;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
+import mwk.testmod.common.block.multiblock.blueprint.MultiBlockUtils;
 import mwk.testmod.datagen.TestModLanguageProvider;
 import mwk.testmod.init.registries.TestModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -100,9 +94,10 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
 
     /**
      * Get the shape of the multiblock structure when it is formed.
-     * 
+     *
      * @param state The state of the controller block. This is only used to get the direction the
-     *        controller block is facing, and does not check if the multiblock structure is formed.
+     *              controller block is facing, and does not check if the multiblock structure is
+     *              formed.
      * @return The shape of the multiblock structure when it is formed.
      */
     public VoxelShape getFormedShape(BlockState state) {
@@ -138,9 +133,9 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
 
     /**
      * Set the blueprint for the multiblock structure. This has to be done outside the constructor
-     * because the blueprint requires the controller block to be initialized. Otherwise we would
+     * because the blueprint requires the controller block to be initialized, otherwise we would
      * have a circular dependency.
-     * 
+     *
      * @param blueprint The blueprint for the multiblock structure.
      */
     public void setBlueprint(MultiBlockBlueprint blueprint) {
@@ -156,17 +151,17 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
 
     /**
      * Set the formed state of the multiblock structure.
-     * 
-     * @param level The level.
-     * @param controllerPos The position of the controller block.
+     *
+     * @param level           The level.
+     * @param controllerPos   The position of the controller block.
      * @param controllerState The state of the controller block.
-     * @param isFormed The desired formed state of the multiblock structure.
-     * @param checkBlueprint Whether or not to check if the multiblock structure matches the
-     *        blueprint. When a block in the multiblock structure is broken, the block might already
-     *        be gone before we get to this method. In that case we don't want to check the
-     *        blueprint, because it will fail, and instead we want to ensure that the multiblock
-     *        structure is unformed.
-     * @return Whether or not the multiblock structure is formed.
+     * @param isFormed        The desired formed state of the multiblock structure.
+     * @param checkBlueprint  Whether to check if the multiblock structure matches the blueprint.
+     *                        When a block in the multiblock structure is broken, the block might
+     *                        already be gone before we get to this method. In that case we don't
+     *                        want to check the blueprint, because it will fail, and instead we want
+     *                        to ensure that the multiblock structure is unformed.
+     * @return Whether the multiblock structure is formed.
      */
     public boolean setMultiblockFormed(Level level, BlockPos controllerPos,
             BlockState controllerState, boolean isFormed, boolean checkBlueprint) {
@@ -198,7 +193,6 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
                             + ", but expected instanceof MultiBlockPartBlock");
                     return false;
                 }
-                continue;
             }
         }
         TestMod.LOGGER.debug("successfully set multiblock formed to " + isFormed);
@@ -207,13 +201,11 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
 
     /**
      * Toggle the multiblock structure.
-     * 
-     * @param level The level.
-     * @param controllerPos The position of the controller block.
+     *
+     * @param level           The level.
+     * @param controllerPos   The position of the controller block.
      * @param controllerState The state of the controller block.
-     * @param checkBlueprint Whether or not to check if the multiblock structure matches the
-     *        blueprint.
-     * @return Whether or not the multiblock structure was toggled.
+     * @return Whether the multiblock structure was toggled.
      */
     public boolean toggleMultiblock(Level level, BlockPos controllerPos,
             BlockState controllerState) {
@@ -221,9 +213,31 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
                 !controllerState.getValue(FORMED), true);
     }
 
+    private void dissasembleMultiblock(Level level, BlockPos controllerPos,
+            BlockState controllerState) {
+        BlockPos[] positions =
+                blueprint.getAbsolutePositions(controllerPos, controllerState.getValue(FACING));
+        for (BlockPos blockPos : positions) {
+            BlockState blockState = level.getBlockState(blockPos);
+            if (blockState.getBlock() instanceof MultiBlockPartBlock) {
+                // Deliberately not using level#destroyBlock to avoid spawning particles.
+                // TODO: Identical to IWrenchable#onWrenched. Maybe refactor?
+                level.setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());
+                Containers.dropItemStack(level, blockPos.getX(), blockPos.getY(), blockPos.getZ(),
+                        new ItemStack(blockState.getBlock().asItem()));
+            }
+        }
+    }
+
     @Override
     public boolean onWrenched(BlockState state, Level level, BlockPos pos, Player player,
             InteractionHand hand) {
+        if (state.getValue(FORMED)) {
+            if (player.isShiftKeyDown()) {
+                dissasembleMultiblock(level, pos, state);
+                return true;
+            }
+        }
         if (super.onWrenched(state, level, pos, player, hand)) {
             return true;
         }
@@ -269,96 +283,10 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
-    /**
-     * Build the entire multiblock structure at once. This is only used when the player is in
-     * creative mode and sneaking.
-     */
-    private void buildEntireMultiBlock(Level level, BlockPos pos, BlockState state,
-            BlueprintState blueprintState) {
-        for (BlueprintBlockInfo missingBlockInfo : blueprintState.getMissingBlocks()) {
-            BlockPos missingBlockInfoPos =
-                    missingBlockInfo.getAbsolutePosition(pos, state.getValue(FACING));
-            BlockState missingBlockState = missingBlockInfo.getExpectedState();
-            level.setBlockAndUpdate(missingBlockInfoPos, missingBlockState);
-        }
-        level.playSound(null, pos, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 1.0f, 1.0f);
-        HologramRenderer.getInstance().updateBlueprintState();
-    }
-
-    /**
-     * Attempt to build the multiblock structure. This method is called when the player right clicks
-     * the controller block without a wrench in their hand. This method checks if the player has the
-     * required blocks in their inventory and if so, places them in the world.
-     */
-    private InteractionResult attemptBuildMultiBlock(BlockState state, Level level, BlockPos pos,
-            Player player, InteractionHand hand, BlockHitResult hit) {
-        Inventory inventory = player.getInventory();
-        BlueprintState blueprintState = blueprint.getState(level, pos);
-        // If the blueprint is complete, notify the player and return.
-        if (blueprintState.isComplete()) {
-            player.displayClientMessage(Component.translatable(
-                    TestModLanguageProvider.KEY_INFO_CONTROLLER_BLUEPRINT_COMPLETE), true);
-            return InteractionResult.FAIL;
-        }
-        // Otherwise, iterate over the missing blocks and attempt to place them.
-        for (BlueprintBlockInfo blockInfo : blueprintState.getMissingBlocks()) {
-            BlockPos blockInfoPos = blockInfo.getAbsolutePosition(pos, state.getValue(FACING));
-            ItemStack expectedItemStack = blockInfo.getExpectedItemStack();
-            ItemStack blockToPlace = ItemStack.EMPTY;
-            if (player.isCreative()) {
-                blockToPlace = expectedItemStack;
-                // If the player is sneaking build the whole multiblock structure.
-                if (player.isShiftKeyDown()) {
-                    buildEntireMultiBlock(level, pos, state, blueprintState);
-                    return InteractionResult.SUCCESS;
-                }
-            } else {
-                // Check if the player has the missing block in their inventory.
-                int itemIndex = inventory.findSlotMatchingItem(expectedItemStack);
-                if (itemIndex != -1) {
-                    blockToPlace = inventory.getItem(itemIndex);
-                }
-            }
-            // Sanity check that we're not overwriting a block that's already there.
-            if (!level.getBlockState(blockInfoPos).isAir()) {
-                player.displayClientMessage(
-                        Component.translatable(
-                                TestModLanguageProvider.KEY_INFO_CONTROLLER_BLUEPRINTED,
-                                blockInfoPos.getX(), blockInfoPos.getY(), blockInfoPos.getZ()),
-                        true);
-                return InteractionResult.SUCCESS;
-            }
-            if (!blockToPlace.isEmpty()) {
-                // Simulate the block being placed by the player. This handles playing the sound
-                // and removing the item from the player's inventory.
-                if (blockToPlace.getItem() instanceof BlockItem blockItem) {
-                    BlockHitResult hitResult = new BlockHitResult(hit.getLocation(),
-                            hit.getDirection(), blockInfoPos, hit.isInside());
-                    UseOnContext context =
-                            new UseOnContext(level, player, hand, blockToPlace, hitResult);
-                    InteractionResult result = blockItem.useOn(context);
-                    if (result != InteractionResult.FAIL) {
-                        // Notify the blueprint hologram that a block has been placed.
-                        // Would be cool if this happened automatically, but
-                        // BlockEvent.EntityPlaceEvent only gets fired when an *entity*
-                        // places a block, and there's not another alternative.
-                        HologramClientEvents.checkHologramUpdate(blockInfoPos);
-                    }
-                    return result;
-                }
-            }
-        }
-        // Notify the player if they don't have any of the missing blocks in their inventory.
-        player.displayClientMessage(Component.translatable(
-                TestModLanguageProvider.KEY_INFO_CONTROLLER_BLUEPRINT_INSUFFICIENTS), true);
-        // TODO: Not sure if we want to return SUCCESS here?
-        return InteractionResult.SUCCESS;
-    }
-
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
             InteractionHand hand, BlockHitResult hit) {
-        // Right clicking with a wrench is handled by Wrenchable#onWrenched.
+        // Right-clicking with a wrench is handled by Wrenchable#onWrenched.
         // (so skip it here)
         if (player.getItemInHand(hand).getItem() == TestModItems.WRENCH_ITEM.get()) {
             return InteractionResult.PASS;
@@ -367,14 +295,15 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
                 blueprint, state.getValue(FACING));
         boolean isFormed = state.getValue(FORMED);
         if (!isFormed) {
-            // If the player right clicks the controller block...
+            // If the player right-clicks the controller block...
             if (!isCurrentBlueprint) {
                 // ...and it's not the current blueprint, explain how to view the blueprint.
                 player.displayClientMessage(Component.translatable(
                         TestModLanguageProvider.KEY_INFO_CONTROLLER_BLUEPRINT_HELP), true);
             } else {
                 // ...and it is the current blueprint, attempt to build the multiblock structure.
-                return attemptBuildMultiBlock(state, level, pos, player, hand, hit);
+                return MultiBlockUtils.attemptBuildMultiBlock(level, blueprint, pos,
+                        state.getValue(FACING), player, hand, true);
             }
         } else {
             // Open the menu if the multiblock structure is formed.

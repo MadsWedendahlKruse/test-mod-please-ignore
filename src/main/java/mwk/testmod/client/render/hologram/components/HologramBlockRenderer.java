@@ -1,9 +1,8 @@
 package mwk.testmod.client.render.hologram.components;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.Collection;
 import javax.annotation.Nullable;
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import mwk.testmod.client.animations.FixedAnimationFloat;
 import mwk.testmod.common.block.multiblock.HologramBlock;
 import mwk.testmod.common.block.multiblock.HologramBlock.HologramColor;
@@ -21,9 +20,9 @@ public class HologramBlockRenderer {
 
     private static final float ANIMATION_SCALE_DURATION = 0.3F;
 
-    private BlockRenderDispatcher blockRenderer;
-    private BufferSource bufferSource;
-    private FixedAnimationFloat scaleAnimation;
+    private final BlockRenderDispatcher blockRenderer;
+    private final BufferSource bufferSource;
+    private final FixedAnimationFloat scaleAnimation;
 
     public HologramBlockRenderer(BlockRenderDispatcher blockRenderer, BufferSource bufferSource) {
         this.blockRenderer = blockRenderer;
@@ -34,13 +33,11 @@ public class HologramBlockRenderer {
 
     /**
      * Renders a hologram at the given position.
-     * 
+     *
      * @param poseStack the pose stack
-     * @param position the position of the hologram
-     * @param state the block state of the hologram. If null the hologram overlay is rendered
-     * @param color the color of the hologram. If null the current shader color is used
-     * @param endBatch whether to end the current buffer source batch after rendering the hologram
-     * @param animate whether to animate the hologram
+     * @param position  the position of the hologram
+     * @param state     the block state of the hologram. If null the hologram overlay is rendered
+     * @param animate   whether to animate the hologram
      */
     public void renderHologramBlock(PoseStack poseStack, BlockPos position,
             @Nullable BlockState state, boolean animate) {
@@ -63,19 +60,16 @@ public class HologramBlockRenderer {
      */
     public void renderHologramBlockOverlay(PoseStack poseStack, BlockPos position,
             HologramColor color, boolean animate) {
-        BlockState state = TestModBlocks.HOLOGRAM.get().defaultBlockState();
-        state = state.setValue(HologramBlock.COLOR, color);
+        BlockState state = TestModBlocks.HOLOGRAM.get().defaultBlockState()
+                .setValue(HologramBlock.COLOR, color);
         renderHologramBlock(poseStack, position, state, animate);
     }
 
     /**
      * Renders a collection of hologram blocks at the given position.
-     * 
+     *
      * @param poseStack the pose stack
-     * @param blocks the blocks to render
-     * @param color the color of the hologram. If null the current shader color is used
-     * @param endBatch whether to end the current buffer source batch after rendering the hologram
-     * @param animate whether to animate the hologram
+     * @param blocks    the blocks to render@param animate whether to animate the hologram
      */
     public void renderHologramBlocks(PoseStack poseStack, Collection<BlueprintBlockInfo> blocks,
             boolean animate) {

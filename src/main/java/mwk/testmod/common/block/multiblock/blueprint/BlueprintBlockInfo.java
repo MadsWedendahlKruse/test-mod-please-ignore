@@ -14,14 +14,15 @@ import net.minecraft.world.level.block.state.BlockState;
  * Represents a block in a blueprint and its expected and actual state.
  */
 public class BlueprintBlockInfo {
+
     private final BlockPos position;
     private final BlockState expectedState;
     private BlockState actualState = null;
 
     /**
      * Creates a new blueprint block info.
-     * 
-     * @param position the position of the block relative to the controller
+     *
+     * @param position      the position of the block relative to the controller
      * @param expectedState the expected state of the block
      */
     public BlueprintBlockInfo(BlockPos position, BlockState expectedState) {
@@ -51,7 +52,7 @@ public class BlueprintBlockInfo {
 
     /**
      * @param controllerPosition the position of the controller
-     * @param direction the direction the blueprint is facing
+     * @param direction          the direction the blueprint is facing
      * @return the absolute position of the block
      */
     public BlockPos getAbsolutePosition(BlockPos controllerPosition, Direction direction) {

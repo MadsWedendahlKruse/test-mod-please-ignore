@@ -1,6 +1,5 @@
 package mwk.testmod;
 
-import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import mwk.testmod.client.gui.screen.CrusherScreen;
 import mwk.testmod.client.gui.screen.GeothermalGeneratorScreen;
@@ -14,6 +13,7 @@ import mwk.testmod.client.render.block_entity.StirlingGeneratorBlockEntityRender
 import mwk.testmod.client.render.conduit.FluidConduitBlockEntityRenderer;
 import mwk.testmod.client.render.hologram.HologramRenderer;
 import mwk.testmod.common.block.multiblock.HologramBlockColor;
+import mwk.testmod.common.network.BuildMultiBlockPacket;
 import mwk.testmod.common.network.MachineIOPacket;
 import mwk.testmod.init.registries.TestModBlockEntities;
 import mwk.testmod.init.registries.TestModBlocks;
@@ -47,157 +47,163 @@ import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
 import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
+import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(TestMod.MODID)
 public class TestMod {
-	// Define mod id in a common place for everything to reference
-	public static final String MODID = "testmod";
-	// Directly reference a slf4j logger
-	// private static final Logger LOGGER = LogUtils.getLogger();
-	public static final Logger LOGGER = LogUtils.getLogger();
 
-	// The constructor for the mod class is the first code that is run when your mod is loaded.
-	// FML will recognize some parameter types like IEventBus or ModContainer and pass them in
-	// automatically.
-	public TestMod(IEventBus modEventBus) {
-		// Register the commonSetup method for modloading
-		modEventBus.addListener(this::commonSetup);
+    // Define mod id in a common place for everything to reference
+    public static final String MODID = "testmod";
+    // Directly reference a slf4j logger
+    // private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
 
-		TestModBlocks.register(modEventBus);
-		TestModBlockEntities.register(modEventBus);
-		TestModItems.register(modEventBus);
-		TestModCreativeTabs.register(modEventBus);
-		TestModSounds.register(modEventBus);
-		TestModMenus.register(modEventBus);
-		TestModRecipeTypes.register(modEventBus);
-		TestModRecipeSerializers.register(modEventBus);
+    // The constructor for the mod class is the first code that is run when your mod is loaded.
+    // FML will recognize some parameter types like IEventBus or ModContainer and pass them in
+    // automatically.
+    public TestMod(IEventBus modEventBus) {
+        // Register the commonSetup method for modloading
+        modEventBus.addListener(this::commonSetup);
 
-		// Register ourselves for server and other game events we are interested in.
-		// Note that this is necessary if and only if we want *this* class (testmod) to
-		// respond directly to events. Do not add this line if there are no
-		// @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
-		NeoForge.EVENT_BUS.register(this);
+        TestModBlocks.register(modEventBus);
+        TestModBlockEntities.register(modEventBus);
+        TestModItems.register(modEventBus);
+        TestModCreativeTabs.register(modEventBus);
+        TestModSounds.register(modEventBus);
+        TestModMenus.register(modEventBus);
+        TestModRecipeTypes.register(modEventBus);
+        TestModRecipeSerializers.register(modEventBus);
 
-		modEventBus.addListener(this::addCreative);
-		modEventBus.addListener(this::registerCapabilities);
-		modEventBus.addListener(this::onRegisterPayloadHandlers);
+        // Register ourselves for server and other game events we are interested in.
+        // Note that this is necessary if and only if we want *this* class (testmod) to
+        // respond directly to events. Do not add this line if there are no
+        // @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
+        NeoForge.EVENT_BUS.register(this);
 
-		// Register our mod's ModConfigSpec so that FML can create and load the config file
-		// for us
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, TestModConfig.SPEC);
-	}
+        modEventBus.addListener(this::addCreative);
+        modEventBus.addListener(this::registerCapabilities);
+        modEventBus.addListener(this::onRegisterPayloadHandlers);
 
-	private void commonSetup(final FMLCommonSetupEvent event) {
-		// Some common setup code
-		LOGGER.info("HELLO FROM COMMON SETUP");
+        // Register our mod's ModConfigSpec so that FML can create and load the config file
+        // for us
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, TestModConfig.SPEC);
+    }
 
-		if (TestModConfig.logDirtBlock)
+    private void commonSetup(final FMLCommonSetupEvent event) {
+        // Some common setup code
+        LOGGER.info("HELLO FROM COMMON SETUP");
+
+		if (TestModConfig.logDirtBlock) {
 			LOGGER.info("DIRT BLOCK >> {}", BuiltInRegistries.BLOCK.getKey(Blocks.DIRT));
-
-		LOGGER.info(TestModConfig.magicNumberIntroduction + TestModConfig.magicNumber);
-
-		TestModConfig.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
-	}
-
-	private void addCreative(BuildCreativeModeTabContentsEvent event) {
-		TestModCreativeTabs.addToTabs(event);
-	}
-
-	private void registerCapabilities(RegisterCapabilitiesEvent event) {
-		event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
-				TestModBlockEntities.MULTI_ENERGY_PORT_ENTITY_TYPE.get(),
-				(entity, direction) -> entity.getEnergyHandler(direction));
-		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
-				TestModBlockEntities.MULTI_ITEM_INPUT_PORT_ENTITY_TYPE.get(),
-				(entity, direction) -> entity.getItemHandler(direction));
-		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
-				TestModBlockEntities.MULTI_ITEM_OUTPUT_PORT_ENTITY_TYPE.get(),
-				(entity, direction) -> entity.getItemHandler(direction));
-		event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
-				TestModBlockEntities.MULTI_FLUID_INPUT_PORT_ENTITY_TYPE.get(),
-				(entity, direction) -> entity.getFluidHandler(direction));
-		event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
-				TestModBlockEntities.MULTI_FLUID_OUTPUT_PORT_ENTITY_TYPE.get(),
-				(entity, direction) -> entity.getFluidHandler(direction));
-
-		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
-				TestModBlockEntities.CONDUIT_ITEM_ENTITY_TYPE.get(),
-				(entity, direction) -> entity.getItemHandler(direction));
-		event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
-				TestModBlockEntities.CONDUIT_FLUID_ENTITY_TYPE.get(),
-				(entity, direction) -> entity.getFluidHandler(direction));
-		event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
-				TestModBlockEntities.CONDUIT_ENERGY_ENTITY_TYPE.get(),
-				(entity, direction) -> entity.getEnergyStorage(direction));
-
-	}
-
-	private void onRegisterPayloadHandlers(RegisterPayloadHandlerEvent event) {
-		final IPayloadRegistrar registrar = event.registrar(MODID);
-		registrar.play(MachineIOPacket.ID, MachineIOPacket::new,
-				handler -> handler.server(MachineIOPacket::handleServer));
-	}
-
-	// You can use SubscribeEvent and let the Event Bus discover methods to call
-	@SubscribeEvent
-	public void onServerStarting(ServerStartingEvent event) {
-		// Do something when the server starts
-		LOGGER.info("HELLO from server starting");
-		MinecraftServer server = event.getServer();
-		server.getAllLevels().forEach((level) -> LOGGER.info("LEVEL >> {}", level));
-	}
-
-	// You can use EventBusSubscriber to automatically register all static methods in the class
-	// annotated with @SubscribeEvent
-	@Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD,
-			value = Dist.CLIENT)
-	public static class ClientModEvents {
-		@SubscribeEvent
-		public static void onClientSetup(FMLClientSetupEvent event) {
-			// Some client setup code
-			LOGGER.info("HELLO FROM CLIENT SETUP");
-			LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
-			HologramRenderer.getInstance().init();
-
-			// TODO: McJty's tutorial uses enqueueWork here, but I don't know why
-			event.enqueueWork(() -> {
-				MenuScreens.register(TestModMenus.INDUCTION_FURNACE_MENU.get(),
-						InductionFurnaceScreen::new);
-				MenuScreens.register(TestModMenus.CRUSHER_MENU.get(), CrusherScreen::new);
-				MenuScreens.register(TestModMenus.SEPARATOR_MENU.get(), SeparatorScreen::new);
-
-				MenuScreens.register(TestModMenus.REDSTONE_GENERATOR_MENU.get(),
-						RedstoneGeneratorScreen::new);
-				MenuScreens.register(TestModMenus.GEOTHERMAL_GENERATOR_MENU.get(),
-						GeothermalGeneratorScreen::new);
-				MenuScreens.register(TestModMenus.STIRLING_GENERATOR_MENU.get(),
-						StirlingGeneratorScreen::new);
-			});
 		}
 
-		@SubscribeEvent
-		public static void onRegisterColorHandlersEvent(RegisterColorHandlersEvent.Block event) {
-			event.register(new HologramBlockColor(), TestModBlocks.HOLOGRAM.get());
-		}
+        LOGGER.info(TestModConfig.magicNumberIntroduction + TestModConfig.magicNumber);
 
-		@SubscribeEvent
-		public static void onRegisterRenderersEvent(EntityRenderersEvent.RegisterRenderers event) {
-			event.registerBlockEntityRenderer(TestModBlockEntities.CRUSHER_ENTITY_TYPE.get(),
-					(context) -> new CrusherBlockEntityRenderer(context));
-			event.registerBlockEntityRenderer(TestModBlockEntities.SEPARATOR_ENTITY_TYPE.get(),
-					(context) -> new SeparatorBlockEntityRenderer(context));
-			event.registerBlockEntityRenderer(
-					TestModBlockEntities.STIRLING_GENERATOR_ENTITY_TYPE.get(),
-					(context) -> new StirlingGeneratorBlockEntityRenderer(context));
+        TestModConfig.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
+    }
 
-			event.registerBlockEntityRenderer(TestModBlockEntities.CONDUIT_FLUID_ENTITY_TYPE.get(),
-					(context) -> new FluidConduitBlockEntityRenderer(context));
-		}
+    private void addCreative(BuildCreativeModeTabContentsEvent event) {
+        TestModCreativeTabs.addToTabs(event);
+    }
 
-		@SubscribeEvent
-		public static void onRegisterAdditionalEvent(ModelEvent.RegisterAdditional event) {
-			TestModModels.register(event);
-		}
-	}
+    private void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
+                TestModBlockEntities.MULTI_ENERGY_PORT_ENTITY_TYPE.get(),
+                (entity, direction) -> entity.getEnergyHandler(direction));
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
+                TestModBlockEntities.MULTI_ITEM_INPUT_PORT_ENTITY_TYPE.get(),
+                (entity, direction) -> entity.getItemHandler(direction));
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
+                TestModBlockEntities.MULTI_ITEM_OUTPUT_PORT_ENTITY_TYPE.get(),
+                (entity, direction) -> entity.getItemHandler(direction));
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
+                TestModBlockEntities.MULTI_FLUID_INPUT_PORT_ENTITY_TYPE.get(),
+                (entity, direction) -> entity.getFluidHandler(direction));
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
+                TestModBlockEntities.MULTI_FLUID_OUTPUT_PORT_ENTITY_TYPE.get(),
+                (entity, direction) -> entity.getFluidHandler(direction));
+
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
+                TestModBlockEntities.CONDUIT_ITEM_ENTITY_TYPE.get(),
+                (entity, direction) -> entity.getItemHandler(direction));
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
+                TestModBlockEntities.CONDUIT_FLUID_ENTITY_TYPE.get(),
+                (entity, direction) -> entity.getFluidHandler(direction));
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
+                TestModBlockEntities.CONDUIT_ENERGY_ENTITY_TYPE.get(),
+                (entity, direction) -> entity.getEnergyStorage(direction));
+
+    }
+
+    private void onRegisterPayloadHandlers(RegisterPayloadHandlerEvent event) {
+        final IPayloadRegistrar registrar = event.registrar(MODID);
+        registrar.play(MachineIOPacket.ID, MachineIOPacket::new,
+                handler -> handler.server(MachineIOPacket::handleServer));
+        registrar.play(BuildMultiBlockPacket.ID, BuildMultiBlockPacket::new,
+                handler -> handler.server(BuildMultiBlockPacket::handleServer));
+    }
+
+    // You can use SubscribeEvent and let the Event Bus discover methods to call
+    @SubscribeEvent
+    public void onServerStarting(ServerStartingEvent event) {
+        // Do something when the server starts
+        LOGGER.info("HELLO from server starting");
+        MinecraftServer server = event.getServer();
+        server.getAllLevels().forEach((level) -> LOGGER.info("LEVEL >> {}", level));
+    }
+
+    // You can use EventBusSubscriber to automatically register all static methods in the class
+    // annotated with @SubscribeEvent
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD,
+            value = Dist.CLIENT)
+    public static class ClientModEvents {
+
+        @SubscribeEvent
+        public static void onClientSetup(FMLClientSetupEvent event) {
+            // Some client setup code
+            LOGGER.info("HELLO FROM CLIENT SETUP");
+            LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+            HologramRenderer.getInstance().init();
+
+            // TODO: McJty's tutorial uses enqueueWork here, but I don't know why
+            event.enqueueWork(() -> {
+                MenuScreens.register(TestModMenus.INDUCTION_FURNACE_MENU.get(),
+                        InductionFurnaceScreen::new);
+                MenuScreens.register(TestModMenus.CRUSHER_MENU.get(), CrusherScreen::new);
+                MenuScreens.register(TestModMenus.SEPARATOR_MENU.get(), SeparatorScreen::new);
+
+                MenuScreens.register(TestModMenus.REDSTONE_GENERATOR_MENU.get(),
+                        RedstoneGeneratorScreen::new);
+                MenuScreens.register(TestModMenus.GEOTHERMAL_GENERATOR_MENU.get(),
+                        GeothermalGeneratorScreen::new);
+                MenuScreens.register(TestModMenus.STIRLING_GENERATOR_MENU.get(),
+                        StirlingGeneratorScreen::new);
+            });
+        }
+
+        @SubscribeEvent
+        public static void onRegisterColorHandlersEvent(RegisterColorHandlersEvent.Block event) {
+            event.register(new HologramBlockColor(), TestModBlocks.HOLOGRAM.get());
+        }
+
+        @SubscribeEvent
+        public static void onRegisterRenderersEvent(EntityRenderersEvent.RegisterRenderers event) {
+            event.registerBlockEntityRenderer(TestModBlockEntities.CRUSHER_ENTITY_TYPE.get(),
+                    (context) -> new CrusherBlockEntityRenderer(context));
+            event.registerBlockEntityRenderer(TestModBlockEntities.SEPARATOR_ENTITY_TYPE.get(),
+                    (context) -> new SeparatorBlockEntityRenderer(context));
+            event.registerBlockEntityRenderer(
+                    TestModBlockEntities.STIRLING_GENERATOR_ENTITY_TYPE.get(),
+                    (context) -> new StirlingGeneratorBlockEntityRenderer(context));
+
+            event.registerBlockEntityRenderer(TestModBlockEntities.CONDUIT_FLUID_ENTITY_TYPE.get(),
+                    (context) -> new FluidConduitBlockEntityRenderer(context));
+        }
+
+        @SubscribeEvent
+        public static void onRegisterAdditionalEvent(ModelEvent.RegisterAdditional event) {
+            TestModModels.register(event);
+        }
+    }
 }

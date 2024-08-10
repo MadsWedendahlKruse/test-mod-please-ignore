@@ -22,7 +22,7 @@ public class StirlingGeneratorBlockEntityRenderer
     private static final float[] PISTON_4_OFFSET = {26, 26, 23};
     private static final float PISTON_Z_ROT = (float) Math.PI / 4;
     // Offset from the piston's initial position
-    private static final float PISTON_HEIGHT_MAX = 3F / 16F;
+    private static final float PISTON_HEIGHT_MAX = 2.5F / 16F;
 
     public StirlingGeneratorBlockEntityRenderer(BlockEntityRendererProvider.Context context) {}
 
@@ -38,8 +38,8 @@ public class StirlingGeneratorBlockEntityRenderer
         renderFlywheel(poseStack, multiBufferSource, flywheelModel, flywheelAngle, combinedLight,
                 combinedOverlay);
         BakedModel pistonModel = TestModModels.STIRLING_GENERATOR_PISTON.getBakedModel();
-        float pistonUpHeight = (float) Math.sin(flywheelAngle) * PISTON_HEIGHT_MAX;
-        float pistonDownHeight = (float) Math.sin(flywheelAngle + Math.PI) * PISTON_HEIGHT_MAX;
+        float pistonUpHeight = ((float) Math.sin(flywheelAngle)) * PISTON_HEIGHT_MAX;
+        float pistonDownHeight = ((float) Math.sin(flywheelAngle + Math.PI)) * PISTON_HEIGHT_MAX;
         renderPiston(poseStack, multiBufferSource, pistonModel, PISTON_1_OFFSET, PISTON_Z_ROT,
                 pistonUpHeight, combinedLight, combinedOverlay);
         renderPiston(poseStack, multiBufferSource, pistonModel, PISTON_2_OFFSET, PISTON_Z_ROT,

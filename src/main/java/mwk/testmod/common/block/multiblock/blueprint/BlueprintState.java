@@ -10,14 +10,14 @@ import net.minecraft.world.level.Level;
  */
 public class BlueprintState {
 
-    private MultiBlockBlueprint blueprint;
-    private Level level;
-    private BlockPos controllerPos;
-    private Direction controllerFacing;
+    private final MultiBlockBlueprint blueprint;
+    private final Level level;
+    private final BlockPos controllerPos;
+    private final Direction controllerFacing;
 
-    private ArrayList<BlueprintBlockInfo> emptyBlocks;
-    private ArrayList<BlueprintBlockInfo> missingBlocks;
-    private ArrayList<BlueprintBlockInfo> incorrectBlocks;
+    private final ArrayList<BlueprintBlockInfo> emptyBlocks;
+    private final ArrayList<BlueprintBlockInfo> missingBlocks;
+    private final ArrayList<BlueprintBlockInfo> incorrectBlocks;
 
     public BlueprintState(MultiBlockBlueprint blueprint, Level level, BlockPos controllerPos,
             Direction controllerFacing) {
@@ -88,5 +88,13 @@ public class BlueprintState {
      */
     public ArrayList<BlueprintBlockInfo> getIncorrectBlocks() {
         return incorrectBlocks;
+    }
+
+    public BlockPos getControllerPos() {
+        return controllerPos;
+    }
+
+    public Direction getControllerFacing() {
+        return controllerFacing;
     }
 }

@@ -18,7 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class StirlingGeneratorBlockEntity extends GeneratorBlockEntity<StirlingGeneratorRecipe> {
 
-    private static final float FLYWHEEL_SPEED = (float) (2 * Math.PI); // [rad/s]
+    private static final float FLYWHEEL_SPEED = (float) (2.5 * Math.PI); // [rad/s]
     private final PerpetualAnimationFloat flywheelAnimation;
 
     public StirlingGeneratorBlockEntity(BlockPos pos, BlockState state) {

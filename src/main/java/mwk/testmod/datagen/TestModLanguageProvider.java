@@ -29,9 +29,9 @@ public class TestModLanguageProvider extends LanguageProvider {
 			"info.testmod.controller.blueprint.help";
 	public static final String KEY_INFO_CONTROLLER_BLUEPRINT_COMPLETE =
 			"info.testmod.controller.blueprint.complete";
-	public static final String KEY_INFO_CONTROLLER_BLUEPRINT_INSUFFICIENTS =
+	public static final String KEY_INFO_CONTROLLER_BLUEPRINT_INSUFFICIENT =
 			"info.testmod.controller.blueprint.insufficient_blocks";
-	public static final String KEY_INFO_CONTROLLER_BLUEPRINTED =
+	public static final String KEY_INFO_CONTROLLER_BLUEPRINT_BLOCKED =
 			"info.testmod.controller.blueprint.blocked";
 	public static final String KEY_INFO_CONTROLLER_MISSINGS =
 			"info.testmod.controller.blueprint.hologram.missing_blocks";
@@ -162,9 +162,9 @@ public class TestModLanguageProvider extends LanguageProvider {
 		add(KEY_INFO_CONTROLLER_BLUEPRINT_HELP, "Right-click with a wrench to see the blueprint");
 		add(KEY_INFO_CONTROLLER_BLUEPRINT_COMPLETE,
 				"The blueprint is complete, form the multiblock with a wrench");
-		add(KEY_INFO_CONTROLLER_BLUEPRINT_INSUFFICIENTS,
+		add(KEY_INFO_CONTROLLER_BLUEPRINT_INSUFFICIENT,
 				"You are missing the required blocks to build the blueprint");
-		add(KEY_INFO_CONTROLLER_BLUEPRINTED,
+		add(KEY_INFO_CONTROLLER_BLUEPRINT_BLOCKED,
 				"An incorrect block is in the way of the blueprint [x=%s, y=%s, z=%s]");
 		add(KEY_INFO_CONTROLLER_MISSINGS, "Missing blocks:");
 		add(KEY_INFO_CONTROLLER_INCORRECTS, "Incorrect blocks:");

@@ -1,6 +1,5 @@
 package mwk.testmod.common.block.multiblock;
 
-import java.util.Random;
 import mwk.testmod.TestMod;
 import mwk.testmod.common.block.interfaces.IWrenchable;
 import mwk.testmod.common.block.multiblock.entity.MultiBlockPartBlockEntity;
@@ -200,11 +199,6 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState,
             boolean movedByPiston) {
         TestMod.LOGGER.debug("MultiBlockPartBlock::onRemove");
-        TestMod.LOGGER.debug("client = " + level.isClientSide());
-        TestMod.LOGGER.debug("state = " + state);
-        TestMod.LOGGER.debug("state @ " + pos + " = " + level.getBlockState(pos));
-        TestMod.LOGGER.debug("newState = " + newState);
-        TestMod.LOGGER.debug("blockEntity @ " + pos + " = " + level.getBlockEntity(pos));
         // If any of the blocks in the multiblock are removed while the multiblock is
         // formed we have to unform it
         if (state.getValue(FORMED)) {

@@ -1,8 +1,6 @@
 package mwk.testmod.client.render.hologram;
 
-import org.joml.Quaternionf;
 import com.mojang.blaze3d.vertex.PoseStack;
-
 import mwk.testmod.client.animations.DynamicAnimationAngle;
 import mwk.testmod.client.animations.DynamicAnimationVector;
 import mwk.testmod.client.render.RenderUtils;
@@ -14,7 +12,6 @@ import mwk.testmod.client.render.hologram.events.HologramEvent;
 import mwk.testmod.common.block.multiblock.HologramBlock.HologramColor;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintState;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -25,6 +22,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import org.joml.Quaternionf;
 
 public class HologramRenderer {
 
@@ -49,7 +48,8 @@ public class HologramRenderer {
 
     private static HologramRenderer instance;
 
-    private HologramRenderer() {}
+    private HologramRenderer() {
+    }
 
     public static synchronized HologramRenderer getInstance() {
         if (instance == null) {
@@ -87,13 +87,12 @@ public class HologramRenderer {
             return;
         }
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS) {
-            renderBlueprintHologram(Minecraft.getInstance(), event, controllerPos, blueprint,
-                    facing);
+            renderBlueprintHologram(event, blueprint);
         }
     }
 
-    private void renderBlueprintHologram(Minecraft minecraft, RenderLevelStageEvent event,
-            BlockPos controllerPos, MultiBlockBlueprint blueprint, Direction facing) {
+    private void renderBlueprintHologram(RenderLevelStageEvent event,
+            MultiBlockBlueprint blueprint) {
         hologramBlockRenderer.updateAnimation();
         moveAnimation.update();
         rotateAnimation.update();
@@ -153,13 +152,13 @@ public class HologramRenderer {
 
     /**
      * Set the hologram to render the given blueprint.
-     * 
-     * @param controllerPos the position of the controller
-     * @param blueprint the blueprint to render
+     *
+     * @param controllerPos  the position of the controller
+     * @param blueprint      the blueprint to render
      * @param blueprintState the state of the blueprint
-     * @param facing the direction the blueprint should be rendered in
-     * @param animatePopIn whether to animate the hologram popping in
-     * @param animateMove whether to animate the hologram moving to the new position
+     * @param facing         the direction the blueprint should be rendered in
+     * @param animatePopIn   whether to animate the hologram popping in
+     * @param animateMove    whether to animate the hologram moving to the new position
      */
     public void setHologramBlueprint(BlockPos controllerPos, MultiBlockBlueprint blueprint,
             BlueprintState blueprintState, Direction facing, boolean animatePopIn,
@@ -200,6 +199,18 @@ public class HologramRenderer {
         }
     }
 
+    public MultiBlockBlueprint getBlueprint() {
+        return blueprint;
+    }
+
+    public BlockPos getControllerPos() {
+        return controllerPos;
+    }
+
+    public Direction getFacing() {
+        return facing;
+    }
+
     /**
      * Clear the hologram so it doesn't render anything.
      */
@@ -209,7 +220,7 @@ public class HologramRenderer {
 
     /**
      * Check if the given position is inside the hologram of the current controller.
-     * 
+     *
      * @param pos the position to check
      */
     public boolean isInsideHologram(BlockPos pos) {

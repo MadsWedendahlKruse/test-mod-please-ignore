@@ -1,11 +1,11 @@
 package mwk.testmod.common.block.multiblock.blueprint;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import net.minecraft.core.BlockPos;
@@ -115,9 +115,7 @@ public final class MultiBlockBlueprint {
                 this.controller = controller;
                 // Convert the positions to relative positions.
                 BlockPos controllerPos = positions.get(i);
-                for (int j = 0; j < positions.size(); j++) {
-                    positions.set(j, positions.get(j).subtract(controllerPos));
-                }
+                positions.replaceAll(blockPos -> blockPos.subtract(controllerPos));
                 this.name = controller.getName().getString();
             }
         }
@@ -132,9 +130,9 @@ public final class MultiBlockBlueprint {
 
     /**
      * Get the absolute positions of the blocks that make up the multiblock structure.
-     * 
+     *
      * @param controllerPos The position of the controller block.
-     * @param direction The direction the controller block is facing.
+     * @param direction     The direction the controller block is facing.
      * @return The absolute positions of the blocks.
      */
     public BlockPos[] getAbsolutePositions(BlockPos controllerPos, Direction direction) {
@@ -149,9 +147,9 @@ public final class MultiBlockBlueprint {
      * Get the state of the multiblock structure associated with the controller block at the given
      * position. This creates a new blueprint state object. If you want to update an existing
      * blueprint state object, use {@link BlueprintState#update()}.
-     * 
-     * @param level The level the controller block is in.
-     * @param controllerPos The position of the controller block.
+     *
+     * @param level            The level the controller block is in.
+     * @param controllerPos    The position of the controller block.
      * @param controllerFacing The direction the controller block is facing.
      * @return The state of the multiblock structure.
      */
@@ -185,8 +183,8 @@ public final class MultiBlockBlueprint {
     /**
      * Check if the multiblock structure associated with the controller block at the given position
      * is complete.
-     * 
-     * @param level The level the controller block is in.
+     *
+     * @param level         The level the controller block is in.
      * @param controllerPos The position of the controller block.
      * @return Whether the multiblock structure is complete.
      */
@@ -217,8 +215,8 @@ public final class MultiBlockBlueprint {
 
     /**
      * @param controllerPos The position of the controller block. If null the relative position is
-     *        returned. If not null the absolute position is returned.
-     * @param direction The direction the controller block is facing.
+     *                      returned. If not null the absolute position is returned.
+     * @param direction     The direction the controller block is facing.
      * @return The AABB of the multiblock structure.
      */
     public AABB getAABB(@Nullable BlockPos controllerPos, Direction direction) {
@@ -239,8 +237,8 @@ public final class MultiBlockBlueprint {
 
     /**
      * @return The AABB of the multiblock structure. All positions are relative to the controller
-     *         block and the controller block is assumed to be facing north. For an absolute AABB
-     *         use {@link #getAABB(BlockPos, Direction)}.
+     * block and the controller block is assumed to be facing north. For an absolute AABB use
+     * {@link #getAABB(BlockPos, Direction)}.
      */
     public AABB getAABB() {
         return getAABB(null, Direction.NORTH);

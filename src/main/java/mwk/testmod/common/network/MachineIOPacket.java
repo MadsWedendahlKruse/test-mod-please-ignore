@@ -12,6 +12,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
+/**
+ * Packet for setting machine IO settings.
+ */
 public record MachineIOPacket(Type type, boolean value, BlockPos blockPos)
         implements CustomPacketPayload {
 
