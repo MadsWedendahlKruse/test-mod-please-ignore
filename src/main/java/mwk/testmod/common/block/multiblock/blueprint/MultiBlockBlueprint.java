@@ -8,9 +8,11 @@ import java.util.Map;
 import javax.annotation.Nullable;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
+import mwk.testmod.init.registries.TestModBlueprints;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -41,15 +43,17 @@ public final class MultiBlockBlueprint {
                             KEY_CODEC.fieldOf("key").forGetter(data -> null))
                     .apply(instance, MultiBlockBlueprint::new));
 
-    // The name of the multiblock structure.
+    // The key to the blueprint
+    private ResourceKey<MultiBlockBlueprint> key;
+    // The name of the blueprint
     private String name;
     // The controller block of the multiblock structure.
     private MultiBlockControllerBlock controller;
     // The blocks that make up the multiblock structure.
     private BlueprintBlockInfo[] blocks;
     // Corners of the bounding box of the multiblock structure.
-    private BlockPos minCorner;
-    private BlockPos maxCorner;
+    private final BlockPos minCorner;
+    private final BlockPos maxCorner;
 
     public MultiBlockBlueprint(List<List<String>> layers, Map<String, String> key) {
         parseData(layers, key);
@@ -101,6 +105,7 @@ public final class MultiBlockBlueprint {
         for (int i = 0; i < symbols.size(); i++) {
             String symbol = symbols.get(i);
             String blockIdentifier = key.get(symbol);
+            ResourceLocation blockId = new ResourceLocation(blockIdentifier);
             Block block = BuiltInRegistries.BLOCK.get(new ResourceLocation(blockIdentifier));
             states[i] = block.defaultBlockState();
             // TODO: Maybe this will give a false positive if the block has another
@@ -116,7 +121,8 @@ public final class MultiBlockBlueprint {
                 // Convert the positions to relative positions.
                 BlockPos controllerPos = positions.get(i);
                 positions.replaceAll(blockPos -> blockPos.subtract(controllerPos));
-                this.name = controller.getName().getString();
+                this.key = ResourceKey.create(TestModBlueprints.BLUEPRINT_REGISTRY_KEY, blockId);
+                this.name = block.getName().getString();
             }
         }
         if (!foundController) {
@@ -190,6 +196,13 @@ public final class MultiBlockBlueprint {
      */
     public boolean isComplete(Level level, BlockPos controllerPos) {
         return getState(level, controllerPos).isComplete();
+    }
+
+    /**
+     * @return The key of the multiblock structure.
+     */
+    public ResourceKey<MultiBlockBlueprint> getKey() {
+        return this.key;
     }
 
     /**

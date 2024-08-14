@@ -139,7 +139,7 @@ public class HologramClientEvents {
                 blueprint = null;
             } else if (key != previousKey
                     || !(HOLOGRAM_RENDERER.getLatestEvent() instanceof ProjectorEvent)) {
-                // If the key has changed, or if the blueprint was not previously set by the
+                // If the key has changed, or if the blueprint was not previously set by the projector,
                 // but e.g. set by right-clicking a controller block, we want to override it
                 blueprint = minecraft.level.registryAccess()
                         .registry(TestModBlueprints.BLUEPRINT_REGISTRY_KEY)
@@ -225,6 +225,10 @@ public class HologramClientEvents {
         if (player == null || !getHologramProjector(player).isEmpty()) {
             return;
         }
+        // Don't do anything if the player is sneaking
+        if (player.isCrouching()) {
+            return;
+        }
         MultiBlockBlueprint blueprint = HOLOGRAM_RENDERER.getBlueprint();
         if (blueprint == null) {
             return;
@@ -244,9 +248,11 @@ public class HologramClientEvents {
         Vec3 lookVec = player.getViewVector(1.0F);
         if (vecIntersectsAABB(eyePos, lookVec, aabb)) {
             Level level = player.level();
-            // TODO: Using the previous key here is a bit of a hack
+//            ResourceKey<MultiBlockBlueprint> blueprintKey = ResourceKey.create(
+//                    TestModBlueprints.BLUEPRINT_REGISTRY_KEY,
+//                    new ResourceLocation(TestMod.MODID, blueprint.getName()));
             PacketDistributor.SERVER.noArg()
-                    .send(new BuildMultiBlockPacket(previousKey, controllerPos, facing));
+                    .send(new BuildMultiBlockPacket(blueprint.getKey(), controllerPos, facing));
             // Since we know the outcome of the packet (the controller block will be placed),
             // we can place the controller block on the client side as well, which allows us to
             // update the hologram immediately

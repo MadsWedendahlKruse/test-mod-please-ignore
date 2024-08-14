@@ -1,6 +1,7 @@
 package mwk.testmod.common.block.interfaces;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -32,6 +33,8 @@ public interface IWrenchable {
             level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
             Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(),
                     new ItemStack(state.getBlock().asItem()));
+            level.playSound(null, pos, state.getSoundType().getBreakSound(), SoundSource.BLOCKS,
+                    1.0F, 1.0F);
             return true;
         }
         return false;

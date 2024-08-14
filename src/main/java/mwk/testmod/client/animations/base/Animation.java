@@ -61,8 +61,8 @@ public abstract class Animation<T> {
 
     /**
      * Creates a new animation with the given start and target values.
-     * 
-     * @param start The start value of the animation.
+     *
+     * @param start  The start value of the animation.
      * @param target The target value of the animation.
      */
     protected Animation(T start, T target) {
@@ -118,7 +118,7 @@ public abstract class Animation<T> {
 
     /**
      * Check if the animation is paused.
-     * 
+     *
      * @return true if the animation is paused, false otherwise.
      */
     public boolean isPaused() {
@@ -136,7 +136,7 @@ public abstract class Animation<T> {
     /**
      * Updates the animation's state, advancing the elapsed time. No effect if the animation is
      * disabled or already finished.
-     * 
+     *
      * @param reverse True to reverse the elapsed time, false to advance it.
      */
     public void update(boolean reverse) {
@@ -152,7 +152,7 @@ public abstract class Animation<T> {
 
     /**
      * Checks if the animation has finished.
-     * 
+     *
      * @return true if the animation is finished or not enabled, false otherwise.
      */
     public boolean isFinished() {
@@ -167,7 +167,7 @@ public abstract class Animation<T> {
 
     /**
      * Enables or disables the animation. When disabled, the animation will not update or start.
-     * 
+     *
      * @param enabled True to enable the animation, false to disable it.
      */
     public void setEnabled(boolean enabled) {
@@ -229,10 +229,10 @@ public abstract class Animation<T> {
      * Get the value of the animation. This is the value that changes over time and is used to
      * update the state of the animated object. The type T is the type of the animation's value,
      * e.g. a float for a linear animation or a vector for a path animation.
-     * 
-     * Any subclass are responisble for checking if the animation is enabled or finished and
+     * <p>
+     * Any subclass is responsible for checking if the animation is enabled or finished and
      * returning the correct value.
-     * 
+     *
      * @return the value of the animation
      */
     public abstract T getValue();

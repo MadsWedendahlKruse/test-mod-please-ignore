@@ -24,8 +24,8 @@ import net.neoforged.neoforge.network.handling.PlayPayloadContext;
  * the ground.
  */
 public record BuildMultiBlockPacket(ResourceKey<MultiBlockBlueprint> blueprintKey,
-                                    BlockPos controllerPos, Direction controllerFacing) implements
-        CustomPacketPayload {
+                                    BlockPos controllerPos, Direction controllerFacing)
+        implements CustomPacketPayload {
 
     public static final ResourceLocation ID =
             new ResourceLocation(TestMod.MODID, "blueprint_builder");
@@ -77,10 +77,7 @@ public record BuildMultiBlockPacket(ResourceKey<MultiBlockBlueprint> blueprintKe
             BlockState controllerState = blueprint.getController().defaultBlockState()
                     .setValue(MultiBlockControllerBlock.FACING, controllerFacing);
             MultiBlockUtils.attemptBuildMultiBlock(level, blueprint, controllerPos,
-                    controllerFacing,
-                    player, null, true);
-            // TODO: If we stick with this solution we need to check if the player is in creative
-//            level.setBlockAndUpdate(controllerPos, controllerState);
+                    controllerFacing, player, null, true);
         });
     }
 
