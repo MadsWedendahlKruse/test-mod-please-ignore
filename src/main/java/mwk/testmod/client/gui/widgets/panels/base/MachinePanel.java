@@ -1,4 +1,3 @@
-
 package mwk.testmod.client.gui.widgets.panels.base;
 
 import mwk.testmod.TestMod;
@@ -14,9 +13,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * A base class for panel widgets to supplement the GUI of a machine. Typically they would be placed
- * on the sides of the GUI and fold out when the player clicks on them. This could be e.g. a panel
- * where the player can insert upgrades into the machine.
+ * A base class for panel widgets to supplement the GUI of a machine. Typically, they would be
+ * placed on the sides of the GUI and fold out when the player clicks on them. This could be e.g. a
+ * panel where the player can insert upgrades into the machine.
  */
 public abstract class MachinePanel extends AbstractWidget {
 
@@ -52,12 +51,9 @@ public abstract class MachinePanel extends AbstractWidget {
     private final int iconHeight;
     private final int iconPaddingX;
     private final int iconPaddingY;
-    // Text to render when the panel is open
-    private String openText = "";
     // Top left corner of the panel in screen coordinates
     protected int screenX;
     protected int screenY;
-
 
     public MachinePanel(int widthOpen, int heightOpen, Component message, float[] color,
             ResourceLocation icon) {
@@ -154,8 +150,8 @@ public abstract class MachinePanel extends AbstractWidget {
 
     /**
      * @return The x coordinate of the top left corner of the area that becomes visible when the
-     *         panel is open. This is the recommended point to start rendering the content of the
-     *         open panel from.
+     * panel is open. This is the recommended point to start rendering the content of the open panel
+     * from.
      */
     protected int getOpenLeft() {
         return getX() + iconPaddingX;
@@ -163,8 +159,8 @@ public abstract class MachinePanel extends AbstractWidget {
 
     /**
      * @return The y coordinate of the top left corner of the area that becomes visible when the
-     *         panel is open. This is the recommended point to start rendering the content of the
-     *         open panel from.
+     * panel is open. This is the recommended point to start rendering the content of the open panel
+     * from.
      */
     protected int getOpenTop() {
         return getY() + 2 * iconPaddingY + iconHeight;

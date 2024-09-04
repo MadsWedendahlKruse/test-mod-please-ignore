@@ -1,7 +1,7 @@
 package mwk.testmod.common.block.entity;
 
 import mwk.testmod.TestModConfig;
-import mwk.testmod.client.animations.PerpetualAnimationFloat;
+import mwk.testmod.client.animations.AnimationClock;
 import mwk.testmod.common.block.entity.base.crafter.OneToManyCrafterBlockEntity;
 import mwk.testmod.common.block.inventory.SeparatorMenu;
 import mwk.testmod.common.recipe.SeparationRecipe;
@@ -20,15 +20,13 @@ import net.minecraft.world.level.block.state.BlockState;
 public class SeparatorBlockEntity extends OneToManyCrafterBlockEntity<SeparationRecipe> {
 
     public static final float SPINNER_SPEED = (float) (2 * Math.PI); // [rad/s]
-    private final PerpetualAnimationFloat spinnerAnimation;
+    private float spinnerAngle;
 
     public SeparatorBlockEntity(BlockPos pos, BlockState state) {
         super(TestModBlockEntities.SEPARATOR_ENTITY_TYPE.get(), pos, state,
                 TestModConfig.MACHINE_ENERGY_CAPACITY_DEFAULT.get(), 20, 1, 3, 6, 20,
                 TestModRecipeTypes.SEPARATION.get(), TestModSounds.MULTIBLOCK_CRUSHER.get(),
                 TestModSounds.MULTIBLOCK_CRUSHER_DURATION);
-        spinnerAnimation = new PerpetualAnimationFloat(SPINNER_SPEED);
-        spinnerAnimation.start();
     }
 
     @Override
@@ -47,11 +45,11 @@ public class SeparatorBlockEntity extends OneToManyCrafterBlockEntity<Separation
         return TestModLanguageProvider.KEY_DESCRIPTION_SEPARATOR;
     }
 
-    public void updateSpinnerAnimation() {
-        spinnerAnimation.update();
+    public void updateSpinnerAngle() {
+        spinnerAngle += SPINNER_SPEED * AnimationClock.getInstance().getDeltaTime();
     }
 
     public float getSpinnerAngle() {
-        return spinnerAnimation.getValue();
+        return spinnerAngle;
     }
 }

@@ -1,5 +1,8 @@
 package mwk.testmod.client.animations.base;
 
+import mwk.testmod.client.animations.AnimationClock;
+import mwk.testmod.client.animations.AnimationSequence;
+
 /**
  * Abstract class for creating different types of animations. This is useful for creating smooth
  * transitions between states, e.g. moving a model or a button. The type T is the type of the
@@ -30,11 +33,6 @@ public abstract class Animation<T> {
      * animation will keep running until manually stopped.
      */
     protected float duration;
-    /**
-     * The time of the last update in milliseconds. This is used to calculate the time difference
-     * between updates and advance the animation's state.
-     */
-    protected long lastTickTime;
     /**
      * The time difference between the last two updates in seconds. This is used to calculate the
      * progress of the animation and advance the state of the animated object.
@@ -78,7 +76,6 @@ public abstract class Animation<T> {
         if (!enabled) {
             return;
         }
-        lastTickTime = System.currentTimeMillis();
         elapsedTime = 0.0F;
         finished = false;
     }
@@ -113,7 +110,6 @@ public abstract class Animation<T> {
             return;
         }
         paused = false;
-        lastTickTime = System.currentTimeMillis();
     }
 
     /**
@@ -128,26 +124,40 @@ public abstract class Animation<T> {
     /**
      * Updates the animation's state, advancing the elapsed time. No effect if the animation is
      * disabled or already finished.
+     *
+     * @param deltaTime The time difference between the last two updates in seconds.
+     * @param reverse   True to reverse the elapsed time, false to advance it.
+     * @return The remaining time of the animation in seconds. This is primarily used by
+     * {@link AnimationSequence} to allow smooth transitions between animations.
      */
-    public void update() {
-        update(false);
+    public float update(float deltaTime, boolean reverse) {
+        if (!enabled || finished || paused) {
+            return 0.0F;
+        }
+        lastDeltaTime = deltaTime;
+        elapsedTime += (reverse ? -1 : 1) * deltaTime;
+        return duration - elapsedTime;
     }
 
     /**
-     * Updates the animation's state, advancing the elapsed time. No effect if the animation is
-     * disabled or already finished.
-     *
-     * @param reverse True to reverse the elapsed time, false to advance it.
+     * see {@link #update(float, boolean)}
      */
-    public void update(boolean reverse) {
-        if (!enabled || finished || paused) {
-            return;
-        }
-        long currentTime = System.currentTimeMillis();
-        float deltaTime = (currentTime - lastTickTime) / 1000.0F;
-        lastDeltaTime = deltaTime;
-        elapsedTime += (reverse ? -1 : 1) * deltaTime;
-        lastTickTime = currentTime;
+    public float update() {
+        return update(AnimationClock.getInstance().getDeltaTime(), false);
+    }
+
+    /**
+     * see {@link #update(float, boolean)}
+     */
+    public float update(boolean reverse) {
+        return update(AnimationClock.getInstance().getDeltaTime(), reverse);
+    }
+
+    /**
+     * see {@link #update(float, boolean)}
+     */
+    public float update(float deltaTime) {
+        return update(deltaTime, false);
     }
 
     /**
@@ -207,7 +217,6 @@ public abstract class Animation<T> {
         setStartValue(null);
         setTargetValue(null);
         elapsedTime = 0.0F;
-        lastTickTime = 0;
     }
 
     /**

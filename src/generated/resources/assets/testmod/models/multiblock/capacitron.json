@@ -1,0 +1,9 @@
+{
+  "flip_v": true,
+  "loader": "neoforge:obj",
+  "model": "testmod:models/multiblock/capacitron.obj",
+  "textures": {
+    "base": "testmod:block/capacitron",
+    "particle": "testmod:block/machine_frame_advanced"
+  }
+}

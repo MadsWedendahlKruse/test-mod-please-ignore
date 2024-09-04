@@ -1,6 +1,5 @@
 package mwk.testmod.client.render.block_entity;
 
-import org.joml.Quaternionf;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import mwk.testmod.client.render.RenderUtils;
@@ -10,6 +9,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.resources.model.BakedModel;
+import org.joml.Quaternionf;
 
 public class StirlingGeneratorBlockEntityRenderer
         extends MultiBlockEntityRenderer<StirlingGeneratorBlockEntity> {
@@ -24,14 +24,15 @@ public class StirlingGeneratorBlockEntityRenderer
     // Offset from the piston's initial position
     private static final float PISTON_HEIGHT_MAX = 2.5F / 16F;
 
-    public StirlingGeneratorBlockEntityRenderer(BlockEntityRendererProvider.Context context) {}
+    public StirlingGeneratorBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
+    }
 
     @Override
     protected void renderDynamicParts(StirlingGeneratorBlockEntity generatorEntity,
             float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource,
             int combinedLight, int combinedOverlay) {
         if (generatorEntity.isWorking()) {
-            generatorEntity.updateFlywheelAnimation();
+            generatorEntity.updateFlywheelAngle();
         }
         float flywheelAngle = generatorEntity.getFlywheelAngle();
         BakedModel flywheelModel = TestModModels.STIRLING_GENERATOR_FLYWHEEL.getBakedModel();

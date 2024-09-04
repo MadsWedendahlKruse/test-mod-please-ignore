@@ -1,0 +1,8 @@
+# Made in Blockbench 4.10.4
+newmtl m_29dd175c-fc89-782b-9b1e-f1c1e9bee2b3
+map_Kd #base
+newmtl m_5de811f4-ec14-335d-4555-823b96a76eb8
+map_Kd testmod:block/capacitron_screen
+newmtl m_10f4e047-0939-852c-7a8f-08e860ad40a3
+map_Kd testmod:block/energy_cell
+newmtl none

@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "testmod:plate_copper"
+    },
+    "E": {
+      "item": "testmod:energy_cell"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "M": {
+      "item": "testmod:machine_frame_basic"
+    }
+  },
+  "pattern": [
+    "EIE",
+    "CMC",
+    "EIE"
+  ],
+  "result": {
+    "item": "testmod:energy_cube"
+  }
+}

@@ -9,6 +9,7 @@
     "testmod:machine_fluid_output_port",
     "testmod:machine_energy_port",
     "testmod:copper_coil",
+    "testmod:energy_cube",
     "testmod:induction_furnace",
     "testmod:super_assembler",
     "testmod:crusher",
@@ -16,6 +17,7 @@
     "testmod:teleporter",
     "testmod:redstone_generator",
     "testmod:geothermal_generator",
-    "testmod:stirling_generator"
+    "testmod:stirling_generator",
+    "testmod:capacitron"
   ]
 }

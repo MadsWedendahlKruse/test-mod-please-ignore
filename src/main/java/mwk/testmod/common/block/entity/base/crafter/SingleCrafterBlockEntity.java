@@ -36,6 +36,7 @@ public abstract class SingleCrafterBlockEntity<T extends Recipe<Container>>
                 processRecipe(recipe);
                 resetProgress();
             }
+            playSound();
         } else {
             resetProgress();
             setWorking(false);

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "testmod:gizmo_red"
+    },
+    "I": {
+      "item": "minecraft:iron_nugget"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    "IGI",
+    "IRI",
+    "IRI"
+  ],
+  "result": {
+    "item": "testmod:energy_cell"
+  }
+}

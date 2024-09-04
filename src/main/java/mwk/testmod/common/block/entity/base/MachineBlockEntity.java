@@ -26,7 +26,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.util.Lazy;
-import net.neoforged.neoforge.energy.EnergyStorage;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
@@ -75,7 +74,7 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
     public MachineBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
             int maxEnergy, EnergyType energyType, int inputSlots, int outputSlots, int upgradeSlots,
             int[] inputTankCapacities, int[] outputTankCapacities) {
-        super(type, pos, state, new EnergyStorage(maxEnergy), energyType);
+        super(type, pos, state, maxEnergy, energyType);
         this.inputSlots = inputSlots;
         this.outputSlots = outputSlots;
         this.upgradeSlots = upgradeSlots;
@@ -197,8 +196,8 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
      * Checks if the given stack can be inserted into the given slot. This is used to check if the
      * stack can be inserted into the input slots. By default, this method returns true, but it can
      * be overridden to provide custom behavior.
-     * 
-     * @param slot the slot
+     *
+     * @param slot  the slot
      * @param stack the stack
      * @return true if the stack can be inserted, false otherwise
      */
@@ -242,8 +241,8 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
      * Checks if the given stack can be inserted into the given tank. This is used to check if the
      * stack can be inserted into the input tanks. By default, this method returns true, but it can
      * be overridden to provide custom behavior.
-     * 
-     * @param tank the tank
+     *
+     * @param tank  the tank
      * @param stack the stack
      * @return true if the stack can be inserted, false otherwise
      */
@@ -287,7 +286,7 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
     /**
      * Install the given upgrade to the block entity. This should check the type of the upgrade and
      * modify the block entity accordingly.
-     * 
+     *
      * @param upgrade the upgrade to install
      */
     abstract protected void installUpgrade(UpgradeItem upgrade);
@@ -328,7 +327,7 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
 
     /**
      * Push items from the output slots to adjacent inventories.
-     * 
+     *
      * @param pos the position whose neighbors to push to
      */
     public void ejectItemOutput(BlockPos pos) {
@@ -373,7 +372,7 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
 
     /**
      * Pull items from adjacent inventories to the input slots.
-     * 
+     *
      * @param pos the position whose neighbors to pull from
      */
     public void pullItemInput(BlockPos pos) {
@@ -407,7 +406,7 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
 
     /**
      * Push fluids from the output tanks to adjacent tanks.
-     * 
+     *
      * @param pos the position whose neighbors to push to
      */
     public void ejectFluidOutput(BlockPos pos) {
@@ -447,7 +446,7 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
 
     /**
      * Pull fluids from adjacent tanks to the input tanks.
-     * 
+     *
      * @param pos the position whose neighbors to pull from
      */
     public void pullFluidInput(BlockPos pos) {

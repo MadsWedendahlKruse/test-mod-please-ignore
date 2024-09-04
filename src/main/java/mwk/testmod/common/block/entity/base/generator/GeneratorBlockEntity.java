@@ -4,7 +4,6 @@ import mwk.testmod.common.block.entity.base.processing.ProcessingBlockEntity;
 import mwk.testmod.common.item.upgrades.base.UpgradeItem;
 import mwk.testmod.common.recipe.base.generator.GeneratorRecipe;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Container;
@@ -12,8 +11,6 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.energy.IEnergyStorage;
 
 public abstract class GeneratorBlockEntity<T extends Recipe<Container>>
         extends ProcessingBlockEntity<T> {
@@ -54,6 +51,7 @@ public abstract class GeneratorBlockEntity<T extends Recipe<Container>>
         increaseProgress();
         generateEnergy();
         setChanged();
+        playSound();
     }
 
     @Override
@@ -68,26 +66,6 @@ public abstract class GeneratorBlockEntity<T extends Recipe<Container>>
 
     protected void generateEnergy() {
         energyStorage.receiveEnergy(energyPerTick, false);
-    }
-
-    public void pushEnergy(BlockPos pos) {
-        if (getEnergyStored() == 0) {
-            return;
-        }
-        for (Direction direction : Direction.values()) {
-            // TODO: Capability cache
-            IEnergyStorage receiver = level.getCapability(Capabilities.EnergyStorage.BLOCK,
-                    pos.relative(direction), direction.getOpposite());
-            if (receiver == null || receiver == this.getEnergyStorage(direction)) {
-                continue;
-            }
-            // We don't want to transfer more energy than we have
-            // Generator can push twice as much energy as it can generate so we don't
-            // end up with a full buffer that never gets emptied
-            int maxTransfer = Math.min(getEnergyStored(), 2 * energyPerTick);
-            int received = receiver.receiveEnergy(maxTransfer, false);
-            energyStorage.extractEnergy(received, false);
-        }
     }
 
     @Override

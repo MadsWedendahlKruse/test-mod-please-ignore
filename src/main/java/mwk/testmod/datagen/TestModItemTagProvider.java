@@ -30,13 +30,13 @@ public class TestModItemTagProvider extends ItemTagsProvider {
         tagOres();
     }
 
-    private void tagRawMetarial(Item item, TagKey<Item> tag) {
+    private void tagRawMaterial(Item item, TagKey<Item> tag) {
         this.tag(tag).add(item);
         this.tag(TestModTags.Items.FORGE_RAW_MATERIALS).add(item);
     }
 
     private void tagRawMetarials() {
-        tagRawMetarial(TestModItems.RAW_ILMENITE.get(), TestModTags.Items.RAW_ILMENITE);
+        tagRawMaterial(TestModItems.RAW_ILMENITE.get(), TestModTags.Items.RAW_ILMENITE);
     }
 
     private void tagDust(Item item, TagKey<Item> tag) {

@@ -1,0 +1,10 @@
+{
+  "parent": "testmod:block/multiblock_controller",
+  "textures": {
+    "front": "testmod:block/controller_front_capacitron",
+    "particle": "testmod:block/controller_top_capacitron",
+    "screen": "testmod:block/controller_screen_capacitron",
+    "side": "testmod:block/controller_side_capacitron",
+    "top": "testmod:block/controller_top_capacitron"
+  }
+}

@@ -1,0 +1,17 @@
+{
+	"layers": [
+		[
+			"XE",
+			"EE"
+		],
+		[
+			"ee",
+			"ee"
+		]
+	],
+	"key": {
+		"X": "testmod:capacitron",
+		"E": "testmod:machine_energy_port",
+		"e": "testmod:energy_cube"
+	}
+}

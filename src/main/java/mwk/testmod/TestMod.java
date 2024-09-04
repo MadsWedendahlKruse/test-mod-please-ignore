@@ -1,6 +1,7 @@
 package mwk.testmod;
 
 import com.mojang.logging.LogUtils;
+import mwk.testmod.client.gui.screen.CapacitronScreen;
 import mwk.testmod.client.gui.screen.CrusherScreen;
 import mwk.testmod.client.gui.screen.GeothermalGeneratorScreen;
 import mwk.testmod.client.gui.screen.InductionFurnaceScreen;
@@ -94,9 +95,9 @@ public class TestMod {
         // Some common setup code
         LOGGER.info("HELLO FROM COMMON SETUP");
 
-		if (TestModConfig.logDirtBlock) {
-			LOGGER.info("DIRT BLOCK >> {}", BuiltInRegistries.BLOCK.getKey(Blocks.DIRT));
-		}
+        if (TestModConfig.logDirtBlock) {
+            LOGGER.info("DIRT BLOCK >> {}", BuiltInRegistries.BLOCK.getKey(Blocks.DIRT));
+        }
 
         LOGGER.info(TestModConfig.magicNumberIntroduction + TestModConfig.magicNumber);
 
@@ -179,6 +180,8 @@ public class TestMod {
                         GeothermalGeneratorScreen::new);
                 MenuScreens.register(TestModMenus.STIRLING_GENERATOR_MENU.get(),
                         StirlingGeneratorScreen::new);
+
+                MenuScreens.register(TestModMenus.CAPACITRON_MENU.get(), CapacitronScreen::new);
             });
         }
 

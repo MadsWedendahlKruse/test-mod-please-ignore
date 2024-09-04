@@ -1,13 +1,10 @@
 package mwk.testmod.client.gui.screen;
 
-import java.util.ArrayList;
-import org.joml.Math;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import com.mojang.blaze3d.vertex.PoseStack;
+import java.util.ArrayList;
 import mwk.testmod.TestMod;
+import mwk.testmod.client.animations.AnimationClock;
 import mwk.testmod.client.animations.FixedAnimationFloat;
-import mwk.testmod.client.animations.PerpetualAnimationFloat;
 import mwk.testmod.client.gui.widgets.buttons.BlueprintList;
 import mwk.testmod.client.gui.widgets.buttons.ButtonList;
 import mwk.testmod.client.gui.widgets.buttons.OnOffButton;
@@ -43,12 +40,15 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Math;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 
 /**
  * The screen for the hologram projector. It displays a list of blueprints on the right side and a
  * 3D model of the selected blueprint on the left side. The user can manipulate the model using
  * buttons. The screen is opened by right-clicking with the hologram projector in hand.
- * 
+ * <p>
  * TODO: This class is a monster
  */
 public class HologramProjectorScreen extends Screen {
@@ -110,16 +110,17 @@ public class HologramProjectorScreen extends Screen {
     private OnOffButton formedButton;
     private ItemStack hologramProjector;
 
-    private PerpetualAnimationFloat spinAnimation;
+    private float spinAngle;
+    private boolean autoSpin;
     private boolean manualSpinDirection;
     private FixedAnimationFloat mergeSplitAnimation;
     private float layerSpacing = 0.0F;
 
     public HologramProjectorScreen() {
         super(Component.literal("Placeholder"));
-        spinAnimation = new PerpetualAnimationFloat(BLUEPRINT_MODEL_SPIN_SPEED);
         mergeSplitAnimation = new FixedAnimationFloat(0.5F,
                 FixedAnimationFloat.Function.EASE_IN_CUBIC, 0.0F, 0.0F);
+        autoSpin = true;
     }
 
     @Override
@@ -142,7 +143,7 @@ public class HologramProjectorScreen extends Screen {
         this.searchBox = new EditBox(minecraft.font, this.width / 2 + BLUEPRINT_X_OFFSET,
                 this.height / 2 - BLUEPRINT_LIST_HEIGHT / 2, BLUEPRINT_SEARCH_WIDTH,
                 BLUEPRINT_SEARCH_HEIGHT, Component.translatable(
-                        TestModLanguageProvider.KEY_WIDGET_HOLOGRAM_PROJECTOR_SEARCH));
+                TestModLanguageProvider.KEY_WIDGET_HOLOGRAM_PROJECTOR_SEARCH));
         this.addRenderableWidget(this.searchBox);
 
         this.blueprintList = new BlueprintList(this.width / 2 + BLUEPRINT_X_OFFSET,
@@ -160,35 +161,32 @@ public class HologramProjectorScreen extends Screen {
                         TestModLanguageProvider.KEY_WIDGET_HOLOGRAM_PROJECTOR_BUTTONS),
                 true, BLUEPRINT_MODEL_BUTTON_SPACING);
 
-        // Initialize all the buttons so they can reference eah other later
+        // Initialize all the buttons, so they can reference eah other later
         pauseAutoSpinButton = new OnOffButton(BLUEPRINT_MODEL_BUTTON_SIZE, null, "play", "pause");
         counterClockwiseButton = new OnOffButton(BLUEPRINT_MODEL_BUTTON_SIZE, null,
                 "swap_clockwise", "swap_counter_clockwise");
-        manualSpinClockwiseButton = new ReleaseButton(BLUEPRINT_MODEL_BUTTON_SIZE, (pButton) -> {
-            spinAnimation.resume();
-            manualSpinDirection = false;
-            pauseAutoSpinButton.setOn(true);
-        }, (pButton) -> {
-            spinAnimation.pause();
+        manualSpinClockwiseButton = new ReleaseButton(BLUEPRINT_MODEL_BUTTON_SIZE,
+                (pButton) -> {
+                    autoSpin = true;
+                    manualSpinDirection = false;
+                    pauseAutoSpinButton.setOn(true);
+                }, (pButton) -> {
+            autoSpin = false;
         }, "clockwise");
-        manualSpinCounterClockwiseButton =
-                new ReleaseButton(BLUEPRINT_MODEL_BUTTON_SIZE, (pButton) -> {
-                    spinAnimation.resume();
+        manualSpinCounterClockwiseButton = new ReleaseButton(BLUEPRINT_MODEL_BUTTON_SIZE,
+                (pButton) -> {
+                    autoSpin = true;
                     manualSpinDirection = true;
                     pauseAutoSpinButton.setOn(true);
                 }, (pButton) -> {
-                    spinAnimation.pause();
-                }, "counter_clockwise");
+            autoSpin = false;
+        }, "counter_clockwise");
         splitButton = new OnOffButton(BLUEPRINT_MODEL_BUTTON_SIZE, null, "merge", "split");
         formedButton = new OnOffButton(BLUEPRINT_MODEL_BUTTON_SIZE, null, "unform", "form");
 
         // Buttons can now turn each other on or off when clicked
         pauseAutoSpinButton.setOnPressedExtra((button) -> {
-            if (button.isOn()) {
-                spinAnimation.pause();
-            } else {
-                spinAnimation.resume();
-            }
+            autoSpin = !button.isOn();
         });
         splitButton.setOnPressedExtra((button) -> {
             mergeSplitAnimation.start();
@@ -211,8 +209,6 @@ public class HologramProjectorScreen extends Screen {
         buttonList.addButton(formedButton);
 
         this.addRenderableWidget(buttonList);
-
-        spinAnimation.start();
     }
 
     private ItemStack getHologramProjector(Player player) {
@@ -373,10 +369,11 @@ public class HologramProjectorScreen extends Screen {
                 || manualSpinCounterClockwiseButton.isHeldDown()) {
             spinDirection = manualSpinDirection;
         }
-        spinAnimation.update(spinDirection);
-        // spinAnimation.update();
-        float rotationAngle = spinAnimation.getValue();
-        setupOrthographicProjection(poseStack, rotationAngle);
+        if (autoSpin) {
+            spinAngle += BLUEPRINT_MODEL_SPIN_SPEED * (spinDirection ? 1 : -1)
+                    * AnimationClock.getInstance().getDeltaTime();
+        }
+        setupOrthographicProjection(poseStack, spinAngle);
 
         if (!formedButton.isOn()) {
             mergeSplitAnimation.update();

@@ -7,14 +7,10 @@ import mwk.testmod.common.util.inventory.container_data.MachineIOContainerData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -28,8 +24,6 @@ public class MachineMenu extends EnergyMenu {
     public static final int DEFAULT_PLAYER_INVENTORY_X = 8;
     public static final int DEFAULT_PLAYER_INVENTORY_Y = 111;
 
-    private final BlockPos pos;
-    private final Block block;
     private final MachineBlockEntity blockEntity;
 
     public final int inputSlots;
@@ -55,8 +49,6 @@ public class MachineMenu extends EnergyMenu {
             int playerInventoryX, int playerInventoryY, int inputSlotsX, int inputSlotsY,
             int outputSlotsX, int outputSlotsY) {
         super(menuType, containerId, player, pos);
-        this.pos = pos;
-        this.block = player.level().getBlockState(pos).getBlock();
         BlockEntity blockEntity = player.level().getBlockEntity(pos);
         if (blockEntity instanceof MachineBlockEntity machineBlockEntity) {
             this.blockEntity = machineBlockEntity;
@@ -167,8 +159,9 @@ public class MachineMenu extends EnergyMenu {
     @Override
     public ItemStack quickMoveStack(Player playerIn, int pIndex) {
         Slot sourceSlot = slots.get(pIndex);
-        if (sourceSlot == null || !sourceSlot.hasItem())
+        if (sourceSlot == null || !sourceSlot.hasItem()) {
             return ItemStack.EMPTY; // EMPTY_ITEM
+        }
         ItemStack sourceStack = sourceSlot.getItem();
         ItemStack copyOfSourceStack = sourceStack.copy();
 
@@ -199,18 +192,13 @@ public class MachineMenu extends EnergyMenu {
         return copyOfSourceStack;
     }
 
-    @Override
-    public boolean stillValid(Player player) {
-        return stillValid(ContainerLevelAccess.create(player.level(), pos), player, block);
-    }
-
     /**
      * Set the visibility of the upgrade slots. If the slots are visible, they will be added to the
      * GUI at the specified position.
-     * 
+     *
      * @param upgradesVisible Whether the upgrade slots should be visible
-     * @param x The x position of the upgrade slots
-     * @param y The y position of the upgrade slots
+     * @param x               The x position of the upgrade slots
+     * @param y               The y position of the upgrade slots
      */
     public void setUpgradesVisible(boolean upgradesVisible, int x, int y) {
         this.upgradesVisible = upgradesVisible;
@@ -235,6 +223,7 @@ public class MachineMenu extends EnergyMenu {
 
     @FunctionalInterface
     private interface SlotVisibilityCondition {
+
         boolean isVisible();
     }
 

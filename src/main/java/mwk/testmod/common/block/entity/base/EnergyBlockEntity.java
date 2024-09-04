@@ -10,6 +10,7 @@ import net.minecraft.nbt.IntTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.energy.EnergyStorage;
 import net.neoforged.neoforge.energy.IEnergyStorage;
@@ -30,13 +31,13 @@ public class EnergyBlockEntity extends BlockEntity {
     }
 
     public EnergyBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
-            EnergyStorage energy, EnergyType energyType) {
+            int maxEnergy, EnergyType energyType) {
         super(type, pos, state);
-        this.energyStorage = energy;
+        this.energyStorage = new EnergyStorage(maxEnergy);
         this.energyWrapper = switch (energyType) {
-            case STORAGE -> Lazy.of(() -> new EnergyStorageWrapper(energy, this));
-            case CONSUMER -> Lazy.of(() -> new EnergyStorageConsumer(energy, this));
-            case PRODUCER -> Lazy.of(() -> new EnergyStorageProducer(energy, this));
+            case STORAGE -> Lazy.of(() -> new EnergyStorageWrapper(this.energyStorage, this));
+            case CONSUMER -> Lazy.of(() -> new EnergyStorageConsumer(this.energyStorage, this));
+            case PRODUCER -> Lazy.of(() -> new EnergyStorageProducer(this.energyStorage, this));
         };
     }
 
@@ -51,6 +52,26 @@ public class EnergyBlockEntity extends BlockEntity {
         super.load(tag);
         if (tag.contains(NBT_TAG_ENERGY)) {
             energyStorage.deserializeNBT(IntTag.valueOf(tag.getInt(NBT_TAG_ENERGY)));
+        }
+    }
+
+    public void pushEnergy(BlockPos pos, int energyPerTick) {
+        if (getEnergyStored() == 0) {
+            return;
+        }
+        for (Direction direction : Direction.values()) {
+            // TODO: Capability cache
+            IEnergyStorage receiver = level.getCapability(Capabilities.EnergyStorage.BLOCK,
+                    pos.relative(direction), direction.getOpposite());
+            if (receiver == null || receiver == this.getEnergyStorage(direction)) {
+                continue;
+            }
+            // We don't want to transfer more energy than we have
+            // Generator can push twice as much energy as it can generate so we don't
+            // end up with a full buffer that never gets emptied
+            int maxTransfer = Math.min(getEnergyStored(), energyPerTick);
+            int received = receiver.receiveEnergy(maxTransfer, false);
+            energyStorage.extractEnergy(received, false);
         }
     }
 

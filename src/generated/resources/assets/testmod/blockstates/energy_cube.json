@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "formed=false": {
+      "model": "testmod:block/energy_cube"
+    },
+    "formed=true": {
+      "model": "testmod:block/empty"
+    }
+  }
+}
