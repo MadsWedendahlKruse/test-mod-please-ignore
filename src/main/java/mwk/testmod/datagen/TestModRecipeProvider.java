@@ -9,6 +9,7 @@ import mwk.testmod.common.recipe.CrushingRecipe;
 import mwk.testmod.common.recipe.GeothermalGeneratorRecipe;
 import mwk.testmod.common.recipe.RedstoneGeneratorRecipe;
 import mwk.testmod.common.recipe.SeparationRecipe;
+import mwk.testmod.common.recipe.StampingRecipe;
 import mwk.testmod.common.recipe.StirlingGeneratorRecipe;
 import mwk.testmod.common.util.TestModTags;
 import mwk.testmod.init.registries.TestModBlocks;
@@ -42,11 +43,15 @@ public class TestModRecipeProvider extends RecipeProvider {
 
     @Override
     protected void buildRecipes(RecipeOutput recipeOutput) {
+        // Crafting recipes
         registerShapelessRecipes(recipeOutput);
         registerShapedRecipes(recipeOutput);
+        // Processing recipes
         registerCookingRecipes(recipeOutput);
         registerCrushingRecipes(recipeOutput);
         registerSeparationRecipes(recipeOutput);
+        registerStampingRecipes(recipeOutput);
+        // Generator recipes
         registerRedstoneGeneratorRecipes(recipeOutput);
         registerGeothermalGeneratorRecipes(recipeOutput);
         registerStirlingGeneratorRecipes(recipeOutput);
@@ -194,6 +199,25 @@ public class TestModRecipeProvider extends RecipeProvider {
                 new ArrayList<ItemStack>(
                         Arrays.asList(new ItemStack(TestModItems.TITANIUM_DUST.get()),
                                 new ItemStack(TestModItems.IRON_DUST.get()))));
+    }
+
+    private void registerStampingRecipe(RecipeOutput recipeOutput, String name,
+            Ingredient stampingDie, Ingredient input, ItemStack output) {
+        recipeOutput.accept(new ResourceLocation(TestMod.MODID, name),
+                new StampingRecipe(stampingDie, input, output), null);
+    }
+
+    private void registerStampingRecipes(RecipeOutput recipeOutput) {
+        registerStampingRecipe(recipeOutput, "iron_plate_stamping",
+                Ingredient.of(TestModItems.PLATE_STAMPING_DIE), Ingredient.of(Items.IRON_INGOT),
+                new ItemStack(TestModItems.IRON_PLATE.get()));
+        registerStampingRecipe(recipeOutput, "copper_plate_stamping",
+                Ingredient.of(TestModItems.PLATE_STAMPING_DIE), Ingredient.of(Items.COPPER_INGOT),
+                new ItemStack(TestModItems.COPPER_PLATE.get()));
+        registerStampingRecipe(recipeOutput, "steel_plate_stamping",
+                Ingredient.of(TestModItems.PLATE_STAMPING_DIE),
+                Ingredient.of(TestModTags.Items.STEEL_INGOT),
+                new ItemStack(TestModItems.STEEL_PLATE.get()));
     }
 
     private void registerRedstoneGeneratorRecipe(RecipeOutput recipeOutput, String name,

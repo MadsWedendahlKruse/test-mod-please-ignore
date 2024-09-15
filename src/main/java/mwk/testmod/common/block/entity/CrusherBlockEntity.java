@@ -25,8 +25,8 @@ public class CrusherBlockEntity extends ParallelCrafterBlockEntity<CrushingRecip
     public CrusherBlockEntity(BlockPos pos, BlockState state) {
         super(TestModBlockEntities.CRUSHER_ENTITY_TYPE.get(), pos, state,
                 TestModConfig.MACHINE_ENERGY_CAPACITY_DEFAULT.get(), 20, 9, 6, 40,
-                TestModRecipeTypes.CRUSHING.get(), TestModSounds.MULTIBLOCK_CRUSHER.get(),
-                TestModSounds.MULTIBLOCK_CRUSHER_DURATION);
+                TestModRecipeTypes.CRUSHING.get(), TestModSounds.CRUSHER.get(),
+                TestModSounds.CRUSHER_DURATION);
     }
 
     @Override

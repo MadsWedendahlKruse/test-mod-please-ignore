@@ -25,8 +25,8 @@ public class SeparatorBlockEntity extends OneToManyCrafterBlockEntity<Separation
     public SeparatorBlockEntity(BlockPos pos, BlockState state) {
         super(TestModBlockEntities.SEPARATOR_ENTITY_TYPE.get(), pos, state,
                 TestModConfig.MACHINE_ENERGY_CAPACITY_DEFAULT.get(), 20, 1, 3, 6, 20,
-                TestModRecipeTypes.SEPARATION.get(), TestModSounds.MULTIBLOCK_CRUSHER.get(),
-                TestModSounds.MULTIBLOCK_CRUSHER_DURATION);
+                TestModRecipeTypes.SEPARATION.get(), TestModSounds.CRUSHER.get(),
+                TestModSounds.CRUSHER_DURATION);
     }
 
     @Override

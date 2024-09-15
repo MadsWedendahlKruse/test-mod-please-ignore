@@ -1,35 +1,57 @@
 {
-    "block.multiblock_form": {
-        "category": "block",
-        "sounds": [
-            {
-                "name": "testmod:block/multiblock_form",
-                "attenuation_distance": 16,
-                "volume": 0.9
-            }
-        ],
-        "subtitle": "sounds.testmod.block.multiblock_form"
-    },
-    "block.crusher": {
-        "category": "block",
-        "sounds": [
-            {
-                "name": "testmod:block/crusher",
-                "attenuation_distance": 16,
-                "volume": 0.9
-            }
-        ],
-        "subtitle": "sounds.testmod.block.crusher"
-    },
-    "block.induction_furnace": {
-        "category": "block",
-        "sounds": [
-            {
-                "name": "testmod:block/induction_furnace3",
-                "attenuation_distance": 8,
-                "volume": 0.9
-            }
-        ],
-        "subtitle": "sounds.testmod.block.induction_furnace"
-    }
+	"block.multiblock_form": {
+		"category": "block",
+		"sounds": [
+			{
+				"name": "testmod:block/multiblock_form",
+				"attenuation_distance": 16,
+				"volume": 0.9
+			}
+		],
+		"subtitle": "sounds.testmod.block.multiblock_form"
+	},
+	"block.crusher": {
+		"category": "block",
+		"sounds": [
+			{
+				"name": "testmod:block/crusher",
+				"attenuation_distance": 16,
+				"volume": 0.9
+			}
+		],
+		"subtitle": "sounds.testmod.block.crusher"
+	},
+	"block.induction_furnace": {
+		"category": "block",
+		"sounds": [
+			{
+				"name": "testmod:block/induction_furnace3",
+				"attenuation_distance": 8,
+				"volume": 0.9
+			}
+		],
+		"subtitle": "sounds.testmod.block.induction_furnace"
+	},
+	"block.stamping_press": {
+		"category": "block",
+		"sounds": [
+			{
+				"name": "testmod:block/stamping_press",
+				"attenuation_distance": 8,
+				"volume": 0.8
+			}
+		],
+		"subtitle": "sounds.testmod.block.stamping_press"
+	},
+	"block.stamping_press_piston": {
+		"category": "block",
+		"sounds": [
+			{
+				"name": "testmod:block/stamping_press_piston",
+				"attenuation_distance": 8,
+				"volume": 0.9
+			}
+		],
+		"subtitle": "sounds.testmod.block.stamping_press_piston"
+	}
 }

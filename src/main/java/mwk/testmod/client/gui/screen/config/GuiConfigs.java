@@ -1,7 +1,7 @@
 package mwk.testmod.client.gui.screen.config;
 
 import mwk.testmod.TestMod;
-import mwk.testmod.client.gui.widgets.progress.ProgressArrowFactory;
+import mwk.testmod.client.gui.widgets.progress.ProgressArrowFactory.ArrowType;
 import net.minecraft.resources.ResourceLocation;
 
 public class GuiConfigs {
@@ -24,31 +24,36 @@ public class GuiConfigs {
     public static final GuiConfig INDUCTION_FURNACE = new GuiConfig(
             new ResourceLocation(TestMod.MODID, "textures/gui/container/3x3_parallel.png"),
             ENERGY_BAR_X, ENERGY_BAR_Y, IMAGE_WIDTH_3X3, IMAGE_HEIGHT, "smelting",
-            PROGRESS_ICON_X_3X3, PROGRESS_ICON_Y, ProgressArrowFactory.Type.SINGLE,
+            PROGRESS_ICON_X_3X3, PROGRESS_ICON_Y, ArrowType.SINGLE,
             PROGRESS_ARROWS_3X3, PROGRESS_ARROW_X_3X3, PROGRESS_ARROW_Y_3X3,
             PROGRESS_ARROW_SPACING_3X3);
 
     public static final GuiConfig CRUSHER = new GuiConfig(
             new ResourceLocation(TestMod.MODID, "textures/gui/container/3x3_parallel.png"),
             ENERGY_BAR_X, ENERGY_BAR_Y, IMAGE_WIDTH_3X3, IMAGE_HEIGHT, "crushing",
-            PROGRESS_ICON_X_3X3, PROGRESS_ICON_Y, ProgressArrowFactory.Type.SINGLE,
+            PROGRESS_ICON_X_3X3, PROGRESS_ICON_Y, ArrowType.SINGLE,
             PROGRESS_ARROWS_3X3, PROGRESS_ARROW_X_3X3, PROGRESS_ARROW_Y_3X3,
             PROGRESS_ARROW_SPACING_3X3);
 
     public static final GuiConfig SEPARATOR = new GuiConfig(
             new ResourceLocation(TestMod.MODID, "textures/gui/container/separator.png"),
             ENERGY_BAR_X, ENERGY_BAR_Y, IMAGE_WIDTH, IMAGE_HEIGHT, "separation", PROGRESS_ICON_X,
-            PROGRESS_ICON_Y, ProgressArrowFactory.Type.ONE_TO_THREE, 1, 70, 29, 0);
+            PROGRESS_ICON_Y, ArrowType.ONE_TO_THREE, 1, 70, 29, 0);
+
+    public static final GuiConfig STAMPING_PRESS = new GuiConfig(
+            new ResourceLocation(TestMod.MODID, "textures/gui/container/stamping_press.png"),
+            ENERGY_BAR_X, ENERGY_BAR_Y, IMAGE_WIDTH, IMAGE_HEIGHT, "stamping", PROGRESS_ICON_X,
+            PROGRESS_ICON_Y, ArrowType.ONE_TO_ONE, 1, 70, 48, 0);
 
     public static final GuiConfig REDSTONE_GENERATOR = new GuiConfig(
             new ResourceLocation(TestMod.MODID, "textures/gui/container/redstone_generator.png"),
             ENERGY_BAR_X, ENERGY_BAR_Y, IMAGE_WIDTH, IMAGE_HEIGHT, "energy", 45, 63,
-            ProgressArrowFactory.Type.SINGLE, 0, 0, 0, 0);
+            ArrowType.SINGLE, 0, 0, 0, 0);
 
     public static final GuiConfig GEOTHERMAL_GENERATOR = new GuiConfig(
             new ResourceLocation(TestMod.MODID, "textures/gui/container/geothermal_generator.png"),
             ENERGY_BAR_X, ENERGY_BAR_Y, IMAGE_WIDTH, IMAGE_HEIGHT, "energy", 63, 46,
-            ProgressArrowFactory.Type.SINGLE, 0, 0, 0, 0);
+            ArrowType.SINGLE, 0, 0, 0, 0);
 
     public static final GuiConfig CAPACITRON = new GuiConfig(
             new ResourceLocation(TestMod.MODID, "textures/gui/container/capacitron.png"),

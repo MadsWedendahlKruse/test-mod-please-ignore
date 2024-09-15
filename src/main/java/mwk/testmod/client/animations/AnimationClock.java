@@ -1,6 +1,7 @@
 package mwk.testmod.client.animations;
 
 import mwk.testmod.TestMod;
+import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
@@ -18,10 +19,13 @@ public class AnimationClock {
 
     private float deltaTime;
     private long lastTickTime;
+    // We need the Minecraft instance to check if the game is paused
+    private final Minecraft minecraft;
 
     private static final AnimationClock INSTANCE = new AnimationClock();
 
     private AnimationClock() {
+        minecraft = Minecraft.getInstance();
         deltaTime = 0;
     }
 
@@ -36,6 +40,9 @@ public class AnimationClock {
     }
 
     public float getDeltaTime() {
+        if (minecraft.isPaused()) {
+            return 0;
+        }
         return deltaTime;
     }
 

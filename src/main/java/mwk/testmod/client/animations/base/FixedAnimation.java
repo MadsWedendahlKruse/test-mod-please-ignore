@@ -7,21 +7,22 @@ package mwk.testmod.client.animations.base;
 public abstract class FixedAnimation<T> extends Animation<T> {
 
     /**
-     * The function to use for interpolating the animation's progress.
+     * The function to use for interpolating the animation's progress. For previews, see
+     * <a href="https://easings.net/">easings.net</a>
      */
     public enum Function {
-        LINEAR, EASE_IN_CUBIC
+        LINEAR, EASE_IN_CUBIC, EASE_OUT_CUBIC
     }
 
     protected Function function;
 
     /**
      * Creates a new animation with the given duration, function and start and target values.
-     * 
+     *
      * @param duration The duration of the animation in seconds. Must be greater than 0.
      * @param function The function to use for interpolating the animation's progress.
-     * @param start The start value of the animation.
-     * @param target The target value of the animation.
+     * @param start    The start value of the animation.
+     * @param target   The target value of the animation.
      * @throws IllegalArgumentException If the duration is less than or equal to 0.
      */
     protected FixedAnimation(float duration, Function function, T start, T target) {
@@ -41,16 +42,24 @@ public abstract class FixedAnimation<T> extends Animation<T> {
         float progress = elapsedTime / duration;
         T diff = subtract(targetValue, startValue);
         currentValue = startValue;
-        switch (function) {
-            case EASE_IN_CUBIC:
-                currentValue =
-                        add(currentValue, multiply(diff, 1 - (float) Math.pow(1 - progress, 3)));
-                break;
-            case LINEAR:
-            default:
-                currentValue = add(currentValue, multiply(diff, progress));
-                break;
-        }
-        return currentValue;
+//        switch (function) {
+//            case EASE_IN_CUBIC:
+//                currentValue = add(currentValue, multiply(diff, (float) Math.pow(progress, 3)));
+//                break;
+//            case EASE_OUT_CUBIC:
+//                currentValue =
+//                        add(currentValue, multiply(diff, 1 - (float) Math.pow(1 - progress, 3)));
+//                break;
+//            case LINEAR:
+//            default:
+//                currentValue = add(currentValue, multiply(diff, progress));
+//                break;
+//        }
+        return switch (function) {
+            case EASE_IN_CUBIC -> add(currentValue, multiply(diff, (float) Math.pow(progress, 3)));
+            case EASE_OUT_CUBIC ->
+                    add(currentValue, multiply(diff, 1 - (float) Math.pow(1 - progress, 3)));
+            case LINEAR -> add(currentValue, multiply(diff, progress));
+        };
     }
 }

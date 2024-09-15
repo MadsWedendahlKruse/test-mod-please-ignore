@@ -16,6 +16,7 @@ public class TestModLanguageProvider extends LanguageProvider {
             "description.testmod.induction_furnace";
     public static final String KEY_DESCRIPTION_CRUSHER = "description.testmod.crusher";
     public static final String KEY_DESCRIPTION_SEPARATOR = "description.testmod.separator";
+    public static final String KEY_DESCRIPTION_STAMPING_PRESS = "description.testmod.stamping_press";
     public static final String KEY_DESCRIPTION_REDSTONE_GENERATOR =
             "description.testmod.redstone_generator";
     public static final String KEY_DESCRIPTION_GEOTHERMAL_GENERATOR =
@@ -83,6 +84,7 @@ public class TestModLanguageProvider extends LanguageProvider {
     public static final String KEY_WIDGET_AUTO_EJECT_TOOLTIP = "widget.testmod.auto_eject.tooltip";
     public static final String KEY_WIDGET_TOOLTIP_ON = "widget.testmod.tooltip.on";
     public static final String KEY_WIDGET_TOOLTIP_OFF = "widget.testmod.tooltip.off";
+    public static final String KEY_WIDGET_MISSING_STAMPING_DIE = "widget.testmod.missing_stamping_die";
     // TODO: Not sure where to put this
     public static final String KEY_WIDGET_GENERATOR_GENERATING_TITLE =
             "widget.testmod.generator.generating_title";
@@ -126,6 +128,7 @@ public class TestModLanguageProvider extends LanguageProvider {
         add(TestModBlocks.INDUCTION_FURNACE.get(), "Induction Furnace");
         add(TestModBlocks.CRUSHER.get(), "Crusher");
         add(TestModBlocks.SEPARATOR.get(), "Separator");
+        add(TestModBlocks.STAMPING_PRESS.get(), "Stamping Press");
         add(TestModBlocks.REDSTONE_GENERATOR.get(), "Redstone Generator");
         add(TestModBlocks.GEOTHERMAL_GENERATOR.get(), "Geothermal Generator");
         add(TestModBlocks.STIRLING_GENERATOR.get(), "Stirling Generator");
@@ -143,6 +146,8 @@ public class TestModLanguageProvider extends LanguageProvider {
                 "A powerful machine designed to break down ores into finer materials, enabling the extraction of valuable resources. Essential for efficient ore processing and preparation in advanced manufacturing systems.");
         add(KEY_DESCRIPTION_SEPARATOR,
                 "A machine designed to separate mixed materials into their individual components. Essential for efficient ore processing and preparation in advanced manufacturing systems.");
+        add(KEY_DESCRIPTION_STAMPING_PRESS,
+                "A machine designed to stamp and shape materials into specific forms. Essential for efficient manufacturing and production of advanced components.");
         add(KEY_DESCRIPTION_REDSTONE_GENERATOR,
                 "A machine that generates energy from redstone. Useful for providing power to machines and systems in remote locations or where other power sources are unavailable.");
         add(KEY_DESCRIPTION_GEOTHERMAL_GENERATOR,
@@ -169,6 +174,8 @@ public class TestModLanguageProvider extends LanguageProvider {
         add(TestModItems.BLUE_GIZMO.get(), "Blue Gizmo");
         add(TestModItems.ENERGY_CELL.get(), "Energy Cell");
         add(TestModItems.SPEED_UPGRADE.get(), "Speed Upgrade");
+        add(TestModItems.PLATE_STAMPING_DIE.get(), "Plate Stamping Die");
+        add(TestModItems.GEAR_STAMPING_DIE.get(), "Gear Stamping Die");
         // Info
         add(KEY_INFO_CONTROLLER_BLUEPRINT_HELP, "Right-click with a wrench to see the blueprint");
         add(KEY_INFO_CONTROLLER_BLUEPRINT_COMPLETE,
@@ -208,6 +215,7 @@ public class TestModLanguageProvider extends LanguageProvider {
         add(KEY_WIDGET_AUTO_EJECT_TOOLTIP, "Auto eject: %s");
         add(KEY_WIDGET_TOOLTIP_ON, "ON");
         add(KEY_WIDGET_TOOLTIP_OFF, "OFF");
+        add(KEY_WIDGET_MISSING_STAMPING_DIE, "Missing stamping die");
         add(KEY_WIDGET_GENERATOR_ENERGY_TITLE, "Energy");
         add(KEY_WIDGET_GENERATOR_ENERGY_TEXT, "  %s FE");
         add(KEY_WIDGET_GENERATOR_GENERATING_TITLE, "Generating");

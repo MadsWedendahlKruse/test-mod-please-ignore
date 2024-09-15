@@ -7,9 +7,11 @@ import mwk.testmod.client.gui.screen.GeothermalGeneratorScreen;
 import mwk.testmod.client.gui.screen.InductionFurnaceScreen;
 import mwk.testmod.client.gui.screen.RedstoneGeneratorScreen;
 import mwk.testmod.client.gui.screen.SeparatorScreen;
+import mwk.testmod.client.gui.screen.StampingPressScreen;
 import mwk.testmod.client.gui.screen.StirlingGeneratorScreen;
 import mwk.testmod.client.render.block_entity.CrusherBlockEntityRenderer;
 import mwk.testmod.client.render.block_entity.SeparatorBlockEntityRenderer;
+import mwk.testmod.client.render.block_entity.StampingPressBlockEntityRenderer;
 import mwk.testmod.client.render.block_entity.StirlingGeneratorBlockEntityRenderer;
 import mwk.testmod.client.render.conduit.FluidConduitBlockEntityRenderer;
 import mwk.testmod.client.render.hologram.HologramRenderer;
@@ -173,6 +175,8 @@ public class TestMod {
                         InductionFurnaceScreen::new);
                 MenuScreens.register(TestModMenus.CRUSHER_MENU.get(), CrusherScreen::new);
                 MenuScreens.register(TestModMenus.SEPARATOR_MENU.get(), SeparatorScreen::new);
+                MenuScreens.register(TestModMenus.STAMPING_PRESS_MENU.get(),
+                        StampingPressScreen::new);
 
                 MenuScreens.register(TestModMenus.REDSTONE_GENERATOR_MENU.get(),
                         RedstoneGeneratorScreen::new);
@@ -199,6 +203,8 @@ public class TestMod {
             event.registerBlockEntityRenderer(
                     TestModBlockEntities.STIRLING_GENERATOR_ENTITY_TYPE.get(),
                     (context) -> new StirlingGeneratorBlockEntityRenderer(context));
+            event.registerBlockEntityRenderer(TestModBlockEntities.STAMPING_PRESS_ENTITY_TYPE.get(),
+                    (context) -> new StampingPressBlockEntityRenderer(context));
 
             event.registerBlockEntityRenderer(TestModBlockEntities.CONDUIT_FLUID_ENTITY_TYPE.get(),
                     (context) -> new FluidConduitBlockEntityRenderer(context));

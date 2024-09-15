@@ -7,6 +7,7 @@ import mwk.testmod.client.gui.widgets.panels.SettingsPanel;
 import mwk.testmod.client.gui.widgets.panels.UpgradePanel;
 import mwk.testmod.client.gui.widgets.panels.base.PanelSide;
 import mwk.testmod.client.gui.widgets.progress.ProgressArrowFactory;
+import mwk.testmod.client.gui.widgets.progress.ProgressArrowFactory.ArrowType;
 import mwk.testmod.client.gui.widgets.progress.ProgressIcon;
 import mwk.testmod.client.gui.widgets.progress.ProgressSprite;
 import mwk.testmod.common.block.inventory.base.ProcessingMenu;
@@ -23,7 +24,7 @@ public abstract class ProcessingScreen<T extends ProcessingMenu> extends Machine
     private final WidgetSprites progressIconSprites;
     private final int progressIconX;
     private final int progressIconY;
-    private final ProgressArrowFactory.Type progressArrowType;
+    private final ArrowType progressArrowType;
     private final int progressArrows;
     private final int progressArrowX;
     private final int progressArrowY;
@@ -40,7 +41,7 @@ public abstract class ProcessingScreen<T extends ProcessingMenu> extends Machine
     public ProcessingScreen(T menu, Inventory playerInventory, Component title,
             ResourceLocation texture, int energyBarX, int energyBarY, int imageWidth,
             int imageHeight, String iconName, int progressIconX, int progressIconY,
-            ProgressArrowFactory.Type progressArrowType, int progressArrows, int progressArrowX,
+            ArrowType progressArrowType, int progressArrows, int progressArrowX,
             int progressArrowY, int progressArrowSpacing) {
         super(menu, playerInventory, title, texture, energyBarX, energyBarY, imageWidth,
                 imageHeight);

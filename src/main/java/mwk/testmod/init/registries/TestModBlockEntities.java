@@ -10,6 +10,7 @@ import mwk.testmod.common.block.entity.GeothermalGeneratorBlockEntity;
 import mwk.testmod.common.block.entity.InductionFurnaceBlockEntity;
 import mwk.testmod.common.block.entity.RedstoneGeneratorBlockEntity;
 import mwk.testmod.common.block.entity.SeparatorBlockEntity;
+import mwk.testmod.common.block.entity.StampingPressBlockEntity;
 import mwk.testmod.common.block.entity.StirlingGeneratorBlockEntity;
 import mwk.testmod.common.block.entity.TeleporterBlockEntity;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
@@ -68,6 +69,8 @@ public class TestModBlockEntities {
             registerSimpleBlockEntity(TestModBlocks.CRUSHER, CrusherBlockEntity::new);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SeparatorBlockEntity>> SEPARATOR_ENTITY_TYPE =
             registerSimpleBlockEntity(TestModBlocks.SEPARATOR, SeparatorBlockEntity::new);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StampingPressBlockEntity>> STAMPING_PRESS_ENTITY_TYPE =
+            registerSimpleBlockEntity(TestModBlocks.STAMPING_PRESS, StampingPressBlockEntity::new);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TeleporterBlockEntity>> TELEPORTER_ENTITY_TYPE =
             registerSimpleBlockEntity(TestModBlocks.TELEPORTER, TeleporterBlockEntity::new);
 

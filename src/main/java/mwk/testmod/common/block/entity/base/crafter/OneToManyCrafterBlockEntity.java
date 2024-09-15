@@ -1,7 +1,6 @@
 package mwk.testmod.common.block.entity.base.crafter;
 
 import java.util.List;
-import mwk.testmod.common.recipe.SeparationRecipe;
 import mwk.testmod.common.recipe.base.crafter.OneToManyItemStackRecipe;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
@@ -43,7 +42,7 @@ public abstract class OneToManyCrafterBlockEntity<T extends OneToManyItemStackRe
         this.inventory.extractItem(0, 1, false);
         for (int i = 0; i < results.size(); i++) {
             ItemStack result = results.get(i);
-            int outputSlot = i + 1;
+            int outputSlot = i + inputSlots;
             this.inventory.setStackInSlot(outputSlot, new ItemStack(result.getItem(),
                     this.inventory.getStackInSlot(outputSlot).getCount() + result.getCount()));
         }

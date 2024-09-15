@@ -24,7 +24,7 @@ public class MachineMenu extends EnergyMenu {
     public static final int DEFAULT_PLAYER_INVENTORY_X = 8;
     public static final int DEFAULT_PLAYER_INVENTORY_Y = 111;
 
-    private final MachineBlockEntity blockEntity;
+    protected final MachineBlockEntity blockEntity;
 
     public final int inputSlots;
     public final int outputSlots;
@@ -65,7 +65,8 @@ public class MachineMenu extends EnergyMenu {
             this.inputSlotsY = inputSlotsY;
             this.outputSlotsX = outputSlotsX;
             this.outputSlotsY = outputSlotsY;
-            addInputOutputSlots();
+            addInputSlots();
+            addOutputSlots();
             addUpgradeSlots(0, 0);
             addDataSlots(new MachineIOContainerData(machineBlockEntity, this));
         } else {
@@ -96,9 +97,12 @@ public class MachineMenu extends EnergyMenu {
         addItemHandlerSlots(itemHandler, slots, startIndex, slotsX, slotsY, slotGridHelper, null);
     }
 
-    protected void addInputOutputSlots() {
+    protected void addInputSlots() {
         addItemHandlerSlots(blockEntity.getInputItemHandler(null, true), inputSlots, 0, inputSlotsX,
                 inputSlotsY, ItemSlotGridHelper.ROWS_3);
+    }
+
+    protected void addOutputSlots() {
         addItemHandlerSlots(blockEntity.getOutputItemHandler(null), outputSlots, inputSlots,
                 outputSlotsX, outputSlotsY, ItemSlotGridHelper.ROWS_3);
     }
@@ -146,14 +150,14 @@ public class MachineMenu extends EnergyMenu {
     // 0 - 8 = hotbar slots (which will map to the InventoryPlayer slot numbers 0 - 8)
     // 9 - 35 = player inventory slots (which map to the InventoryPlayer slot numbers 9 - 35)
     // 36 - 44 = TileInventory slots, which map to our TileEntity slot numbers 0 - 8)
-    private static final int HOTBAR_SLOT_COUNT = 9;
-    private static final int PLAYER_INVENTORY_ROW_COUNT = 3;
-    private static final int PLAYER_INVENTORY_COLUMN_COUNT = 9;
-    private static final int PLAYER_INVENTORY_SLOT_COUNT =
+    protected static final int HOTBAR_SLOT_COUNT = 9;
+    protected static final int PLAYER_INVENTORY_ROW_COUNT = 3;
+    protected static final int PLAYER_INVENTORY_COLUMN_COUNT = 9;
+    protected static final int PLAYER_INVENTORY_SLOT_COUNT =
             PLAYER_INVENTORY_COLUMN_COUNT * PLAYER_INVENTORY_ROW_COUNT;
-    private static final int VANILLA_SLOT_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INVENTORY_SLOT_COUNT;
-    private static final int VANILLA_FIRST_SLOT_INDEX = 0;
-    private static final int TE_INVENTORY_FIRST_SLOT_INDEX =
+    protected static final int VANILLA_SLOT_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INVENTORY_SLOT_COUNT;
+    protected static final int VANILLA_FIRST_SLOT_INDEX = 0;
+    protected static final int TE_INVENTORY_FIRST_SLOT_INDEX =
             VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT;
 
     @Override
@@ -222,7 +226,7 @@ public class MachineMenu extends EnergyMenu {
     }
 
     @FunctionalInterface
-    private interface SlotVisibilityCondition {
+    protected interface SlotVisibilityCondition {
 
         boolean isVisible();
     }

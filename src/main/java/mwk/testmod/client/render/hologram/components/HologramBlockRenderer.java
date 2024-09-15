@@ -28,7 +28,7 @@ public class HologramBlockRenderer {
         this.blockRenderer = blockRenderer;
         this.bufferSource = bufferSource;
         scaleAnimation = new FixedAnimationFloat(ANIMATION_SCALE_DURATION,
-                FixedAnimationFloat.Function.EASE_IN_CUBIC);
+                FixedAnimationFloat.Function.EASE_OUT_CUBIC);
     }
 
     /**

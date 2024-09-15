@@ -28,3 +28,6 @@ java_pid21216.hprof
 .vscode/settings.json
 *.hprof
 src/generated/resources/.cache
+
+# blockbench likes to export the textures used for the model next to the model file
+src/main/resources/assets/testmod/models/multiblock/*.png

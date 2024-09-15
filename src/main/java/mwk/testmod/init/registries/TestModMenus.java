@@ -8,6 +8,7 @@ import mwk.testmod.common.block.inventory.GeothermalGeneratorMenu;
 import mwk.testmod.common.block.inventory.InductionFurnaceMenu;
 import mwk.testmod.common.block.inventory.RedstoneGeneratorMenu;
 import mwk.testmod.common.block.inventory.SeparatorMenu;
+import mwk.testmod.common.block.inventory.StampingPressMenu;
 import mwk.testmod.common.block.inventory.StirlingGeneratorMenu;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import net.minecraft.core.BlockPos;
@@ -34,6 +35,8 @@ public class TestModMenus {
             TestModBlocks.CRUSHER, CrusherMenu::new);
     public static final Supplier<MenuType<SeparatorMenu>> SEPARATOR_MENU = registerMultiBlockControllerMenu(
             TestModBlocks.SEPARATOR, SeparatorMenu::new);
+    public static final Supplier<MenuType<StampingPressMenu>> STAMPING_PRESS_MENU = registerMultiBlockControllerMenu(
+            TestModBlocks.STAMPING_PRESS, StampingPressMenu::new);
     public static final Supplier<MenuType<RedstoneGeneratorMenu>> REDSTONE_GENERATOR_MENU = registerMultiBlockControllerMenu(
             TestModBlocks.REDSTONE_GENERATOR, RedstoneGeneratorMenu::new);
     public static final Supplier<MenuType<GeothermalGeneratorMenu>> GEOTHERMAL_GENERATOR_MENU = registerMultiBlockControllerMenu(

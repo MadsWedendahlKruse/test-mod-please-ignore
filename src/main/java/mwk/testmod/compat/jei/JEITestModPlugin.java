@@ -17,6 +17,7 @@ import mwk.testmod.TestMod;
 import mwk.testmod.client.gui.screen.CrusherScreen;
 import mwk.testmod.client.gui.screen.InductionFurnaceScreen;
 import mwk.testmod.client.gui.screen.SeparatorScreen;
+import mwk.testmod.client.gui.screen.StampingPressScreen;
 import mwk.testmod.client.gui.screen.base.MachineScreen;
 import mwk.testmod.client.gui.screen.base.ProcessingScreen;
 import mwk.testmod.client.gui.screen.config.GuiConfig;
@@ -26,6 +27,7 @@ import mwk.testmod.client.gui.widgets.progress.ProgressArrowFactory;
 import mwk.testmod.client.gui.widgets.progress.ProgressIcon;
 import mwk.testmod.compat.jei.recipe_categories.CrushingRecipeCategory;
 import mwk.testmod.compat.jei.recipe_categories.SeparationRecipeCategory;
+import mwk.testmod.compat.jei.recipe_categories.StampingRecipeCategory;
 import mwk.testmod.init.registries.TestModBlocks;
 import mwk.testmod.init.registries.TestModRecipeTypes;
 import net.minecraft.client.Minecraft;
@@ -46,6 +48,7 @@ public class JEITestModPlugin implements IModPlugin {
         IGuiHelper guiHelper = registration.getJeiHelpers().getGuiHelper();
         registration.addRecipeCategories(new CrushingRecipeCategory(guiHelper));
         registration.addRecipeCategories(new SeparationRecipeCategory(guiHelper));
+        registration.addRecipeCategories(new StampingRecipeCategory(guiHelper));
     }
 
     @Override
@@ -58,6 +61,9 @@ public class JEITestModPlugin implements IModPlugin {
         registration.addRecipes(JEITestModRecipeTypes.SEPARATION,
                 recipeManager.getAllRecipesFor(TestModRecipeTypes.SEPARATION.get()).stream()
                         .map(recipe -> recipe.value()).toList());
+        registration.addRecipes(JEITestModRecipeTypes.STAMPING,
+                recipeManager.getAllRecipesFor(TestModRecipeTypes.STAMPING.get()).stream()
+                        .map(recipe -> recipe.value()).toList());
     }
 
     @Override
@@ -69,6 +75,9 @@ public class JEITestModPlugin implements IModPlugin {
                 JEITestModRecipeTypes.CRUSHING);
         registration.addRecipeCatalyst(TestModBlocks.SEPARATOR.get().asItem().getDefaultInstance(),
                 JEITestModRecipeTypes.SEPARATION);
+        registration.addRecipeCatalyst(
+                TestModBlocks.STAMPING_PRESS.get().asItem().getDefaultInstance(),
+                JEITestModRecipeTypes.STAMPING);
     }
 
     private Collection<Rect2i> getRecipeClickAreas(GuiConfig config) {
@@ -114,5 +123,7 @@ public class JEITestModPlugin implements IModPlugin {
                 JEITestModRecipeTypes.SEPARATION);
         registerClickArea(registration, CrusherScreen.class, GuiConfigs.CRUSHER,
                 JEITestModRecipeTypes.CRUSHING);
+        registerClickArea(registration, StampingPressScreen.class, GuiConfigs.STAMPING_PRESS,
+                JEITestModRecipeTypes.STAMPING);
     }
 }

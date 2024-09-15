@@ -47,7 +47,7 @@ import org.joml.Quaternionf;
 /**
  * The screen for the hologram projector. It displays a list of blueprints on the right side and a
  * 3D model of the selected blueprint on the left side. The user can manipulate the model using
- * buttons. The screen is opened by right-clicking with the hologram projector in hand.
+ * buttons. The screen is opened by shift-right-clicking with the hologram projector in hand.
  * <p>
  * TODO: This class is a monster
  */
@@ -119,8 +119,14 @@ public class HologramProjectorScreen extends Screen {
     public HologramProjectorScreen() {
         super(Component.literal("Placeholder"));
         mergeSplitAnimation = new FixedAnimationFloat(0.5F,
-                FixedAnimationFloat.Function.EASE_IN_CUBIC, 0.0F, 0.0F);
+                FixedAnimationFloat.Function.EASE_OUT_CUBIC, 0.0F, 0.0F);
         autoSpin = true;
+    }
+
+    @Override
+    public boolean isPauseScreen() {
+        // Prevent the game from pausing when this screen is open
+        return false;
     }
 
     @Override

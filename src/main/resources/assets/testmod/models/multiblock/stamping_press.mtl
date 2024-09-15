@@ -1,0 +1,8 @@
+# Made in Blockbench 4.10.4
+newmtl m_c2d44528-b9d9-31fb-04ad-4add63b3c993
+map_Kd testmod:block/conveyor_belt
+newmtl m_a676dfcf-d470-eb4e-2b91-74e631458259
+map_Kd #base
+newmtl m_98f4cdaa-d68d-df58-70ad-d5333b763afc
+map_Kd testmod:block/stamping_press_screen
+newmtl none

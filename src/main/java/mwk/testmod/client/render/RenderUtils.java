@@ -15,7 +15,8 @@ import net.neoforged.neoforge.fluids.FluidStack;
 
 public class RenderUtils {
 
-    private RenderUtils() {}
+    private RenderUtils() {
+    }
 
     /**
      * Returns the rotation in radians for the given facing direction.
@@ -24,17 +25,12 @@ public class RenderUtils {
      * @return the rotation in radians
      */
     public static float getRotation(Direction facing) {
-        switch (facing) {
-            case EAST:
-                return -(float) Math.PI / 2.0F;
-            case WEST:
-                return (float) Math.PI / 2.0F;
-            case SOUTH:
-                return (float) Math.PI;
-            case NORTH:
-            default:
-                return 0.0F;
-        }
+        return switch (facing) {
+            case EAST -> -(float) Math.PI / 2.0F;
+            case WEST -> (float) Math.PI / 2.0F;
+            case SOUTH -> (float) Math.PI;
+            default -> 0.0F;
+        };
     }
 
     public static void renderModel(PoseStack poseStack, VertexConsumer buffer, BakedModel model,
@@ -47,6 +43,7 @@ public class RenderUtils {
      * Represents a vertex with position and texture coordinates.
      */
     public record Vertex(float x, float y, float z, float u, float v) {
+
     }
 
     /**
@@ -62,7 +59,7 @@ public class RenderUtils {
      */
     public static Vertex[] getCubeVertices(float x1, float y1, float z1, float x2, float y2,
             float z2) {
-        return new Vertex[] {
+        return new Vertex[]{
                 // Front face
                 new Vertex(x1, y1, z1, 0, 0), new Vertex(x1, y2, z1, 0, 1),
                 new Vertex(x2, y2, z1, 1, 1), new Vertex(x2, y1, z1, 1, 0),
@@ -86,13 +83,13 @@ public class RenderUtils {
     /**
      * Renders a cube with the given vertices, sprite, color, light, and overlay.
      *
-     * @param poseStack the pose stack to render with
+     * @param poseStack     the pose stack to render with
      * @param vertexBuilder the vertex consumer to render with
-     * @param vertices the vertices of the cube
-     * @param sprite the sprite to render
-     * @param color the color to render with
-     * @param light the light level to render with
-     * @param overlay the overlay to render with
+     * @param vertices      the vertices of the cube
+     * @param sprite        the sprite to render
+     * @param color         the color to render with
+     * @param light         the light level to render with
+     * @param overlay       the overlay to render with
      */
     public static void renderCube(PoseStack poseStack, VertexConsumer vertexBuilder,
             Vertex[] vertices, TextureAtlasSprite sprite, int color, int light, int overlay) {
@@ -106,15 +103,15 @@ public class RenderUtils {
      * Renders a quad with the given vertices, sprite, color, light, and overlay.
      *
      * @param vertexBuilder the vertex consumer to render with
-     * @param poseStack the pose stack to render with
-     * @param sprite the sprite to render
-     * @param v1 the first vertex
-     * @param v2 the second vertex
-     * @param v3 the third vertex
-     * @param v4 the fourth vertex
-     * @param color the color to render with
-     * @param light the light level to render with
-     * @param overlay the overlay to render with
+     * @param poseStack     the pose stack to render with
+     * @param sprite        the sprite to render
+     * @param v1            the first vertex
+     * @param v2            the second vertex
+     * @param v3            the third vertex
+     * @param v4            the fourth vertex
+     * @param color         the color to render with
+     * @param light         the light level to render with
+     * @param overlay       the overlay to render with
      */
     public static void drawQuad(VertexConsumer vertexBuilder, PoseStack poseStack,
             TextureAtlasSprite sprite, Vertex v1, Vertex v2, Vertex v3, Vertex v4, int color,
@@ -129,12 +126,12 @@ public class RenderUtils {
      * Renders a vertex with the given sprite, color, light, and overlay.
      *
      * @param vertexBuilder the vertex consumer to render with
-     * @param poseStack the pose stack to render with
-     * @param sprite the sprite to render
-     * @param vertex the vertex to render
-     * @param color the color to render with
-     * @param light the light level to render with
-     * @param overlay the overlay to render with
+     * @param poseStack     the pose stack to render with
+     * @param sprite        the sprite to render
+     * @param vertex        the vertex to render
+     * @param color         the color to render with
+     * @param light         the light level to render with
+     * @param overlay       the overlay to render with
      */
     public static void vertex(VertexConsumer vertexBuilder, PoseStack poseStack,
             TextureAtlasSprite sprite, Vertex vertex, int color, int light, int overlay) {
@@ -147,8 +144,8 @@ public class RenderUtils {
 
     /**
      * Returns the texture for the given fluid.
-     * 
-     * @param fluid the fluid to get the texture for
+     *
+     * @param fluid   the fluid to get the texture for
      * @param flowing whether to get the flowing texture or the still texture
      * @return the texture for the fluid
      */
@@ -161,9 +158,9 @@ public class RenderUtils {
 
     /**
      * Returns the texture for the given fluid stack.
-     * 
+     *
      * @param fluidStack the fluid stack to get the texture for
-     * @param flowing whether to get the flowing texture or the still texture
+     * @param flowing    whether to get the flowing texture or the still texture
      * @return the texture for the fluid stack
      */
     public static TextureAtlasSprite getFluidTexture(FluidStack fluidStack, boolean flowing) {

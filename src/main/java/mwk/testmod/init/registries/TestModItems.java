@@ -1,6 +1,7 @@
 package mwk.testmod.init.registries;
 
 import mwk.testmod.TestMod;
+import mwk.testmod.common.item.misc.StampingDieItem;
 import mwk.testmod.common.item.tools.HologramProjectorItem;
 import mwk.testmod.common.item.tools.WrenchItem;
 import mwk.testmod.common.item.upgrades.SpeedUpgradeItem;
@@ -60,6 +61,11 @@ public class TestModItems {
     // Upgrades
     public static final DeferredItem<Item> SPEED_UPGRADE = ITEMS.register("speed_upgrade",
             () -> new SpeedUpgradeItem(new Item.Properties(), 0.3F, 0.4F));
+    // Stamping dies
+    public static final DeferredItem<Item> PLATE_STAMPING_DIE =
+            ITEMS.register("stamping_die_plate", () -> new StampingDieItem(new Item.Properties()));
+    public static final DeferredItem<Item> GEAR_STAMPING_DIE =
+            ITEMS.register("stamping_die_gear", () -> new StampingDieItem(new Item.Properties()));
 
     public static void register(IEventBus modEventBus) {
         ITEMS.register(modEventBus);

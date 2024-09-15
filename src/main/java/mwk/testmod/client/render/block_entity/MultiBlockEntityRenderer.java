@@ -1,6 +1,5 @@
 package mwk.testmod.client.render.block_entity;
 
-import org.joml.Quaternionf;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mwk.testmod.client.render.RenderUtils;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
@@ -11,6 +10,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import org.joml.Quaternionf;
 
 /**
  * Base class for rendering block entities of multiblock structures.

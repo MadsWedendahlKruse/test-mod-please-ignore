@@ -85,10 +85,10 @@ public abstract class MachinePanel extends AbstractWidget {
         this.heightOpen = heightOpen;
         this.widthClosed = widthClosed;
         this.heightClosed = heightClosed;
-        animationWidth = new FixedAnimationFloat(ANIMATION_WIDTH_DURATION, Function.EASE_IN_CUBIC);
+        animationWidth = new FixedAnimationFloat(ANIMATION_WIDTH_DURATION, Function.EASE_OUT_CUBIC);
         animationWidth.setStartAndTarget((float) widthClosed, (float) widthClosed);
         animationHeight =
-                new FixedAnimationFloat(ANIMATION_HEIGHT_DURATION, Function.EASE_IN_CUBIC);
+                new FixedAnimationFloat(ANIMATION_HEIGHT_DURATION, Function.EASE_OUT_CUBIC);
         animationHeight.setStartAndTarget((float) heightClosed, (float) heightClosed);
         this.icon = icon;
         this.color = color;

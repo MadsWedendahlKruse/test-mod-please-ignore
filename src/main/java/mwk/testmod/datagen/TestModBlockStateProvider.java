@@ -58,6 +58,7 @@ public class TestModBlockStateProvider extends BlockStateProvider {
         registerMultiBlockController(TestModBlocks.SUPER_ASSEMBLER, ControllerType.MACHINE);
         registerMultiBlockController(TestModBlocks.CRUSHER, ControllerType.MACHINE);
         registerMultiBlockController(TestModBlocks.SEPARATOR, ControllerType.MACHINE);
+        registerMultiBlockController(TestModBlocks.STAMPING_PRESS, ControllerType.MACHINE);
 
         registerMultiBlockController(TestModBlocks.REDSTONE_GENERATOR, ControllerType.GENERATOR,
                 true);

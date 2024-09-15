@@ -34,7 +34,6 @@ import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -104,9 +103,10 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
         // TODO: This should be cached. It should also be a proper box for each block, not just a
         // bounding box, so that we can have more complex shapes.
         if (blueprint != null) {
-            AABB aabb = blueprint.getAABB(null, state.getValue(FACING));
-            return Block.box(aabb.minX * 16, aabb.minY * 16, aabb.minZ * 16, aabb.maxX * 16,
-                    aabb.maxY * 16, aabb.maxZ * 16);
+//            AABB aabb = blueprint.getAABB(null, state.getValue(FACING));
+//            return Block.box(aabb.minX * 16, aabb.minY * 16, aabb.minZ * 16, aabb.maxX * 16,
+//                    aabb.maxY * 16, aabb.maxZ * 16);
+            return blueprint.getShape(state.getValue(FACING));
         }
         return null;
     }

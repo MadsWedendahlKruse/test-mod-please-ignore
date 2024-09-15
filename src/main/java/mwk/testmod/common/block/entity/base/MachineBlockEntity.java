@@ -83,6 +83,7 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
             @Override
             protected void onContentsChanged(int slot) {
                 setChanged();
+                onInventoryChanged(slot);
             }
 
             @Override
@@ -114,12 +115,8 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
         inputTanks = inputTankCapacities.length;
         outputTanks = outputTankCapacities.length;
         int[] tankCapacities = new int[inputTanks + outputTanks];
-        for (int i = 0; i < inputTanks; i++) {
-            tankCapacities[i] = inputTankCapacities[i];
-        }
-        for (int i = 0; i < outputTanks; i++) {
-            tankCapacities[inputTanks + i] = outputTankCapacities[i];
-        }
+        System.arraycopy(inputTankCapacities, 0, tankCapacities, 0, inputTanks);
+        System.arraycopy(outputTankCapacities, 0, tankCapacities, inputTanks, outputTanks);
         fluidTanks = new FluidStackHandler(tankCapacities) {
             @Override
             protected void onContentsChanged(int tank) {
@@ -190,6 +187,15 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
         if (tag.contains(NBT_TAG_FLUID_TANKS)) {
             fluidTanks.deserializeNBT(tag.getCompound(NBT_TAG_FLUID_TANKS));
         }
+    }
+
+    /**
+     * Called when the contents of the inventory change. By default, this method does nothing, but
+     * it can be overridden to provide custom behavior.
+     *
+     * @param slot the slot that changed
+     */
+    protected void onInventoryChanged(int slot) {
     }
 
     /**
@@ -393,6 +399,9 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
                 }
                 for (int j = inputItemHandlerAutomation
                         .getStartSlot(); j < inputItemHandlerAutomation.getEndSlot(); j++) {
+                    if (!isInputItemValid(j, extractedStack)) {
+                        continue;
+                    }
                     ItemStack remainder =
                             inputItemHandlerAutomation.insertItem(j, extractedStack, false);
                     handler.extractItem(i, extractedStack.getCount() - remainder.getCount(), false);

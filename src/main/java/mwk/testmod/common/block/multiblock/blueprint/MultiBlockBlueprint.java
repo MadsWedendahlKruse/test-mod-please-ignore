@@ -3,6 +3,7 @@ package mwk.testmod.common.block.multiblock.blueprint;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
@@ -19,6 +20,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * A blueprint for a multiblock structure.
@@ -54,6 +58,10 @@ public final class MultiBlockBlueprint {
     // Corners of the bounding box of the multiblock structure.
     private final BlockPos minCorner;
     private final BlockPos maxCorner;
+    // AABB cache
+    private final Map<Direction, AABB> aabbCache;
+    // Shape cache
+    private final Map<Direction, VoxelShape> shapeCache;
 
     public MultiBlockBlueprint(List<List<String>> layers, Map<String, String> key) {
         parseData(layers, key);
@@ -78,6 +86,10 @@ public final class MultiBlockBlueprint {
         this.minCorner = new BlockPos(minX, minY, minZ);
         this.maxCorner = new BlockPos(maxX, maxY, maxZ);
         this.controller.setBlueprint(this);
+        // Initialize the AABB cache
+        this.aabbCache = new HashMap<>();
+        // Initialize the shape cache
+        this.shapeCache = new HashMap<>();
     }
 
     /**
@@ -233,15 +245,19 @@ public final class MultiBlockBlueprint {
      * @return The AABB of the multiblock structure.
      */
     public AABB getAABB(@Nullable BlockPos controllerPos, Direction direction) {
-        Rotation rotation = switch (direction) {
-            case SOUTH -> Rotation.CLOCKWISE_180;
-            case EAST -> Rotation.CLOCKWISE_90;
-            case WEST -> Rotation.COUNTERCLOCKWISE_90;
-            default -> Rotation.NONE;
-        };
-        BlockPos minCorner = this.minCorner.rotate(rotation);
-        BlockPos maxCorner = this.maxCorner.rotate(rotation);
-        AABB aabb = AABB.encapsulatingFullBlocks(minCorner, maxCorner);
+        AABB aabb = this.aabbCache.get(direction);
+        if (aabb == null) {
+            Rotation rotation = switch (direction) {
+                case SOUTH -> Rotation.CLOCKWISE_180;
+                case EAST -> Rotation.CLOCKWISE_90;
+                case WEST -> Rotation.COUNTERCLOCKWISE_90;
+                default -> Rotation.NONE;
+            };
+            BlockPos minCorner = this.minCorner.rotate(rotation);
+            BlockPos maxCorner = this.maxCorner.rotate(rotation);
+            aabb = AABB.encapsulatingFullBlocks(minCorner, maxCorner);
+            this.aabbCache.put(direction, aabb);
+        }
         if (controllerPos != null) {
             aabb = aabb.move(controllerPos);
         }
@@ -255,5 +271,27 @@ public final class MultiBlockBlueprint {
      */
     public AABB getAABB() {
         return getAABB(null, Direction.NORTH);
+    }
+
+    /**
+     * @param direction The direction the controller block is facing.
+     * @return The shape of the multiblock structure.
+     */
+    public VoxelShape getShape(Direction direction) {
+        VoxelShape shape = this.shapeCache.get(direction);
+        if (shape == null) {
+            for (BlueprintBlockInfo block : this.blocks) {
+                BlockPos pos = block.getRelativePosition(direction);
+                VoxelShape blockShape = Shapes.block();
+                blockShape = blockShape.move(pos.getX(), pos.getY(), pos.getZ());
+                if (shape == null) {
+                    shape = blockShape;
+                } else {
+                    shape = Shapes.join(shape, blockShape, BooleanOp.OR);
+                }
+            }
+            this.shapeCache.put(direction, shape);
+        }
+        return shape;
     }
 }

@@ -99,14 +99,14 @@ public abstract class ProcessingBlockEntity<T extends Recipe<Container>> extends
     protected boolean canInsertItemIntoSlot(int slot, Item item, int count) {
         return inventory.getStackInSlot(slot).isEmpty() || (inventory.getStackInSlot(slot).is(item)
                 && inventory.getStackInSlot(slot).getCount() + count <= inventory
-                        .getSlotLimit(slot));
+                .getSlotLimit(slot));
     }
 
     protected boolean canInsertFluidIntoTank(int tank, FluidStack fluid) {
         return fluidTanks.getFluidInTank(tank).isEmpty()
                 || fluidTanks.getFluidInTank(tank).isFluidEqual(fluid)
-                        && fluidTanks.getFluidInTank(tank).getAmount()
-                                + fluid.getAmount() <= fluidTanks.getTankCapacity(tank);
+                && fluidTanks.getFluidInTank(tank).getAmount()
+                + fluid.getAmount() <= fluidTanks.getTankCapacity(tank);
     }
 
     protected void playSound() {
@@ -181,8 +181,9 @@ public abstract class ProcessingBlockEntity<T extends Recipe<Container>> extends
     }
 
     /**
-     * This method should return the current recipe that can be crafted given the current inventory.
-     * 
+     * This method should return the current recipe that can be crafted given the current
+     * inventory.
+     *
      * @return The current recipe that can be crafted.
      */
     protected T getCurrentRecipe() {
@@ -214,7 +215,7 @@ public abstract class ProcessingBlockEntity<T extends Recipe<Container>> extends
     /**
      * This method checks if the given recipe can be processed in the current state. This is mostly
      * used for crafting recipes to check if the result can be inserted into the output slot(s).
-     * 
+     *
      * @param recipe The recipe to check.
      * @return True if the recipe can be processed, false otherwise.
      */
@@ -237,7 +238,7 @@ public abstract class ProcessingBlockEntity<T extends Recipe<Container>> extends
     /**
      * This method is responsible for crafting the item. It should also handle the removal of the
      * input items and the insertion of the output items.
-     * 
+     *
      * @param recipe The recipe to craft.
      */
     protected void processRecipe(T recipe) {
@@ -265,17 +266,21 @@ public abstract class ProcessingBlockEntity<T extends Recipe<Container>> extends
     }
 
     @Override
+    protected void onInventoryChanged(int slot) {
+        if (slot < inputSlots) {
+            latestItemInputs = null;
+        }
+    }
+
+    @Override
     protected boolean isInputItemValid(int slot, ItemStack stack) {
         if (slot >= inputSlots) {
             return false;
         }
         // TODO: Can we cache this?
         return this.level.getRecipeManager().getAllRecipesFor(recipeType).stream()
-                .anyMatch(recipe -> {
-                    return recipe.value().getIngredients().stream().anyMatch(ingredient -> {
-                        return ingredient.test(stack);
-                    });
-                });
+                .anyMatch(recipe -> recipe.value().getIngredients().stream()
+                        .anyMatch(ingredient -> ingredient.test(stack)));
     }
 
     @Override

@@ -1,7 +1,6 @@
 package mwk.testmod.client.animations.base;
 
 import mwk.testmod.client.animations.AnimationClock;
-import mwk.testmod.client.animations.AnimationSequence;
 
 /**
  * Abstract class for creating different types of animations. This is useful for creating smooth
@@ -128,7 +127,7 @@ public abstract class Animation<T> {
      * @param deltaTime The time difference between the last two updates in seconds.
      * @param reverse   True to reverse the elapsed time, false to advance it.
      * @return The remaining time of the animation in seconds. This is primarily used by
-     * {@link AnimationSequence} to allow smooth transitions between animations.
+     * {@link KeyframeManager} to allow smooth transitions between animations.
      */
     public float update(float deltaTime, boolean reverse) {
         if (!enabled || finished || paused) {
@@ -245,4 +244,18 @@ public abstract class Animation<T> {
      * @return the value of the animation
      */
     public abstract T getValue();
+
+    /**
+     * @return The start value of the animation.
+     */
+    public T getStartValue() {
+        return startValue;
+    }
+
+    /**
+     * @return The target value of the animation.
+     */
+    public T getTargetValue() {
+        return targetValue;
+    }
 }
