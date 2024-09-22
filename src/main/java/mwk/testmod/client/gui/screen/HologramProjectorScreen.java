@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import mwk.testmod.TestMod;
 import mwk.testmod.client.animations.AnimationClock;
 import mwk.testmod.client.animations.FixedAnimationFloat;
+import mwk.testmod.client.gui.widgets.BlueprintInfoIcon;
 import mwk.testmod.client.gui.widgets.buttons.BlueprintList;
 import mwk.testmod.client.gui.widgets.buttons.ButtonList;
 import mwk.testmod.client.gui.widgets.buttons.OnOffButton;
@@ -102,6 +103,7 @@ public class HologramProjectorScreen extends Screen {
 
     private EditBox searchBox;
     private BlueprintList blueprintList;
+    private BlueprintInfoIcon blueprintInfoIcon;
     private OnOffButton pauseAutoSpinButton;
     private OnOffButton counterClockwiseButton;
     private ReleaseButton manualSpinCounterClockwiseButton;
@@ -166,6 +168,9 @@ public class HologramProjectorScreen extends Screen {
                 Component.translatable(
                         TestModLanguageProvider.KEY_WIDGET_HOLOGRAM_PROJECTOR_BUTTONS),
                 true, BLUEPRINT_MODEL_BUTTON_SPACING);
+
+        this.blueprintInfoIcon = new BlueprintInfoIcon(getBlueprintX() + 4, getBlueprintY() + 4);
+        this.addRenderableWidget(blueprintInfoIcon);
 
         // Initialize all the buttons, so they can reference eah other later
         pauseAutoSpinButton = new OnOffButton(BLUEPRINT_MODEL_BUTTON_SIZE, null, "play", "pause");
@@ -310,11 +315,18 @@ public class HologramProjectorScreen extends Screen {
             blueprint = registryAccess.registry(TestModBlueprints.BLUEPRINT_REGISTRY_KEY)
                     .flatMap(blueprintRegistry -> blueprintRegistry.getOptional(key)).orElse(null);
         }
+        if (blueprint != null) {
+            MultiBlockControllerBlock controller = blueprint.getController();
+            blueprintInfoIcon.setMachine(
+                    controller.newBlockEntity(BlockPos.ZERO, controller.defaultBlockState()));
+
+        }
         renderMaterials(
                 guiGraphics, blueprint, getBlueprintX(), getBlueprintY() + BLUEPRINT_MODEL_HEIGHT
                         + BLUEPRINT_MODEL_BUTTON_SIZE + 2 * BLUEPRINT_MODEL_BUTTON_SPACING,
                 mouseX, mouseY);
         if (blueprint == null) {
+            blueprintInfoIcon.setMachine(null);
             return;
         }
         if (formedButton.isOn()) {

@@ -100,6 +100,7 @@ public class TestModLanguageProvider extends LanguageProvider {
             "widget.testmod.generator.duration_title";
     public static final String KEY_WIDGET_GENERATOR_DURATION_TEXT =
             "widget.testmod.generator.duration_text";
+    public static final String KEY_WIDGET_BLUEPRINT_ICON_PICK_BLUEPRINT = "info.testmod.icon.pick_blueprint";
     // Sounds (subtitles)
     public static final String KEY_SUBTITLE_MULTIBLOCK_FORM =
             "sounds.testmod.block.multiblock_form";
@@ -226,14 +227,15 @@ public class TestModLanguageProvider extends LanguageProvider {
         add(KEY_WIDGET_GENERATOR_GENERATING_TEXT, "  %s FE/t");
         add(KEY_WIDGET_GENERATOR_DURATION_TITLE, "Duration");
         add(KEY_WIDGET_GENERATOR_DURATION_TEXT, "  %s");
+        add(KEY_WIDGET_BLUEPRINT_ICON_PICK_BLUEPRINT, "Pick a blueprint to see more information");
         // Sounds (subtitles)
         add(KEY_SUBTITLE_MULTIBLOCK_FORM, "Multiblock forms");
         add(KEY_SUBTITLE_MULTIBLOCK_CRUSHER, "Crusher crushes");
         // Conduit connector types
-        add(ConduitConnectionType.NONE.getSerializedName(), "None");
-        add(ConduitConnectionType.CONDUIT.getSerializedName(), "Conduit");
-        add(ConduitConnectionType.PULL.getSerializedName(), "Pull");
-        add(ConduitConnectionType.PUSH.getSerializedName(), "Push");
-        add(ConduitConnectionType.BIDIRECTIONAL.getSerializedName(), "Bidirectional");
+        add(ConduitConnectionType.NONE.getSerializedName(), "NONE");
+        add(ConduitConnectionType.CONDUIT.getSerializedName(), "CONDUIT");
+        add(ConduitConnectionType.PULL.getSerializedName(), "PULL");
+        add(ConduitConnectionType.PUSH.getSerializedName(), "PUSH");
+        add(ConduitConnectionType.BIDIRECTIONAL.getSerializedName(), "BIDIRECTIONAL");
     }
 }

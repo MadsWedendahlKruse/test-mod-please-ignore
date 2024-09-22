@@ -2,6 +2,7 @@ package mwk.testmod.common.block.conduit.network.base;
 
 import com.ibm.icu.impl.Pair;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -66,9 +67,8 @@ public class ConduitNetworkManager {
         } else {
             // Connect to an existing network, merge if necessary
             // TODO: Not sure if this is the best way to find the largest network
-            ConduitNetwork<?, ?> largestNetwork = neighborNetworks.stream().max((n1, n2) -> {
-                return Integer.compare(n1.getSize(), n2.getSize());
-            }).get();
+            ConduitNetwork<?, ?> largestNetwork = neighborNetworks.stream().max(
+                    Comparator.comparingInt(ConduitNetwork::getSize)).get();
             for (ConduitNetwork<?, ?> network : neighborNetworks) {
                 if (network != largestNetwork) {
                     mergeNetworks(level, largestNetwork, network);
