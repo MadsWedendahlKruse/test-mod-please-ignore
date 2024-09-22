@@ -32,15 +32,16 @@ public class CrusherBlockEntityRenderer extends MultiBlockEntityRenderer<Crusher
         if (crusherEntity.isWorking()) {
             crusherEntity.updateRotorAngle();
         }
+        float rotorAngle = crusherEntity.getRotorAngle();
         BakedModel rotorModel = TestModModels.CRUSHER_ROTOR.getBakedModel();
         renderRotor(poseStack, multiBufferSource, rotorModel, ROTOR_OFFSET_FRONT_1,
-                ROTOR_ROT_FRONT_Y, crusherEntity.getRotorAngle(), combinedLight, combinedOverlay);
+                ROTOR_ROT_FRONT_Y, rotorAngle, combinedLight, combinedOverlay);
         renderRotor(poseStack, multiBufferSource, rotorModel, ROTOR_OFFSET_FRONT_2,
-                ROTOR_ROT_FRONT_Y, crusherEntity.getRotorAngle(), combinedLight, combinedOverlay);
+                ROTOR_ROT_FRONT_Y, rotorAngle, combinedLight, combinedOverlay);
         renderRotor(poseStack, multiBufferSource, rotorModel, ROTOR_OFFSET_BACK_1, ROTOR_ROT_BACK_Y,
-                crusherEntity.getRotorAngle(), combinedLight, combinedOverlay);
+                rotorAngle, combinedLight, combinedOverlay);
         renderRotor(poseStack, multiBufferSource, rotorModel, ROTOR_OFFSET_BACK_2, ROTOR_ROT_BACK_Y,
-                crusherEntity.getRotorAngle(), combinedLight, combinedOverlay);
+                rotorAngle, combinedLight, combinedOverlay);
     }
 
     private void renderRotor(PoseStack poseStack, MultiBufferSource multiBufferSource,

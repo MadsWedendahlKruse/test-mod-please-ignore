@@ -1,10 +1,13 @@
 package mwk.testmod.common.block.conduit.network;
 
-import org.jetbrains.annotations.NotNull;
 import mwk.testmod.common.block.conduit.ConduitType;
 import mwk.testmod.common.block.conduit.network.base.ConduitNetwork;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A conduit network for transferring items. ItemHandler works differently from FluidHandler and
@@ -51,4 +54,17 @@ public class ItemConduitNetwork extends ConduitNetwork<IItemHandler, ItemStack> 
         return remaining;
     }
 
+    @Override
+    public void pullPayload(ServerLevel level, BlockPos start, Direction direction,
+            IItemHandler source) {
+        for (int i = 0; i < source.getSlots(); i++) {
+            // TODO: stack limit?
+            ItemStack stack = source.extractItem(i, source.getSlotLimit(i), true);
+            if (stack.isEmpty()) {
+                continue;
+            }
+            ItemStack remaining = receivePayload(level, start, direction, stack, false);
+            source.extractItem(i, stack.getCount() - remaining.getCount(), false);
+        }
+    }
 }

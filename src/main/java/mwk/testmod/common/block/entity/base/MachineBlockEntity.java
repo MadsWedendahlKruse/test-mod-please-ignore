@@ -24,11 +24,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
@@ -41,8 +38,8 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
 
     public static final String NBT_TAG_INVENTORY = "inventory";
     public static final String NBT_TAG_FLUID_TANKS = "fluidTanks";
-    public static final String NBT_TAG_AUTO_INSERT = "autoInsert";
-    public static final String NBT_TAG_AUTO_EJECT = "autoEject";
+    public static final String NBT_TAG_AUTO_PULL = "autoPull";
+    public static final String NBT_TAG_AUTO_PUSH = "autoPush";
 
     public static final int ITEM_IO_SPEED = TestModConfig.MACHINE_ITEM_IO_SPEED_DEFAULT.get(); // [items/tick]
     public static final int FLUID_IO_SPEED = TestModConfig.MACHINE_FLUID_IO_SPEED_DEFAULT.get(); // [mB/tick]
@@ -68,8 +65,8 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
     protected final InputFluidHandler inputFluidHandler;
     protected final OutputFluidHandler outputFluidHandler;
 
-    private boolean autoInsert;
-    private boolean autoEject;
+    private boolean autoPull;
+    private boolean autoPush;
 
     public MachineBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
             int maxEnergy, EnergyType energyType, int inputSlots, int outputSlots, int upgradeSlots,
@@ -88,12 +85,12 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
 
             @Override
             public int getSlotLimit(int slot) {
-                if (inputItemHandlerPlayer.isSlotValid(slot)) {
-                    return inputItemHandlerPlayer.getSlotLimit(slot);
-                }
-                if (outputItemHandler.isSlotValid(slot)) {
-                    return outputItemHandler.getSlotLimit(slot);
-                }
+//                if (inputItemHandlerPlayer.isSlotValid(slot)) {
+//                    return inputItemHandlerPlayer.getSlotLimit(slot);
+//                }
+//                if (outputItemHandler.isSlotValid(slot)) {
+//                    return outputItemHandler.getSlotLimit(slot);
+//                }
                 if (upgradeItemHandler.isSlotValid(slot)) {
                     return upgradeItemHandler.getSlotLimit(slot);
                 }
@@ -131,8 +128,8 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
                 new InputFluidHandler(fluidTanks, 0, inputTanks, this::isInputFluidValid);
         outputFluidHandler = new OutputFluidHandler(fluidTanks, inputTanks, outputTanks);
 
-        this.autoEject = true;
-        this.autoInsert = true;
+        this.autoPush = true;
+        this.autoPull = true;
     }
 
     @Override
@@ -140,8 +137,8 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
         super.saveAdditional(tag);
         tag.put(NBT_TAG_INVENTORY, inventory.serializeNBT());
         tag.put(NBT_TAG_FLUID_TANKS, fluidTanks.serializeNBT());
-        tag.putBoolean(NBT_TAG_AUTO_INSERT, autoInsert);
-        tag.putBoolean(NBT_TAG_AUTO_EJECT, autoEject);
+        tag.putBoolean(NBT_TAG_AUTO_PULL, autoPull);
+        tag.putBoolean(NBT_TAG_AUTO_PUSH, autoPush);
     }
 
     @Override
@@ -153,11 +150,11 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
         if (tag.contains(NBT_TAG_FLUID_TANKS)) {
             fluidTanks.deserializeNBT(tag.getCompound(NBT_TAG_FLUID_TANKS));
         }
-        if (tag.contains(NBT_TAG_AUTO_INSERT)) {
-            autoInsert = tag.getBoolean(NBT_TAG_AUTO_INSERT);
+        if (tag.contains(NBT_TAG_AUTO_PULL)) {
+            autoPull = tag.getBoolean(NBT_TAG_AUTO_PULL);
         }
-        if (tag.contains(NBT_TAG_AUTO_EJECT)) {
-            autoEject = tag.getBoolean(NBT_TAG_AUTO_EJECT);
+        if (tag.contains(NBT_TAG_AUTO_PUSH)) {
+            autoPush = tag.getBoolean(NBT_TAG_AUTO_PUSH);
         }
         applyUpgrades();
     }
@@ -256,11 +253,11 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
         return true;
     }
 
-    public IFluidHandler getInputFluidHandler(Direction direction) {
+    public InputFluidHandler getInputFluidHandler(Direction direction) {
         return inputFluidHandler;
     }
 
-    public IFluidHandler getOutputFluidHandler(Direction direction) {
+    public OutputFluidHandler getOutputFluidHandler(Direction direction) {
         return outputFluidHandler;
     }
 
@@ -307,176 +304,27 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
             return;
         }
         resetUpgrades();
-        for (int i = upgradeItemHandler.getStartSlot(); i < upgradeItemHandler.getEndSlot(); i++) {
-            ItemStack stack = inventory.getStackInSlot(i);
+        for (int i = 0; i < upgradeItemHandler.getSlots(); i++) {
+            ItemStack stack = upgradeItemHandler.getStackInSlot(i);
             if (stack.getItem() instanceof UpgradeItem upgrade) {
                 installUpgrade(upgrade);
             }
         }
     }
 
-    public boolean isAutoEject() {
-        return autoEject;
+    public boolean isAutoPush() {
+        return autoPush;
     }
 
-    public void setAutoEject(boolean autoEject) {
-        this.autoEject = autoEject;
+    public void setAutoPush(boolean autoPush) {
+        this.autoPush = autoPush;
     }
 
-    public boolean isAutoInsert() {
-        return autoInsert;
+    public boolean isAutoPull() {
+        return autoPull;
     }
 
-    public void setAutoInsert(boolean autoInsert) {
-        this.autoInsert = autoInsert;
-    }
-
-    /**
-     * Push items from the output slots to adjacent inventories.
-     *
-     * @param pos the position whose neighbors to push to
-     */
-    public void ejectItemOutput(BlockPos pos) {
-        if (!autoEject) {
-            return;
-        }
-        // Check if the output slots are empty
-        boolean empty = true;
-        for (int i = outputItemHandler.getStartSlot(); i < outputItemHandler.getEndSlot(); i++) {
-            if (!outputItemHandler.getStackInSlot(i).isEmpty()) {
-                empty = false;
-                break;
-            }
-        }
-        if (empty) {
-            return;
-        }
-        for (Direction direction : Direction.values()) {
-            IItemHandler handler = level.getCapability(Capabilities.ItemHandler.BLOCK,
-                    pos.relative(direction), direction.getOpposite());
-            // Don't inject into itself
-            if (handler == null || handler == this.getItemHandler(direction)) {
-                continue;
-            }
-            for (int i = outputItemHandler.getStartSlot(); i < outputItemHandler
-                    .getEndSlot(); i++) {
-                ItemStack extractedStack = outputItemHandler.extractItem(i, ITEM_IO_SPEED, true);
-                if (extractedStack.isEmpty()) {
-                    continue;
-                }
-                for (int j = 0; j < handler.getSlots(); j++) {
-                    ItemStack remainder = handler.insertItem(j, extractedStack, false);
-                    outputItemHandler.extractItem(i,
-                            extractedStack.getCount() - remainder.getCount(), false);
-                    if (remainder.isEmpty()) {
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Pull items from adjacent inventories to the input slots.
-     *
-     * @param pos the position whose neighbors to pull from
-     */
-    public void pullItemInput(BlockPos pos) {
-        if (!autoInsert) {
-            return;
-        }
-        for (Direction direction : Direction.values()) {
-            IItemHandler handler = level.getCapability(Capabilities.ItemHandler.BLOCK,
-                    pos.relative(direction), direction.getOpposite());
-            // Don't pull from itself
-            if (handler == null || handler == this.getItemHandler(direction)) {
-                continue;
-            }
-            for (int i = 0; i < handler.getSlots(); i++) {
-                ItemStack extractedStack = handler.extractItem(i, ITEM_IO_SPEED, true);
-                if (extractedStack.isEmpty()) {
-                    continue;
-                }
-                for (int j = inputItemHandlerAutomation
-                        .getStartSlot(); j < inputItemHandlerAutomation.getEndSlot(); j++) {
-                    if (!isInputItemValid(j, extractedStack)) {
-                        continue;
-                    }
-                    ItemStack remainder =
-                            inputItemHandlerAutomation.insertItem(j, extractedStack, false);
-                    handler.extractItem(i, extractedStack.getCount() - remainder.getCount(), false);
-                    if (remainder.isEmpty()) {
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Push fluids from the output tanks to adjacent tanks.
-     *
-     * @param pos the position whose neighbors to push to
-     */
-    public void ejectFluidOutput(BlockPos pos) {
-        if (!autoEject) {
-            return;
-        }
-        // Check if the output tanks are empty
-        boolean empty = true;
-        for (int i = outputFluidHandler.getStartTank(); i < outputFluidHandler.getEndTank(); i++) {
-            if (!outputFluidHandler.getFluidInTank(i).isEmpty()) {
-                empty = false;
-                break;
-            }
-        }
-        if (empty) {
-            return;
-        }
-        for (Direction direction : Direction.values()) {
-            IFluidHandler handler = level.getCapability(Capabilities.FluidHandler.BLOCK,
-                    pos.relative(direction), direction.getOpposite());
-            // Don't inject into itself
-            if (handler == null || handler == this.getOutputFluidHandler(direction)) {
-                continue;
-            }
-            for (int i = outputFluidHandler.getStartTank(); i < outputFluidHandler
-                    .getEndTank(); i++) {
-                FluidStack extractedStack =
-                        outputFluidHandler.drain(FLUID_IO_SPEED, FluidAction.SIMULATE);
-                if (extractedStack.isEmpty()) {
-                    continue;
-                }
-                int received = handler.fill(extractedStack, FluidAction.EXECUTE);
-                outputFluidHandler.drain(received, FluidAction.EXECUTE);
-            }
-        }
-    }
-
-    /**
-     * Pull fluids from adjacent tanks to the input tanks.
-     *
-     * @param pos the position whose neighbors to pull from
-     */
-    public void pullFluidInput(BlockPos pos) {
-        if (!autoInsert) {
-            return;
-        }
-        for (Direction direction : Direction.values()) {
-            IFluidHandler handler = level.getCapability(Capabilities.FluidHandler.BLOCK,
-                    pos.relative(direction), direction.getOpposite());
-            // Don't pull from itself
-            if (handler == null || handler == this.getInputFluidHandler(direction)) {
-                continue;
-            }
-            for (int i = 0; i < handler.getTanks(); i++) {
-                FluidStack extractedStack = handler.drain(FLUID_IO_SPEED, FluidAction.SIMULATE);
-                if (extractedStack.isEmpty()) {
-                    continue;
-                }
-                int received = inputFluidHandler.fill(extractedStack, FluidAction.EXECUTE);
-                handler.drain(received, FluidAction.EXECUTE);
-            }
-        }
+    public void setAutoPull(boolean autoPull) {
+        this.autoPull = autoPull;
     }
 }

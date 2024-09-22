@@ -11,10 +11,9 @@ public class FluidHandlerWrapper implements IFluidHandler {
 
     /**
      * Creates a new FluidHandlerWrapper with the given capacity for each tank
-     * 
-     * @param capacity The capacity of each tank
+     *
      * @param startTank the index of the first tank
-     * @param tanks the number of tanks to wrap
+     * @param tanks     the number of tanks to wrap
      */
     public FluidHandlerWrapper(FluidStackHandler fluidHandler, int startTank, int tanks) {
         this.fluidHandler = fluidHandler;

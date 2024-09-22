@@ -1,0 +1,10 @@
+{
+  "parent": "testmod:block/conduit_connector",
+  "ambientocclusion": false,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "0": "testmod:block/conduit_fluid",
+    "1": "testmod:block/conduit_connector_push",
+    "particle": "testmod:block/conduit_fluid"
+  }
+}

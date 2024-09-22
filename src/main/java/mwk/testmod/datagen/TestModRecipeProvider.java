@@ -208,6 +208,7 @@ public class TestModRecipeProvider extends RecipeProvider {
     }
 
     private void registerStampingRecipes(RecipeOutput recipeOutput) {
+        // Plates
         registerStampingRecipe(recipeOutput, "iron_plate_stamping",
                 Ingredient.of(TestModItems.PLATE_STAMPING_DIE), Ingredient.of(Items.IRON_INGOT),
                 new ItemStack(TestModItems.IRON_PLATE.get()));
@@ -218,6 +219,10 @@ public class TestModRecipeProvider extends RecipeProvider {
                 Ingredient.of(TestModItems.PLATE_STAMPING_DIE),
                 Ingredient.of(TestModTags.Items.STEEL_INGOT),
                 new ItemStack(TestModItems.STEEL_PLATE.get()));
+        // Gears
+        registerStampingRecipe(recipeOutput, "iron_gear_stamping",
+                Ingredient.of(TestModItems.GEAR_STAMPING_DIE), Ingredient.of(Items.IRON_INGOT),
+                new ItemStack(TestModItems.IRON_GEAR.get()));
     }
 
     private void registerRedstoneGeneratorRecipe(RecipeOutput recipeOutput, String name,

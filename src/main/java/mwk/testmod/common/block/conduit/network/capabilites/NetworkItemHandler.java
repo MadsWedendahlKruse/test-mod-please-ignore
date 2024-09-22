@@ -2,6 +2,7 @@ package mwk.testmod.common.block.conduit.network.capabilites;
 
 import mwk.testmod.common.block.conduit.network.ItemConduitNetwork;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -9,14 +10,15 @@ import net.neoforged.neoforge.items.IItemHandler;
 public class NetworkItemHandler extends NetworkCapabilityProvider<ItemConduitNetwork>
         implements IItemHandler {
 
-    public NetworkItemHandler(ServerLevel level, ItemConduitNetwork network, BlockPos pos) {
-        super(level, network, pos);
+    public NetworkItemHandler(ServerLevel level, ItemConduitNetwork network, BlockPos pos,
+            Direction direction) {
+        super(level, network, pos, direction);
     }
 
     @Override
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
         // The slot doesn't matter
-        return network.receivePayload(level, pos, stack, simulate);
+        return network.receivePayload(level, pos, direction, stack, simulate);
     }
 
     @Override

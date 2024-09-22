@@ -10,13 +10,13 @@ public class InputItemHandler extends ItemHandlerWrapper {
 
     /**
      * Creates a new input item handler.
-     * 
-     * @param itemHandler the underlying item handler
+     *
+     * @param itemHandler    the underlying item handler
      * @param startInputSlot the index of the first input slot
-     * @param inputSlots the number of input slots
+     * @param inputSlots     the number of input slots
      * @param inputValidator the input validator, which determines whether an item can be inserted.
-     *        See {@link InputValidator#isInputValid(int, ItemStack)}
-     * @param playerInput whether the input is from a player
+     *                       See {@link InputValidator#isInputValid(int, ItemStack)}
+     * @param playerInput    whether the input is from a player
      */
     public InputItemHandler(ItemStackHandler itemHandler, int startInputSlot, int inputSlots,
             InputValidator inputValidator, boolean playerInput) {
@@ -40,7 +40,7 @@ public class InputItemHandler extends ItemHandlerWrapper {
 
     @Override
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-        if (isSlotValid(slot)) {
+        if (isSlotValid(slot) && isItemValid(slot, stack)) {
             return super.insertItem(slot, stack, simulate);
         }
         return stack;
@@ -48,6 +48,7 @@ public class InputItemHandler extends ItemHandlerWrapper {
 
     @FunctionalInterface
     public interface InputValidator {
+
         boolean isInputValid(int slot, ItemStack stack);
     }
 }

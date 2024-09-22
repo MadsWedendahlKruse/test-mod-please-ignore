@@ -30,32 +30,49 @@ public class ItemHandlerWrapper implements IItemHandlerModifiable {
 
     @Override
     public int getSlotLimit(int slot) {
-        // return itemHandler.getSlotLimit(slot);
-        return 64;
+        if (!isSlotValid(slot)) {
+            return 0;
+        }
+        return itemHandler.getSlotLimit(slot);
     }
 
     @Override
     public boolean isItemValid(int slot, ItemStack stack) {
+        if (!isSlotValid(slot)) {
+            return false;
+        }
         return itemHandler.isItemValid(slot, stack);
     }
 
     @Override
     public ItemStack getStackInSlot(int slot) {
+        if (!isSlotValid(slot)) {
+            return ItemStack.EMPTY;
+        }
         return itemHandler.getStackInSlot(slot);
     }
 
     @Override
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+        if (!isSlotValid(slot)) {
+            return stack;
+        }
         return itemHandler.insertItem(slot, stack, simulate);
     }
 
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
+        if (!isSlotValid(slot)) {
+            return ItemStack.EMPTY;
+        }
         return itemHandler.extractItem(slot, amount, simulate);
     }
 
     @Override
     public void setStackInSlot(int slot, ItemStack stack) {
+        if (!isSlotValid(slot)) {
+            return;
+        }
         itemHandler.setStackInSlot(slot, stack);
     }
 

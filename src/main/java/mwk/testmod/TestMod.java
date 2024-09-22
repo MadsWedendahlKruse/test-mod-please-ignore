@@ -15,7 +15,11 @@ import mwk.testmod.client.render.block_entity.StampingPressBlockEntityRenderer;
 import mwk.testmod.client.render.block_entity.StirlingGeneratorBlockEntityRenderer;
 import mwk.testmod.client.render.conduit.FluidConduitBlockEntityRenderer;
 import mwk.testmod.client.render.hologram.HologramRenderer;
+import mwk.testmod.common.block.conduit.ConduitBlockEntity;
 import mwk.testmod.common.block.multiblock.HologramBlockColor;
+import mwk.testmod.common.block.multiblock.entity.MultiBlockEnergyPortBlockEntity;
+import mwk.testmod.common.block.multiblock.entity.MultiBlockFluidIOPortBlockEntity;
+import mwk.testmod.common.block.multiblock.entity.MultiBlockItemIOPortBlockEntity;
 import mwk.testmod.common.network.BuildMultiBlockPacket;
 import mwk.testmod.common.network.MachineIOPacket;
 import mwk.testmod.init.registries.TestModBlockEntities;
@@ -113,29 +117,29 @@ public class TestMod {
     private void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
                 TestModBlockEntities.MULTI_ENERGY_PORT_ENTITY_TYPE.get(),
-                (entity, direction) -> entity.getEnergyHandler(direction));
+                MultiBlockEnergyPortBlockEntity::getEnergyHandler);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
                 TestModBlockEntities.MULTI_ITEM_INPUT_PORT_ENTITY_TYPE.get(),
-                (entity, direction) -> entity.getItemHandler(direction));
+                MultiBlockItemIOPortBlockEntity::getItemHandler);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
                 TestModBlockEntities.MULTI_ITEM_OUTPUT_PORT_ENTITY_TYPE.get(),
-                (entity, direction) -> entity.getItemHandler(direction));
+                MultiBlockItemIOPortBlockEntity::getItemHandler);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
                 TestModBlockEntities.MULTI_FLUID_INPUT_PORT_ENTITY_TYPE.get(),
-                (entity, direction) -> entity.getFluidHandler(direction));
+                MultiBlockFluidIOPortBlockEntity::getFluidHandler);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
                 TestModBlockEntities.MULTI_FLUID_OUTPUT_PORT_ENTITY_TYPE.get(),
-                (entity, direction) -> entity.getFluidHandler(direction));
+                MultiBlockFluidIOPortBlockEntity::getFluidHandler);
 
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
                 TestModBlockEntities.CONDUIT_ITEM_ENTITY_TYPE.get(),
-                (entity, direction) -> entity.getItemHandler(direction));
+                ConduitBlockEntity::getCapability);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
                 TestModBlockEntities.CONDUIT_FLUID_ENTITY_TYPE.get(),
-                (entity, direction) -> entity.getFluidHandler(direction));
+                ConduitBlockEntity::getCapability);
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
                 TestModBlockEntities.CONDUIT_ENERGY_ENTITY_TYPE.get(),
-                (entity, direction) -> entity.getEnergyStorage(direction));
+                ConduitBlockEntity::getCapability);
 
     }
 

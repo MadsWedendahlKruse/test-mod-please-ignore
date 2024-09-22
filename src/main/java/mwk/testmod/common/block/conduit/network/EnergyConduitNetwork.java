@@ -1,9 +1,12 @@
 package mwk.testmod.common.block.conduit.network;
 
-import org.jetbrains.annotations.NotNull;
 import mwk.testmod.common.block.conduit.ConduitType;
 import mwk.testmod.common.block.conduit.network.base.ConduitNetwork;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.energy.IEnergyStorage;
+import org.jetbrains.annotations.NotNull;
 
 public class EnergyConduitNetwork extends ConduitNetwork<IEnergyStorage, Integer> {
 
@@ -30,6 +33,12 @@ public class EnergyConduitNetwork extends ConduitNetwork<IEnergyStorage, Integer
     @Override
     protected Integer getRemainingPayload(Integer payload, Integer receivedPayload) {
         return payload - receivedPayload;
+    }
+
+    @Override
+    public void pullPayload(ServerLevel level, BlockPos start, Direction direction,
+            IEnergyStorage source) {
+        // TODO: I think energy conduits shouldn't do anything here?
     }
 
     @Override

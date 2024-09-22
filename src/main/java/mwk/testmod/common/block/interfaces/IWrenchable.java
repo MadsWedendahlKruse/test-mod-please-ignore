@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * An interface for blocks that can be wrenched, i.e. rotated or otherwise manipulated by a wrench.
@@ -25,7 +26,7 @@ public interface IWrenchable {
      * @return True if the wrenching operation did something, false otherwise.
      */
     default boolean onWrenched(BlockState state, Level level, BlockPos pos, Player player,
-            InteractionHand hand) {
+            InteractionHand hand, Vec3 clickLocation) {
         // If the player is crouching, remove the block.
         if (player.isCrouching()) {
             // "manually" remove it to avoid spawning particles

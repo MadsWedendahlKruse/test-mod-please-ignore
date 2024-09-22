@@ -1,15 +1,16 @@
 package mwk.testmod.common.block.conduit.network;
 
-import org.jetbrains.annotations.NotNull;
 import mwk.testmod.common.block.conduit.ConduitType;
 import mwk.testmod.common.block.conduit.FluidConduitBlockEntity;
 import mwk.testmod.common.block.conduit.network.base.ConduitNetwork;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
+import org.jetbrains.annotations.NotNull;
 
 public class FluidConduitNetwork extends ConduitNetwork<IFluidHandler, FluidStack> {
 
@@ -54,9 +55,9 @@ public class FluidConduitNetwork extends ConduitNetwork<IFluidHandler, FluidStac
     }
 
     @Override
-    public FluidStack receivePayload(ServerLevel level, BlockPos start, FluidStack payload,
-            boolean simulate) {
-        FluidStack received = super.receivePayload(level, start, payload, simulate);
+    public FluidStack receivePayload(ServerLevel level, BlockPos start, Direction direction,
+            FluidStack payload, boolean simulate) {
+        FluidStack received = super.receivePayload(level, start, direction, payload, simulate);
         if (!isPayloadEmpty(received)) {
             for (BlockPos pos : getPositions()) {
                 if (level.getBlockEntity(pos) instanceof FluidConduitBlockEntity conduit) {
@@ -68,5 +69,19 @@ public class FluidConduitNetwork extends ConduitNetwork<IFluidHandler, FluidStac
             }
         }
         return received;
+    }
+
+    @Override
+    public void pullPayload(ServerLevel level, BlockPos start, Direction direction,
+            IFluidHandler source) {
+        // Pull from the source
+        for (int i = 0; i < source.getTanks(); i++) {
+            // TODO: drain limit?
+            FluidStack stack = source.drain(1000, FluidAction.SIMULATE);
+            if (!stack.isEmpty()) {
+                FluidStack received = receivePayload(level, start, direction, stack, false);
+                source.drain(received.getAmount(), FluidAction.EXECUTE);
+            }
+        }
     }
 }

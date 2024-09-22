@@ -7,23 +7,25 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import org.jetbrains.annotations.NotNull;
 import mwk.testmod.TestMod;
+import mwk.testmod.common.block.conduit.ConduitBlock;
 import mwk.testmod.common.block.conduit.ConduitType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.util.INBTSerializable;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Base class for all conduit networks. This class is responsible for managing the network data and
  * serializing it to disk.
- * 
+ *
  * @param <C> The type of capability that the network will be using, e.g. IEnergyStorage for energy
- *        networks, IFluidHandler for fluid networks, IItemHandler for item networks.
+ *            networks, IFluidHandler for fluid networks, IItemHandler for item networks.
  * @param <T> The type of payload that the network will be transferring, e.g. ItemStack for item
- *        networks, FluidStack for fluid networks, Integer for energy networks.
+ *            networks, FluidStack for fluid networks, Integer for energy networks.
  */
 public abstract class ConduitNetwork<C, T> implements INBTSerializable<CompoundTag> {
 
@@ -110,7 +112,7 @@ public abstract class ConduitNetwork<C, T> implements INBTSerializable<CompoundT
     /**
      * Creates an empty payload. This is used to initialize the aggregate of the payloads that have
      * been received by the receivers in the network so far.
-     * 
+     *
      * @param payload The payload to copy the empty payload from (not necessarily used).
      * @return An empty payload.
      */
@@ -122,7 +124,7 @@ public abstract class ConduitNetwork<C, T> implements INBTSerializable<CompoundT
      * searching for a recipient for the payload. E.g. if the network is an energy network, the
      * payload would be the amount of energy to transfer. If the payload is 0, then the network
      * should stop searching for a recipient.
-     * 
+     *
      * @param payload The payload to check.
      * @return True if the payload is empty, false otherwise.
      */
@@ -132,9 +134,9 @@ public abstract class ConduitNetwork<C, T> implements INBTSerializable<CompoundT
      * Transfers the payload to the receiver. This is where the actual transfer of the payload
      * should happen. This method should also handle the case where the payload is too large for the
      * receiver to handle.
-     * 
+     *
      * @param receiver The receiver of the payload.
-     * @param payload The payload to transfer.
+     * @param payload  The payload to transfer.
      * @param simulate If the transfer should be simulated.
      * @return The payload that has been received by the receiver.
      */
@@ -144,8 +146,8 @@ public abstract class ConduitNetwork<C, T> implements INBTSerializable<CompoundT
      * Aggregates the payloads that have been received by the receivers in the network. This method
      * is responsible for combining the payloads into a single payload that can be returned to the
      * sender to indicate the total amount of the payload that has been received by the receivers.
-     * 
-     * @param aggregate The aggregate of the payloads that have been received so far.
+     *
+     * @param aggregate       The aggregate of the payloads that have been received so far.
      * @param receivedPayload The payload that has been received by the receiver.
      * @return The new aggregate of the payloads.
      */
@@ -154,26 +156,27 @@ public abstract class ConduitNetwork<C, T> implements INBTSerializable<CompoundT
     /**
      * Gets the remaining payload after a payload has successfully been transferred to the receivers
      * in the network.
-     * 
-     * @param payload The payload that was sent.
+     *
+     * @param payload         The payload that was sent.
      * @param receivedPayload The payload that has been received by the receivers in the network.
      * @return The remaining payload that has not yet been transferred to the receivers in the
-     *         network.
+     * network.
      */
     protected abstract T getRemainingPayload(T payload, T receivedPayload);
 
     /**
      * This method is responsible for receiving the payload and transferring it to the receivers in
      * the network.
-     * 
-     * @param level The level that the network is in.
-     * @param start The position of the conduit that is sending the payload.
-     * @param payload The payload to transfer.
-     * @param simulate If the transfer should be simulated.
+     *
+     * @param level     The level that the network is in.
+     * @param start     The position of the conduit that is sending the payload.
+     * @param sourceDir The direction of the source of the payload.
+     * @param payload   The payload to transfer.
+     * @param simulate  If the transfer should be simulated.
      * @return The payload that has been received by the receivers in the network.
      */
-    public T receivePayload(ServerLevel level, BlockPos start, T payload, boolean simulate) {
-
+    public T receivePayload(ServerLevel level, BlockPos start, Direction sourceDir, T payload,
+            boolean simulate) {
         if (isPayloadEmpty(payload)) {
             return payload;
         }
@@ -191,6 +194,11 @@ public abstract class ConduitNetwork<C, T> implements INBTSerializable<CompoundT
         while (!queue.isEmpty() && !isPayloadEmpty(payload)) {
             BlockPos current = queue.poll();
             for (Direction direction : Direction.values()) {
+                // Don't send the payload back to the sender
+                if (current.equals(start) && direction == sourceDir) {
+                    continue;
+                }
+
                 BlockPos neighbor = current.relative(direction);
                 if (!visited.contains(neighbor) && graph.containsKey(neighbor)) {
                     visited.add(neighbor);
@@ -200,6 +208,13 @@ public abstract class ConduitNetwork<C, T> implements INBTSerializable<CompoundT
                 // TODO: Maybe not the nice way to check this?
                 if (ConduitNetworkManager.getInstance().getNetwork(neighbor) != null) {
                     continue;
+                }
+                // Check if the conduit is in a mode where it can transfer the payload
+                BlockState state = level.getBlockState(current);
+                if (state.getBlock() instanceof ConduitBlock conduit) {
+                    if (!conduit.canPushPayload(state, direction)) {
+                        continue;
+                    }
                 }
                 C receiver = level.getCapability(type.getCapability(), neighbor,
                         direction.getOpposite());
@@ -213,6 +228,17 @@ public abstract class ConduitNetwork<C, T> implements INBTSerializable<CompoundT
         }
         return payloadAggregate;
     }
+
+    /**
+     * Pulls a payload from the source to the network.
+     *
+     * @param level     The level that the network is in.
+     * @param start     The position of the conduit that is receiving the payload.
+     * @param direction The direction of the source of the payload.
+     * @param source    The source of the payload.
+     */
+    public abstract void pullPayload(ServerLevel level, BlockPos start, Direction direction,
+            C source);
 
     @Override
     public CompoundTag serializeNBT() {

@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -63,8 +64,8 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
 
     /**
      * Get a random position on the surface of the block.
-     * 
-     * @param pos The position of the block.
+     *
+     * @param pos    The position of the block.
      * @param offset The offset from the surface of the block.
      * @return A random position on the surface of the block.
      */
@@ -115,9 +116,9 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
 
     /**
      * Spawn particles for forming or unforming the multiblock structure.
-     * 
-     * @param level The level the block is in.
-     * @param pos The position of the block.
+     *
+     * @param level    The level the block is in.
+     * @param pos      The position of the block.
      * @param isFormed Whether or not the multiblock structure is formed.
      */
     private void spawnMultiBlockParticles(Level level, BlockPos pos, boolean isFormed) {
@@ -134,9 +135,9 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
 
     /**
      * Play a sound for forming or unforming the multiblock structure.
-     * 
-     * @param level The level the block is in.
-     * @param pos The position of the block.
+     *
+     * @param level    The level the block is in.
+     * @param pos      The position of the block.
      * @param isFormed Whether or not the multiblock structure is formed.
      */
     private void playMultiBlockSound(Level level, BlockPos pos, boolean isFormed) {
@@ -147,11 +148,11 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
 
     /**
      * Set the formed state of the multi block part.
-     * 
-     * @param level The level the multi block part is in.
-     * @param pos The position of the multi block part.
-     * @param state The state of the multi block part.
-     * @param isFormed The value of the formed state.
+     *
+     * @param level         The level the multi block part is in.
+     * @param pos           The position of the multi block part.
+     * @param state         The state of the multi block part.
+     * @param isFormed      The value of the formed state.
      * @param controllerPos The position of the controller multi block part.
      */
     public void setPartFormed(Level level, BlockPos pos, BlockState state, boolean isFormed,
@@ -182,8 +183,8 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
 
     /**
      * Get the position of the multilblock controller.
-     * 
-     * @param level The level the multiblock part is in.
+     *
+     * @param level   The level the multiblock part is in.
      * @param partPos The position of the multiblock part.
      * @return The position of the multilblock controller.
      */
@@ -248,9 +249,9 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
 
     @Override
     public boolean onWrenched(BlockState state, Level level, BlockPos pos, Player player,
-            InteractionHand hand) {
+            InteractionHand hand, Vec3 clickLocation) {
         // Check if the super onWrenched method does anything.
-        if (IWrenchable.super.onWrenched(state, level, pos, player, hand)) {
+        if (IWrenchable.super.onWrenched(state, level, pos, player, hand, clickLocation)) {
             return true;
         }
         // If not, and the multiblock structure is formed, propagate the wrenched
@@ -261,7 +262,8 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
                 BlockState controllerState = level.getBlockState(controllerPos);
                 if (controllerState.getBlock() instanceof MultiBlockControllerBlock) {
                     return ((MultiBlockControllerBlock) controllerState.getBlock())
-                            .onWrenched(controllerState, level, controllerPos, player, hand);
+                            .onWrenched(controllerState, level, controllerPos, player, hand,
+                                    clickLocation);
                 }
             }
         }

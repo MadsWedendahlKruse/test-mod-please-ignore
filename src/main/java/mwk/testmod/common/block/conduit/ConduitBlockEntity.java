@@ -1,8 +1,10 @@
 package mwk.testmod.common.block.conduit;
 
+import java.util.HashMap;
 import mwk.testmod.TestMod;
 import mwk.testmod.common.block.conduit.network.base.ConduitNetwork;
 import mwk.testmod.common.block.conduit.network.base.ConduitNetworkManager;
+import mwk.testmod.common.block.conduit.network.capabilites.NetworkCapabilityProvider;
 import mwk.testmod.common.block.interfaces.ITickable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -23,20 +25,23 @@ public abstract class ConduitBlockEntity<T> extends BlockEntity implements ITick
     private final BlockCapabilityCache<T, Direction>[] connections;
     private boolean capsInvalidated;
     // The network this conduit is part of
-    protected ConduitNetwork<?, ?> network;
+    protected ConduitNetwork<T, ?> network;
     protected ConduitType conduitType;
     // One conduit is in charge of serializing the network data
     private boolean isMaster;
-    // Whether or not this conduit has connections to blocks other than conduits
+    // Whether this conduit has connections to blocks other than conduits
     private boolean hasConnections;
     // If caps are invalidated the conduit might gain or lose connections
     private boolean hasConnectionsValid;
+    // Capabilities exposed by this conduit
+    protected final HashMap<Direction, T> capabilities;
 
     public ConduitBlockEntity(BlockEntityType<?> type, ConduitType conduitType, BlockPos pos,
             BlockState blockState) {
         super(type, pos, blockState);
         this.conduitType = conduitType;
         this.connections = new BlockCapabilityCache[Direction.values().length];
+        this.capabilities = new HashMap<>();
     }
 
     @Override
@@ -68,13 +73,30 @@ public abstract class ConduitBlockEntity<T> extends BlockEntity implements ITick
         // TODO: Remove this check if it's not needed
         // I've seen this once, so it's better to keep it for now
         if (network == null) {
-            if (level.getServer().getTickCount() % 20 == 0)
+            if (level.getServer().getTickCount() % 20 == 0) {
                 TestMod.LOGGER.error("ConduitBlockEntity at {} has no network", worldPosition);
+            }
             return;
         }
+        BlockState state = this.getBlockState();
         for (BlockCapabilityCache<T, Direction> connection : connections) {
             // We need to query the capability to trigger the invalidation callback
             T cap = connection.getCapability();
+            // Skip neighbors that are conduits
+            if (cap instanceof NetworkCapabilityProvider<?>) {
+                continue;
+            }
+            // The direction is the face of the block that is connected to this conduit,
+            // so the opposite direction is the direction of the block from the conduit
+            // perspective (which is what we're interested in)
+            Direction direction = connection.context().getOpposite();
+            ConduitConnectionType conduitConnectionType = state.getValue(
+                    ConduitBlock.CONNECTOR_PROPERTIES[direction.ordinal()]);
+            if (conduitConnectionType == ConduitConnectionType.PULL && cap != null) {
+                if (level instanceof ServerLevel serverLevel) {
+                    network.pullPayload(serverLevel, worldPosition, direction, cap);
+                }
+            }
         }
         if (capsInvalidated) {
             capsInvalidated = false;
@@ -108,7 +130,7 @@ public abstract class ConduitBlockEntity<T> extends BlockEntity implements ITick
     }
 
     public void setNetwork(ConduitNetwork<?, ?> network) {
-        this.network = network;
+        this.network = (ConduitNetwork<T, ?>) network;
         this.conduitType = network.getType();
     }
 
@@ -127,6 +149,12 @@ public abstract class ConduitBlockEntity<T> extends BlockEntity implements ITick
         }
         return hasConnections;
     }
+
+    public T getCapability(Direction direction) {
+        return capabilities.computeIfAbsent(direction, this::createNewCapability);
+    }
+
+    protected abstract T createNewCapability(Direction direction);
 
     @Override
     protected void saveAdditional(CompoundTag tag) {

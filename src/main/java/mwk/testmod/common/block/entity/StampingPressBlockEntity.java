@@ -172,7 +172,7 @@ public class StampingPressBlockEntity extends SingleCrafterBlockEntity<StampingR
     }
 
     public ItemStack getInput() {
-        return inventory.getStackInSlot(1);
+        return latestRecipe != null ? latestRecipe.getInput().getItems()[0] : ItemStack.EMPTY;
     }
 
     public ItemStack getOutput() {

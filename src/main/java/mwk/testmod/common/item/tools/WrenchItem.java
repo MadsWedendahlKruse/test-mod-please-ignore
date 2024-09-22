@@ -12,6 +12,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * A wrench for interacting with machines.
@@ -36,15 +37,15 @@ public class WrenchItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         TestMod.LOGGER.debug("WrenchItem::useOn");
+        InteractionHand hand = context.getHand();
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
         BlockState state = level.getBlockState(pos);
         Player player = context.getPlayer();
-        InteractionHand hand = context.getHand();
-        if (state.getBlock() instanceof IWrenchable) {
+        Vec3 clickLocation = context.getClickLocation();
+        if (state.getBlock() instanceof IWrenchable wrenchable) {
             TestMod.LOGGER.debug("Wrenching " + state.getBlock() + " @ " + pos);
-            IWrenchable block = (IWrenchable) level.getBlockState(pos).getBlock();
-            if (block.onWrenched(state, level, pos, player, hand)) {
+            if (wrenchable.onWrenched(state, level, pos, player, hand, clickLocation)) {
                 return InteractionResult.SUCCESS;
             }
         }

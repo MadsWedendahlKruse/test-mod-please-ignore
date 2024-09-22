@@ -35,6 +35,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -231,14 +232,14 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
 
     @Override
     public boolean onWrenched(BlockState state, Level level, BlockPos pos, Player player,
-            InteractionHand hand) {
+            InteractionHand hand, Vec3 clickLocation) {
         if (state.getValue(FORMED)) {
             if (player.isShiftKeyDown()) {
                 dissasembleMultiblock(level, pos, state);
                 return true;
             }
         }
-        if (super.onWrenched(state, level, pos, player, hand)) {
+        if (super.onWrenched(state, level, pos, player, hand, clickLocation)) {
             return true;
         }
         // TODO: Presumably this is only called when the player has a wrench in their

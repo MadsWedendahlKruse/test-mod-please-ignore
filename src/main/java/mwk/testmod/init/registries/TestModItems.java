@@ -51,6 +51,9 @@ public class TestModItems {
             ITEMS.register("plate_steel", () -> new Item(new Item.Properties()));
     //    public static final DeferredItem<Item> TITANIUM_PLATE =
 //            ITEMS.register("plate_titanium", () -> new Item(new Item.Properties()));
+    // Gears
+    public static final DeferredItem<Item> IRON_GEAR =
+            ITEMS.register("gear_iron", () -> new Item(new Item.Properties()));
     // Misc
     public static final DeferredItem<Item> RED_GIZMO =
             ITEMS.register("gizmo_red", () -> new Item(new Item.Properties()));

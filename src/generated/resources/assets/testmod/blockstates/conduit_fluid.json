@@ -60,55 +60,161 @@
     },
     {
       "apply": {
-        "model": "testmod:block/conduit_side_block_fluid"
+        "model": "testmod:block/conduit_connector_pull_fluid"
       },
       "when": {
-        "north": "block"
+        "north": "pull"
       }
     },
     {
       "apply": {
-        "model": "testmod:block/conduit_side_block_fluid",
+        "model": "testmod:block/conduit_connector_pull_fluid",
         "y": 90
       },
       "when": {
-        "east": "block"
+        "east": "pull"
       }
     },
     {
       "apply": {
-        "model": "testmod:block/conduit_side_block_fluid",
+        "model": "testmod:block/conduit_connector_pull_fluid",
         "y": 180
       },
       "when": {
-        "south": "block"
+        "south": "pull"
       }
     },
     {
       "apply": {
-        "model": "testmod:block/conduit_side_block_fluid",
+        "model": "testmod:block/conduit_connector_pull_fluid",
         "y": 270
       },
       "when": {
-        "west": "block"
+        "west": "pull"
       }
     },
     {
       "apply": {
-        "model": "testmod:block/conduit_side_block_fluid",
+        "model": "testmod:block/conduit_connector_pull_fluid",
         "x": 270
       },
       "when": {
-        "up": "block"
+        "up": "pull"
       }
     },
     {
       "apply": {
-        "model": "testmod:block/conduit_side_block_fluid",
+        "model": "testmod:block/conduit_connector_pull_fluid",
         "x": 90
       },
       "when": {
-        "down": "block"
+        "down": "pull"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_push_fluid"
+      },
+      "when": {
+        "north": "push"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_push_fluid",
+        "y": 90
+      },
+      "when": {
+        "east": "push"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_push_fluid",
+        "y": 180
+      },
+      "when": {
+        "south": "push"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_push_fluid",
+        "y": 270
+      },
+      "when": {
+        "west": "push"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_push_fluid",
+        "x": 270
+      },
+      "when": {
+        "up": "push"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_push_fluid",
+        "x": 90
+      },
+      "when": {
+        "down": "push"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_bidirectional_fluid"
+      },
+      "when": {
+        "north": "bidirectional"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_bidirectional_fluid",
+        "y": 90
+      },
+      "when": {
+        "east": "bidirectional"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_bidirectional_fluid",
+        "y": 180
+      },
+      "when": {
+        "south": "bidirectional"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_bidirectional_fluid",
+        "y": 270
+      },
+      "when": {
+        "west": "bidirectional"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_bidirectional_fluid",
+        "x": 270
+      },
+      "when": {
+        "up": "bidirectional"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_bidirectional_fluid",
+        "x": 90
+      },
+      "when": {
+        "down": "bidirectional"
       }
     }
   ]

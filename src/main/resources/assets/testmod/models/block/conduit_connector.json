@@ -2,6 +2,7 @@
 	"credit": "Made with Blockbench",
 	"textures": {
 		"0": "testmod:block/conduit",
+		"1": "testmod:block/conduit_connector_input_output",
 		"particle": "testmod:block/conduit"
 	},
 	"elements": [
@@ -22,11 +23,11 @@
 			"to": [12, 12, 4],
 			"faces": {
 				"north": {"uv": [4, 6, 12, 14], "texture": "#0"},
-				"east": {"uv": [0, 6, 4, 14], "rotation": 180, "texture": "#0"},
+				"east": {"uv": [0, 16, 8, 0], "rotation": 180, "texture": "#1"},
 				"south": {"uv": [4, 6, 12, 14], "texture": "#0"},
-				"west": {"uv": [0, 6, 4, 14], "texture": "#0"},
-				"up": {"uv": [0, 6, 4, 14], "rotation": 90, "texture": "#0"},
-				"down": {"uv": [0, 6, 4, 14], "rotation": 270, "texture": "#0"}
+				"west": {"uv": [0, 0, 8, 16], "texture": "#1"},
+				"up": {"uv": [0, 0, 8, 16], "rotation": 90, "texture": "#1"},
+				"down": {"uv": [0, 0, 8, 16], "rotation": 270, "texture": "#1"}
 			}
 		}
 	]

@@ -1,6 +1,7 @@
 package mwk.testmod.datagen;
 
 import mwk.testmod.TestMod;
+import mwk.testmod.common.block.conduit.ConduitConnectionType;
 import mwk.testmod.init.registries.TestModBlocks;
 import mwk.testmod.init.registries.TestModItems;
 import net.minecraft.data.PackOutput;
@@ -49,6 +50,7 @@ public class TestModLanguageProvider extends LanguageProvider {
             "info.testmod.hologram_projector.blueprint.locked";
     public static final String KEY_INFO_HOLOGRAM_PROJECTOR_UNLOCKED =
             "info.testmod.hologram_projector.blueprint.unlocked";
+    public static final String KEY_INFO_CONDUIT_CYCLE_MODE = "info.testmod.conduit.cycle_mode";
     // Widgets
     public static final String KEY_WIDGET_HOLOGRAM_PROJECTOR_NONE =
             "widget.testmod.hologram_projector.none";
@@ -170,6 +172,7 @@ public class TestModLanguageProvider extends LanguageProvider {
         add(TestModItems.IRON_PLATE.get(), "Iron Plate");
         add(TestModItems.COPPER_PLATE.get(), "Copper Plate");
         add(TestModItems.STEEL_PLATE.get(), "Steel Plate");
+        add(TestModItems.IRON_GEAR.get(), "Iron Gear");
         add(TestModItems.RED_GIZMO.get(), "Red Gizmo");
         add(TestModItems.BLUE_GIZMO.get(), "Blue Gizmo");
         add(TestModItems.ENERGY_CELL.get(), "Energy Cell");
@@ -191,6 +194,7 @@ public class TestModLanguageProvider extends LanguageProvider {
         add(KEY_INFO_HOLOGRAM_PROJECTOR_HELP, "Shift + right-click to choose a blueprint");
         add(KEY_INFO_HOLOGRAM_PROJECTOR_LOCKED, "Blueprint position locked");
         add(KEY_INFO_HOLOGRAM_PROJECTOR_UNLOCKED, "Blueprint position unlocked");
+        add(KEY_INFO_CONDUIT_CYCLE_MODE, "Changed conduit mode to %s");
         // Widgets
         add(KEY_WIDGET_HOLOGRAM_PROJECTOR_NONE, "None");
         add(KEY_WIDGET_HOLOGRAM_PROJECTOR_SEARCH, "Search");
@@ -225,5 +229,11 @@ public class TestModLanguageProvider extends LanguageProvider {
         // Sounds (subtitles)
         add(KEY_SUBTITLE_MULTIBLOCK_FORM, "Multiblock forms");
         add(KEY_SUBTITLE_MULTIBLOCK_CRUSHER, "Crusher crushes");
+        // Conduit connector types
+        add(ConduitConnectionType.NONE.getSerializedName(), "None");
+        add(ConduitConnectionType.CONDUIT.getSerializedName(), "Conduit");
+        add(ConduitConnectionType.PULL.getSerializedName(), "Pull");
+        add(ConduitConnectionType.PUSH.getSerializedName(), "Push");
+        add(ConduitConnectionType.BIDIRECTIONAL.getSerializedName(), "Bidirectional");
     }
 }

@@ -2,14 +2,16 @@ package mwk.testmod.common.block.conduit.network.capabilites;
 
 import mwk.testmod.common.block.conduit.network.EnergyConduitNetwork;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 
 public class NetworkEnergyStorage extends NetworkCapabilityProvider<EnergyConduitNetwork>
         implements IEnergyStorage {
 
-    public NetworkEnergyStorage(ServerLevel level, EnergyConduitNetwork network, BlockPos pos) {
-        super(level, network, pos);
+    public NetworkEnergyStorage(ServerLevel level, EnergyConduitNetwork network, BlockPos pos,
+            Direction direction) {
+        super(level, network, pos, direction);
     }
 
     @Override
@@ -19,7 +21,7 @@ public class NetworkEnergyStorage extends NetworkCapabilityProvider<EnergyCondui
 
     @Override
     public int receiveEnergy(int energy, boolean simulate) {
-        return network.receivePayload(level, pos, energy, simulate);
+        return network.receivePayload(level, pos, direction, energy, simulate);
     }
 
     @Override

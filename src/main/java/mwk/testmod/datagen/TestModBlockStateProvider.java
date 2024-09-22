@@ -1,8 +1,9 @@
 package mwk.testmod.datagen;
 
+import java.util.HashMap;
 import mwk.testmod.TestMod;
 import mwk.testmod.common.block.conduit.ConduitBlock;
-import mwk.testmod.common.block.conduit.ConnectorType;
+import mwk.testmod.common.block.conduit.ConduitConnectionType;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import mwk.testmod.init.registries.TestModBlocks;
@@ -208,55 +209,66 @@ public class TestModBlockStateProvider extends BlockStateProvider {
         });
     }
 
+    private static final String TEXTURE_PATH_INPUT_OUTPUT = "block/conduit_connector_bidirectional";
+    private static final String TEXTURE_PATH_INPUT = "block/conduit_connector_pull";
+    private static final String TEXTURE_PATH_OUTPUT = "block/conduit_connector_push";
+
+    private void addConduitParts(MultiPartBlockStateBuilder builder, ModelFile model,
+            ConduitConnectionType type) {
+        builder.part().modelFile(model).addModel().condition(ConduitBlock.NORTH, type).end();
+        builder.part().modelFile(model).rotationY(90).addModel().condition(ConduitBlock.EAST, type)
+                .end();
+        builder.part().modelFile(model).rotationY(180).addModel()
+                .condition(ConduitBlock.SOUTH, type).end();
+        builder.part().modelFile(model).rotationY(270).addModel().condition(ConduitBlock.WEST, type)
+                .end();
+        builder.part().modelFile(model).rotationX(270).addModel().condition(ConduitBlock.UP, type)
+                .end();
+        builder.part().modelFile(model).rotationX(90).addModel().condition(ConduitBlock.DOWN, type)
+                .end();
+    }
+
     private void registerConduitBlock(ConduitBlock conduitBlock, String renderType) {
-        String type = conduitBlock.getType().name().toLowerCase();
+        String conduitType = conduitBlock.getType().name().toLowerCase();
         // Create the models for the conduit block
-        String texturePath = "block/conduit_" + type;
-        String modelPathBase = "block/conduit_base_" + type;
-        String modelPathSide = "block/conduit_side_" + type;
-        String modelPathSideBlock = "block/conduit_side_block_" + type;
+        String texturePath = "block/conduit_" + conduitType;
+        String modelPathBase = "block/conduit_base_" + conduitType;
+        String modelPathSide = "block/conduit_side_" + conduitType;
+        HashMap<ConduitConnectionType, String> connectorModelPaths = new HashMap<>();
+        for (ConduitConnectionType type : ConduitConnectionType.VALUES) {
+            if (!type.hasConnector()) {
+                continue;
+            }
+            connectorModelPaths.put(type,
+                    "block/conduit_connector_" + type.getSerializedName() + "_" + conduitType);
+        }
         models().withExistingParent(modelPathBase, "testmod:block/conduit_base")
                 .texture("0", texturePath).texture("particle", texturePath).ao(false)
                 .renderType(renderType);
         models().withExistingParent(modelPathSide, "testmod:block/conduit_side")
                 .texture("0", texturePath).texture("particle", texturePath).ao(false)
                 .renderType(renderType);
-        models().withExistingParent(modelPathSideBlock, "testmod:block/conduit_side_block")
-                .texture("0", texturePath).texture("particle", texturePath).ao(false)
-                .renderType(renderType);
+        for (ConduitConnectionType type : connectorModelPaths.keySet()) {
+            models().withExistingParent(connectorModelPaths.get(type),
+                            "testmod:block/conduit_connector")
+                    .texture("0", texturePath)
+                    .texture("1", "block/conduit_connector_" + type.getSerializedName())
+                    .texture("particle", texturePath).ao(false).renderType(renderType);
+        }
         // Create the item model for the conduit
-        itemModels().getBuilder("item/conduit_" + type)
+        itemModels().getBuilder("item/conduit_" + conduitType)
                 .parent(models().getExistingFile(modLoc("item/conduit"))).texture("0", texturePath)
                 .texture("particle", texturePath);
         // Create the blockstate for the conduit
-        ModelFile modelBase = models().getExistingFile(modLoc(modelPathBase));
-        ModelFile modelSide = models().getExistingFile(modLoc(modelPathSide));
-        ModelFile modelSideBlock = models().getExistingFile(modLoc(modelPathSideBlock));
         MultiPartBlockStateBuilder builder = getMultipartBuilder(conduitBlock);
+        ModelFile modelBase = models().getExistingFile(modLoc(modelPathBase));
         builder.part().modelFile(modelBase).addModel().end();
-        builder.part().modelFile(modelSide).addModel()
-                .condition(ConduitBlock.NORTH, ConnectorType.CONDUIT).end();
-        builder.part().modelFile(modelSide).rotationY(90).addModel()
-                .condition(ConduitBlock.EAST, ConnectorType.CONDUIT).end();
-        builder.part().modelFile(modelSide).rotationY(180).addModel()
-                .condition(ConduitBlock.SOUTH, ConnectorType.CONDUIT).end();
-        builder.part().modelFile(modelSide).rotationY(270).addModel()
-                .condition(ConduitBlock.WEST, ConnectorType.CONDUIT).end();
-        builder.part().modelFile(modelSide).rotationX(270).addModel()
-                .condition(ConduitBlock.UP, ConnectorType.CONDUIT).end();
-        builder.part().modelFile(modelSide).rotationX(90).addModel()
-                .condition(ConduitBlock.DOWN, ConnectorType.CONDUIT).end();
-        builder.part().modelFile(modelSideBlock).addModel()
-                .condition(ConduitBlock.NORTH, ConnectorType.BLOCK).end();
-        builder.part().modelFile(modelSideBlock).rotationY(90).addModel()
-                .condition(ConduitBlock.EAST, ConnectorType.BLOCK).end();
-        builder.part().modelFile(modelSideBlock).rotationY(180).addModel()
-                .condition(ConduitBlock.SOUTH, ConnectorType.BLOCK).end();
-        builder.part().modelFile(modelSideBlock).rotationY(270).addModel()
-                .condition(ConduitBlock.WEST, ConnectorType.BLOCK).end();
-        builder.part().modelFile(modelSideBlock).rotationX(270).addModel()
-                .condition(ConduitBlock.UP, ConnectorType.BLOCK).end();
-        builder.part().modelFile(modelSideBlock).rotationX(90).addModel()
-                .condition(ConduitBlock.DOWN, ConnectorType.BLOCK).end();
+        ModelFile modelSide = models().getExistingFile(modLoc(modelPathSide));
+        addConduitParts(builder, modelSide, ConduitConnectionType.CONDUIT);
+        for (ConduitConnectionType type : connectorModelPaths.keySet()) {
+            ModelFile modelConnector = models().getExistingFile(
+                    modLoc(connectorModelPaths.get(type)));
+            addConduitParts(builder, modelConnector, type);
+        }
     }
 }

@@ -278,6 +278,8 @@ public abstract class ProcessingBlockEntity<T extends Recipe<Container>> extends
             return false;
         }
         // TODO: Can we cache this?
+        // TODO: For multi-input recipes this can't tell if the item is valid in the context
+        // of the items already in the input slots
         return this.level.getRecipeManager().getAllRecipesFor(recipeType).stream()
                 .anyMatch(recipe -> recipe.value().getIngredients().stream()
                         .anyMatch(ingredient -> ingredient.test(stack)));

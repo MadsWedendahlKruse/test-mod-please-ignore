@@ -20,7 +20,6 @@ public class FluidConduitBlockEntity extends ConduitBlockEntity<IFluidHandler> {
     public static final String NBT_TAG_PAYLOAD_FLUID = "payloadFluid";
     public static final String NBT_TAG_PAYLOAD_TIMESTAMP = "payloadTimestamp";
 
-    private NetworkFluidHandler fluidHandler;
     private FluidStack fluidStack;
     private long fluidStackTimestamp;
 
@@ -29,14 +28,13 @@ public class FluidConduitBlockEntity extends ConduitBlockEntity<IFluidHandler> {
                 blockState);
     }
 
-    public NetworkFluidHandler getFluidHandler(Direction direction) {
-        if (fluidHandler == null) {
-            if (network instanceof FluidConduitNetwork fluidNetwork
-                    && level instanceof ServerLevel serverLevel) {
-                fluidHandler = new NetworkFluidHandler(serverLevel, fluidNetwork, worldPosition);
-            }
+    @Override
+    protected IFluidHandler createNewCapability(Direction direction) {
+        if (network instanceof FluidConduitNetwork fluidNetwork
+                && level instanceof ServerLevel serverLevel) {
+            return new NetworkFluidHandler(serverLevel, fluidNetwork, worldPosition, direction);
         }
-        return fluidHandler;
+        return null;
     }
 
     public void setFluidStack(FluidStack fluidStack) {

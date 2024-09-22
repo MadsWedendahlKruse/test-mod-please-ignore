@@ -51,8 +51,8 @@ public record MachineIOPacket(Type type, boolean value, BlockPos blockPos)
             BlockEntity blockEntity = player.level().getBlockEntity(packet.blockPos());
             if (blockEntity instanceof MachineBlockEntity machineBlockEntity) {
                 switch (packet.type()) {
-                    case AUTO_INSERT -> machineBlockEntity.setAutoInsert(packet.value());
-                    case AUTO_EJECT -> machineBlockEntity.setAutoEject(packet.value());
+                    case AUTO_INSERT -> machineBlockEntity.setAutoPull(packet.value());
+                    case AUTO_EJECT -> machineBlockEntity.setAutoPush(packet.value());
                 }
             }
         });

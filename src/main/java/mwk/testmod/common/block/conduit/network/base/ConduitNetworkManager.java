@@ -1,5 +1,6 @@
 package mwk.testmod.common.block.conduit.network.base;
 
+import com.ibm.icu.impl.Pair;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,12 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import com.ibm.icu.impl.Pair;
 import mwk.testmod.TestMod;
 import mwk.testmod.common.block.conduit.ConduitBlock;
 import mwk.testmod.common.block.conduit.ConduitBlockEntity;
+import mwk.testmod.common.block.conduit.ConduitConnectionType;
 import mwk.testmod.common.block.conduit.ConduitType;
-import mwk.testmod.common.block.conduit.ConnectorType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -47,9 +47,9 @@ public class ConduitNetworkManager {
      * Connects the conduit at the given position to a network in the given level. This handles
      * creating a new network if necessary, as well as merging networks if the conduit is placed
      * between two existing networks.
-     * 
+     *
      * @param level The level to connect the conduit in.
-     * @param pos The position of the conduit to connect.
+     * @param pos   The position of the conduit to connect.
      * @param state The state of the conduit to connect.
      */
     public void connectToNetwork(ServerLevel level, BlockPos pos, BlockState state) {
@@ -81,9 +81,9 @@ public class ConduitNetworkManager {
     /**
      * Disconnects the conduit at the given position from its network. This handles removing the
      * block from the network, as well as potentially splitting the network into multiple networks.
-     * 
+     *
      * @param level The level to disconnect the conduit in.
-     * @param pos The position of the conduit to disconnect.
+     * @param pos   The position of the conduit to disconnect.
      * @param state The state of the conduit to disconnect.
      */
     public void disconnectFromNetwork(ServerLevel level, BlockPos pos, BlockState state) {
@@ -107,7 +107,7 @@ public class ConduitNetworkManager {
 
     /**
      * Gets the conduit network at the given position.
-     * 
+     *
      * @param pos The position of the conduit to get the network of.
      * @return The conduit network at the given position, or null if there is no network.
      */
@@ -118,8 +118,8 @@ public class ConduitNetworkManager {
     /**
      * Gets the neighbors of the conduit at the given position, excluding the conduits in the same
      * network.
-     * 
-     * @param pos The position of the conduit to get the neighbors of.
+     *
+     * @param pos  The position of the conduit to get the neighbors of.
      * @param type The type of neighbors to get.
      * @return A set of all neighboring networks.
      */
@@ -138,10 +138,10 @@ public class ConduitNetworkManager {
 
     /**
      * Creates a new network at the given position in the given level.
-     * 
+     *
      * @param level The level to create the network in.
-     * @param pos The position of the conduit to create the network at.
-     * @param type The type of the conduit to create the network for.
+     * @param pos   The position of the conduit to create the network at.
+     * @param type  The type of the conduit to create the network for.
      */
     private void createNetwork(ServerLevel level, BlockPos pos, ConduitType type) {
         ConduitNetwork<?, ?> network = type.createNetwork();
@@ -152,9 +152,9 @@ public class ConduitNetworkManager {
 
     /**
      * Adds the conduit at the given position to the given network.
-     * 
-     * @param level The level the conduit is in.
-     * @param pos The position of the conduit to add.
+     *
+     * @param level   The level the conduit is in.
+     * @param pos     The position of the conduit to add.
      * @param network The network to add the conduit to.
      */
     private void addConduitToNetwork(ServerLevel level, BlockPos pos,
@@ -174,9 +174,9 @@ public class ConduitNetworkManager {
 
     /**
      * Removes the conduit at the given position from its network.
-     * 
+     *
      * @param level The level the conduit is in.
-     * @param pos The position of the conduit to remove.
+     * @param pos   The position of the conduit to remove.
      */
     private void removeConduitFromNetwork(ServerLevel level, BlockPos pos) {
         // ConduitNetwork network = networkMap.remove(pos);
@@ -198,7 +198,7 @@ public class ConduitNetworkManager {
     /**
      * Merges two networks into one.
      *
-     * @param level The level the networks are in.
+     * @param level    The level the networks are in.
      * @param network1 The network to merge into.
      * @param network2 The network to merge.
      */
@@ -224,7 +224,7 @@ public class ConduitNetworkManager {
     /**
      * Splits a network into multiple networks if necessary.
      *
-     * @param level The level the network is in.
+     * @param level           The level the network is in.
      * @param originalNetwork The network to split.
      */
     private void splitNetwork(ServerLevel level, ConduitNetwork<?, ?> originalNetwork) {
@@ -270,9 +270,9 @@ public class ConduitNetworkManager {
 
     /**
      * Gets the neighboring blocks of the block at the given position.
-     * 
+     *
      * @param level The level to get the neighbors in.
-     * @param pos The position of the block to get the neighbors of.
+     * @param pos   The position of the block to get the neighbors of.
      * @param state The state of the block to get the neighbors of.
      * @return A list of pairs of positions and states of the neighboring blocks.
      */
@@ -281,7 +281,8 @@ public class ConduitNetworkManager {
         List<Pair<BlockPos, BlockState>> neighbors = new ArrayList<>();
         Direction[] directions = Direction.values();
         for (int i = 0; i < ConduitBlock.CONNECTOR_PROPERTIES.length; i++) {
-            if (state.getValue(ConduitBlock.CONNECTOR_PROPERTIES[i]) != ConnectorType.NONE) {
+            if (state.getValue(ConduitBlock.CONNECTOR_PROPERTIES[i])
+                    != ConduitConnectionType.NONE) {
                 BlockPos neighborPos = pos.relative(directions[i]);
                 neighbors.add(Pair.of(neighborPos, level.getBlockState(neighborPos)));
             }

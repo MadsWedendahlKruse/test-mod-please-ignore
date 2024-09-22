@@ -5,9 +5,13 @@ import javax.annotation.Nonnull;
 import mwk.testmod.common.block.conduit.network.base.ConduitNetworkManager;
 import mwk.testmod.common.block.interfaces.ITickable;
 import mwk.testmod.common.block.interfaces.IWrenchable;
+import mwk.testmod.datagen.TestModLanguageProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -24,6 +28,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -37,20 +42,20 @@ public class ConduitBlock extends Block
         implements EntityBlock, IWrenchable, SimpleWaterloggedBlock {
 
     // Same order as Direction.values()
-    public static final EnumProperty<ConnectorType> DOWN =
-            EnumProperty.create("down", ConnectorType.class);
-    public static final EnumProperty<ConnectorType> UP =
-            EnumProperty.create("up", ConnectorType.class);
-    public static final EnumProperty<ConnectorType> NORTH =
-            EnumProperty.create("north", ConnectorType.class);
-    public static final EnumProperty<ConnectorType> SOUTH =
-            EnumProperty.create("south", ConnectorType.class);
-    public static final EnumProperty<ConnectorType> WEST =
-            EnumProperty.create("west", ConnectorType.class);
-    public static final EnumProperty<ConnectorType> EAST =
-            EnumProperty.create("east", ConnectorType.class);
-    public static final EnumProperty<ConnectorType>[] CONNECTOR_PROPERTIES =
-            new EnumProperty[] {DOWN, UP, NORTH, SOUTH, WEST, EAST};
+    public static final EnumProperty<ConduitConnectionType> DOWN =
+            EnumProperty.create("down", ConduitConnectionType.class);
+    public static final EnumProperty<ConduitConnectionType> UP =
+            EnumProperty.create("up", ConduitConnectionType.class);
+    public static final EnumProperty<ConduitConnectionType> NORTH =
+            EnumProperty.create("north", ConduitConnectionType.class);
+    public static final EnumProperty<ConduitConnectionType> SOUTH =
+            EnumProperty.create("south", ConduitConnectionType.class);
+    public static final EnumProperty<ConduitConnectionType> WEST =
+            EnumProperty.create("west", ConduitConnectionType.class);
+    public static final EnumProperty<ConduitConnectionType> EAST =
+            EnumProperty.create("east", ConduitConnectionType.class);
+    public static final EnumProperty<ConduitConnectionType>[] CONNECTOR_PROPERTIES =
+            new EnumProperty[]{DOWN, UP, NORTH, SOUTH, WEST, EAST};
 
     private final ConduitType type;
 
@@ -97,17 +102,25 @@ public class ConduitBlock extends Block
     /**
      * @return The connector type of the block at the given position.
      */
-    private ConnectorType getConnectorType(BlockGetter world, BlockPos connectorPos,
+    private ConduitConnectionType getConnectionType(BlockGetter world, BlockPos connectorPos,
             Direction facing) {
-        BlockPos pos = connectorPos.relative(facing);
-        BlockState state = world.getBlockState(pos);
-        Block block = state.getBlock();
-        if (block instanceof ConduitBlock other && other.getType() == type) {
-            return ConnectorType.CONDUIT;
+        BlockPos neighborPos = connectorPos.relative(facing);
+        if (world.getBlockState(neighborPos).getBlock() instanceof ConduitBlock other
+                && other.getType() == type) {
+            return ConduitConnectionType.CONDUIT;
         } else if (isConnectable(world, connectorPos, facing)) {
-            return ConnectorType.BLOCK;
+            // Check if the conduit is already connected to the block
+            BlockState state = world.getBlockState(connectorPos);
+            if (state.getBlock() instanceof ConduitBlock) {
+                ConduitConnectionType conduitConnectionType = state.getValue(
+                        CONNECTOR_PROPERTIES[facing.ordinal()]);
+                if (conduitConnectionType.hasConnector()) {
+                    return conduitConnectionType;
+                }
+            }
+            return ConduitConnectionType.BIDIRECTIONAL;
         } else {
-            return ConnectorType.NONE;
+            return ConduitConnectionType.NONE;
         }
     }
 
@@ -131,9 +144,9 @@ public class ConduitBlock extends Block
 
     @Nonnull
     public BlockState calculateState(LevelAccessor world, BlockPos pos, BlockState state) {
-        ArrayList<ConnectorType> connectors = new ArrayList<>(Direction.values().length);
+        ArrayList<ConduitConnectionType> connectors = new ArrayList<>(Direction.values().length);
         for (Direction facing : Direction.values()) {
-            connectors.add(getConnectorType(world, pos, facing));
+            connectors.add(getConnectionType(world, pos, facing));
         }
         BlockState newState = state;
         for (int i = 0; i < CONNECTOR_PROPERTIES.length; i++) {
@@ -184,6 +197,67 @@ public class ConduitBlock extends Block
         return super.getLightEmission(state, level, pos);
     }
 
+    @Override
+    public boolean onWrenched(BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, Vec3 clickLocation) {
+        if (level.isClientSide()) {
+            return true;
+        }
+        if (IWrenchable.super.onWrenched(state, level, pos, player, hand, clickLocation)) {
+            return true;
+        }
+        // Check if the player right-clicked on the connector part of the block
+        Vec3 hitPos = clickLocation.subtract(pos.getX(), pos.getY(), pos.getZ());
+        // hitPos is on the surface of the block, so we can offset it slightly towards the center
+        // of the block before checking if it's inside the connector
+        hitPos = hitPos.subtract(0.5, 0.5, 0.5);
+        hitPos = hitPos.scale(0.99);
+        hitPos = hitPos.add(0.5, 0.5, 0.5);
+        for (int i = 0; i < CONNECTOR_SHAPES.length; i++) {
+            VoxelShape shape = CONNECTOR_SHAPES[i];
+            Direction direction = Direction.values()[i];
+            ConduitConnectionType conduitConnectionType = getConnectionType(level, pos, direction);
+            if (conduitConnectionType.hasConnector()) {
+                if (shape.bounds().contains(hitPos.x, hitPos.y, hitPos.z)) {
+                    ConduitConnectionType newType = cycleConnectorType(
+                            state.getValue(CONNECTOR_PROPERTIES[i]));
+                    BlockState newState = state.setValue(CONNECTOR_PROPERTIES[i], newType);
+                    level.setBlockAndUpdate(pos, newState);
+                    player.displayClientMessage(
+                            Component.translatable(
+                                    TestModLanguageProvider.KEY_INFO_CONDUIT_CYCLE_MODE,
+                                    Component.translatable(newType.getSerializedName())),
+                            true);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public ConduitConnectionType cycleConnectorType(ConduitConnectionType type) {
+        return switch (type) {
+            case NONE -> ConduitConnectionType.BIDIRECTIONAL;
+            case BIDIRECTIONAL -> ConduitConnectionType.PULL;
+            case PULL -> ConduitConnectionType.PUSH;
+            case PUSH -> ConduitConnectionType.NONE;
+            case CONDUIT -> ConduitConnectionType.CONDUIT;
+        };
+    }
+
+    /**
+     * Check if the conduit can push payloads in the given direction.
+     *
+     * @param state     The block state of the conduit.
+     * @param direction The direction in which the payload is being pushed.
+     * @return True if the conduit can push payloads in the given direction.
+     */
+    public boolean canPushPayload(BlockState state, Direction direction) {
+        ConduitConnectionType conduitConnectionType = state.getValue(
+                CONNECTOR_PROPERTIES[direction.ordinal()]);
+        return conduitConnectionType.canPushPayload();
+    }
+
     private static VoxelShape[] shapeCache = null;
 
     public static final float CONDUIT_MIN = 5F / 16F;
@@ -219,27 +293,32 @@ public class ConduitBlock extends Block
     public static final VoxelShape SHAPE_BLOCK_EAST = Shapes.box(1 - CONNECTOR_THICKNESS,
             CONNECTOR_MIN, CONNECTOR_MIN, 1, CONNECTOR_MAX, CONNECTOR_MAX);
 
-    private int calculateShapeIndex(ConnectorType north, ConnectorType south, ConnectorType west,
-            ConnectorType east, ConnectorType up, ConnectorType down) {
-        int l = ConnectorType.values().length;
+    public static final VoxelShape[] CONNECTOR_SHAPES =
+            new VoxelShape[]{SHAPE_BLOCK_DOWN, SHAPE_BLOCK_UP, SHAPE_BLOCK_NORTH, SHAPE_BLOCK_SOUTH,
+                    SHAPE_BLOCK_WEST, SHAPE_BLOCK_EAST};
+
+    private int calculateShapeIndex(ConduitConnectionType north, ConduitConnectionType south,
+            ConduitConnectionType west,
+            ConduitConnectionType east, ConduitConnectionType up, ConduitConnectionType down) {
+        int l = ConduitConnectionType.values().length;
         return ((((south.ordinal() * l + north.ordinal()) * l + west.ordinal()) * l
                 + east.ordinal()) * l + up.ordinal()) * l + down.ordinal();
     }
 
     private void makeShapes() {
         if (shapeCache == null) {
-            int length = ConnectorType.values().length;
+            int length = ConduitConnectionType.values().length;
             shapeCache = new VoxelShape[length * length * length * length * length * length];
 
             // TODO: Sweet mother of nested loops!
             // Check video comments for a better way to do this
             // https://www.youtube.com/watch?v=WUhet8dOlAs&feature=youtu.be
-            for (ConnectorType up : ConnectorType.VALUES) {
-                for (ConnectorType down : ConnectorType.VALUES) {
-                    for (ConnectorType north : ConnectorType.VALUES) {
-                        for (ConnectorType south : ConnectorType.VALUES) {
-                            for (ConnectorType east : ConnectorType.VALUES) {
-                                for (ConnectorType west : ConnectorType.VALUES) {
+            for (ConduitConnectionType up : ConduitConnectionType.VALUES) {
+                for (ConduitConnectionType down : ConduitConnectionType.VALUES) {
+                    for (ConduitConnectionType north : ConduitConnectionType.VALUES) {
+                        for (ConduitConnectionType south : ConduitConnectionType.VALUES) {
+                            for (ConduitConnectionType east : ConduitConnectionType.VALUES) {
+                                for (ConduitConnectionType west : ConduitConnectionType.VALUES) {
                                     int idx =
                                             calculateShapeIndex(north, south, west, east, up, down);
                                     shapeCache[idx] = makeShape(north, south, west, east, up, down);
@@ -253,8 +332,9 @@ public class ConduitBlock extends Block
         }
     }
 
-    private VoxelShape makeShape(ConnectorType north, ConnectorType south, ConnectorType west,
-            ConnectorType east, ConnectorType up, ConnectorType down) {
+    private VoxelShape makeShape(ConduitConnectionType north, ConduitConnectionType south,
+            ConduitConnectionType west,
+            ConduitConnectionType east, ConduitConnectionType up, ConduitConnectionType down) {
         VoxelShape shape = Shapes.box(CONDUIT_MIN, CONDUIT_MIN, CONDUIT_MIN, CONDUIT_MAX,
                 CONDUIT_MAX, CONDUIT_MAX);
         shape = combineShape(shape, north, SHAPE_CONDUIT_NORTH, SHAPE_BLOCK_NORTH);
@@ -266,11 +346,11 @@ public class ConduitBlock extends Block
         return shape;
     }
 
-    private VoxelShape combineShape(VoxelShape shape, ConnectorType connectorType,
+    private VoxelShape combineShape(VoxelShape shape, ConduitConnectionType conduitConnectionType,
             VoxelShape conduitShape, VoxelShape blockShape) {
-        if (connectorType == ConnectorType.CONDUIT) {
+        if (conduitConnectionType == ConduitConnectionType.CONDUIT) {
             return Shapes.join(shape, conduitShape, BooleanOp.OR);
-        } else if (connectorType == ConnectorType.BLOCK) {
+        } else if (conduitConnectionType.hasConnector()) {
             return Shapes.join(shape, Shapes.join(blockShape, conduitShape, BooleanOp.OR),
                     BooleanOp.OR);
         } else {
@@ -282,12 +362,12 @@ public class ConduitBlock extends Block
     @Override
     public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter world,
             @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
-        ConnectorType north = getConnectorType(world, pos, Direction.NORTH);
-        ConnectorType south = getConnectorType(world, pos, Direction.SOUTH);
-        ConnectorType west = getConnectorType(world, pos, Direction.WEST);
-        ConnectorType east = getConnectorType(world, pos, Direction.EAST);
-        ConnectorType up = getConnectorType(world, pos, Direction.UP);
-        ConnectorType down = getConnectorType(world, pos, Direction.DOWN);
+        ConduitConnectionType north = getConnectionType(world, pos, Direction.NORTH);
+        ConduitConnectionType south = getConnectionType(world, pos, Direction.SOUTH);
+        ConduitConnectionType west = getConnectionType(world, pos, Direction.WEST);
+        ConduitConnectionType east = getConnectionType(world, pos, Direction.EAST);
+        ConduitConnectionType up = getConnectionType(world, pos, Direction.UP);
+        ConduitConnectionType down = getConnectionType(world, pos, Direction.DOWN);
         int index = calculateShapeIndex(north, south, west, east, up, down);
         return shapeCache[index];
     }

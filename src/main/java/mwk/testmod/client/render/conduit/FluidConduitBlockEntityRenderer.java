@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import mwk.testmod.client.render.RenderUtils;
 import mwk.testmod.client.render.RenderUtils.Vertex;
 import mwk.testmod.common.block.conduit.ConduitBlock;
-import mwk.testmod.common.block.conduit.ConnectorType;
+import mwk.testmod.common.block.conduit.ConduitConnectionType;
 import mwk.testmod.common.block.conduit.FluidConduitBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -80,7 +80,8 @@ public class FluidConduitBlockEntityRenderer
     private static final Vertex[][] FLUID_VERTICES_DIRECTIONS_COMBINED =
             {FLUID_VERTICES_DOWN_UP, FLUID_VERTICES_NORTH_SOUTH, FLUID_VERTICES_WEST_EAST};
 
-    public FluidConduitBlockEntityRenderer(BlockEntityRendererProvider.Context context) {}
+    public FluidConduitBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
+    }
 
     @Override
     public void render(FluidConduitBlockEntity conduitEntity, float partialTick,
@@ -111,16 +112,16 @@ public class FluidConduitBlockEntityRenderer
         BlockState state = conduitEntity.getBlockState();
         int connections = 0;
         for (int i = 0; i < FLUID_VERTICES_DIRECTIONS.length; i++) {
-            ConnectorType type = state.getValue(ConduitBlock.CONNECTOR_PROPERTIES[i]);
-            if (type == ConnectorType.NONE) {
+            ConduitConnectionType type = state.getValue(ConduitBlock.CONNECTOR_PROPERTIES[i]);
+            if (type == ConduitConnectionType.NONE) {
                 continue;
             }
             connections++;
-            if (type == ConnectorType.BLOCK) {
+            if (type.hasConnector()) {
                 RenderUtils.renderCube(poseStack, vertexBuilder, FLUID_VERTICES_DIRECTIONS[i],
                         fluidStillSprite, color, light, overlay);
             }
-            if (type == ConnectorType.CONDUIT) {
+            if (type == ConduitConnectionType.CONDUIT) {
                 // To avoid rendering a fluid face in the middle of the conduit, we render
                 // one long fluid cube between two conduits, instead of two separate fluid
                 // cubes. This means that we only render the fluid cube for odd indices to avoid
@@ -138,7 +139,6 @@ public class FluidConduitBlockEntityRenderer
                     fluidStillSprite, color, light, overlay);
         }
     }
-
 
 
 }
