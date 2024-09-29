@@ -56,11 +56,15 @@ public class HologramProjectorScreen extends Screen {
 
     // Rotating 3D model of the blueprint
     private static final int BLUEPRINT_MODEL_WIDTH = 130;
-    private static final int BLUEPRINT_MODEL_HEIGHT = 130;
+    private static final int BLUEPRINT_MODEL_HEIGHT = 108;
     private static final int BLUEPRINT_MODEL_PADDING = 5;
     private static final int BLUEPRINT_MODEL_Z = 150;
     private static final float BLUEPRINT_MODEL_SPIN_SPEED = 36; // [deg/s]
     private static final float BLUEPRINT_MODEL_MAX_LAYER_SPACING = 2.0F;
+
+    // Text box with name of the blueprint
+    private static final int BLUEPRINT_NAME_HEIGHT = Button.DEFAULT_HEIGHT;
+    private static final int BLUEPRINT_NAME_WIDTH = BLUEPRINT_MODEL_WIDTH;
 
     // Buttons for manipulating the model
     private static final int BLUEPRINT_MODEL_BUTTON_SIZE = 20;
@@ -77,11 +81,12 @@ public class HologramProjectorScreen extends Screen {
             new ResourceLocation(TestMod.MODID, "widget/empty_block");
     private static final int ITEMSTACK_PIXEL_SIZE = 16;
 
-    // All three elements combined
+    // All left side elements combined
     private static final int BLUEPRINT_WIDTH = BLUEPRINT_MODEL_WIDTH;
     private static final int BLUEPRINT_HEIGHT = BLUEPRINT_MODEL_HEIGHT + BLUEPRINT_MODEL_BUTTON_SIZE
             + BLUEPRINT_MATERIALS_ITEM_ROWS * BLUEPRINT_MATERIALS_ITEM_HEIGHT
-            + (BLUEPRINT_MATERIALS_ITEM_ROWS + 1) * BLUEPRINT_MODEL_BUTTON_SPACING;
+            + (BLUEPRINT_MATERIALS_ITEM_ROWS + 1) * BLUEPRINT_MODEL_BUTTON_SPACING
+            + BLUEPRINT_NAME_HEIGHT + BLUEPRINT_MODEL_BUTTON_SPACING;
     private static final int BLUEPRINT_X_OFFSET = 10;
 
     // The list of blueprints
@@ -148,17 +153,16 @@ public class HologramProjectorScreen extends Screen {
             TestMod.LOGGER.error("No hologram projector found in either hand");
             return;
         }
-        this.searchBox = new EditBox(minecraft.font, this.width / 2 + BLUEPRINT_X_OFFSET,
-                this.height / 2 - BLUEPRINT_LIST_HEIGHT / 2, BLUEPRINT_SEARCH_WIDTH,
-                BLUEPRINT_SEARCH_HEIGHT, Component.translatable(
+        int y = this.height / 2 - BLUEPRINT_LIST_HEIGHT / 2;
+        this.searchBox = new EditBox(minecraft.font, this.width / 2 + BLUEPRINT_X_OFFSET, y,
+                BLUEPRINT_SEARCH_WIDTH, BLUEPRINT_SEARCH_HEIGHT, Component.translatable(
                 TestModLanguageProvider.KEY_WIDGET_HOLOGRAM_PROJECTOR_SEARCH));
         this.addRenderableWidget(this.searchBox);
 
+        y += BLUEPRINT_SEARCH_HEIGHT + BLUEPRINT_MODEL_BUTTON_SPACING;
         this.blueprintList = new BlueprintList(this.width / 2 + BLUEPRINT_X_OFFSET,
-                this.height / 2 - BLUEPRINT_LIST_HEIGHT / 2 + BLUEPRINT_SEARCH_HEIGHT
-                        + BLUEPRINT_MODEL_BUTTON_SPACING,
-                BLUEPRINT_LIST_WIDTH,
-                BLUEPRINT_LIST_HEIGHT - (BLUEPRINT_SEARCH_HEIGHT - BLUEPRINT_MODEL_BUTTON_SPACING),
+                y, BLUEPRINT_LIST_WIDTH,
+                BLUEPRINT_LIST_HEIGHT - (BLUEPRINT_SEARCH_HEIGHT + BLUEPRINT_MODEL_BUTTON_SPACING),
                 Component.translatable(
                         TestModLanguageProvider.KEY_WIDGET_HOLOGRAM_PROJECTOR_BLUEPRINTS));
         this.addRenderableWidget(this.blueprintList);
@@ -241,7 +245,8 @@ public class HologramProjectorScreen extends Screen {
     }
 
     private int getBlueprintY() {
-        return this.height / 2 - BLUEPRINT_HEIGHT / 2;
+        return this.height / 2 - BLUEPRINT_HEIGHT / 2 + BLUEPRINT_NAME_HEIGHT
+                + BLUEPRINT_MODEL_BUTTON_SPACING;
     }
 
     private int getBlueprintModelCenterX() {
@@ -284,6 +289,21 @@ public class HologramProjectorScreen extends Screen {
     }
 
     @Override
+    public boolean mouseDragged(double pMouseX, double pMouseY, int pButton, double pDragX,
+            double pDragY) {
+        for (Renderable widget : this.renderables) {
+            if (widget instanceof AbstractWidget abstractWidget) {
+                if (abstractWidget.isMouseOver(pMouseX, pMouseY)) {
+                    if (abstractWidget.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
+    }
+
+    @Override
     public void renderBackground(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY,
             float pPartialTick) {
         super.renderBackground(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
@@ -304,7 +324,9 @@ public class HologramProjectorScreen extends Screen {
         BufferSource bufferSource = guiGraphics.bufferSource();
         PoseStack poseStack = guiGraphics.pose();
 
-        guiGraphics.blitSprite(BlueprintList.BACKGROUND_SPRITES.get(false, false), getBlueprintX(),
+        ResourceLocation backgroundSprites = BlueprintList.BACKGROUND_SPRITES.get(false, false);
+        // Render the border around the blueprint model
+        guiGraphics.blitSprite(backgroundSprites, getBlueprintX(),
                 getBlueprintY(), BLUEPRINT_MODEL_WIDTH, BLUEPRINT_MODEL_HEIGHT);
 
         Minecraft minecraft = Minecraft.getInstance();
@@ -321,10 +343,10 @@ public class HologramProjectorScreen extends Screen {
                     controller.newBlockEntity(BlockPos.ZERO, controller.defaultBlockState()));
 
         }
-        renderMaterials(
-                guiGraphics, blueprint, getBlueprintX(), getBlueprintY() + BLUEPRINT_MODEL_HEIGHT
-                        + BLUEPRINT_MODEL_BUTTON_SIZE + 2 * BLUEPRINT_MODEL_BUTTON_SPACING,
-                mouseX, mouseY);
+        renderName(guiGraphics, backgroundSprites, blueprint, minecraft);
+        renderMaterials(guiGraphics, blueprint, getBlueprintX(),
+                getBlueprintY() + BLUEPRINT_MODEL_HEIGHT + BLUEPRINT_MODEL_BUTTON_SIZE
+                        + 2 * BLUEPRINT_MODEL_BUTTON_SPACING, mouseX, mouseY);
         if (blueprint == null) {
             blueprintInfoIcon.setMachine(null);
             return;
@@ -336,6 +358,26 @@ public class HologramProjectorScreen extends Screen {
             renderBlueprint(blueprint, poseStack, bufferSource, blockRenderer,
                     getBlueprintModelCenterX(), getBlueprintModelCenterY());
         }
+    }
+
+    private void renderName(GuiGraphics guiGraphics, ResourceLocation backgroundSprites,
+            MultiBlockBlueprint blueprint, Minecraft minecraft) {
+        // Render the border around the name box
+        guiGraphics.blitSprite(backgroundSprites, getBlueprintX(),
+                getBlueprintY() - BLUEPRINT_SEARCH_HEIGHT - BLUEPRINT_MODEL_BUTTON_SPACING,
+                BLUEPRINT_MODEL_WIDTH, BLUEPRINT_SEARCH_HEIGHT);
+        // Draw the blueprint name
+        if (blueprint == null) {
+            return;
+        }
+        Component name = blueprint.getController().getName();
+        int nameWidth = minecraft.font.width(name);
+        int minX = getBlueprintX() + (BLUEPRINT_MODEL_WIDTH - nameWidth) / 2;
+        int minY = getBlueprintY() - BLUEPRINT_SEARCH_HEIGHT - BLUEPRINT_MODEL_BUTTON_SPACING;
+        int maxX = minX + Math.min(nameWidth, BLUEPRINT_NAME_WIDTH);
+        int maxY = minY + BLUEPRINT_SEARCH_HEIGHT;
+        AbstractWidget.renderScrollingString(guiGraphics, font, name, minX, minY, maxX, maxY,
+                0xFFFFFF);
     }
 
     private void renderBlueprint(MultiBlockBlueprint blueprint, PoseStack poseStack,
@@ -406,7 +448,7 @@ public class HologramProjectorScreen extends Screen {
         final float diagonal = (float) Math.sqrt(aabb.getXsize() * aabb.getXsize()
                 + aabbYSize * aabbYSize + aabb.getZsize() * aabb.getZsize());
         final float blueprintScale =
-                (BLUEPRINT_MODEL_WIDTH - BLUEPRINT_MODEL_PADDING * 2) / diagonal;
+                (BLUEPRINT_MODEL_HEIGHT - BLUEPRINT_MODEL_PADDING * 2) / diagonal;
         poseStack.scale(blueprintScale, blueprintScale, blueprintScale);
     }
 

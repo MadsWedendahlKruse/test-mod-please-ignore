@@ -65,8 +65,8 @@ public class BlueprintList extends AbstractScrollWidget {
             ResourceKey<MultiBlockBlueprint> blueprintKey) {
         buttons.add(new BlueprintButton(getX() + padding / 2, getButtonY(buttons.size()),
                 width - padding, Button.DEFAULT_HEIGHT, buttonLabel, (pButton) -> {
-                    this.blueprintKey = blueprintKey;
-                }));
+            this.blueprintKey = blueprintKey;
+        }));
     }
 
     public ResourceKey<MultiBlockBlueprint> getBlueprintKey() {
@@ -76,7 +76,7 @@ public class BlueprintList extends AbstractScrollWidget {
     /**
      * Filters the buttons based on the given filter. The filter is case-insensitive and only
      * searches for the filter in the button's message.
-     * 
+     *
      * @param filter The filter to apply to the buttons
      */
     public void filter(String filter) {
@@ -100,8 +100,8 @@ public class BlueprintList extends AbstractScrollWidget {
 
     @Override
     protected int getInnerHeight() {
-        // Add one extra spacing because there's also one at the top
-        return buttons.size() * (Button.DEFAULT_HEIGHT + spacing) + spacing;
+        // TODO: Why does subtracting 3 * spacing work?
+        return filteredButtons.size() * (Button.DEFAULT_HEIGHT + spacing) - 3 * spacing;
     }
 
     @Override
@@ -115,6 +115,16 @@ public class BlueprintList extends AbstractScrollWidget {
         for (Button button : filteredButtons) {
             button.render(guiGraphics, mouseX, mouseY + (int) scrollAmount(), partialTick);
         }
+    }
+
+    @Override
+    public boolean isMouseOver(double pMouseX, double pMouseY) {
+        boolean overScrollBar = scrollbarVisible()
+                && pMouseX >= (double) (this.getX() + this.width)
+                && pMouseX <= (double) (this.getX() + this.width + 8)
+                && pMouseY >= (double) this.getY()
+                && pMouseY < (double) (this.getY() + this.height);
+        return super.isMouseOver(pMouseX, pMouseY) || overScrollBar;
     }
 
     public boolean buttonClicked(double pMouseX, double pMouseY, int pButton) {
@@ -143,6 +153,13 @@ public class BlueprintList extends AbstractScrollWidget {
                 button.onPress();
             }
         }
+    }
+
+    @Override
+    public boolean mouseDragged(double pMouseX, double pMouseY, int pButton, double pDragX,
+            double pDragY) {
+        setFocused(true);
+        return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
     }
 
     @Override
