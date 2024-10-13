@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "M": {
+      "item": "testmod:machine_frame_basic"
+    },
+    "S": {
+      "item": "testmod:plate_steel"
+    }
+  },
+  "pattern": [
+    "ISI",
+    "SMS",
+    "ISI"
+  ],
+  "result": {
+    "count": 1,
+    "id": "testmod:machine_frame_reinforced"
+  }
+}

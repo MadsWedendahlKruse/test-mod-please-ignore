@@ -10,6 +10,7 @@ import mwk.testmod.common.block.interfaces.ITickable;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockUtils;
 import mwk.testmod.datagen.TestModLanguageProvider;
+import mwk.testmod.init.registries.TestModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -17,6 +18,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -100,12 +102,7 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
      * @return The shape of the multiblock structure when it is formed.
      */
     public VoxelShape getFormedShape(BlockState state) {
-        // TODO: This should be cached. It should also be a proper box for each block, not just a
-        // bounding box, so that we can have more complex shapes.
         if (blueprint != null) {
-//            AABB aabb = blueprint.getAABB(null, state.getValue(FACING));
-//            return Block.box(aabb.minX * 16, aabb.minY * 16, aabb.minZ * 16, aabb.maxX * 16,
-//                    aabb.maxY * 16, aabb.maxZ * 16);
             return blueprint.getShape(state.getValue(FACING));
         }
         return null;
@@ -286,11 +283,7 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
     @Override
     public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
             Player player, BlockHitResult hit) {
-        // Right-clicking with a wrench is handled by Wrenchable#onWrenched.
-        // (so skip it here)
-//        if (player.getItemInHand(hand).getItem() == TestModItems.WRENCH_ITEM.get()) {
-//            return InteractionResult.PASS;
-//        }
+        TestMod.LOGGER.debug("MultiBlockControllerBlock::useWithoutItem");
         boolean isCurrentBlueprint = HologramRenderer.getInstance().isCurrentBlueprint(pos,
                 blueprint, state.getValue(FACING));
         boolean isFormed = state.getValue(FORMED);
@@ -321,5 +314,15 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
             return InteractionResult.sidedSuccess(level.isClientSide());
         }
         return super.useWithoutItem(state, level, pos, player, hit);
+    }
+
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level,
+            BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (stack.is(TestModItems.WRENCH_ITEM.get())) {
+            return this.onWrenched(state, level, pos, player, hand, hitResult.getLocation())
+                    ? ItemInteractionResult.SUCCESS : ItemInteractionResult.FAIL;
+        }
+        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 }

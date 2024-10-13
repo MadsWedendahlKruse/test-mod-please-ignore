@@ -1,0 +1,10 @@
+{
+  "type": "testmod:crushing",
+  "input": {
+    "item": "minecraft:lapis_block"
+  },
+  "output": {
+    "count": 9,
+    "id": "minecraft:lapis_lazuli"
+  }
+}

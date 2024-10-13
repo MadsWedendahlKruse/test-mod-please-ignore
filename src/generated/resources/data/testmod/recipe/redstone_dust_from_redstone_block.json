@@ -1,0 +1,10 @@
+{
+  "type": "testmod:crushing",
+  "input": {
+    "item": "minecraft:redstone_block"
+  },
+  "output": {
+    "count": 9,
+    "id": "minecraft:redstone"
+  }
+}

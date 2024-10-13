@@ -1,0 +1,10 @@
+{
+  "type": "testmod:crushing",
+  "input": {
+    "item": "minecraft:gold_ore"
+  },
+  "output": {
+    "count": 3,
+    "id": "minecraft:raw_gold"
+  }
+}

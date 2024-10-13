@@ -1,0 +1,10 @@
+{
+  "type": "testmod:crushing",
+  "input": {
+    "item": "minecraft:gravel"
+  },
+  "output": {
+    "count": 1,
+    "id": "minecraft:sand"
+  }
+}

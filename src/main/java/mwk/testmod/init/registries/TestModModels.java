@@ -33,18 +33,18 @@ public class TestModModels {
         event.register(
                 new ModelResourceLocation(
                         ResourceLocation.fromNamespaceAndPath(TestMod.MODID, CRUSHER_ROTOR_PATH),
-                        ""));
+                        "standalone"));
         event.register(
                 new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(TestMod.MODID,
-                        SEPATATOR_SPINNER_PATH), ""));
+                        SEPATATOR_SPINNER_PATH), "standalone"));
         event.register(
                 new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(TestMod.MODID,
-                        STIRLING_GENERATOR_FLYWHEEL_PATH), ""));
+                        STIRLING_GENERATOR_FLYWHEEL_PATH), "standalone"));
         event.register(
                 new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(TestMod.MODID,
-                        STIRLING_GENERATOR_PISTON_PATH), ""));
+                        STIRLING_GENERATOR_PISTON_PATH), "standalone"));
         event.register(
                 new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(TestMod.MODID,
-                        STAMPING_PRESS_PISTON_PATH), ""));
+                        STAMPING_PRESS_PISTON_PATH), "standalone"));
     }
 }

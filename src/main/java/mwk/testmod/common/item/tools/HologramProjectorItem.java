@@ -1,6 +1,5 @@
 package mwk.testmod.common.item.tools;
 
-import mwk.testmod.TestMod;
 import mwk.testmod.client.gui.screen.HologramProjectorScreen;
 import mwk.testmod.client.render.hologram.HologramRenderer;
 import mwk.testmod.client.render.hologram.events.ProjectorEvent;
@@ -10,7 +9,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -21,8 +19,8 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class HologramProjectorItem extends Item {
 
-    public static final String TAG_BLUEPRINT_LOCATION_NAMESPACE = "blueprint_location_namespace";
-    public static final String TAG_BLUEPRINT_LOCATION_PATH = "blueprint_location_path";
+    // TODO: It's not the cleanest solution to store the blueprint key in the item class, but it gets the job done
+    private static ResourceKey<MultiBlockBlueprint> blueprintKey;
 
     public HologramProjectorItem(Properties properties) {
         super(properties);
@@ -70,33 +68,11 @@ public class HologramProjectorItem extends Item {
         return super.use(level, player, hand);
     }
 
-    public static void setBlueprintKey(ItemStack projector,
-            ResourceKey<MultiBlockBlueprint> blueprintKey) {
-        if (blueprintKey == null) {
-            TestMod.LOGGER.debug("Setting blueprint key to null");
-//            projector.getOrCreateTag().remove(TAG_BLUEPRINT_LOCATION_NAMESPACE);
-//            projector.getOrCreateTag().remove(TAG_BLUEPRINT_LOCATION_PATH);
-            return;
-        }
-        TestMod.LOGGER.debug("Setting blueprint key to {}", blueprintKey);
-        // Decompose the ResourceKey into its parts for eaiser reconstruction
-        ResourceLocation location = blueprintKey.location();
-//        projector.getOrCreateTag().putString(TAG_BLUEPRINT_LOCATION_NAMESPACE,
-//                location.getNamespace());
-//        projector.getOrCreateTag().putString(TAG_BLUEPRINT_LOCATION_PATH, location.getPath());
+    public static void setBlueprintKey(ResourceKey<MultiBlockBlueprint> key) {
+        blueprintKey = key;
     }
 
-    public static ResourceKey<MultiBlockBlueprint> getBlueprintKey(ItemStack projector) {
-//        CompoundTag tag = projector.getOrCreateTag();
-//        if (!(tag.contains(TAG_BLUEPRINT_LOCATION_NAMESPACE)
-//                && tag.contains(TAG_BLUEPRINT_LOCATION_PATH))) {
-//            return null;
-//        }
-//        ResourceLocation location =
-//                ResourceLocation.fromNamespaceAndPath(
-//                        tag.getString(TAG_BLUEPRINT_LOCATION_NAMESPACE),
-//                        tag.getString(TAG_BLUEPRINT_LOCATION_PATH));
-//        return ResourceKey.create(TestModBlueprints.BLUEPRINT_REGISTRY_KEY, location);
-        return null;
+    public static ResourceKey<MultiBlockBlueprint> getBlueprintKey() {
+        return blueprintKey;
     }
 }

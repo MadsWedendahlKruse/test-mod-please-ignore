@@ -268,8 +268,7 @@ public class HologramProjectorScreen extends Screen {
     @Override
     public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
         if (blueprintList.buttonClicked(pMouseX, pMouseY, pButton)) {
-            HologramProjectorItem.setBlueprintKey(hologramProjector,
-                    blueprintList.getBlueprintKey());
+            HologramProjectorItem.setBlueprintKey(blueprintList.getBlueprintKey());
             this.onClose();
             return true;
         }

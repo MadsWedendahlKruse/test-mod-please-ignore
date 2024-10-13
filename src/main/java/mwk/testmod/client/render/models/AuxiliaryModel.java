@@ -23,7 +23,7 @@ public class AuxiliaryModel {
         if (bakedModel == null) {
             bakedModel = Minecraft.getInstance().getModelManager()
                     .getModel(new ModelResourceLocation(
-                            ResourceLocation.fromNamespaceAndPath(TestMod.MODID, modelPath), ""));
+                            ResourceLocation.fromNamespaceAndPath(TestMod.MODID, modelPath), "standalone"));
         }
         return bakedModel;
     }

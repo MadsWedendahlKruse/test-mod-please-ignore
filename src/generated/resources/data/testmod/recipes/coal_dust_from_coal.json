@@ -1,9 +1,0 @@
-{
-  "type": "testmod:crushing",
-  "input": {
-    "item": "minecraft:coal"
-  },
-  "output": {
-    "item": "testmod:dust_coal"
-  }
-}

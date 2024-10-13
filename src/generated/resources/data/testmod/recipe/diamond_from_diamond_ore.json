@@ -1,0 +1,10 @@
+{
+  "type": "testmod:crushing",
+  "input": {
+    "item": "minecraft:diamond_ore"
+  },
+  "output": {
+    "count": 2,
+    "id": "minecraft:diamond"
+  }
+}

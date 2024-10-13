@@ -1,0 +1,16 @@
+{
+  "type": "testmod:separation",
+  "input": {
+    "tag": "forge:dusts/ilmenite"
+  },
+  "outputs": [
+    {
+      "count": 1,
+      "id": "testmod:dust_titanium"
+    },
+    {
+      "count": 1,
+      "id": "testmod:dust_iron"
+    }
+  ]
+}

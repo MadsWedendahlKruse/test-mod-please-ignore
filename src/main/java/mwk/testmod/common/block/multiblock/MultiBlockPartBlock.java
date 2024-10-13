@@ -14,7 +14,9 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -213,8 +215,7 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
                 BlockPos controllerPos = getControllerPos(level, pos);
                 if (controllerPos != null) {
                     BlockState controllerState = level.getBlockState(controllerPos);
-                    if (controllerState
-                            .getBlock() instanceof MultiBlockControllerBlock controller) {
+                    if (controllerState.getBlock() instanceof MultiBlockControllerBlock controller) {
                         controller.setMultiblockFormed(level, controllerPos, controllerState, false,
                                 false);
                     }
@@ -227,7 +228,6 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
     @Override
     public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
             Player player, BlockHitResult hit) {
-        TestMod.LOGGER.debug("MultiBlockPartBlock::use");
         // If the multiblock structure is formed, propagate the use event to the
         // multiblock controller.
         if (state.getValue(FORMED)) {
@@ -249,8 +249,32 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
     }
 
     @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level,
+            BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        // If the multiblock structure is formed, propagate the use event to the
+        // multiblock controller.
+        if (state.getValue(FORMED)) {
+            // Prevent the client from doing anything
+            if (level.isClientSide()) {
+                return ItemInteractionResult.SUCCESS;
+            }
+            BlockPos controllerPos = getControllerPos(level, pos);
+            // Make sure it's not already the controller
+            if (controllerPos != null && !controllerPos.equals(pos)) {
+                BlockState controllerState = level.getBlockState(controllerPos);
+                if (controllerState.getBlock() instanceof MultiBlockControllerBlock controller) {
+                    return controller.useItemOn(stack, controllerState, level, controllerPos,
+                            player, hand, hitResult);
+                }
+            }
+        }
+        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+    }
+
+    @Override
     public boolean onWrenched(BlockState state, Level level, BlockPos pos, Player player,
             InteractionHand hand, Vec3 clickLocation) {
+        TestMod.LOGGER.debug("MultiBlockPartBlock::onWrenched");
         // Check if the super onWrenched method does anything.
         if (IWrenchable.super.onWrenched(state, level, pos, player, hand, clickLocation)) {
             return true;
@@ -261,10 +285,9 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
             BlockPos controllerPos = getControllerPos(level, pos);
             if (controllerPos != null && !controllerPos.equals(pos)) {
                 BlockState controllerState = level.getBlockState(controllerPos);
-                if (controllerState.getBlock() instanceof MultiBlockControllerBlock) {
-                    return ((MultiBlockControllerBlock) controllerState.getBlock())
-                            .onWrenched(controllerState, level, controllerPos, player, hand,
-                                    clickLocation);
+                if (controllerState.getBlock() instanceof MultiBlockControllerBlock controllerBlock) {
+                    return controllerBlock.onWrenched(controllerState, level, controllerPos, player,
+                            hand, clickLocation);
                 }
             }
         }
@@ -279,8 +302,8 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
             if (controllerPos != null) {
                 BlockState controllerState = level.getBlockState(controllerPos);
                 if (controllerState.getBlock() instanceof MultiBlockControllerBlock controller) {
-                    VoxelShape controllerShape =
-                            controller.getShape(controllerState, level, controllerPos, context);
+                    VoxelShape controllerShape = controller.getShape(controllerState, level,
+                            controllerPos, context);
                     BlockPos controllerOffset = controllerPos.subtract(pos);
                     return controllerShape.move(controllerOffset.getX(), controllerOffset.getY(),
                             controllerOffset.getZ());

@@ -104,6 +104,9 @@ public class FluidStackHandler implements INBTSerializable<CompoundTag> {
         CompoundTag nbt = new CompoundTag();
         ListTag list = new ListTag();
         for (int i = 0; i < stacks.length; i++) {
+            if (stacks[i].isEmpty()) {
+                continue;
+            }
             CompoundTag tankTag = new CompoundTag();
             tankTag.putInt("Tank", i);
             tankTag.put("Fluid", stacks[i].save(registries, new CompoundTag()));

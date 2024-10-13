@@ -60,55 +60,55 @@
     },
     {
       "apply": {
-        "model": "testmod:block/conduit_connector_bidirectional_energy"
+        "model": "testmod:block/conduit_connector_push_energy"
       },
       "when": {
-        "north": "bidirectional"
+        "north": "push"
       }
     },
     {
       "apply": {
-        "model": "testmod:block/conduit_connector_bidirectional_energy",
+        "model": "testmod:block/conduit_connector_push_energy",
         "y": 90
       },
       "when": {
-        "east": "bidirectional"
+        "east": "push"
       }
     },
     {
       "apply": {
-        "model": "testmod:block/conduit_connector_bidirectional_energy",
+        "model": "testmod:block/conduit_connector_push_energy",
         "y": 180
       },
       "when": {
-        "south": "bidirectional"
+        "south": "push"
       }
     },
     {
       "apply": {
-        "model": "testmod:block/conduit_connector_bidirectional_energy",
+        "model": "testmod:block/conduit_connector_push_energy",
         "y": 270
       },
       "when": {
-        "west": "bidirectional"
+        "west": "push"
       }
     },
     {
       "apply": {
-        "model": "testmod:block/conduit_connector_bidirectional_energy",
+        "model": "testmod:block/conduit_connector_push_energy",
         "x": 270
       },
       "when": {
-        "up": "bidirectional"
+        "up": "push"
       }
     },
     {
       "apply": {
-        "model": "testmod:block/conduit_connector_bidirectional_energy",
+        "model": "testmod:block/conduit_connector_push_energy",
         "x": 90
       },
       "when": {
-        "down": "bidirectional"
+        "down": "push"
       }
     },
     {
@@ -166,55 +166,55 @@
     },
     {
       "apply": {
-        "model": "testmod:block/conduit_connector_push_energy"
+        "model": "testmod:block/conduit_connector_bidirectional_energy"
       },
       "when": {
-        "north": "push"
+        "north": "bidirectional"
       }
     },
     {
       "apply": {
-        "model": "testmod:block/conduit_connector_push_energy",
+        "model": "testmod:block/conduit_connector_bidirectional_energy",
         "y": 90
       },
       "when": {
-        "east": "push"
+        "east": "bidirectional"
       }
     },
     {
       "apply": {
-        "model": "testmod:block/conduit_connector_push_energy",
+        "model": "testmod:block/conduit_connector_bidirectional_energy",
         "y": 180
       },
       "when": {
-        "south": "push"
+        "south": "bidirectional"
       }
     },
     {
       "apply": {
-        "model": "testmod:block/conduit_connector_push_energy",
+        "model": "testmod:block/conduit_connector_bidirectional_energy",
         "y": 270
       },
       "when": {
-        "west": "push"
+        "west": "bidirectional"
       }
     },
     {
       "apply": {
-        "model": "testmod:block/conduit_connector_push_energy",
+        "model": "testmod:block/conduit_connector_bidirectional_energy",
         "x": 270
       },
       "when": {
-        "up": "push"
+        "up": "bidirectional"
       }
     },
     {
       "apply": {
-        "model": "testmod:block/conduit_connector_push_energy",
+        "model": "testmod:block/conduit_connector_bidirectional_energy",
         "x": 90
       },
       "when": {
-        "down": "push"
+        "down": "bidirectional"
       }
     }
   ]

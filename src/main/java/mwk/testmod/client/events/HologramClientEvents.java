@@ -132,10 +132,10 @@ public class HologramClientEvents {
                 // If the latest hologram was not rendered by the projector, we don't want to
                 // accidentally override it
                 if (!(HOLOGRAM_RENDERER.getLatestEvent() instanceof ProjectorEvent)) {
-                    HologramProjectorItem.setBlueprintKey(projector, null);
+                    HologramProjectorItem.setBlueprintKey(null);
                 }
             }
-            ResourceKey<MultiBlockBlueprint> key = HologramProjectorItem.getBlueprintKey(projector);
+            ResourceKey<MultiBlockBlueprint> key = HologramProjectorItem.getBlueprintKey();
             if (key == null) {
                 blueprint = null;
             } else if (key != previousKey

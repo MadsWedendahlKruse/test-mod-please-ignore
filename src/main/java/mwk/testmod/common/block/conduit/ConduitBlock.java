@@ -139,6 +139,7 @@ public class ConduitBlock extends Block
         }
         Direction opposite = facing.getOpposite();
         Level level = blockEntity.getLevel();
+        // TODO: Capability cache?
         return level.getCapability(type.getCapability(), pos, opposite) != null;
     }
 

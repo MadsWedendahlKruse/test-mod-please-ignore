@@ -133,8 +133,14 @@ public class StampingPressBlockEntity extends
     public CompoundTag getUpdateTag(Provider registries) {
         // Note to self: This is used both on LevelChunk load and Block Update
         CompoundTag tag = new CompoundTag();
-        tag.put(NBT_TAG_DIE, getStampingDie().save(registries, new CompoundTag()));
-        tag.put(NBT_TAG_INPUT, getInput().save(registries, new CompoundTag()));
+        ItemStack stampingDie = getStampingDie();
+        if (!stampingDie.isEmpty()) {
+            tag.put(NBT_TAG_DIE, stampingDie.save(registries, new CompoundTag()));
+        }
+        ItemStack input = getInput();
+        if (!input.isEmpty()) {
+            tag.put(NBT_TAG_INPUT, input.save(registries, new CompoundTag()));
+        }
         if (latestRecipe != null) {
             tag.put(NBT_TAG_OUTPUT,
                     latestRecipe.getOutputItem().save(registries, new CompoundTag()));
