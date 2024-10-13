@@ -5,14 +5,14 @@ import mwk.testmod.common.item.upgrades.SpeedUpgradeItem;
 import mwk.testmod.common.item.upgrades.base.UpgradeItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-public abstract class CrafterBlockEntity<T extends Recipe<Container>>
-        extends ProcessingBlockEntity<T> {
+public abstract class CrafterBlockEntity<I extends RecipeInput, T extends Recipe<I>>
+        extends ProcessingBlockEntity<I, T> {
 
     protected CrafterBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
             int maxEnergy, int energyPerTick, int inputSlots, int outputSlots, int upgradeSlots,
@@ -21,7 +21,6 @@ public abstract class CrafterBlockEntity<T extends Recipe<Container>>
         super(type, pos, state, maxEnergy, energyPerTick, EnergyType.CONSUMER, inputSlots,
                 outputSlots, upgradeSlots, inputTankCapacities, outputTankCapacities, maxProgress,
                 recipeType, sound, soundDuration);
-        // TODO Auto-generated constructor stub
     }
 
     @Override

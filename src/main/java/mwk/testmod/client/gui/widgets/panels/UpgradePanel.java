@@ -13,8 +13,8 @@ import net.minecraft.resources.ResourceLocation;
 public class UpgradePanel extends MachinePanel {
 
     public static final ResourceLocation ICON =
-            new ResourceLocation(TestMod.MODID, "widget/icon_upgrade");
-    public static final float[] COLOR = new float[] {0.5F, 0.75F, 0.5F, 1};
+            ResourceLocation.fromNamespaceAndPath(TestMod.MODID, "widget/icon_upgrade");
+    public static final float[] COLOR = new float[]{0.5F, 0.75F, 0.5F, 1};
     public static final int PADDING = 5;
 
     private static final ItemSlotGridHelper GRID_HELPER = ItemSlotGridHelper.ROWS_2;

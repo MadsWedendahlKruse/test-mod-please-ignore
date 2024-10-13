@@ -14,10 +14,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class StirlingGeneratorBlockEntity extends
-        GeneratorBlockEntity<StirlingGeneratorRecipe> {
+        GeneratorBlockEntity<SingleRecipeInput, StirlingGeneratorRecipe> {
 
     private static final float FLYWHEEL_SPEED = (float) (2.5 * Math.PI); // [rad/s]
     private float flywheelAngle;
@@ -52,5 +53,10 @@ public class StirlingGeneratorBlockEntity extends
 
     public float getFlywheelAngle() {
         return flywheelAngle;
+    }
+
+    @Override
+    protected SingleRecipeInput getRecipeInput() {
+        return new SingleRecipeInput(inventory.getStackInSlot(0));
     }
 }

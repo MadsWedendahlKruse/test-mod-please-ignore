@@ -78,7 +78,7 @@ public class HologramProjectorScreen extends Screen {
             BLUEPRINT_MATERIALS_WIDTH / BLUEPRINT_MATERIALS_ITEM_WIDTH;
     private static final int BLUEPRINT_MATERIALS_ITEM_ROWS = 2;
     private static final ResourceLocation EMPTY_SPRITE =
-            new ResourceLocation(TestMod.MODID, "widget/empty_block");
+            ResourceLocation.fromNamespaceAndPath(TestMod.MODID, "widget/empty_block");
     private static final int ITEMSTACK_PIXEL_SIZE = 16;
 
     // All left side elements combined
@@ -97,7 +97,8 @@ public class HologramProjectorScreen extends Screen {
     private static final int BLUEPRINT_SEARCH_WIDTH = BLUEPRINT_LIST_WIDTH - 8;
 
     private static final ResourceLocation BACKGROUND_TEXTURE =
-            new ResourceLocation(TestMod.MODID, "textures/gui/hologram_projector.png");
+            ResourceLocation.fromNamespaceAndPath(TestMod.MODID,
+                    "textures/gui/hologram_projector.png");
     // TODO: Is it illegal to use something other than 256x256?
     private static final int BACKGROUND_TEXTURE_WIDTH = 512;
     private static final int BACKGROUND_TEXTURE_HEIGHT = 512;
@@ -453,11 +454,10 @@ public class HologramProjectorScreen extends Screen {
     }
 
     private void setupOrthographicProjection(PoseStack poseStack, float rotationAngle) {
-        // TODO:
-        // https://github.com/AppliedEnergistics/Applied-Energistics-2/blob/main/src/main/java/appeng/integration/modules/itemlists/FluidBlockRendering.java
+        // TODO: https://github.com/AppliedEnergistics/Applied-Energistics-2/blob/main/src/main/java/appeng/integration/modules/itemlists/FluidBlockRendering.java
         // They can do it with one less rotation, but when I do the same the light is upside down
 
-        poseStack.mulPoseMatrix(new Matrix4f().scaling(1.0F, -1.0F, 1.0F));
+        poseStack.mulPose(new Matrix4f().scaling(1.0F, -1.0F, 1.0F));
         float angle = 36;
         float rotation = 225 + rotationAngle;
 

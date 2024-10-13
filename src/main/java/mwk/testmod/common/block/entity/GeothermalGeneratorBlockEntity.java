@@ -4,6 +4,7 @@ import mwk.testmod.TestModConfig;
 import mwk.testmod.common.block.entity.base.generator.GeneratorBlockEntity;
 import mwk.testmod.common.block.inventory.GeothermalGeneratorMenu;
 import mwk.testmod.common.recipe.GeothermalGeneratorRecipe;
+import mwk.testmod.common.recipe.inputs.FluidRecipeInput;
 import mwk.testmod.datagen.TestModLanguageProvider;
 import mwk.testmod.init.registries.TestModBlockEntities;
 import mwk.testmod.init.registries.TestModBlocks;
@@ -18,14 +19,19 @@ import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 public class GeothermalGeneratorBlockEntity
-        extends GeneratorBlockEntity<GeothermalGeneratorRecipe> {
+        extends GeneratorBlockEntity<FluidRecipeInput, GeothermalGeneratorRecipe> {
 
     public GeothermalGeneratorBlockEntity(BlockPos pos, BlockState state) {
         super(TestModBlockEntities.GEOTHERMAL_GENERATOR_ENTITY_TYPE.get(), pos, state,
                 TestModConfig.GENERATOR_ENERGY_CAPACITY_DEFAULT.get(),
                 TestModConfig.GENERATOR_GEOTHERMAL_ENERGY_PER_TICK.get(), 0, 0, 6,
-                new int[] {TestModConfig.GENERATOR_GEOTHERMAL_TANK_CAPACITY.get()}, EMPTY_TANKS,
+                new int[]{TestModConfig.GENERATOR_GEOTHERMAL_TANK_CAPACITY.get()}, EMPTY_TANKS,
                 TestModRecipeTypes.GEOTHERMAL_GENERATOR.get(), null, 0);
+    }
+
+    @Override
+    protected FluidRecipeInput getRecipeInput() {
+        return new FluidRecipeInput(fluidTanks.getFluidInTank(0));
     }
 
     @Override

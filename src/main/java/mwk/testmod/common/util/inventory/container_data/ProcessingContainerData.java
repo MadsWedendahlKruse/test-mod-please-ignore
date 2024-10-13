@@ -6,10 +6,10 @@ import net.minecraft.world.inventory.ContainerData;
 
 public class ProcessingContainerData implements ContainerData {
 
-    private final ProcessingBlockEntity<?> blockEntity;
+    private final ProcessingBlockEntity<?, ?> blockEntity;
     private final ProcessingMenu menu;
 
-    public ProcessingContainerData(ProcessingBlockEntity<?> blockEntity, ProcessingMenu menu) {
+    public ProcessingContainerData(ProcessingBlockEntity<?, ?> blockEntity, ProcessingMenu menu) {
         this.blockEntity = blockEntity;
         this.menu = menu;
     }

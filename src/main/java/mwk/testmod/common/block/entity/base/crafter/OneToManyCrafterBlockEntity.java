@@ -6,11 +6,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class OneToManyCrafterBlockEntity<T extends OneToManyItemStackRecipe>
-        extends SingleCrafterBlockEntity<T> {
+        extends SingleCrafterBlockEntity<SingleRecipeInput, T> {
 
     protected OneToManyCrafterBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
             int maxEnergy, int energyPerTick, int inputSlots, int outputSlots, int upgradeSlots,
@@ -48,4 +49,8 @@ public abstract class OneToManyCrafterBlockEntity<T extends OneToManyItemStackRe
         }
     }
 
+    @Override
+    protected SingleRecipeInput getRecipeInput() {
+        return new SingleRecipeInput(this.inventory.getStackInSlot(0));
+    }
 }

@@ -4,6 +4,7 @@ import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import mwk.testmod.init.registries.TestModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -45,24 +46,24 @@ public class MultiBlockPartBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    protected void saveAdditional(CompoundTag tag, Provider registries) {
+        super.saveAdditional(tag, registries);
         if (controllerPos != null) {
             tag.putLong(NBT_TAG_CONTROLLER_POS, controllerPos.asLong());
         }
     }
 
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    public void loadAdditional(CompoundTag tag, Provider registries) {
+        super.loadAdditional(tag, registries);
         if (tag.contains(NBT_TAG_CONTROLLER_POS)) {
             controllerPos = BlockPos.of(tag.getLong(NBT_TAG_CONTROLLER_POS));
         }
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
-        CompoundTag tag = super.getUpdateTag();
+    public CompoundTag getUpdateTag(Provider registries) {
+        CompoundTag tag = super.getUpdateTag(registries);
         if (controllerPos != null) {
             tag.putLong(NBT_TAG_CONTROLLER_POS, controllerPos.asLong());
         }
@@ -70,8 +71,8 @@ public class MultiBlockPartBlockEntity extends BlockEntity {
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag) {
-        super.handleUpdateTag(tag);
+    public void handleUpdateTag(CompoundTag tag, Provider registries) {
+        super.handleUpdateTag(tag, registries);
         if (tag.contains(NBT_TAG_CONTROLLER_POS)) {
             controllerPos = BlockPos.of(tag.getLong(NBT_TAG_CONTROLLER_POS));
         }
@@ -87,7 +88,7 @@ public class MultiBlockPartBlockEntity extends BlockEntity {
     /**
      * Helper function for checking if the block at the given position is part of a formed
      * multiblock structure.
-     * 
+     *
      * @param pos The position of the block to check.
      * @return True if the block is part of a formed multiblock structure, false otherwise.
      */
@@ -101,7 +102,8 @@ public class MultiBlockPartBlockEntity extends BlockEntity {
 
     /**
      * Get the energy handler for the multiblock structure. By default this returns null. This
-     * should be overridden by subclasses that need to provide an energy handler, e.g. energy ports.
+     * should be overridden by subclasses that need to provide an energy handler, e.g. energy
+     * ports.
      */
     public IEnergyStorage getEnergyHandler(Direction direction) {
         return null;

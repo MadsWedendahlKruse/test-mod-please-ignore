@@ -18,8 +18,9 @@ import net.minecraft.resources.ResourceLocation;
 public class BlueprintList extends AbstractScrollWidget {
 
     public static final WidgetSprites BACKGROUND_SPRITES =
-            new WidgetSprites(new ResourceLocation(TestMod.MODID, "widget/button"),
-                    new ResourceLocation(TestMod.MODID, "widget/button_highlighted"));
+            new WidgetSprites(ResourceLocation.fromNamespaceAndPath(TestMod.MODID, "widget/button"),
+                    ResourceLocation.fromNamespaceAndPath(TestMod.MODID,
+                            "widget/button_highlighted"));
     // Same value as in AbstractScrollWidget, except this one is public
     public static final int SCROLL_BAR_WIDTH = 8;
     public static final int DEFAULT_PADDING = 4;

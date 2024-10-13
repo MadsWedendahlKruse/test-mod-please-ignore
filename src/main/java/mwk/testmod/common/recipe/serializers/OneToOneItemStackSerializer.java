@@ -1,9 +1,10 @@
 package mwk.testmod.common.recipe.serializers;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import mwk.testmod.common.recipe.base.crafter.OneToOneItemStackRecipe;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -12,40 +13,40 @@ public class OneToOneItemStackSerializer<T extends OneToOneItemStackRecipe>
         implements RecipeSerializer<T> {
 
     private final RecipeFactory<T> factory;
-    private Codec<T> codec;
+    private MapCodec<T> codec;
+    private StreamCodec<RegistryFriendlyByteBuf, T> streamCodec;
 
     public OneToOneItemStackSerializer(RecipeFactory<T> factory) {
         this.factory = factory;
     }
 
     @Override
-    public Codec<T> codec() {
+    public MapCodec<T> codec() {
         if (codec == null) {
-            codec = RecordCodecBuilder.create(instance -> instance.group(
-                    Ingredient.CODEC.fieldOf("input").forGetter(OneToOneItemStackRecipe::getInput),
-                    ItemStack.ITEM_WITH_COUNT_CODEC.fieldOf("output")
-                            .forGetter(OneToOneItemStackRecipe::getResultItem))
+            codec = RecordCodecBuilder.mapCodec(instance -> instance.group(
+                            Ingredient.CODEC.fieldOf("input")
+                                    .forGetter(OneToOneItemStackRecipe::getInputItem),
+                            ItemStack.CODEC.fieldOf("output")
+                                    .forGetter(OneToOneItemStackRecipe::getResultItem))
                     .apply(instance, factory::create));
         }
         return codec;
     }
 
     @Override
-    public T fromNetwork(FriendlyByteBuf pBuffer) {
-        Ingredient input = Ingredient.fromNetwork(pBuffer);
-        ItemStack output = pBuffer.readItem();
-        return factory.create(input, output);
-    }
-
-    @Override
-    public void toNetwork(FriendlyByteBuf buffer, OneToOneItemStackRecipe recipe) {
-        for (Ingredient ingredient : recipe.getIngredients()) {
-            ingredient.toNetwork(buffer);
+    public StreamCodec<RegistryFriendlyByteBuf, T> streamCodec() {
+        if (streamCodec == null) {
+            streamCodec = StreamCodec.composite(
+                    Ingredient.CONTENTS_STREAM_CODEC, OneToOneItemStackRecipe::getInputItem,
+                    ItemStack.STREAM_CODEC, OneToOneItemStackRecipe::getResultItem,
+                    factory::create);
         }
-        buffer.writeItem(recipe.getResultItem());
+        return streamCodec;
     }
 
+    @FunctionalInterface
     public interface RecipeFactory<T extends OneToOneItemStackRecipe> {
+
         T create(Ingredient input, ItemStack output);
     }
 }

@@ -87,15 +87,15 @@ public class IOUtils {
      *
      * @param level            the level
      * @param inputItemHandler the input item handler
-     * @param pos              the position whose neighbors to pull from
-     * @param stackSize        the maximum stack size to pull
+     * @param pos              the position whose neighbors to input from
+     * @param stackSize        the maximum stack size to input
      */
     public static void pullItemInput(Level level, IItemHandler inputItemHandler, BlockPos pos,
             int startSlot, int endSlot, int stackSize) {
         for (Direction direction : Direction.values()) {
             IItemHandler handler = level.getCapability(Capabilities.ItemHandler.BLOCK,
                     pos.relative(direction), direction.getOpposite());
-            // Don't pull from itself
+            // Don't input from itself
             if (handler == null || handler == inputItemHandler) {
                 continue;
             }
@@ -175,15 +175,15 @@ public class IOUtils {
      *
      * @param level             the level
      * @param inputFluidHandler the input fluid handler
-     * @param pos               the position whose neighbors to pull from
-     * @param stackSize         the maximum stack size to pull
+     * @param pos               the position whose neighbors to input from
+     * @param stackSize         the maximum stack size to input
      */
     public static void pullFluidInput(Level level, IFluidHandler inputFluidHandler, BlockPos pos,
             int startTank, int endTank, int stackSize) {
         for (Direction direction : Direction.values()) {
             IFluidHandler handler = level.getCapability(Capabilities.FluidHandler.BLOCK,
                     pos.relative(direction), direction.getOpposite());
-            // Don't pull from itself
+            // Don't input from itself
             if (handler == null || handler == inputFluidHandler) {
                 continue;
             }

@@ -15,7 +15,7 @@ public enum ConduitConnectionType implements StringRepresentable {
     }
 
     /**
-     * @return {@code true} if this connection type can pull payloads, {@code false} otherwise
+     * @return {@code true} if this connection type can input payloads, {@code false} otherwise
      */
     public boolean canPushPayload() {
         return this == BIDIRECTIONAL || this == PUSH;

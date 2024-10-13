@@ -44,7 +44,7 @@ public class TestModTags {
             if (!material.isEmpty()) {
                 path += "/" + material;
             }
-            return ItemTags.create(new ResourceLocation("forge", path));
+            return ItemTags.create(ResourceLocation.fromNamespaceAndPath("forge", path));
         }
 
         private static TagKey<Item> forgeRawMaterialsTag(String material) {
@@ -80,7 +80,7 @@ public class TestModTags {
             if (!material.isEmpty()) {
                 path += "/" + material;
             }
-            return BlockTags.create(new ResourceLocation("forge", path));
+            return BlockTags.create(ResourceLocation.fromNamespaceAndPath("forge", path));
         }
 
         private static TagKey<Block> forgeOresTag(String material) {

@@ -19,7 +19,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 public class FluidBar extends AbstractWidget {
 
     public static final ResourceLocation SPRITE_FLUID_BAR_OVERLAY =
-            new ResourceLocation(TestMod.MODID, "widget/fluid_bar_overlay");
+            ResourceLocation.fromNamespaceAndPath(TestMod.MODID, "widget/fluid_bar_overlay");
 
     public static final int WIDTH = 16;
     public static final int HEIGHT = 52;
@@ -48,7 +48,7 @@ public class FluidBar extends AbstractWidget {
         int maxFluidAmount = fluidHandler.getTankCapacity(tank);
         Component fluidName = fluidStack.isEmpty()
                 ? Component.translatable(TestModLanguageProvider.KEY_WIDGET_FLUID_EMPTY)
-                : fluidStack.getDisplayName();
+                : fluidStack.getHoverName();
         int barHeight = fluidAmount * this.height / maxFluidAmount;
         // TODO: Get proper color - maybe not needed?
         int color = Integer.MAX_VALUE;

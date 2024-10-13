@@ -117,8 +117,8 @@ public final class MultiBlockBlueprint {
         for (int i = 0; i < symbols.size(); i++) {
             String symbol = symbols.get(i);
             String blockIdentifier = key.get(symbol);
-            ResourceLocation blockId = new ResourceLocation(blockIdentifier);
-            Block block = BuiltInRegistries.BLOCK.get(new ResourceLocation(blockIdentifier));
+            ResourceLocation blockId = ResourceLocation.parse(blockIdentifier);
+            Block block = BuiltInRegistries.BLOCK.get(blockId);
             states[i] = block.defaultBlockState();
             // TODO: Maybe this will give a false positive if the block has another
             // boolean property. Alternatively we could check if the block is an

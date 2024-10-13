@@ -8,9 +8,9 @@ import mwk.testmod.common.item.upgrades.SpeedUpgradeItem;
 import mwk.testmod.common.item.upgrades.base.UpgradeItem;
 import mwk.testmod.common.recipe.base.FluidRecipe;
 import mwk.testmod.common.util.inventory.SimpleFluidContainer;
-import mwk.testmod.common.util.inventory.SimpleItemFluidContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
@@ -22,6 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,8 +34,8 @@ import net.neoforged.neoforge.items.IItemHandler;
 /**
  * A block entity that can process items in some way, e.g. a furnace or a generator.
  */
-public abstract class ProcessingBlockEntity<T extends Recipe<Container>> extends MachineBlockEntity
-        implements ITickable {
+public abstract class ProcessingBlockEntity<I extends RecipeInput, T extends Recipe<I>> extends
+        MachineBlockEntity implements ITickable {
 
     public static final String NBT_TAG_PROGRESS = "progress";
 
@@ -104,7 +105,7 @@ public abstract class ProcessingBlockEntity<T extends Recipe<Container>> extends
 
     protected boolean canInsertFluidIntoTank(int tank, FluidStack fluid) {
         return fluidTanks.getFluidInTank(tank).isEmpty()
-                || fluidTanks.getFluidInTank(tank).isFluidEqual(fluid)
+                || FluidStack.isSameFluid(fluidTanks.getFluidInTank(tank), fluid)
                 && fluidTanks.getFluidInTank(tank).getAmount()
                 + fluid.getAmount() <= fluidTanks.getTankCapacity(tank);
     }
@@ -170,7 +171,7 @@ public abstract class ProcessingBlockEntity<T extends Recipe<Container>> extends
         for (int i = 0; i < fluidContainer.getSize(); i++) {
             FluidStack containerFluid = fluidContainer.getFluid(i);
             FluidStack latestFluid = latestFluidInputs.getFluid(i);
-            if (!containerFluid.isFluidEqual(latestFluid)) {
+            if (!FluidStack.isSameFluid(containerFluid, latestFluid)) {
                 return true;
             }
             if (containerFluid.getAmount() != latestFluid.getAmount()) {
@@ -179,6 +180,14 @@ public abstract class ProcessingBlockEntity<T extends Recipe<Container>> extends
         }
         return false;
     }
+
+    /**
+     * This method should return the recipe input that can be used to look up the recipe in the
+     * recipe manager, i.e. the current state of the input slots and tanks.
+     *
+     * @return The recipe input.
+     */
+    protected abstract I getRecipeInput();
 
     /**
      * This method should return the current recipe that can be crafted given the current
@@ -194,13 +203,12 @@ public abstract class ProcessingBlockEntity<T extends Recipe<Container>> extends
             return latestRecipe;
         }
         // Check if the input items and fluids match the latest recipe
-        SimpleItemFluidContainer combinedContainer =
-                new SimpleItemFluidContainer(itemContainer, fluidContainer);
-        if (latestRecipe != null && latestRecipe.matches(combinedContainer, level)) {
+        I recipeInput = getRecipeInput();
+        if (latestRecipe != null && latestRecipe.matches(recipeInput, level)) {
             return latestRecipe;
         }
         latestRecipe = this.level.getRecipeManager()
-                .getRecipeFor(this.recipeType, combinedContainer, level).map(RecipeHolder::value)
+                .getRecipeFor(this.recipeType, recipeInput, level).map(RecipeHolder::value)
                 .orElse(null);
         TestMod.LOGGER.debug("Got new recipe from recipe manager: " + latestRecipe);
         latestItemInputs = itemContainer;
@@ -286,14 +294,14 @@ public abstract class ProcessingBlockEntity<T extends Recipe<Container>> extends
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    protected void saveAdditional(CompoundTag tag, Provider registries) {
+        super.saveAdditional(tag, registries);
         tag.putInt(NBT_TAG_PROGRESS, progress);
     }
 
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    public void loadAdditional(CompoundTag tag, Provider registries) {
+        super.loadAdditional(tag, registries);
         progress = tag.getInt(NBT_TAG_PROGRESS);
     }
 

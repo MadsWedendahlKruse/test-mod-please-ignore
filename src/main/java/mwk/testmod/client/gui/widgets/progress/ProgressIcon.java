@@ -24,8 +24,9 @@ public class ProgressIcon extends ProgressSprite {
 
     public static WidgetSprites createSprites(String iconName) {
         return new WidgetSprites(
-                new ResourceLocation(TestMod.MODID, "container/progress/" + iconName),
-                new ResourceLocation(TestMod.MODID,
+                ResourceLocation.fromNamespaceAndPath(TestMod.MODID,
+                        "container/progress/" + iconName),
+                ResourceLocation.fromNamespaceAndPath(TestMod.MODID,
                         "container/progress/" + iconName + "_background"));
     }
 }

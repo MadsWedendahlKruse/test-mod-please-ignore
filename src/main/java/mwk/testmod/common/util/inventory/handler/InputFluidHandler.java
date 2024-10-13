@@ -8,11 +8,11 @@ public class InputFluidHandler extends FluidHandlerWrapper {
 
     /**
      * Creates a new input fluid handler.
-     * 
-     * @param fluidHandler the underlying fluid handler
+     *
+     * @param fluidHandler   the underlying fluid handler
      * @param startInputTank the index of the first input tank
-     * @param inputTanks the number of input tanks
-     * @param validator the input validator
+     * @param inputTanks     the number of input tanks
+     * @param validator      the input validator
      */
     public InputFluidHandler(FluidStackHandler fluidHandler, int startInputTank, int inputTanks,
             InputValidator validator) {
@@ -37,6 +37,7 @@ public class InputFluidHandler extends FluidHandlerWrapper {
 
     @FunctionalInterface
     public interface InputValidator {
+
         boolean isFluidValid(int tank, FluidStack stack);
     }
 

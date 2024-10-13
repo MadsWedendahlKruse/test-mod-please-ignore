@@ -1,7 +1,5 @@
 package mwk.testmod.client.gui;
 
-import java.util.Locale;
-import org.joml.Matrix4f;
 import com.ibm.icu.text.NumberFormat;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -9,6 +7,7 @@ import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
+import java.util.Locale;
 import mwk.testmod.TestMod;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -16,12 +15,14 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import org.joml.Matrix4f;
 
 public class GuiUtils {
 
     public static final NumberFormat NUMBER_FORMAT = NumberFormat.getNumberInstance(Locale.US);
 
     public static class GuiTextElement {
+
         public final Component title;
         public final Component text;
 
@@ -44,7 +45,7 @@ public class GuiUtils {
     }
 
     public static final ResourceLocation ITEM_SLOT_SPRITE =
-            new ResourceLocation(TestMod.MODID, "widget/item_slot");
+            ResourceLocation.fromNamespaceAndPath(TestMod.MODID, "widget/item_slot");
     public static final int ITEM_SLOT_SIZE = 18;
 
     /**
@@ -54,10 +55,10 @@ public class GuiUtils {
      * bar
      *
      * @param guiGraphics the graphics object to render with
-     * @param x the x position to render the item slot at
-     * @param y the y position to render the item slot at
-     * @param width the width of the item slot
-     * @param height the height of the item slot
+     * @param x           the x position to render the item slot at
+     * @param y           the y position to render the item slot at
+     * @param width       the width of the item slot
+     * @param height      the height of the item slot
      */
     public static void renderItemSlot(GuiGraphics guiGraphics, int x, int y, int width,
             int height) {
@@ -80,17 +81,18 @@ public class GuiUtils {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.enableBlend();
         Matrix4f matrix4f = guiGraphics.pose().last().pose();
-        BufferBuilder bufferBuilder = Tesselator.getInstance().getBuilder();
-        bufferBuilder.begin(Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-        bufferBuilder.vertex(matrix4f, x, y + height, 0).uv(sprite.getU0(), sprite.getV1())
-                .color(color).endVertex();
-        bufferBuilder.vertex(matrix4f, x + width, y + height, 0).uv(sprite.getU1(), sprite.getV1())
-                .color(color).endVertex();
-        bufferBuilder.vertex(matrix4f, x + width, y, 0).uv(sprite.getU1(), sprite.getV0())
-                .color(color).endVertex();
-        bufferBuilder.vertex(matrix4f, x, y, 0).uv(sprite.getU0(), sprite.getV0()).color(color)
-                .endVertex();
-        BufferUploader.drawWithShader(bufferBuilder.end());
+        BufferBuilder bufferBuilder = Tesselator.getInstance()
+                .begin(Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+        bufferBuilder.addVertex(matrix4f, x, y + height, 0).setUv(sprite.getU0(), sprite.getV1())
+                .setColor(color);
+        bufferBuilder.addVertex(matrix4f, x + width, y + height, 0)
+                .setUv(sprite.getU1(), sprite.getV1())
+                .setColor(color);
+        bufferBuilder.addVertex(matrix4f, x + width, y, 0).setUv(sprite.getU1(), sprite.getV0())
+                .setColor(color);
+        bufferBuilder.addVertex(matrix4f, x, y, 0).setUv(sprite.getU0(), sprite.getV0())
+                .setColor(color);
+        BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
         RenderSystem.disableBlend();
     }
 
@@ -151,8 +153,8 @@ public class GuiUtils {
             RenderSystem.enableBlend();
         }
         // Note: We still use the tesselator as that is what GuiGraphics#innerBlit does
-        BufferBuilder vertexBuffer = Tesselator.getInstance().getBuilder();
-        vertexBuffer.begin(Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        BufferBuilder vertexBuffer = Tesselator.getInstance()
+                .begin(Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
         Matrix4f matrix4f = guiGraphics.pose().last().pose();
         for (int xTile = 0; xTile <= xTileCount; xTile++) {
             int width = (xTile == xTileCount) ? xRemainder : textureWidth;
@@ -192,17 +194,17 @@ public class GuiUtils {
                     vLocalMin = vMin + vLocalDif;
                     vLocalMax = vMax;
                 }
-                vertexBuffer.vertex(matrix4f, x, y + textureHeight, zLevel).uv(uLocalMin, vLocalMax)
-                        .endVertex();
-                vertexBuffer.vertex(matrix4f, shiftedX, y + textureHeight, zLevel)
-                        .uv(uLocalMax, vLocalMax).endVertex();
-                vertexBuffer.vertex(matrix4f, shiftedX, y + maskTop, zLevel)
-                        .uv(uLocalMax, vLocalMin).endVertex();
-                vertexBuffer.vertex(matrix4f, x, y + maskTop, zLevel).uv(uLocalMin, vLocalMin)
-                        .endVertex();
+                vertexBuffer.addVertex(matrix4f, x, y + textureHeight, zLevel)
+                        .setUv(uLocalMin, vLocalMax);
+                vertexBuffer.addVertex(matrix4f, shiftedX, y + textureHeight, zLevel)
+                        .setUv(uLocalMax, vLocalMax);
+                vertexBuffer.addVertex(matrix4f, shiftedX, y + maskTop, zLevel)
+                        .setUv(uLocalMax, vLocalMin);
+                vertexBuffer.addVertex(matrix4f, x, y + maskTop, zLevel)
+                        .setUv(uLocalMin, vLocalMin);
             }
         }
-        BufferUploader.drawWithShader(vertexBuffer.end());
+        BufferUploader.drawWithShader(vertexBuffer.buildOrThrow());
         if (blend) {
             RenderSystem.disableBlend();
         }

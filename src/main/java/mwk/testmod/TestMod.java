@@ -32,31 +32,33 @@ import mwk.testmod.init.registries.TestModRecipeSerializers;
 import mwk.testmod.init.registries.TestModRecipeTypes;
 import mwk.testmod.init.registries.TestModSounds;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.event.ModelEvent;
-import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderers;
+import net.neoforged.neoforge.client.event.ModelEvent.RegisterAdditional;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent.Block;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
-import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.HandlerThread;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.slf4j.Logger;
 
-// The value here should match an entry in the META-INF/mods.toml file
+// The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(TestMod.MODID)
 public class TestMod {
 
@@ -69,7 +71,7 @@ public class TestMod {
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in
     // automatically.
-    public TestMod(IEventBus modEventBus) {
+    public TestMod(IEventBus modEventBus, ModContainer modContainer) {
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
@@ -94,7 +96,7 @@ public class TestMod {
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file
         // for us
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, TestModConfig.SPEC);
+        modContainer.registerConfig(ModConfig.Type.COMMON, TestModConfig.SPEC);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
@@ -143,12 +145,13 @@ public class TestMod {
 
     }
 
-    private void onRegisterPayloadHandlers(RegisterPayloadHandlerEvent event) {
-        final IPayloadRegistrar registrar = event.registrar(MODID);
-        registrar.play(MachineIOPacket.ID, MachineIOPacket::new,
-                handler -> handler.server(MachineIOPacket::handleServer));
-        registrar.play(BuildMultiBlockPacket.ID, BuildMultiBlockPacket::new,
-                handler -> handler.server(BuildMultiBlockPacket::handleServer));
+    private void onRegisterPayloadHandlers(RegisterPayloadHandlersEvent event) {
+        // TODO: Docs mention something about a network version? https://docs.neoforged.net/docs/networking/payload
+        final PayloadRegistrar registrar = event.registrar(MODID).executesOn(HandlerThread.MAIN);
+        registrar.playToServer(MachineIOPacket.TYPE, MachineIOPacket.STREAM_CODEC,
+                MachineIOPacket::handleServer);
+        registrar.playToServer(BuildMultiBlockPacket.TYPE, BuildMultiBlockPacket.STREAM_CODEC,
+                BuildMultiBlockPacket::handleServer);
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
@@ -162,8 +165,7 @@ public class TestMod {
 
     // You can use EventBusSubscriber to automatically register all static methods in the class
     // annotated with @SubscribeEvent
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD,
-            value = Dist.CLIENT)
+    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
 
         @SubscribeEvent
@@ -172,34 +174,32 @@ public class TestMod {
             LOGGER.info("HELLO FROM CLIENT SETUP");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
             HologramRenderer.getInstance().init();
-
-            // TODO: McJty's tutorial uses enqueueWork here, but I don't know why
-            event.enqueueWork(() -> {
-                MenuScreens.register(TestModMenus.INDUCTION_FURNACE_MENU.get(),
-                        InductionFurnaceScreen::new);
-                MenuScreens.register(TestModMenus.CRUSHER_MENU.get(), CrusherScreen::new);
-                MenuScreens.register(TestModMenus.SEPARATOR_MENU.get(), SeparatorScreen::new);
-                MenuScreens.register(TestModMenus.STAMPING_PRESS_MENU.get(),
-                        StampingPressScreen::new);
-
-                MenuScreens.register(TestModMenus.REDSTONE_GENERATOR_MENU.get(),
-                        RedstoneGeneratorScreen::new);
-                MenuScreens.register(TestModMenus.GEOTHERMAL_GENERATOR_MENU.get(),
-                        GeothermalGeneratorScreen::new);
-                MenuScreens.register(TestModMenus.STIRLING_GENERATOR_MENU.get(),
-                        StirlingGeneratorScreen::new);
-
-                MenuScreens.register(TestModMenus.CAPACITRON_MENU.get(), CapacitronScreen::new);
-            });
         }
 
         @SubscribeEvent
-        public static void onRegisterColorHandlersEvent(RegisterColorHandlersEvent.Block event) {
+        public static void onRegisterScreens(RegisterMenuScreensEvent event) {
+            event.register(TestModMenus.INDUCTION_FURNACE_MENU.get(), InductionFurnaceScreen::new);
+            event.register(TestModMenus.CRUSHER_MENU.get(), CrusherScreen::new);
+            event.register(TestModMenus.SEPARATOR_MENU.get(), SeparatorScreen::new);
+            event.register(TestModMenus.STAMPING_PRESS_MENU.get(), StampingPressScreen::new);
+
+            event.register(TestModMenus.REDSTONE_GENERATOR_MENU.get(),
+                    RedstoneGeneratorScreen::new);
+            event.register(TestModMenus.GEOTHERMAL_GENERATOR_MENU.get(),
+                    GeothermalGeneratorScreen::new);
+            event.register(TestModMenus.STIRLING_GENERATOR_MENU.get(),
+                    StirlingGeneratorScreen::new);
+
+            event.register(TestModMenus.CAPACITRON_MENU.get(), CapacitronScreen::new);
+        }
+
+        @SubscribeEvent
+        public static void onRegisterColorHandlersEvent(Block event) {
             event.register(new HologramBlockColor(), TestModBlocks.HOLOGRAM.get());
         }
 
         @SubscribeEvent
-        public static void onRegisterRenderersEvent(EntityRenderersEvent.RegisterRenderers event) {
+        public static void onRegisterRenderersEvent(RegisterRenderers event) {
             event.registerBlockEntityRenderer(TestModBlockEntities.CRUSHER_ENTITY_TYPE.get(),
                     (context) -> new CrusherBlockEntityRenderer(context));
             event.registerBlockEntityRenderer(TestModBlockEntities.SEPARATOR_ENTITY_TYPE.get(),
@@ -215,7 +215,7 @@ public class TestMod {
         }
 
         @SubscribeEvent
-        public static void onRegisterAdditionalEvent(ModelEvent.RegisterAdditional event) {
+        public static void onRegisterAdditionalEvent(RegisterAdditional event) {
             TestModModels.register(event);
         }
     }

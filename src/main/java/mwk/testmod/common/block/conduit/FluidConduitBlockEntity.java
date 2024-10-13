@@ -5,6 +5,7 @@ import mwk.testmod.common.block.conduit.network.capabilites.NetworkFluidHandler;
 import mwk.testmod.init.registries.TestModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
@@ -50,10 +51,10 @@ public class FluidConduitBlockEntity extends ConduitBlockEntity<IFluidHandler> {
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
-        CompoundTag tag = super.getUpdateTag();
+    public CompoundTag getUpdateTag(Provider registries) {
+        CompoundTag tag = super.getUpdateTag(registries);
         if (fluidStack != null) {
-            tag.put(NBT_TAG_PAYLOAD_FLUID, fluidStack.writeToNBT(new CompoundTag()));
+            tag.put(NBT_TAG_PAYLOAD_FLUID, fluidStack.save(registries, new CompoundTag()));
         }
         tag.putLong(NBT_TAG_PAYLOAD_TIMESTAMP, fluidStackTimestamp);
         return tag;
@@ -66,11 +67,12 @@ public class FluidConduitBlockEntity extends ConduitBlockEntity<IFluidHandler> {
     }
 
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-        super.onDataPacket(net, pkt);
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt,
+            Provider registries) {
+        super.onDataPacket(net, pkt, registries);
         CompoundTag tag = pkt.getTag();
         if (tag.contains(NBT_TAG_PAYLOAD_FLUID)) {
-            fluidStack = FluidStack.loadFluidStackFromNBT(tag.getCompound(NBT_TAG_PAYLOAD_FLUID));
+            fluidStack = FluidStack.parse(registries, tag.getCompound(NBT_TAG_PAYLOAD_FLUID)).get();
         }
         fluidStackTimestamp = tag.getLong(NBT_TAG_PAYLOAD_TIMESTAMP);
     }

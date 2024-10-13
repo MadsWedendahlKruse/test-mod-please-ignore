@@ -13,9 +13,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class RedstoneGeneratorBlockEntity extends GeneratorBlockEntity<RedstoneGeneratorRecipe> {
+public class RedstoneGeneratorBlockEntity extends
+        GeneratorBlockEntity<SingleRecipeInput, RedstoneGeneratorRecipe> {
 
     public RedstoneGeneratorBlockEntity(BlockPos pos, BlockState state) {
         super(TestModBlockEntities.REDSTONE_GENERATOR_ENTITY_TYPE.get(), pos, state,
@@ -40,4 +42,8 @@ public class RedstoneGeneratorBlockEntity extends GeneratorBlockEntity<RedstoneG
         return TestModLanguageProvider.KEY_DESCRIPTION_REDSTONE_GENERATOR;
     }
 
+    @Override
+    protected SingleRecipeInput getRecipeInput() {
+        return new SingleRecipeInput(inventory.getStackInSlot(0));
+    }
 }

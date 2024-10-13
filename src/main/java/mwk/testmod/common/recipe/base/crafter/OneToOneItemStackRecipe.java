@@ -1,9 +1,9 @@
 package mwk.testmod.common.recipe.base.crafter;
 
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.world.Container;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 
 public abstract class OneToOneItemStackRecipe extends OneInputItemStackRecipe {
 
@@ -15,12 +15,12 @@ public abstract class OneToOneItemStackRecipe extends OneInputItemStackRecipe {
     }
 
     @Override
-    public ItemStack assemble(Container pContainer, RegistryAccess pRegistryAccess) {
+    public ItemStack assemble(SingleRecipeInput input, HolderLookup.Provider registries) {
         return output.copy();
     }
 
     @Override
-    public ItemStack getResultItem(RegistryAccess pRegistryAccess) {
+    public ItemStack getResultItem(HolderLookup.Provider registries) {
         return output.copy();
     }
 

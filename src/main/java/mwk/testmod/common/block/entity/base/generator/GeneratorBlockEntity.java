@@ -4,16 +4,17 @@ import mwk.testmod.common.block.entity.base.processing.ProcessingBlockEntity;
 import mwk.testmod.common.item.upgrades.base.UpgradeItem;
 import mwk.testmod.common.recipe.base.generator.GeneratorRecipe;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-public abstract class GeneratorBlockEntity<T extends Recipe<Container>>
-        extends ProcessingBlockEntity<T> {
+public abstract class GeneratorBlockEntity<I extends RecipeInput, T extends Recipe<I>>
+        extends ProcessingBlockEntity<I, T> {
 
     public static final String NBT_TAG_MAX_PROGRESS = "maxProgress";
 
@@ -87,29 +88,29 @@ public abstract class GeneratorBlockEntity<T extends Recipe<Container>>
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    protected void saveAdditional(CompoundTag tag, Provider registries) {
+        super.saveAdditional(tag, registries);
         tag.putInt(NBT_TAG_MAX_PROGRESS, maxProgress);
     }
 
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    public void loadAdditional(CompoundTag tag, Provider registries) {
+        super.loadAdditional(tag, registries);
         if (tag.contains(NBT_TAG_MAX_PROGRESS)) {
             maxProgress = tag.getInt(NBT_TAG_MAX_PROGRESS);
         }
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
-        CompoundTag tag = super.getUpdateTag();
+    public CompoundTag getUpdateTag(Provider registries) {
+        CompoundTag tag = super.getUpdateTag(registries);
         tag.putInt(NBT_TAG_MAX_PROGRESS, maxProgress);
         return tag;
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag) {
-        super.handleUpdateTag(tag);
+    public void handleUpdateTag(CompoundTag tag, Provider registries) {
+        super.handleUpdateTag(tag, registries);
         if (tag.contains(NBT_TAG_MAX_PROGRESS)) {
             maxProgress = tag.getInt(NBT_TAG_MAX_PROGRESS);
         }

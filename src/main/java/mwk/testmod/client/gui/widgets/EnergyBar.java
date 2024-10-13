@@ -18,9 +18,9 @@ import net.minecraft.resources.ResourceLocation;
 public class EnergyBar extends AbstractWidget {
 
     public static final ResourceLocation SPRITE_EMPTY =
-            new ResourceLocation(TestMod.MODID, "widget/energy_bar_empty");
+            ResourceLocation.fromNamespaceAndPath(TestMod.MODID, "widget/energy_bar_empty");
     public static final ResourceLocation SPRITE_FULL =
-            new ResourceLocation(TestMod.MODID, "widget/energy_bar_full");
+            ResourceLocation.fromNamespaceAndPath(TestMod.MODID, "widget/energy_bar_full");
 
     public static final int WIDTH = 12;
     public static final int HEIGHT = 52;

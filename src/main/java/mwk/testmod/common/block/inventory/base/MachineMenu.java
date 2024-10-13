@@ -237,8 +237,7 @@ public class MachineMenu extends EnergyMenu {
 
     public void setAutoEject(boolean autoEject) {
         this.autoEject = autoEject;
-        PacketDistributor.SERVER.noArg()
-                .send(new MachineIOPacket(MachineIOPacket.Type.AUTO_EJECT, autoEject, pos));
+        PacketDistributor.sendToServer(new MachineIOPacket(false, autoEject, pos));
     }
 
     public boolean isAutoInsert() {
@@ -247,8 +246,7 @@ public class MachineMenu extends EnergyMenu {
 
     public void setAutoInsert(boolean autoInsert) {
         this.autoInsert = autoInsert;
-        PacketDistributor.SERVER.noArg()
-                .send(new MachineIOPacket(MachineIOPacket.Type.AUTO_INSERT, autoInsert, pos));
+        PacketDistributor.sendToServer(new MachineIOPacket(true, autoInsert, pos));
     }
 
     public MachineBlockEntity getBlockEntity() {

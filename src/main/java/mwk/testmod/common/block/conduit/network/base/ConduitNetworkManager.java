@@ -18,6 +18,7 @@ import mwk.testmod.common.block.conduit.ConduitConnectionType;
 import mwk.testmod.common.block.conduit.ConduitType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -290,16 +291,18 @@ public class ConduitNetworkManager {
         return neighbors;
     }
 
-    public void serializeNetworkNBT(BlockPos pos, CompoundTag tag) {
+    public void serializeNetworkNBT(HolderLookup.Provider registries, BlockPos pos,
+            CompoundTag tag) {
         ConduitNetwork<?, ?> network = networkMap.get(pos);
         if (network != null) {
-            tag.put("network", network.serializeNBT());
+            tag.put("network", network.serializeNBT(registries));
         }
     }
 
-    public void deserializeNetworkNBT(BlockPos pos, CompoundTag tag, ConduitType type) {
+    public void deserializeNetworkNBT(HolderLookup.Provider registries, BlockPos pos,
+            CompoundTag tag, ConduitType type) {
         ConduitNetwork<?, ?> network = type.createNetwork();
-        network.deserializeNBT(tag.getCompound("network"));
+        network.deserializeNBT(registries, tag.getCompound("network"));
         for (BlockPos position : network.getPositions()) {
             networkMap.put(position, network);
         }

@@ -40,7 +40,7 @@ public class JEITestModPlugin implements IModPlugin {
 
     @Override
     public ResourceLocation getPluginUid() {
-        return new ResourceLocation(TestMod.MODID, "jei_plugin");
+        return ResourceLocation.fromNamespaceAndPath(TestMod.MODID, "jei_plugin");
     }
 
     @Override

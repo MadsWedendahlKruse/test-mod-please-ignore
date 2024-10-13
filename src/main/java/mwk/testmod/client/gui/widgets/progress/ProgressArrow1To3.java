@@ -8,8 +8,9 @@ import net.minecraft.resources.ResourceLocation;
 public class ProgressArrow1To3 extends ProgressArrow {
 
     public static final WidgetSprites PROGRESS_ARROW_1_TO_3_SPRITES = new WidgetSprites(
-            new ResourceLocation(TestMod.MODID, "container/progress/arrow_1_to_3"),
-            new ResourceLocation(TestMod.MODID, "container/progress/arrow_1_to_3_background"));
+            ResourceLocation.fromNamespaceAndPath(TestMod.MODID, "container/progress/arrow_1_to_3"),
+            ResourceLocation.fromNamespaceAndPath(TestMod.MODID,
+                    "container/progress/arrow_1_to_3_background"));
 
     public static final int WIDTH = 36;
     public static final int HEIGHT = 46;

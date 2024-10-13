@@ -20,9 +20,9 @@ import net.minecraft.resources.ResourceLocation;
 public abstract class MachinePanel extends AbstractWidget {
 
     public static final ResourceLocation SPRITE_LEFT =
-            new ResourceLocation(TestMod.MODID, "widget/panel_left");
+            ResourceLocation.fromNamespaceAndPath(TestMod.MODID, "widget/panel_left");
     public static final ResourceLocation SPRITE_RIGHT =
-            new ResourceLocation(TestMod.MODID, "widget/panel_right");
+            ResourceLocation.fromNamespaceAndPath(TestMod.MODID, "widget/panel_right");
 
     public static final int DEFAULT_ICON_WIDTH = 16;
     public static final int DEFAULT_ICON_HEIGHT = 16;

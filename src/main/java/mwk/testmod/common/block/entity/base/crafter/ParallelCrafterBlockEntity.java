@@ -2,24 +2,23 @@ package mwk.testmod.common.block.entity.base.crafter;
 
 import java.util.ArrayList;
 import java.util.Optional;
-import org.apache.commons.lang3.tuple.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.Container;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * A block entity that can craft mutliple recipes of the same type in parallel, e.g. a furnace that
  * can smelt multiple items at the same time.
  */
-public abstract class ParallelCrafterBlockEntity<T extends Recipe<Container>>
-        extends CrafterBlockEntity<T> {
+public abstract class ParallelCrafterBlockEntity<T extends Recipe<SingleRecipeInput>>
+        extends CrafterBlockEntity<SingleRecipeInput, T> {
 
     protected ParallelCrafterBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
             int maxEnergy, int energyPerTick, int itemSlots, int upgradeSlots, int maxProgress,
@@ -70,26 +69,33 @@ public abstract class ParallelCrafterBlockEntity<T extends Recipe<Container>>
         }
     }
 
+    @Override
+    protected SingleRecipeInput getRecipeInput() {
+        // This method is not used in the parallel crafter
+        return null;
+    }
+
     /**
-     * This method should return the current recipe that can be crafted given the current inventory.
-     * 
+     * This method should return the current recipe that can be crafted given the current
+     * inventory.
+     *
      * @param slot The index of the input slot to check the recipe for. In the parallel crafter,
-     *        each input slot has a corresponding output slot with the same index.
+     *             each input slot has a corresponding output slot with the same index.
      * @return The current recipe that can be crafted.
      */
     protected Optional<RecipeHolder<T>> getCurrentRecipe(int slot) {
         return this.level.getRecipeManager().getRecipeFor(this.recipeType,
-                new SimpleContainer(this.inventory.getStackInSlot(slot)), this.level);
+                new SingleRecipeInput(inventory.getStackInSlot(slot)), this.level);
     }
 
     /**
      * This method checks if the given recipe is valid and returns the indices of output slot(s) to
      * place the result in, as well as the amount that should be placed in eachs slot. In case the
      * entire recipe output can't fit into a single slot, the output is split into multiple slots.
-     * 
+     *
      * @param recipe The recipe to check.
      * @return The indices of the output slot(s) to place the result in and the amount to place in
-     *         each slot.
+     * each slot.
      */
     protected ArrayList<Pair<Integer, Integer>> getOutputSlots(Optional<RecipeHolder<T>> recipe) {
         if (!recipe.isEmpty()) {
@@ -122,10 +128,10 @@ public abstract class ParallelCrafterBlockEntity<T extends Recipe<Container>>
 
     /**
      * Craft the item for the given recipe and input slot.
-     * 
-     * @param inputSlot The index of the input slot to craft the item for.
+     *
+     * @param inputSlot   The index of the input slot to craft the item for.
      * @param outputSlots The indices of the output slot(s) to place the result in.
-     * @param recipe The recipe to craft.
+     * @param recipe      The recipe to craft.
      */
     protected void craftItem(int inputSlot, ArrayList<Pair<Integer, Integer>> outputSlots,
             Optional<RecipeHolder<T>> recipe) {

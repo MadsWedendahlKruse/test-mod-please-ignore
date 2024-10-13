@@ -141,7 +141,7 @@ public class TestModRecipeProvider extends RecipeProvider {
 
     private void registerCrushingRecipe(RecipeOutput recipeOutput, String name, Ingredient input,
             ItemLike output, int count) {
-        recipeOutput.accept(new ResourceLocation(TestMod.MODID, name),
+        recipeOutput.accept(ResourceLocation.fromNamespaceAndPath(TestMod.MODID, name),
                 new CrushingRecipe(input, new ItemStack(output, count)), null);
     }
 
@@ -185,7 +185,7 @@ public class TestModRecipeProvider extends RecipeProvider {
 
     private void registerSeparationRecipe(RecipeOutput recipeOutput, String name, Ingredient input,
             List<ItemStack> outputs) {
-        recipeOutput.accept(new ResourceLocation(TestMod.MODID, name),
+        recipeOutput.accept(ResourceLocation.fromNamespaceAndPath(TestMod.MODID, name),
                 new SeparationRecipe(input, outputs), null);
     }
 
@@ -203,7 +203,7 @@ public class TestModRecipeProvider extends RecipeProvider {
 
     private void registerStampingRecipe(RecipeOutput recipeOutput, String name,
             Ingredient stampingDie, Ingredient input, ItemStack output) {
-        recipeOutput.accept(new ResourceLocation(TestMod.MODID, name),
+        recipeOutput.accept(ResourceLocation.fromNamespaceAndPath(TestMod.MODID, name),
                 new StampingRecipe(stampingDie, input, output), null);
     }
 
@@ -227,7 +227,7 @@ public class TestModRecipeProvider extends RecipeProvider {
 
     private void registerRedstoneGeneratorRecipe(RecipeOutput recipeOutput, String name,
             Ingredient input, int energy) {
-        recipeOutput.accept(new ResourceLocation(TestMod.MODID, name),
+        recipeOutput.accept(ResourceLocation.fromNamespaceAndPath(TestMod.MODID, name),
                 new RedstoneGeneratorRecipe(input, energy), null);
     }
 
@@ -244,7 +244,7 @@ public class TestModRecipeProvider extends RecipeProvider {
 
     private void registerGeothermalGeneratorRecipe(RecipeOutput recipeOutput, String name,
             FluidStack input, int energy) {
-        recipeOutput.accept(new ResourceLocation(TestMod.MODID, name),
+        recipeOutput.accept(ResourceLocation.fromNamespaceAndPath(TestMod.MODID, name),
                 new GeothermalGeneratorRecipe(input, energy), null);
     }
 
@@ -257,7 +257,7 @@ public class TestModRecipeProvider extends RecipeProvider {
 
     private void registerStirlingGeneratorRecipe(RecipeOutput recipeOutput, String name,
             Ingredient input, int energy) {
-        recipeOutput.accept(new ResourceLocation(TestMod.MODID, name),
+        recipeOutput.accept(ResourceLocation.fromNamespaceAndPath(TestMod.MODID, name),
                 new StirlingGeneratorRecipe(input, energy), null);
     }
 

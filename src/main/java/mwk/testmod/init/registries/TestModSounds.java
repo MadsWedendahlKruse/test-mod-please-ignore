@@ -45,7 +45,7 @@ public class TestModSounds {
             int range) {
         return SOUND_EVENTS.register(id,
                 () -> SoundEvent.createFixedRangeEvent(
-                        new ResourceLocation(TestMod.MODID, id),
+                        ResourceLocation.fromNamespaceAndPath(TestMod.MODID, id),
                         range));
     }
 

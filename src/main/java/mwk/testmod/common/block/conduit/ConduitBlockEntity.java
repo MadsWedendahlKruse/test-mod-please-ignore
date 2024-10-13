@@ -8,6 +8,7 @@ import mwk.testmod.common.block.conduit.network.capabilites.NetworkCapabilityPro
 import mwk.testmod.common.block.interfaces.ITickable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -157,26 +158,27 @@ public abstract class ConduitBlockEntity<T> extends BlockEntity implements ITick
     protected abstract T createNewCapability(Direction direction);
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    protected void saveAdditional(CompoundTag tag, Provider registries) {
+        super.saveAdditional(tag, registries);
         tag.putBoolean(NBT_TAG_MASTER, isMaster);
         if (isMaster) {
-            ConduitNetworkManager.getInstance().serializeNetworkNBT(worldPosition, tag);
+            ConduitNetworkManager.getInstance().serializeNetworkNBT(registries, worldPosition, tag);
         }
         tag.putInt(NBT_TAG_CONDUIT_TYPE, conduitType.ordinal());
     }
 
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    public void loadAdditional(CompoundTag tag, Provider registries) {
+        super.loadAdditional(tag, registries);
         if (tag.contains(NBT_TAG_CONDUIT_TYPE)) {
             conduitType = ConduitType.values()[tag.getInt(NBT_TAG_CONDUIT_TYPE)];
         }
         if (tag.contains(NBT_TAG_MASTER)) {
             isMaster = tag.getBoolean(NBT_TAG_MASTER);
             if (isMaster && conduitType != null) {
-                ConduitNetworkManager.getInstance().deserializeNetworkNBT(worldPosition, tag,
-                        conduitType);
+                ConduitNetworkManager.getInstance()
+                        .deserializeNetworkNBT(registries, worldPosition, tag,
+                                conduitType);
             }
         }
     }

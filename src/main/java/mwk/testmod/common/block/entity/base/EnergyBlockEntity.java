@@ -5,6 +5,7 @@ import mwk.testmod.common.util.energy.EnergyStorageProducer;
 import mwk.testmod.common.util.energy.EnergyStorageWrapper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -42,16 +43,16 @@ public class EnergyBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
-        tag.put(NBT_TAG_ENERGY, energyStorage.serializeNBT());
+    protected void saveAdditional(CompoundTag tag, Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.put(NBT_TAG_ENERGY, energyStorage.serializeNBT(registries));
     }
 
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    public void loadAdditional(CompoundTag tag, Provider registries) {
+        super.loadAdditional(tag, registries);
         if (tag.contains(NBT_TAG_ENERGY)) {
-            energyStorage.deserializeNBT(IntTag.valueOf(tag.getInt(NBT_TAG_ENERGY)));
+            energyStorage.deserializeNBT(registries, IntTag.valueOf(tag.getInt(NBT_TAG_ENERGY)));
         }
     }
 

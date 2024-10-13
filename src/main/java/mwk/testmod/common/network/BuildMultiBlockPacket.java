@@ -8,6 +8,7 @@ import mwk.testmod.init.registries.TestModBlueprints;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -15,7 +16,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Packet for placing a blueprint controller. This allows the client to place the controller block
@@ -27,47 +28,43 @@ public record BuildMultiBlockPacket(ResourceKey<MultiBlockBlueprint> blueprintKe
                                     BlockPos controllerPos, Direction controllerFacing)
         implements CustomPacketPayload {
 
-    public static final ResourceLocation ID =
-            new ResourceLocation(TestMod.MODID, "blueprint_builder");
+    public static final Type<BuildMultiBlockPacket> TYPE =
+            new Type<>(ResourceLocation.fromNamespaceAndPath(TestMod.MODID, "blueprint_builder"));
 
-    public BuildMultiBlockPacket(FriendlyByteBuf buffer) {
-        this(buffer.readResourceKey(TestModBlueprints.BLUEPRINT_REGISTRY_KEY),
-                buffer.readBlockPos(), buffer.readEnum(Direction.class));
-    }
-
-    @Override
-    public void write(FriendlyByteBuf buffer) {
-        buffer.writeResourceKey(blueprintKey());
-        buffer.writeBlockPos(controllerPos());
-        buffer.writeEnum(controllerFacing());
-    }
+    public static final StreamCodec<FriendlyByteBuf, BuildMultiBlockPacket> STREAM_CODEC = StreamCodec.composite(
+            ResourceKey.streamCodec(TestModBlueprints.BLUEPRINT_REGISTRY_KEY),
+            BuildMultiBlockPacket::blueprintKey,
+            BlockPos.STREAM_CODEC,
+            BuildMultiBlockPacket::controllerPos,
+            Direction.STREAM_CODEC,
+            BuildMultiBlockPacket::controllerFacing,
+            BuildMultiBlockPacket::new);
 
     @Override
-    public ResourceLocation id() {
-        return ID;
+    public Type<BuildMultiBlockPacket> type() {
+        return TYPE;
     }
 
     public static void handleServer(final BuildMultiBlockPacket packet,
-            PlayPayloadContext context) {
-        TestMod.LOGGER.debug("Received blueprint builder packet: {}, side: {}", packet,
-                context.level().get().isClientSide());
-        Player player = context.player().orElse(null);
+            final IPayloadContext context) {
+        Player player = context.player();
         if (!(player instanceof ServerPlayer)) {
             return;
         }
-        context.workHandler().execute(() -> {
+        context.enqueueWork(() -> {
             MultiBlockBlueprint blueprint = null;
             Level level = player.level();
             if (packet.blueprintKey() != null) {
-                blueprint =
-                        level.registryAccess().registry(TestModBlueprints.BLUEPRINT_REGISTRY_KEY)
-                                .flatMap(registry -> registry.getOptional(packet.blueprintKey()))
-                                .orElse(null);
+                blueprint = level.registryAccess()
+                        .registry(TestModBlueprints.BLUEPRINT_REGISTRY_KEY)
+                        .flatMap(registry -> registry.getOptional(packet.blueprintKey()))
+                        .orElse(null);
             }
             // TODO: Not sure if this even happens? I don't think we'd send the packet if the
             // blueprint is null
             if (blueprint == null) {
-                TestMod.LOGGER.error("BlueprintBuilderPacket: Received invalid blueprint key: {}",
+                TestMod.LOGGER.error(
+                        "BuildMultiBlockPacket: Unable to build blueprint, received invalid blueprint key: {}",
                         packet.blueprintKey());
                 return;
             }

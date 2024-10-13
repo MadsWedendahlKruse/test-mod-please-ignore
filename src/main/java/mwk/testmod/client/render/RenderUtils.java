@@ -36,7 +36,7 @@ public class RenderUtils {
     public static void renderModel(PoseStack poseStack, VertexConsumer buffer, BakedModel model,
             int combinedLight, int combinedOverlay) {
         model.getQuads(null, null, RandomUtils.RANDOM_SOURCE).forEach(quad -> buffer
-                .putBulkData(poseStack.last(), quad, 1, 1, 1, combinedLight, combinedOverlay));
+                .putBulkData(poseStack.last(), quad, 1, 1, 1, 1, combinedLight, combinedOverlay));
     }
 
     /**
@@ -137,9 +137,9 @@ public class RenderUtils {
             TextureAtlasSprite sprite, Vertex vertex, int color, int light, int overlay) {
         // TODO: apparently the normal is determined by the order of the vertices,
         // even though the vertex consumer takes a normal as an argument?
-        vertexBuilder.vertex(poseStack.last().pose(), vertex.x(), vertex.y(), vertex.z())
-                .color(color).uv(sprite.getU(vertex.u()), sprite.getV(vertex.v()))
-                .overlayCoords(overlay).uv2(light).normal(0, 0, 0).endVertex();
+        vertexBuilder.addVertex(poseStack.last().pose(), vertex.x(), vertex.y(), vertex.z())
+                .setColor(color).setUv(sprite.getU(vertex.u()), sprite.getV(vertex.v()))
+                .setOverlay(overlay).setLight(light).setNormal(0, 0, 0);
     }
 
     /**

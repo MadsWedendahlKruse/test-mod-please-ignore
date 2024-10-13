@@ -45,8 +45,10 @@ public class ReleaseButton extends Button {
             ((ReleaseButton) button).heldDown = true;
         }, createNarration);
         this.onRelease = onRelease;
-        this.sprite = new WidgetSprites(new ResourceLocation(TestMod.MODID, "widget/" + name),
-                new ResourceLocation(TestMod.MODID, "widget/" + name + "_highlighted"));
+        this.sprite = new WidgetSprites(
+                ResourceLocation.fromNamespaceAndPath(TestMod.MODID, "widget/" + name),
+                ResourceLocation.fromNamespaceAndPath(TestMod.MODID,
+                        "widget/" + name + "_highlighted"));
     }
 
     public boolean isHeldDown() {
@@ -68,6 +70,7 @@ public class ReleaseButton extends Button {
     }
 
     public interface OnRelease {
+
         void onRelease(ReleaseButton button);
     }
 }

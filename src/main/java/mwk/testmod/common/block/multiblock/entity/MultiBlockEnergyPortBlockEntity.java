@@ -35,7 +35,7 @@ public class MultiBlockEnergyPortBlockEntity extends MultiBlockPartBlockEntity
             return;
         }
         BlockEntity controllerEntity = level.getBlockEntity(controllerPos);
-        if (controllerEntity instanceof GeneratorBlockEntity<?> generator) {
+        if (controllerEntity instanceof GeneratorBlockEntity<?, ?> generator) {
             // Generator can push twice the energy per tick it generates
             generator.pushEnergy(this.worldPosition, 2 * generator.getEnergyPerTick());
         }

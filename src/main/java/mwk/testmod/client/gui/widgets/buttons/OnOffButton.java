@@ -49,10 +49,14 @@ public class OnOffButton extends ImageButton {
     public OnOffButton(int x, int y, int width, int height, OnOffButton.OnPress onPressExtra,
             String onName, String offName, String tooltipKey) {
         this(x, y, width, height, onPressExtra,
-                new WidgetSprites(new ResourceLocation(TestMod.MODID, "widget/" + onName),
-                        new ResourceLocation(TestMod.MODID, "widget/" + onName + "_highlighted")),
-                new WidgetSprites(new ResourceLocation(TestMod.MODID, "widget/" + offName),
-                        new ResourceLocation(TestMod.MODID, "widget/" + offName + "_highlighted")),
+                new WidgetSprites(
+                        ResourceLocation.fromNamespaceAndPath(TestMod.MODID, "widget/" + onName),
+                        ResourceLocation.fromNamespaceAndPath(TestMod.MODID,
+                                "widget/" + onName + "_highlighted")),
+                new WidgetSprites(
+                        ResourceLocation.fromNamespaceAndPath(TestMod.MODID, "widget/" + offName),
+                        ResourceLocation.fromNamespaceAndPath(TestMod.MODID,
+                                "widget/" + offName + "_highlighted")),
                 tooltipKey);
     }
 
@@ -124,6 +128,7 @@ public class OnOffButton extends ImageButton {
     }
 
     public interface OnPress {
+
         void onPress(OnOffButton button);
     }
 }

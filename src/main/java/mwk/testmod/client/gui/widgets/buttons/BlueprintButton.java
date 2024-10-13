@@ -17,8 +17,9 @@ import net.minecraft.util.Mth;
 public class BlueprintButton extends Button {
 
     public static final WidgetSprites SPRITES =
-            new WidgetSprites(new ResourceLocation(TestMod.MODID, "widget/button"),
-                    new ResourceLocation(TestMod.MODID, "widget/button_highlighted"));
+            new WidgetSprites(ResourceLocation.fromNamespaceAndPath(TestMod.MODID, "widget/button"),
+                    ResourceLocation.fromNamespaceAndPath(TestMod.MODID,
+                            "widget/button_highlighted"));
 
     public BlueprintButton(int pX, int pY, int pWidth, int pHeight, Component pMessage,
             Button.OnPress pOnPress) {

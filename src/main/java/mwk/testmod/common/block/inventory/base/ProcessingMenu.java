@@ -19,7 +19,7 @@ public class ProcessingMenu extends MachineMenu {
             int outputSlotsX, int outputSlotsY) {
         super(menuType, containerId, player, pos, playerInventoryX, playerInventoryY, inputSlotsX,
                 inputSlotsY, outputSlotsX, outputSlotsY);
-        if (player.level().getBlockEntity(pos) instanceof ProcessingBlockEntity<?> blockEntity) {
+        if (player.level().getBlockEntity(pos) instanceof ProcessingBlockEntity<?, ?> blockEntity) {
             this.progress = blockEntity.getProgress();
             this.maxProgress = blockEntity.getMaxProgress();
             this.maxProgressBase = blockEntity.maxProgressBase;

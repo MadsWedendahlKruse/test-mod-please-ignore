@@ -10,7 +10,6 @@ import mwk.testmod.common.block.interfaces.ITickable;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockUtils;
 import mwk.testmod.datagen.TestModLanguageProvider;
-import mwk.testmod.init.registries.TestModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -285,13 +284,13 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
-            InteractionHand hand, BlockHitResult hit) {
+    public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
+            Player player, BlockHitResult hit) {
         // Right-clicking with a wrench is handled by Wrenchable#onWrenched.
         // (so skip it here)
-        if (player.getItemInHand(hand).getItem() == TestModItems.WRENCH_ITEM.get()) {
-            return InteractionResult.PASS;
-        }
+//        if (player.getItemInHand(hand).getItem() == TestModItems.WRENCH_ITEM.get()) {
+//            return InteractionResult.PASS;
+//        }
         boolean isCurrentBlueprint = HologramRenderer.getInstance().isCurrentBlueprint(pos,
                 blueprint, state.getValue(FACING));
         boolean isFormed = state.getValue(FORMED);
@@ -304,7 +303,7 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
             } else {
                 // ...and it is the current blueprint, attempt to build the multiblock structure.
                 return MultiBlockUtils.attemptBuildMultiBlock(level, blueprint, pos,
-                        state.getValue(FACING), player, hand, true);
+                        state.getValue(FACING), player, InteractionHand.MAIN_HAND, true);
             }
         } else {
             // Open the menu if the multiblock structure is formed.
@@ -321,6 +320,6 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
             }
             return InteractionResult.sidedSuccess(level.isClientSide());
         }
-        return super.use(state, level, pos, player, hand, hit);
+        return super.useWithoutItem(state, level, pos, player, hit);
     }
 }

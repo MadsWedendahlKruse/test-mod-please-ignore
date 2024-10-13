@@ -1,10 +1,10 @@
 package mwk.testmod.common.recipe.base.crafter;
 
 import java.util.List;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.world.Container;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 
 public abstract class OneToManyItemStackRecipe extends OneInputItemStackRecipe {
 
@@ -16,12 +16,12 @@ public abstract class OneToManyItemStackRecipe extends OneInputItemStackRecipe {
     }
 
     @Override
-    public ItemStack assemble(Container container, RegistryAccess registryAccess) {
+    public ItemStack assemble(SingleRecipeInput input, HolderLookup.Provider registries) {
         return ItemStack.EMPTY;
     }
 
     @Override
-    public ItemStack getResultItem(RegistryAccess registryAccess) {
+    public ItemStack getResultItem(HolderLookup.Provider registries) {
         return ItemStack.EMPTY;
     }
 

@@ -10,9 +10,10 @@ import net.minecraft.resources.ResourceLocation;
 public class JEITestModRecipeTypes {
 
     public static final RecipeType<CrushingRecipe> CRUSHING = new RecipeType<>(
-            new ResourceLocation(TestMod.MODID, "crushing"), CrushingRecipe.class);
+            ResourceLocation.fromNamespaceAndPath(TestMod.MODID, "crushing"), CrushingRecipe.class);
     public static final RecipeType<SeparationRecipe> SEPARATION = new RecipeType<>(
-            new ResourceLocation(TestMod.MODID, "separation"), SeparationRecipe.class);
+            ResourceLocation.fromNamespaceAndPath(TestMod.MODID, "separation"),
+            SeparationRecipe.class);
     public static final RecipeType<StampingRecipe> STAMPING = new RecipeType<>(
-            new ResourceLocation(TestMod.MODID, "stamping"), StampingRecipe.class);
+            ResourceLocation.fromNamespaceAndPath(TestMod.MODID, "stamping"), StampingRecipe.class);
 }

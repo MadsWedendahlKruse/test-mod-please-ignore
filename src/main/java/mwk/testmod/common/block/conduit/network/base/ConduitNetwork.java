@@ -12,6 +12,7 @@ import mwk.testmod.common.block.conduit.ConduitBlock;
 import mwk.testmod.common.block.conduit.ConduitType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
@@ -241,7 +242,7 @@ public abstract class ConduitNetwork<C, T> implements INBTSerializable<CompoundT
             C source);
 
     @Override
-    public CompoundTag serializeNBT() {
+    public CompoundTag serializeNBT(HolderLookup.Provider registries) {
         CompoundTag tag = new CompoundTag();
         tag.putInt(NBT_TAG_SIZE, graph.size());
         BlockPos[] posArray = graph.keySet().toArray(new BlockPos[0]);
@@ -252,7 +253,7 @@ public abstract class ConduitNetwork<C, T> implements INBTSerializable<CompoundT
     }
 
     @Override
-    public void deserializeNBT(CompoundTag tag) {
+    public void deserializeNBT(HolderLookup.Provider registries, CompoundTag tag) {
         if (tag.contains(NBT_TAG_SIZE)) {
             int size = tag.getInt(NBT_TAG_SIZE);
             graph.clear();

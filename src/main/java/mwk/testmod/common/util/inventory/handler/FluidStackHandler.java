@@ -1,18 +1,21 @@
 package mwk.testmod.common.util.inventory.handler;
 
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 
-public class FluidStackHandler {
+public class FluidStackHandler implements INBTSerializable<CompoundTag> {
 
     private FluidStack[] stacks;
     private int[] capacity;
 
     /**
      * Creates a new FluidStackHandler with the given capacity for each tank
-     * 
+     *
      * @param capacity The capacity of each tank
      */
     public FluidStackHandler(int[] capacity) {
@@ -26,7 +29,7 @@ public class FluidStackHandler {
     public FluidStack drain(int tank, FluidStack resource, FluidAction action) {
         validateTankIndex(tank);
         FluidStack stack = stacks[tank];
-        if (resource.isEmpty() || !stack.isFluidEqual(resource)) {
+        if (resource.isEmpty() || FluidStack.isSameFluid(stack, resource)) {
             return FluidStack.EMPTY;
         }
         return drain(tank, resource.getAmount(), action);
@@ -43,7 +46,7 @@ public class FluidStackHandler {
         }
 
         final int drainAmount = Math.min(maxDrain, stack.getAmount());
-        final FluidStack drained = new FluidStack(stack, drainAmount);
+        final FluidStack drained = new FluidStack(stack.getFluid(), drainAmount);
         if (action.execute()) {
             stack.shrink(drainAmount);
             if (stack.isEmpty()) {
@@ -52,7 +55,7 @@ public class FluidStackHandler {
             onContentsChanged(tank);
             return drained;
         } else {
-            return new FluidStack(stacks[tank], drainAmount);
+            return new FluidStack(stacks[tank].getFluid(), drainAmount);
         }
     }
 
@@ -69,7 +72,7 @@ public class FluidStackHandler {
 
         if (action.execute()) {
             if (stack.isEmpty()) {
-                stacks[tank] = new FluidStack(resource, filled);
+                stacks[tank] = new FluidStack(resource.getFluid(), filled);
             } else {
                 stack.grow(filled);
             }
@@ -96,25 +99,27 @@ public class FluidStackHandler {
         return true;
     }
 
-    public CompoundTag serializeNBT() {
+    @Override
+    public CompoundTag serializeNBT(HolderLookup.Provider registries) {
         CompoundTag nbt = new CompoundTag();
         ListTag list = new ListTag();
         for (int i = 0; i < stacks.length; i++) {
             CompoundTag tankTag = new CompoundTag();
             tankTag.putInt("Tank", i);
-            tankTag.put("Fluid", stacks[i].writeToNBT(new CompoundTag()));
+            tankTag.put("Fluid", stacks[i].save(registries, new CompoundTag()));
             list.add(tankTag);
         }
         nbt.put("Tanks", list);
         return nbt;
     }
 
-    public void deserializeNBT(CompoundTag nbt) {
-        ListTag list = nbt.getList("Tanks", 10);
+    @Override
+    public void deserializeNBT(Provider registries, CompoundTag tag) {
+        ListTag list = tag.getList("Tanks", 10);
         for (int i = 0; i < list.size(); i++) {
             CompoundTag tankTag = list.getCompound(i);
             int tank = tankTag.getInt("Tank");
-            stacks[tank] = FluidStack.loadFluidStackFromNBT(tankTag.getCompound("Fluid"));
+            stacks[tank] = FluidStack.parse(registries, tankTag.getCompound("Fluid")).get();
         }
     }
 
@@ -125,6 +130,7 @@ public class FluidStackHandler {
         }
     }
 
-    protected void onContentsChanged(int tank) {}
+    protected void onContentsChanged(int tank) {
+    }
 
 }

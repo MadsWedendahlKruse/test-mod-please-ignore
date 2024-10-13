@@ -7,6 +7,7 @@ import mwk.testmod.common.block.entity.base.crafter.SingleCrafterBlockEntity;
 import mwk.testmod.common.block.inventory.StampingPressMenu;
 import mwk.testmod.common.item.misc.StampingDieItem;
 import mwk.testmod.common.recipe.StampingRecipe;
+import mwk.testmod.common.recipe.inputs.CatalystRecipeInput;
 import mwk.testmod.datagen.TestModLanguageProvider;
 import mwk.testmod.init.registries.TestModBlockEntities;
 import mwk.testmod.init.registries.TestModBlocks;
@@ -14,6 +15,7 @@ import mwk.testmod.init.registries.TestModRecipeTypes;
 import mwk.testmod.init.registries.TestModSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
@@ -26,7 +28,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class StampingPressBlockEntity extends SingleCrafterBlockEntity<StampingRecipe> {
+public class StampingPressBlockEntity extends
+        SingleCrafterBlockEntity<CatalystRecipeInput, StampingRecipe> {
 
     // NBT keys for syncing recipe to the client for rendering
     public static final String NBT_TAG_DIE = "die";
@@ -95,17 +98,22 @@ public class StampingPressBlockEntity extends SingleCrafterBlockEntity<StampingR
     }
 
     @Override
+    protected CatalystRecipeInput getRecipeInput() {
+        return new CatalystRecipeInput(inventory.getStackInSlot(0), inventory.getStackInSlot(1));
+    }
+
+    @Override
     protected boolean canProcessRecipe(StampingRecipe recipe) {
         if (recipe == null) {
             return false;
         }
-        ItemStack output = recipe.getOutput();
+        ItemStack output = recipe.getOutputItem();
         return canInsertItemIntoSlot(inputSlots, output.getItem(), output.getCount());
     }
 
     @Override
     protected void processRecipe(StampingRecipe recipe) {
-        ItemStack output = recipe.getOutput();
+        ItemStack output = recipe.getOutputItem();
         // Slot 0 is the stamping die (which isn't consumed)
         inventory.extractItem(1, 1, false);
         inventory.setStackInSlot(inputSlots, new ItemStack(output.getItem(),
@@ -122,48 +130,54 @@ public class StampingPressBlockEntity extends SingleCrafterBlockEntity<StampingR
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
+    public CompoundTag getUpdateTag(Provider registries) {
         // Note to self: This is used both on LevelChunk load and Block Update
         CompoundTag tag = new CompoundTag();
-        tag.put(NBT_TAG_DIE, getStampingDie().save(new CompoundTag()));
-        tag.put(NBT_TAG_INPUT, getInput().save(new CompoundTag()));
+        tag.put(NBT_TAG_DIE, getStampingDie().save(registries, new CompoundTag()));
+        tag.put(NBT_TAG_INPUT, getInput().save(registries, new CompoundTag()));
         if (latestRecipe != null) {
-            tag.put(NBT_TAG_OUTPUT, latestRecipe.getOutput().save(new CompoundTag()));
+            tag.put(NBT_TAG_OUTPUT,
+                    latestRecipe.getOutputItem().save(registries, new CompoundTag()));
         }
         return tag;
     }
 
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt,
+            Provider registries) {
         // Note to self: This is used on Block Update
-        super.onDataPacket(net, pkt);
+        super.onDataPacket(net, pkt, registries);
         CompoundTag tag = pkt.getTag();
         if (tag == null) {
             return;
         }
         if (tag.contains(NBT_TAG_OUTPUT)) {
             latestRecipe = new StampingRecipe(
-                    Ingredient.of(ItemStack.of(tag.getCompound(NBT_TAG_DIE))),
-                    Ingredient.of(ItemStack.of(tag.getCompound(NBT_TAG_INPUT))),
-                    ItemStack.of(tag.getCompound(NBT_TAG_OUTPUT)));
+                    Ingredient.of(ItemStack.parse(registries, tag.getCompound(NBT_TAG_DIE)).get()),
+                    Ingredient.of(
+                            ItemStack.parse(registries, tag.getCompound(NBT_TAG_INPUT)).get()),
+                    ItemStack.parse(registries, tag.getCompound(NBT_TAG_OUTPUT)).get());
         }
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag) {
+    public void handleUpdateTag(CompoundTag tag, Provider registries) {
         // Note to self: This is used on LevelChunk load
-        super.handleUpdateTag(tag);
+        super.handleUpdateTag(tag, registries);
         if (tag.contains(NBT_TAG_DIE)) {
-            inventory.setStackInSlot(0, ItemStack.of(tag.getCompound(NBT_TAG_DIE)));
+            inventory.setStackInSlot(0,
+                    ItemStack.parse(registries, tag.getCompound(NBT_TAG_DIE)).get());
         }
         if (tag.contains(NBT_TAG_INPUT)) {
-            inventory.setStackInSlot(1, ItemStack.of(tag.getCompound(NBT_TAG_INPUT)));
+            inventory.setStackInSlot(1,
+                    ItemStack.parse(registries, tag.getCompound(NBT_TAG_INPUT)).get());
         }
         if (tag.contains(NBT_TAG_OUTPUT)) {
             latestRecipe = new StampingRecipe(
-                    Ingredient.of(ItemStack.of(tag.getCompound(NBT_TAG_DIE))),
-                    Ingredient.of(ItemStack.of(tag.getCompound(NBT_TAG_INPUT))),
-                    ItemStack.of(tag.getCompound(NBT_TAG_OUTPUT)));
+                    Ingredient.of(ItemStack.parse(registries, tag.getCompound(NBT_TAG_DIE)).get()),
+                    Ingredient.of(
+                            ItemStack.parse(registries, tag.getCompound(NBT_TAG_INPUT)).get()),
+                    ItemStack.parse(registries, tag.getCompound(NBT_TAG_OUTPUT)).get());
         }
     }
 
@@ -172,11 +186,11 @@ public class StampingPressBlockEntity extends SingleCrafterBlockEntity<StampingR
     }
 
     public ItemStack getInput() {
-        return latestRecipe != null ? latestRecipe.getInput().getItems()[0] : ItemStack.EMPTY;
+        return latestRecipe != null ? latestRecipe.getInputItem().getItems()[0] : ItemStack.EMPTY;
     }
 
     public ItemStack getOutput() {
-        return latestRecipe != null ? latestRecipe.getOutput() : ItemStack.EMPTY;
+        return latestRecipe != null ? latestRecipe.getOutputItem() : ItemStack.EMPTY;
     }
 
     @Override

@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class BlueprintInfoIcon extends AbstractWidget {
 
-    public static final ResourceLocation SPRITE = new ResourceLocation("testmod",
+    public static final ResourceLocation SPRITE = ResourceLocation.fromNamespaceAndPath("testmod",
             "widget/icon_info");
     private static final int MAX_TOOLTIP_WIDTH = 200;
 

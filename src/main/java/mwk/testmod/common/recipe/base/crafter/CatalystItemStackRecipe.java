@@ -1,23 +1,24 @@
 package mwk.testmod.common.recipe.base.crafter;
 
+import mwk.testmod.common.recipe.inputs.CatalystRecipeInput;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
 
-public abstract class CatalystItemStackRecipe implements Recipe<Container> {
+public abstract class CatalystItemStackRecipe implements Recipe<CatalystRecipeInput> {
 
-    private final Ingredient catalyst;
-    private final Ingredient input;
-    private final ItemStack output;
+    private final Ingredient catalystItem;
+    private final Ingredient inputItem;
+    private final ItemStack outputItem;
 
-    protected CatalystItemStackRecipe(Ingredient catalyst, Ingredient input, ItemStack output) {
-        this.catalyst = catalyst;
-        this.input = input;
-        this.output = output;
+    protected CatalystItemStackRecipe(Ingredient catalystItem, Ingredient inputItem,
+            ItemStack outputItem) {
+        this.catalystItem = catalystItem;
+        this.inputItem = inputItem;
+        this.outputItem = outputItem;
     }
 
     @Override
@@ -26,44 +27,44 @@ public abstract class CatalystItemStackRecipe implements Recipe<Container> {
     }
 
     @Override
-    public boolean matches(Container pContainer, Level pLevel) {
-        if (pLevel.isClientSide()) {
+    public boolean matches(CatalystRecipeInput input, Level level) {
+        if (level.isClientSide()) {
             return false;
         }
-        return catalyst.test(pContainer.getItem(0)) && input.test(pContainer.getItem(1));
+        return catalystItem.test(input.getItem(0)) && inputItem.test(input.getItem(1));
     }
 
     @Override
     public NonNullList<Ingredient> getIngredients() {
         NonNullList<Ingredient> ingredients = NonNullList.create();
-        ingredients.add(catalyst);
-        ingredients.add(input);
+        ingredients.add(catalystItem);
+        ingredients.add(inputItem);
         return ingredients;
     }
 
     @Override
-    public ItemStack assemble(Container pContainer, RegistryAccess pRegistryAccess) {
-        return output.copy();
+    public ItemStack assemble(CatalystRecipeInput input, HolderLookup.Provider registries) {
+        return outputItem.copy();
     }
 
     @Override
-    public ItemStack getResultItem(RegistryAccess pRegistryAccess) {
-        return output.copy();
+    public ItemStack getResultItem(HolderLookup.Provider registries) {
+        return outputItem.copy();
     }
 
     public ItemStack getResultItem() {
         return getResultItem(null);
     }
 
-    public Ingredient getCatalyst() {
-        return catalyst;
+    public Ingredient getCatalystItem() {
+        return catalystItem;
     }
 
-    public Ingredient getInput() {
-        return input;
+    public Ingredient getInputItem() {
+        return inputItem;
     }
 
-    public ItemStack getOutput() {
-        return output;
+    public ItemStack getOutputItem() {
+        return outputItem;
     }
 }

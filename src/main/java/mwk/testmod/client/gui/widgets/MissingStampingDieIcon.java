@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class MissingStampingDieIcon extends AbstractWidget {
 
-    public static final ResourceLocation SPRITE = new ResourceLocation("testmod",
+    public static final ResourceLocation SPRITE = ResourceLocation.fromNamespaceAndPath("testmod",
             "widget/missing_stamping_die");
 
     private final StampingPressMenu menu;

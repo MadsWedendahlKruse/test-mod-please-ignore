@@ -6,10 +6,8 @@ import mwk.testmod.client.render.hologram.HologramRenderer;
 import mwk.testmod.client.render.hologram.events.ProjectorEvent;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
 import mwk.testmod.datagen.TestModLanguageProvider;
-import mwk.testmod.init.registries.TestModBlueprints;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -76,27 +74,29 @@ public class HologramProjectorItem extends Item {
             ResourceKey<MultiBlockBlueprint> blueprintKey) {
         if (blueprintKey == null) {
             TestMod.LOGGER.debug("Setting blueprint key to null");
-            projector.getOrCreateTag().remove(TAG_BLUEPRINT_LOCATION_NAMESPACE);
-            projector.getOrCreateTag().remove(TAG_BLUEPRINT_LOCATION_PATH);
+//            projector.getOrCreateTag().remove(TAG_BLUEPRINT_LOCATION_NAMESPACE);
+//            projector.getOrCreateTag().remove(TAG_BLUEPRINT_LOCATION_PATH);
             return;
         }
         TestMod.LOGGER.debug("Setting blueprint key to {}", blueprintKey);
         // Decompose the ResourceKey into its parts for eaiser reconstruction
         ResourceLocation location = blueprintKey.location();
-        projector.getOrCreateTag().putString(TAG_BLUEPRINT_LOCATION_NAMESPACE,
-                location.getNamespace());
-        projector.getOrCreateTag().putString(TAG_BLUEPRINT_LOCATION_PATH, location.getPath());
+//        projector.getOrCreateTag().putString(TAG_BLUEPRINT_LOCATION_NAMESPACE,
+//                location.getNamespace());
+//        projector.getOrCreateTag().putString(TAG_BLUEPRINT_LOCATION_PATH, location.getPath());
     }
 
     public static ResourceKey<MultiBlockBlueprint> getBlueprintKey(ItemStack projector) {
-        CompoundTag tag = projector.getOrCreateTag();
-        if (!(tag.contains(TAG_BLUEPRINT_LOCATION_NAMESPACE)
-                && tag.contains(TAG_BLUEPRINT_LOCATION_PATH))) {
-            return null;
-        }
-        ResourceLocation location =
-                new ResourceLocation(tag.getString(TAG_BLUEPRINT_LOCATION_NAMESPACE),
-                        tag.getString(TAG_BLUEPRINT_LOCATION_PATH));
-        return ResourceKey.create(TestModBlueprints.BLUEPRINT_REGISTRY_KEY, location);
+//        CompoundTag tag = projector.getOrCreateTag();
+//        if (!(tag.contains(TAG_BLUEPRINT_LOCATION_NAMESPACE)
+//                && tag.contains(TAG_BLUEPRINT_LOCATION_PATH))) {
+//            return null;
+//        }
+//        ResourceLocation location =
+//                ResourceLocation.fromNamespaceAndPath(
+//                        tag.getString(TAG_BLUEPRINT_LOCATION_NAMESPACE),
+//                        tag.getString(TAG_BLUEPRINT_LOCATION_PATH));
+//        return ResourceKey.create(TestModBlueprints.BLUEPRINT_REGISTRY_KEY, location);
+        return null;
     }
 }

@@ -12,6 +12,7 @@ import mwk.testmod.common.util.inventory.handler.OutputItemHandler;
 import mwk.testmod.common.util.inventory.handler.UpgradeItemHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
@@ -133,22 +134,22 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
-        tag.put(NBT_TAG_INVENTORY, inventory.serializeNBT());
-        tag.put(NBT_TAG_FLUID_TANKS, fluidTanks.serializeNBT());
+    protected void saveAdditional(CompoundTag tag, Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.put(NBT_TAG_INVENTORY, inventory.serializeNBT(registries));
+        tag.put(NBT_TAG_FLUID_TANKS, fluidTanks.serializeNBT(registries));
         tag.putBoolean(NBT_TAG_AUTO_PULL, autoPull);
         tag.putBoolean(NBT_TAG_AUTO_PUSH, autoPush);
     }
 
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    public void loadAdditional(CompoundTag tag, Provider registries) {
+        super.loadAdditional(tag, registries);
         if (tag.contains(NBT_TAG_INVENTORY)) {
-            inventory.deserializeNBT(tag.getCompound(NBT_TAG_INVENTORY));
+            inventory.deserializeNBT(registries, tag.getCompound(NBT_TAG_INVENTORY));
         }
         if (tag.contains(NBT_TAG_FLUID_TANKS)) {
-            fluidTanks.deserializeNBT(tag.getCompound(NBT_TAG_FLUID_TANKS));
+            fluidTanks.deserializeNBT(registries, tag.getCompound(NBT_TAG_FLUID_TANKS));
         }
         if (tag.contains(NBT_TAG_AUTO_PULL)) {
             autoPull = tag.getBoolean(NBT_TAG_AUTO_PULL);
@@ -160,10 +161,10 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
-        CompoundTag tag = super.getUpdateTag();
+    public CompoundTag getUpdateTag(Provider registries) {
+        CompoundTag tag = super.getUpdateTag(registries);
         if (inputTanks + outputTanks > 0) {
-            tag.put(NBT_TAG_FLUID_TANKS, fluidTanks.serializeNBT());
+            tag.put(NBT_TAG_FLUID_TANKS, fluidTanks.serializeNBT(registries));
         }
         return tag;
     }
@@ -175,14 +176,15 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
     }
 
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-        super.onDataPacket(net, pkt);
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt,
+            Provider registries) {
+        super.onDataPacket(net, pkt, registries);
         CompoundTag tag = pkt.getTag();
         if (tag == null) {
             return;
         }
         if (tag.contains(NBT_TAG_FLUID_TANKS)) {
-            fluidTanks.deserializeNBT(tag.getCompound(NBT_TAG_FLUID_TANKS));
+            fluidTanks.deserializeNBT(registries, tag.getCompound(NBT_TAG_FLUID_TANKS));
         }
     }
 

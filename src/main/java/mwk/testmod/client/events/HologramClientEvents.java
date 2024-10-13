@@ -26,9 +26,10 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.EventBusSubscriber.Bus;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import net.neoforged.neoforge.event.TickEvent.ClientTickEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -36,7 +37,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 /**
  * Client-side events for rendering holograms and handling hologram projectors.
  */
-@Mod.EventBusSubscriber(modid = TestMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE,
+@EventBusSubscriber(modid = TestMod.MODID, bus = Bus.GAME,
         value = Dist.CLIENT)
 public class HologramClientEvents {
 
@@ -118,7 +119,7 @@ public class HologramClientEvents {
     private static MultiBlockBlueprint blueprint = null;
 
     @SubscribeEvent
-    public static void onClientTick(ClientTickEvent event) {
+    public static void onClientTick(ClientTickEvent.Post event) {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.level == null || minecraft.player == null) {
             return;
@@ -250,9 +251,9 @@ public class HologramClientEvents {
             Level level = player.level();
 //            ResourceKey<MultiBlockBlueprint> blueprintKey = ResourceKey.create(
 //                    TestModBlueprints.BLUEPRINT_REGISTRY_KEY,
-//                    new ResourceLocation(TestMod.MODID, blueprint.getName()));
-            PacketDistributor.SERVER.noArg()
-                    .send(new BuildMultiBlockPacket(blueprint.getKey(), controllerPos, facing));
+//                    ResourceLocation.fromNamespaceAndPath(TestMod.MODID, blueprint.getName()));
+            PacketDistributor.sendToServer(
+                    new BuildMultiBlockPacket(blueprint.getKey(), controllerPos, facing));
             // Since we know the outcome of the packet (the controller block will be placed),
             // we can place the controller block on the client side as well, which allows us to
             // update the hologram immediately

@@ -16,8 +16,8 @@ import net.minecraft.resources.ResourceLocation;
 public class SettingsPanel extends MachinePanel {
 
     public static final ResourceLocation ICON =
-            new ResourceLocation(TestMod.MODID, "widget/icon_settings");
-    public static final float[] COLOR = new float[] {1.0F, 0.85F, 0, 1};
+            ResourceLocation.fromNamespaceAndPath(TestMod.MODID, "widget/icon_settings");
+    public static final float[] COLOR = new float[]{1.0F, 0.85F, 0, 1};
 
     public static final int BUTTON_SIZE = 20;
     public static final int BUTTON_PADDING = 5;

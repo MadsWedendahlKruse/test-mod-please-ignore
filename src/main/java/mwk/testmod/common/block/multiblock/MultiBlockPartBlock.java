@@ -225,8 +225,8 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
-            InteractionHand hand, BlockHitResult hit) {
+    public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
+            Player player, BlockHitResult hit) {
         TestMod.LOGGER.debug("MultiBlockPartBlock::use");
         // If the multiblock structure is formed, propagate the use event to the
         // multiblock controller.
@@ -240,11 +240,12 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
             if (controllerPos != null && !controllerPos.equals(pos)) {
                 BlockState controllerState = level.getBlockState(controllerPos);
                 if (controllerState.getBlock() instanceof MultiBlockControllerBlock controller) {
-                    return controller.use(controllerState, level, controllerPos, player, hand, hit);
+                    return controller.useWithoutItem(controllerState, level, controllerPos, player,
+                            hit);
                 }
             }
         }
-        return super.use(state, level, pos, player, hand, hit);
+        return super.useWithoutItem(state, level, pos, player, hit);
     }
 
     @Override

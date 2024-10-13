@@ -1,16 +1,15 @@
 package mwk.testmod.common.recipe.base;
 
-import mwk.testmod.common.util.inventory.SimpleItemFluidContainer;
+import mwk.testmod.common.recipe.inputs.FluidRecipeInput;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
 
-public abstract class FluidRecipe implements Recipe<Container> {
+public abstract class FluidRecipe implements Recipe<FluidRecipeInput> {
 
     @Override
     public boolean canCraftInDimensions(int arg0, int arg1) {
@@ -18,7 +17,7 @@ public abstract class FluidRecipe implements Recipe<Container> {
     }
 
     @Override
-    public boolean matches(Container container, Level level) {
+    public boolean matches(FluidRecipeInput input, Level level) {
 
         // Random — 04/14/2024 8:53 PM
         // you definitely need to implement match in a way that takes into account everything you
@@ -36,21 +35,13 @@ public abstract class FluidRecipe implements Recipe<Container> {
         // Shadows — 04/14/2024 8:55 PM
         // doing your own lookup is fairly trivial
 
-        // if (level.isClientSide()) {
-        // return false;
-        // }
-        // return input.test(container.getItem(0));
-
         if (level.isClientSide()) {
-            return false;
-        }
-        if (!(container instanceof SimpleItemFluidContainer fluidContainer)) {
             return false;
         }
         // TODO: Could also leave this method abstract and implement it in the subclasses
         for (int i = 0; i < getFluidIngredients().size(); i++) {
             FluidStack ingredient = getFluidIngredients().get(i);
-            FluidStack containerFluid = fluidContainer.getFluid(i);
+            FluidStack containerFluid = input.getFluid(i);
             if (containerFluid == null) {
                 return false;
             }
@@ -73,12 +64,12 @@ public abstract class FluidRecipe implements Recipe<Container> {
     public abstract NonNullList<FluidStack> getFluidIngredients();
 
     @Override
-    public ItemStack assemble(Container container, RegistryAccess registryAccess) {
+    public ItemStack assemble(FluidRecipeInput input, HolderLookup.Provider registries) {
         return ItemStack.EMPTY;
     }
 
     @Override
-    public ItemStack getResultItem(RegistryAccess registryAccess) {
+    public ItemStack getResultItem(HolderLookup.Provider registries) {
         return ItemStack.EMPTY;
     }
 

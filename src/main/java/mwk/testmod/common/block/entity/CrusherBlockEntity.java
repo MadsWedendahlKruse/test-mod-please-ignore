@@ -17,7 +17,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class CrusherBlockEntity extends ParallelCrafterBlockEntity<CrushingRecipe> {
+public class CrusherBlockEntity extends
+        ParallelCrafterBlockEntity<CrushingRecipe> {
 
     public static final float ROTOR_SPEED = (float) Math.PI; // [rad/s]
     private float rotorAngle;
