@@ -12,32 +12,12 @@ import net.minecraft.world.phys.AABB;
  * Event triggered by the player aiming the hologram projector at a block, while having selected a
  * blueprint in the menu
  */
-public class ProjectorEvent implements HologramEvent {
-    private Level level;
-    private BlockPos lookAtPos;
-    private MultiBlockBlueprint blueprint;
-    private Direction blueprintDirection;
-
-    /**
-     * Creates a new projector event for the given level, look-at position, blueprint and controller
-     * facing direction.
-     * 
-     * @param level The world the hologram is in
-     * @param lookAtPos The position of the block the player is looking at
-     * @param blueprint The blueprint to render
-     * @param blueprintDirection The direction the blueprint should be rendered in
-     */
-    public ProjectorEvent(Level level, BlockPos lookAtPos, MultiBlockBlueprint blueprint,
-            Direction blueprintDirection) {
-        this.level = level;
-        this.lookAtPos = lookAtPos;
-        this.blueprint = blueprint;
-        this.blueprintDirection = blueprintDirection;
-    }
+public record ProjectorEvent(Level level, BlockPos lookAtPos, MultiBlockBlueprint blueprint,
+                             Direction blueprintDirection) implements HologramEvent {
 
     @Override
     public void apply(HologramRenderer renderer) {
-        // If the renderer is locked and it's already rendering the same blueprint, don't do
+        // If the renderer is locked, and it's already rendering the same blueprint, don't do
         // anything
         if (renderer.getLatestEvent() instanceof ProjectorEvent event) {
             if (renderer.isLocked() && event.blueprint == this.blueprint) {

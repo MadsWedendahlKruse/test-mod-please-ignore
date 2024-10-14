@@ -265,7 +265,6 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState,
             boolean movedByPiston) {
-        TestMod.LOGGER.debug("MultiBlockControllerBlock::onRemove");
         // Note to self: this method runs every time the block state changes, not just when the
         // block is broken (contrary to what the name might suggest).
         if (newState.getBlock() instanceof MultiBlockControllerBlock
@@ -283,11 +282,9 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
     @Override
     public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
             Player player, BlockHitResult hit) {
-        TestMod.LOGGER.debug("MultiBlockControllerBlock::useWithoutItem");
         boolean isCurrentBlueprint = HologramRenderer.getInstance().isCurrentBlueprint(pos,
                 blueprint, state.getValue(FACING));
-        boolean isFormed = state.getValue(FORMED);
-        if (!isFormed) {
+        if (!state.getValue(FORMED)) {
             // If the player right-clicks the controller block...
             if (!isCurrentBlueprint) {
                 // ...and it's not the current blueprint, explain how to view the blueprint.

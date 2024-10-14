@@ -209,10 +209,6 @@ public class TestModBlockStateProvider extends BlockStateProvider {
         });
     }
 
-    private static final String TEXTURE_PATH_INPUT_OUTPUT = "block/conduit_connector_bidirectional";
-    private static final String TEXTURE_PATH_INPUT = "block/conduit_connector_pull";
-    private static final String TEXTURE_PATH_OUTPUT = "block/conduit_connector_push";
-
     private void addConduitParts(MultiPartBlockStateBuilder builder, ModelFile model,
             ConduitConnectionType type) {
         builder.part().modelFile(model).addModel().condition(ConduitBlock.NORTH, type).end();
@@ -235,12 +231,13 @@ public class TestModBlockStateProvider extends BlockStateProvider {
         String modelPathBase = "block/conduit_base_" + conduitType;
         String modelPathSide = "block/conduit_side_" + conduitType;
         HashMap<ConduitConnectionType, String> connectorModelPaths = new HashMap<>();
-        for (ConduitConnectionType type : ConduitConnectionType.VALUES) {
-            if (!type.hasConnector()) {
-                continue;
+        for (ConduitConnectionType connectionType : ConduitConnectionType.VALUES) {
+            // Kinda cursed DISABLED check
+            if (connectionType.hasConnector() && connectionType != ConduitConnectionType.DISABLED) {
+                connectorModelPaths.put(connectionType,
+                        "block/conduit_connector_" + connectionType.getSerializedName() + "_"
+                                + conduitType);
             }
-            connectorModelPaths.put(type,
-                    "block/conduit_connector_" + type.getSerializedName() + "_" + conduitType);
         }
         models().withExistingParent(modelPathBase, "testmod:block/conduit_base")
                 .texture("0", texturePath).texture("particle", texturePath).ao(false)

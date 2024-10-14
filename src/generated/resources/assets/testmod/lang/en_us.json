@@ -35,6 +35,7 @@
   "description.testmod.stamping_press": "A machine designed to stamp and shape materials into specific forms. Essential for efficient manufacturing and production of advanced components.",
   "description.testmod.stirling_generator": "A machine that generates energy from solid fuels. Useful as an intial power source for the early stages of industrial development.",
   "description.testmod.super_assembler": "A powerful machine designed to automate the crafting of complex items. It can store multiple recipes and automatically craft items when provided with the necessary materials.",
+  "disabled": "DISABLED",
   "info.testmod.conduit.cycle_mode": "Changed conduit mode to %s",
   "info.testmod.controller.blueprint.blocked": "An incorrect block is in the way of the blueprint [x=%s, y=%s, z=%s]",
   "info.testmod.controller.blueprint.complete": "The blueprint is complete, form the multiblock with a wrench",

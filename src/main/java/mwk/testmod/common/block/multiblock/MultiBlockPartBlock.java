@@ -1,6 +1,6 @@
 package mwk.testmod.common.block.multiblock;
 
-import mwk.testmod.TestMod;
+import java.util.function.BiFunction;
 import mwk.testmod.common.block.interfaces.IWrenchable;
 import mwk.testmod.common.block.multiblock.entity.MultiBlockPartBlockEntity;
 import mwk.testmod.common.util.RandomUtils;
@@ -198,10 +198,34 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
         return null;
     }
 
+    /**
+     * Propagate an action to the controller of the multiblock structure.
+     *
+     * @param level        The level the multiblock part is in.
+     * @param pos          The position of the multiblock part.
+     * @param action       The action to propagate.
+     * @param defaultValue The default value to return if the controller is not found.
+     * @param <R>          The type of the return value.
+     * @return The return value of the action.
+     */
+    private <R> R propagateToController(BlockGetter level, BlockPos pos,
+            BiFunction<MultiBlockControllerBlock, BlockPos, R> action, R defaultValue) {
+        BlockState state = level.getBlockState(pos);
+        if (state.getBlock() instanceof MultiBlockPartBlock && state.getValue(FORMED)) {
+            BlockPos controllerPos = getControllerPos(level, pos);
+            if (controllerPos != null && !controllerPos.equals(pos)) {
+                BlockState controllerState = level.getBlockState(controllerPos);
+                if (controllerState.getBlock() instanceof MultiBlockControllerBlock controller) {
+                    return action.apply(controller, controllerPos);
+                }
+            }
+        }
+        return defaultValue;
+    }
+
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState,
             boolean movedByPiston) {
-        TestMod.LOGGER.debug("MultiBlockPartBlock::onRemove");
         // If any of the blocks in the multiblock are removed while the multiblock is
         // formed we have to unform it
         if (state.getValue(FORMED)) {
@@ -212,14 +236,11 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
                 controller.setMultiblockFormed(level, pos, state, false, false);
             } else {
                 // If it's not, we have to find the controller and unform it
-                BlockPos controllerPos = getControllerPos(level, pos);
-                if (controllerPos != null) {
-                    BlockState controllerState = level.getBlockState(controllerPos);
-                    if (controllerState.getBlock() instanceof MultiBlockControllerBlock controller) {
-                        controller.setMultiblockFormed(level, controllerPos, controllerState, false,
-                                false);
-                    }
-                }
+                propagateToController(level, pos, (controller, controllerPos) -> {
+                    controller.setMultiblockFormed(level, controllerPos,
+                            level.getBlockState(controllerPos), false, false);
+                    return null;
+                }, null);
             }
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
@@ -228,95 +249,44 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
     @Override
     public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
             Player player, BlockHitResult hit) {
-        // If the multiblock structure is formed, propagate the use event to the
-        // multiblock controller.
-        if (state.getValue(FORMED)) {
-            // Prevent the client from doing anything
-            if (level.isClientSide()) {
-                return InteractionResult.SUCCESS;
-            }
-            BlockPos controllerPos = getControllerPos(level, pos);
-            // Make sure it's not already the controller
-            if (controllerPos != null && !controllerPos.equals(pos)) {
-                BlockState controllerState = level.getBlockState(controllerPos);
-                if (controllerState.getBlock() instanceof MultiBlockControllerBlock controller) {
-                    return controller.useWithoutItem(controllerState, level, controllerPos, player,
-                            hit);
-                }
-            }
-        }
-        return super.useWithoutItem(state, level, pos, player, hit);
+        return propagateToController(level, pos, (controller, controllerPos) ->
+                        controller.useWithoutItem(level.getBlockState(controllerPos), level, controllerPos,
+                                player, hit),
+                super.useWithoutItem(state, level, pos, player, hit));
     }
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level,
             BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        // If the multiblock structure is formed, propagate the use event to the
-        // multiblock controller.
-        if (state.getValue(FORMED)) {
-            // Prevent the client from doing anything
-            if (level.isClientSide()) {
-                return ItemInteractionResult.SUCCESS;
-            }
-            BlockPos controllerPos = getControllerPos(level, pos);
-            // Make sure it's not already the controller
-            if (controllerPos != null && !controllerPos.equals(pos)) {
-                BlockState controllerState = level.getBlockState(controllerPos);
-                if (controllerState.getBlock() instanceof MultiBlockControllerBlock controller) {
-                    return controller.useItemOn(stack, controllerState, level, controllerPos,
-                            player, hand, hitResult);
-                }
-            }
-        }
-        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+        return propagateToController(level, pos, (controller, controllerPos) ->
+                        controller.useItemOn(stack, level.getBlockState(controllerPos), level,
+                                controllerPos, player, hand, hitResult),
+                super.useItemOn(stack, state, level, pos, player, hand, hitResult));
     }
 
     @Override
     public boolean onWrenched(BlockState state, Level level, BlockPos pos, Player player,
             InteractionHand hand, Vec3 clickLocation) {
-        TestMod.LOGGER.debug("MultiBlockPartBlock::onWrenched");
-        // Check if the super onWrenched method does anything.
         if (IWrenchable.super.onWrenched(state, level, pos, player, hand, clickLocation)) {
             return true;
         }
-        // If not, and the multiblock structure is formed, propagate the wrenched
-        // event to the multiblock controller.
-        if (state.getValue(FORMED)) {
-            BlockPos controllerPos = getControllerPos(level, pos);
-            if (controllerPos != null && !controllerPos.equals(pos)) {
-                BlockState controllerState = level.getBlockState(controllerPos);
-                if (controllerState.getBlock() instanceof MultiBlockControllerBlock controllerBlock) {
-                    return controllerBlock.onWrenched(controllerState, level, controllerPos, player,
-                            hand, clickLocation);
-                }
-            }
-        }
-        return false;
+        return propagateToController(level, pos, (controller, controllerPos) ->
+                        controller.onWrenched(level.getBlockState(controllerPos), level, controllerPos,
+                                player, hand, clickLocation),
+                false);
     }
+
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos,
             CollisionContext context) {
-        if (state.getValue(FORMED)) {
-            BlockPos controllerPos = getControllerPos(level, pos);
-            if (controllerPos != null) {
-                BlockState controllerState = level.getBlockState(controllerPos);
-                if (controllerState.getBlock() instanceof MultiBlockControllerBlock controller) {
-                    VoxelShape controllerShape = controller.getShape(controllerState, level,
-                            controllerPos, context);
-                    BlockPos controllerOffset = controllerPos.subtract(pos);
-                    return controllerShape.move(controllerOffset.getX(), controllerOffset.getY(),
-                            controllerOffset.getZ());
-                }
-            }
-        }
-        return super.getShape(state, level, pos, context);
+        return propagateToController(level, pos, (controller, controllerPos) -> {
+            VoxelShape controllerShape = controller.getShape(level.getBlockState(controllerPos),
+                    level, controllerPos, context);
+            BlockPos controllerOffset = controllerPos.subtract(pos);
+            return controllerShape.move(controllerOffset.getX(), controllerOffset.getY(),
+                    controllerOffset.getZ());
+        }, super.getShape(state, level, pos, context));
     }
 
-    @Override
-    public VoxelShape getCollisionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos,
-            CollisionContext pContext) {
-        // TODO Auto-generated method stub
-        return super.getCollisionShape(pState, pLevel, pPos, pContext);
-    }
 }

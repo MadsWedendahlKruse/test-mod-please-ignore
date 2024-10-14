@@ -14,14 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * hologram, i.e. it renders the hologram if it's not already rendered, and clears it if it's
  * already rendered.
  */
-public class WrenchEvent implements HologramEvent {
-    protected final Level level;
-    protected final BlockPos controllerPos;
-
-    public WrenchEvent(Level level, BlockPos controllerPos) {
-        this.level = level;
-        this.controllerPos = controllerPos;
-    }
+public record WrenchEvent(Level level, BlockPos controllerPos) implements HologramEvent {
 
     @Override
     public void apply(HologramRenderer renderer) {

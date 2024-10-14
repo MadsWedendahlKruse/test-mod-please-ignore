@@ -192,13 +192,12 @@ public abstract class ConduitNetwork<C, T> implements INBTSerializable<CompoundT
         queue.add(start);
         visited.add(start);
 
+        // The source of the payload
+        C source = level.getCapability(type.getCapability(), start, sourceDir);
+
         while (!queue.isEmpty() && !isPayloadEmpty(payload)) {
             BlockPos current = queue.poll();
             for (Direction direction : Direction.values()) {
-                // Don't send the payload back to the sender
-                if (current.equals(start) && direction == sourceDir) {
-                    continue;
-                }
 
                 BlockPos neighbor = current.relative(direction);
                 if (!visited.contains(neighbor) && graph.containsKey(neighbor)) {
@@ -219,7 +218,7 @@ public abstract class ConduitNetwork<C, T> implements INBTSerializable<CompoundT
                 }
                 C receiver = level.getCapability(type.getCapability(), neighbor,
                         direction.getOpposite());
-                if (receiver == null) {
+                if (receiver == null || receiver == source) {
                     continue;
                 }
                 T receivedPayload = transferPayload(receiver, payload, simulate);

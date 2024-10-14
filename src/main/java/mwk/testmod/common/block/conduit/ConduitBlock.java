@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -19,6 +20,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -28,6 +30,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -60,7 +63,11 @@ public class ConduitBlock extends Block
     private final ConduitType type;
 
     public ConduitBlock(Properties properties, ConduitType type) {
-        super(properties.noOcclusion());
+        super(properties
+                .noOcclusion()
+                .mapColor(MapColor.METAL)
+                .sound(SoundType.METAL)
+                .strength(1.0F));
         makeShapes();
         registerDefaultState(defaultBlockState().setValue(BlockStateProperties.WATERLOGGED, false));
         this.type = type;
@@ -229,6 +236,8 @@ public class ConduitBlock extends Block
                                     TestModLanguageProvider.KEY_INFO_CONDUIT_CYCLE_MODE,
                                     Component.translatable(newType.getSerializedName())),
                             true);
+                    level.playSound(null, pos, state.getSoundType().getHitSound(),
+                            SoundSource.BLOCKS, 1.0F, 1.0F);
                     return true;
                 }
             }
@@ -238,11 +247,11 @@ public class ConduitBlock extends Block
 
     public ConduitConnectionType cycleConnectorType(ConduitConnectionType type) {
         return switch (type) {
-            case NONE -> ConduitConnectionType.BIDIRECTIONAL;
             case BIDIRECTIONAL -> ConduitConnectionType.PULL;
             case PULL -> ConduitConnectionType.PUSH;
-            case PUSH -> ConduitConnectionType.NONE;
-            case CONDUIT -> ConduitConnectionType.CONDUIT;
+            case PUSH -> ConduitConnectionType.DISABLED;
+            case DISABLED -> ConduitConnectionType.BIDIRECTIONAL;
+            default -> type;
         };
     }
 
@@ -298,18 +307,59 @@ public class ConduitBlock extends Block
             new VoxelShape[]{SHAPE_BLOCK_DOWN, SHAPE_BLOCK_UP, SHAPE_BLOCK_NORTH, SHAPE_BLOCK_SOUTH,
                     SHAPE_BLOCK_WEST, SHAPE_BLOCK_EAST};
 
+    /**
+     * All the different connector modes have the same model/shape, so don't have to store  a
+     * separate shape for each of them
+     */
+    private static final int SHAPE_COUNT = 3;
+
+    private int calculateConnectionIndex(ConduitConnectionType connectionType) {
+        if (connectionType.hasConnector()) {
+            return SHAPE_COUNT - 1;
+        }
+        return connectionType.ordinal();
+    }
+
     private int calculateShapeIndex(ConduitConnectionType north, ConduitConnectionType south,
+            ConduitConnectionType west, ConduitConnectionType east, ConduitConnectionType up,
+            ConduitConnectionType down) {
+        return ((((calculateConnectionIndex(south) * SHAPE_COUNT
+                + calculateConnectionIndex(north)) * SHAPE_COUNT
+                + calculateConnectionIndex(west)) * SHAPE_COUNT
+                + calculateConnectionIndex(east)) * SHAPE_COUNT
+                + calculateConnectionIndex(up)) * SHAPE_COUNT
+                + calculateConnectionIndex(down);
+    }
+
+    private VoxelShape combineShape(VoxelShape shape, ConduitConnectionType conduitConnectionType,
+            VoxelShape conduitShape, VoxelShape blockShape) {
+        if (conduitConnectionType == ConduitConnectionType.CONDUIT) {
+            return Shapes.join(shape, conduitShape, BooleanOp.OR);
+        } else if (conduitConnectionType.hasConnector()) {
+            return Shapes.join(shape, Shapes.join(blockShape, conduitShape, BooleanOp.OR),
+                    BooleanOp.OR);
+        } else {
+            return shape;
+        }
+    }
+
+    private VoxelShape makeShape(ConduitConnectionType north, ConduitConnectionType south,
             ConduitConnectionType west,
             ConduitConnectionType east, ConduitConnectionType up, ConduitConnectionType down) {
-        int l = ConduitConnectionType.values().length;
-        return ((((south.ordinal() * l + north.ordinal()) * l + west.ordinal()) * l
-                + east.ordinal()) * l + up.ordinal()) * l + down.ordinal();
+        VoxelShape shape = Shapes.box(CONDUIT_MIN, CONDUIT_MIN, CONDUIT_MIN, CONDUIT_MAX,
+                CONDUIT_MAX, CONDUIT_MAX);
+        shape = combineShape(shape, north, SHAPE_CONDUIT_NORTH, SHAPE_BLOCK_NORTH);
+        shape = combineShape(shape, south, SHAPE_CONDUIT_SOUTH, SHAPE_BLOCK_SOUTH);
+        shape = combineShape(shape, west, SHAPE_CONDUIT_WEST, SHAPE_BLOCK_WEST);
+        shape = combineShape(shape, east, SHAPE_CONDUIT_EAST, SHAPE_BLOCK_EAST);
+        shape = combineShape(shape, up, SHAPE_CONDUIT_UP, SHAPE_BLOCK_UP);
+        shape = combineShape(shape, down, SHAPE_CONDUIT_DOWN, SHAPE_BLOCK_DOWN);
+        return shape;
     }
 
     private void makeShapes() {
         if (shapeCache == null) {
-            int length = ConduitConnectionType.values().length;
-            shapeCache = new VoxelShape[length * length * length * length * length * length];
+            shapeCache = new VoxelShape[(int) Math.pow(SHAPE_COUNT, 6)];
 
             // TODO: Sweet mother of nested loops!
             // Check video comments for a better way to do this
@@ -330,32 +380,6 @@ public class ConduitBlock extends Block
                 }
             }
 
-        }
-    }
-
-    private VoxelShape makeShape(ConduitConnectionType north, ConduitConnectionType south,
-            ConduitConnectionType west,
-            ConduitConnectionType east, ConduitConnectionType up, ConduitConnectionType down) {
-        VoxelShape shape = Shapes.box(CONDUIT_MIN, CONDUIT_MIN, CONDUIT_MIN, CONDUIT_MAX,
-                CONDUIT_MAX, CONDUIT_MAX);
-        shape = combineShape(shape, north, SHAPE_CONDUIT_NORTH, SHAPE_BLOCK_NORTH);
-        shape = combineShape(shape, south, SHAPE_CONDUIT_SOUTH, SHAPE_BLOCK_SOUTH);
-        shape = combineShape(shape, west, SHAPE_CONDUIT_WEST, SHAPE_BLOCK_WEST);
-        shape = combineShape(shape, east, SHAPE_CONDUIT_EAST, SHAPE_BLOCK_EAST);
-        shape = combineShape(shape, up, SHAPE_CONDUIT_UP, SHAPE_BLOCK_UP);
-        shape = combineShape(shape, down, SHAPE_CONDUIT_DOWN, SHAPE_BLOCK_DOWN);
-        return shape;
-    }
-
-    private VoxelShape combineShape(VoxelShape shape, ConduitConnectionType conduitConnectionType,
-            VoxelShape conduitShape, VoxelShape blockShape) {
-        if (conduitConnectionType == ConduitConnectionType.CONDUIT) {
-            return Shapes.join(shape, conduitShape, BooleanOp.OR);
-        } else if (conduitConnectionType.hasConnector()) {
-            return Shapes.join(shape, Shapes.join(blockShape, conduitShape, BooleanOp.OR),
-                    BooleanOp.OR);
-        } else {
-            return shape;
         }
     }
 

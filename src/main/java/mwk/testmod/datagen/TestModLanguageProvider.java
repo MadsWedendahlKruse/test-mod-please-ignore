@@ -237,5 +237,6 @@ public class TestModLanguageProvider extends LanguageProvider {
         add(ConduitConnectionType.PULL.getSerializedName(), "PULL");
         add(ConduitConnectionType.PUSH.getSerializedName(), "PUSH");
         add(ConduitConnectionType.BIDIRECTIONAL.getSerializedName(), "BIDIRECTIONAL");
+        add(ConduitConnectionType.DISABLED.getSerializedName(), "DISABLED");
     }
 }

@@ -7,19 +7,10 @@ import net.minecraft.core.Direction;
 
 /**
  * This event clears the hologram if the current blueprint is the same as the one being cleared.
- * This is useful for example when the player breaks a block that the hologram is projected on.
+ * This is used when the player breaks the block the hologram is being projected from.
  */
-public class ClearIfCurrentEvent implements HologramEvent {
-    private final MultiBlockBlueprint blueprint;
-    private final BlockPos controllerPos;
-    private final Direction facing;
-
-    public ClearIfCurrentEvent(MultiBlockBlueprint blueprint, BlockPos controllerPos,
-            Direction facing) {
-        this.blueprint = blueprint;
-        this.controllerPos = controllerPos;
-        this.facing = facing;
-    }
+public record ClearIfCurrentEvent(MultiBlockBlueprint blueprint, BlockPos controllerPos,
+                                  Direction facing) implements HologramEvent {
 
     @Override
     public void apply(HologramRenderer renderer) {
