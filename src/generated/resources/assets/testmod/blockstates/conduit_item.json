@@ -113,59 +113,6 @@
     },
     {
       "apply": {
-        "model": "testmod:block/conduit_connector_push_item"
-      },
-      "when": {
-        "north": "push"
-      }
-    },
-    {
-      "apply": {
-        "model": "testmod:block/conduit_connector_push_item",
-        "y": 90
-      },
-      "when": {
-        "east": "push"
-      }
-    },
-    {
-      "apply": {
-        "model": "testmod:block/conduit_connector_push_item",
-        "y": 180
-      },
-      "when": {
-        "south": "push"
-      }
-    },
-    {
-      "apply": {
-        "model": "testmod:block/conduit_connector_push_item",
-        "y": 270
-      },
-      "when": {
-        "west": "push"
-      }
-    },
-    {
-      "apply": {
-        "model": "testmod:block/conduit_connector_push_item",
-        "x": 270
-      },
-      "when": {
-        "up": "push"
-      }
-    },
-    {
-      "apply": {
-        "model": "testmod:block/conduit_connector_push_item",
-        "x": 90
-      },
-      "when": {
-        "down": "push"
-      }
-    },
-    {
-      "apply": {
         "model": "testmod:block/conduit_connector_pull_item"
       },
       "when": {
@@ -215,6 +162,59 @@
       },
       "when": {
         "down": "pull"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_push_item"
+      },
+      "when": {
+        "north": "push"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_push_item",
+        "y": 90
+      },
+      "when": {
+        "east": "push"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_push_item",
+        "y": 180
+      },
+      "when": {
+        "south": "push"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_push_item",
+        "y": 270
+      },
+      "when": {
+        "west": "push"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_push_item",
+        "x": 270
+      },
+      "when": {
+        "up": "push"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_push_item",
+        "x": 90
+      },
+      "when": {
+        "down": "push"
       }
     }
   ]

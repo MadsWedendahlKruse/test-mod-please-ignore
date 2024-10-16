@@ -51,7 +51,7 @@ public class StampingPressBlockEntity extends
 
     public static final float CONVEYOR_CENTER_OFFSET = 1.5F;
 
-    private final KeyframeManager keyframeManager;
+    private final KeyframeManager stampingAnimation;
 
     public StampingPressBlockEntity(BlockPos pos, BlockState state) {
         super(TestModBlockEntities.STAMPING_PRESS_ENTITY_TYPE.get(), pos, state,
@@ -59,31 +59,32 @@ public class StampingPressBlockEntity extends
                 EMPTY_TANKS, DEFAULT_MAX_PROGRESS, TestModRecipeTypes.STAMPING.get(),
                 TestModSounds.STAMPING_PRESS.get(), TestModSounds.STAMPING_PRESS_DURATION);
         // One animation for the piston, and one for the item being stamped
-        keyframeManager = new KeyframeManager(new float[]{0, -CONVEYOR_CENTER_OFFSET});
+        stampingAnimation = new KeyframeManager(new float[]{0, -CONVEYOR_CENTER_OFFSET});
         final float duration = DEFAULT_MAX_PROGRESS / 20.0F;
         // Item being stamped
         // We can the use the center as a reference point for when to swap the rendered item from
         // the input to the output. We therefore stop the item before it gets stamped just shy of
         // the center.
-        keyframeManager.addKeyframe(CONVEYOR_ANIMATION_INDEX, duration / 3, -0.001F);
+        stampingAnimation.addKeyframe(CONVEYOR_ANIMATION_INDEX, duration / 3, -0.001F);
         // As the piston goes down, the item moves a very tiny distance forward, so it reaches the
         // center of the conveyor. We can then swap the item from the input to the output
-        keyframeManager.addKeyframe(CONVEYOR_ANIMATION_INDEX, PISTON_DOWN_DURATION, 0);
+        stampingAnimation.addKeyframe(CONVEYOR_ANIMATION_INDEX, PISTON_DOWN_DURATION, 0);
         // Remain at the center until 2/3 of the way through the animation
-        keyframeManager.addKeyframe(CONVEYOR_ANIMATION_INDEX, duration / 3 - PISTON_DOWN_DURATION,
+        stampingAnimation.addKeyframe(CONVEYOR_ANIMATION_INDEX, duration / 3 - PISTON_DOWN_DURATION,
                 0);
         // Finally, move the item to the output
-        keyframeManager.addKeyframe(CONVEYOR_ANIMATION_INDEX, duration / 3, CONVEYOR_CENTER_OFFSET);
+        stampingAnimation.addKeyframe(CONVEYOR_ANIMATION_INDEX, duration / 3,
+                CONVEYOR_CENTER_OFFSET);
         // Piston remains up until the item is moved to the center
-        keyframeManager.addKeyframe(PISTON_ANIMATION_INDEX, duration / 3, 0);
-        keyframeManager.addKeyframe(PISTON_ANIMATION_INDEX, PISTON_DOWN_DURATION,
+        stampingAnimation.addKeyframe(PISTON_ANIMATION_INDEX, duration / 3, 0);
+        stampingAnimation.addKeyframe(PISTON_ANIMATION_INDEX, PISTON_DOWN_DURATION,
                 PISTON_DOWN_OFFSET, Function.EASE_IN_CUBIC);
-        keyframeManager.addKeyframe(PISTON_ANIMATION_INDEX, PISTON_HOLD_DURATION,
+        stampingAnimation.addKeyframe(PISTON_ANIMATION_INDEX, PISTON_HOLD_DURATION,
                 PISTON_DOWN_OFFSET);
-        keyframeManager.addKeyframe(PISTON_ANIMATION_INDEX, PISTON_UP_DURATION, PISTON_UP_OFFSET,
+        stampingAnimation.addKeyframe(PISTON_ANIMATION_INDEX, PISTON_UP_DURATION, PISTON_UP_OFFSET,
                 Function.EASE_OUT_CUBIC);
 
-        keyframeManager.start();
+        stampingAnimation.start();
     }
 
     @Override
@@ -124,8 +125,8 @@ public class StampingPressBlockEntity extends
     protected void onInventoryChanged(int slot) {
         super.onInventoryChanged(slot);
         // Reset animation if the inputs change
-        if (slot < inputSlots) {
-            keyframeManager.start();
+        if (slot < inputSlots && inventory.getStackInSlot(slot).isEmpty()) {
+            stampingAnimation.start();
         }
     }
 
@@ -216,9 +217,9 @@ public class StampingPressBlockEntity extends
     }
 
     public void updateAnimations() {
-        float prevPistonHeight = keyframeManager.getValue(PISTON_ANIMATION_INDEX);
-        keyframeManager.update();
-        float newPistonHeight = keyframeManager.getValue(PISTON_ANIMATION_INDEX);
+        float prevPistonHeight = stampingAnimation.getValue(PISTON_ANIMATION_INDEX);
+        stampingAnimation.update();
+        float newPistonHeight = stampingAnimation.getValue(PISTON_ANIMATION_INDEX);
         if (prevPistonHeight > newPistonHeight
                 && (newPistonHeight == PISTON_DOWN_OFFSET)) {
             Player player = Minecraft.getInstance().player;
@@ -228,10 +229,10 @@ public class StampingPressBlockEntity extends
     }
 
     public float getPistonHeight() {
-        return keyframeManager.getValue(PISTON_ANIMATION_INDEX);
+        return stampingAnimation.getValue(PISTON_ANIMATION_INDEX);
     }
 
     public float getConveyorPosition() {
-        return keyframeManager.getValue(CONVEYOR_ANIMATION_INDEX);
+        return stampingAnimation.getValue(CONVEYOR_ANIMATION_INDEX);
     }
 }

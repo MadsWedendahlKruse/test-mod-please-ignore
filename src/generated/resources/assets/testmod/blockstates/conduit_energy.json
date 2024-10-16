@@ -113,59 +113,6 @@
     },
     {
       "apply": {
-        "model": "testmod:block/conduit_connector_push_energy"
-      },
-      "when": {
-        "north": "push"
-      }
-    },
-    {
-      "apply": {
-        "model": "testmod:block/conduit_connector_push_energy",
-        "y": 90
-      },
-      "when": {
-        "east": "push"
-      }
-    },
-    {
-      "apply": {
-        "model": "testmod:block/conduit_connector_push_energy",
-        "y": 180
-      },
-      "when": {
-        "south": "push"
-      }
-    },
-    {
-      "apply": {
-        "model": "testmod:block/conduit_connector_push_energy",
-        "y": 270
-      },
-      "when": {
-        "west": "push"
-      }
-    },
-    {
-      "apply": {
-        "model": "testmod:block/conduit_connector_push_energy",
-        "x": 270
-      },
-      "when": {
-        "up": "push"
-      }
-    },
-    {
-      "apply": {
-        "model": "testmod:block/conduit_connector_push_energy",
-        "x": 90
-      },
-      "when": {
-        "down": "push"
-      }
-    },
-    {
-      "apply": {
         "model": "testmod:block/conduit_connector_pull_energy"
       },
       "when": {
@@ -215,6 +162,59 @@
       },
       "when": {
         "down": "pull"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_push_energy"
+      },
+      "when": {
+        "north": "push"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_push_energy",
+        "y": 90
+      },
+      "when": {
+        "east": "push"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_push_energy",
+        "y": 180
+      },
+      "when": {
+        "south": "push"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_push_energy",
+        "y": 270
+      },
+      "when": {
+        "west": "push"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_push_energy",
+        "x": 270
+      },
+      "when": {
+        "up": "push"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_push_energy",
+        "x": 90
+      },
+      "when": {
+        "down": "push"
       }
     }
   ]

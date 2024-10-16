@@ -127,6 +127,11 @@ public class TestModRecipeProvider extends RecipeProvider {
 
     private void registerCookingRecipes(RecipeOutput recipeOutput) {
         SimpleCookingRecipeBuilder
+                .blasting(Ingredient.of(TestModTags.Items.IRON_DUST), RecipeCategory.MISC,
+                        Items.IRON_INGOT, 1.0F, 200)
+                .unlockedBy(getHasName(TestModItems.IRON_DUST), has(TestModTags.Items.IRON_DUST))
+                .save(recipeOutput);
+        SimpleCookingRecipeBuilder
                 .blasting(Ingredient.of(TestModTags.Items.STEEL_DUST), RecipeCategory.MISC,
                         TestModItems.STEEL_INGOT.get(), 1.0F, 200)
                 .unlockedBy(getHasName(TestModItems.STEEL_DUST), has(TestModTags.Items.STEEL_DUST))
