@@ -12,12 +12,12 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import mwk.testmod.client.animations.LoopingAnimationFloat;
 import mwk.testmod.client.animations.base.FixedAnimation.Function;
-import mwk.testmod.client.gui.GuiUtils;
+import mwk.testmod.client.utils.GuiUtils;
 import mwk.testmod.client.gui.widgets.EnergyBar;
 import mwk.testmod.client.gui.widgets.progress.ProgressArrow;
 import mwk.testmod.client.gui.widgets.progress.ProgressIcon;
 import mwk.testmod.common.block.inventory.base.ProcessingMenu;
-import mwk.testmod.common.util.inventory.ItemSlotGridHelper;
+import mwk.testmod.client.utils.ItemSlotGridHelper;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
@@ -171,6 +171,7 @@ public abstract class BaseRecipeCategory<T extends Recipe<?>> implements IRecipe
 
     @FunctionalInterface
     public interface ProgressArrowFactory {
+
         ProgressArrow create(ProcessingMenu menu, int x, int y);
     }
 

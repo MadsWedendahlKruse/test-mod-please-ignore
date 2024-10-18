@@ -9,7 +9,9 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
 
 public class TestModLanguageProvider extends LanguageProvider {
 
-    // Descriptions
+    // Descriptions/tooltips
+    public static final String KEY_TOOLTIP_SHOW_INFO = "tooltip.testmod.show_info";
+    public static final String KEY_TOOLTIP_SHOW_DESCRIPTION = "tooltip.testmod.show_description";
     public static final String KEY_DESCRIPTION_MISSING = "description.testmod.missing";
     public static final String KEY_DESCRIPTION_SUPER_ASSEMBLER =
             "description.testmod.super_assembler";
@@ -127,7 +129,7 @@ public class TestModLanguageProvider extends LanguageProvider {
         add(TestModBlocks.MACHINE_ENERGY_PORT.get(), "Machine Energy Port");
         add(TestModBlocks.COPPER_COIL.get(), "Copper Coil");
         add(TestModBlocks.ENERGY_CUBE.get(), "Energy Cube");
-        add(TestModBlocks.SUPER_ASSEMBLER.get(), "Super Assembler");
+        add(TestModBlocks.ASSEMBLER.get(), "Super Assembler");
         add(TestModBlocks.INDUCTION_FURNACE.get(), "Induction Furnace");
         add(TestModBlocks.CRUSHER.get(), "Crusher");
         add(TestModBlocks.SEPARATOR.get(), "Separator");
@@ -139,7 +141,9 @@ public class TestModLanguageProvider extends LanguageProvider {
         add(TestModBlocks.CONDUIT_ITEM.get(), "Item Conduit");
         add(TestModBlocks.CONDUIT_FLUID.get(), "Fluid Conduit");
         add(TestModBlocks.CONDUIT_ENERGY.get(), "Energy Conduit");
-        // TEMPORARY DESCRIPTIONS
+        // Descriptions/tooltips
+        add(KEY_TOOLTIP_SHOW_INFO, "Press %s for more information");
+        add(KEY_TOOLTIP_SHOW_DESCRIPTION, "Press %s for a description");
         add(KEY_DESCRIPTION_MISSING, "No description available.");
         add(KEY_DESCRIPTION_SUPER_ASSEMBLER,
                 "A powerful machine designed to automate the crafting of complex items. It can store multiple recipes and automatically craft items when provided with the necessary materials.");

@@ -1,5 +1,6 @@
 {
   "bidirectional": "BIDIRECTIONAL",
+  "block.testmod.assembler": "Super Assembler",
   "block.testmod.capacitron": "Capacitron",
   "block.testmod.conduit_energy": "Energy Conduit",
   "block.testmod.conduit_fluid": "Fluid Conduit",
@@ -23,7 +24,6 @@
   "block.testmod.separator": "Separator",
   "block.testmod.stamping_press": "Stamping Press",
   "block.testmod.stirling_generator": "Stirling Generator",
-  "block.testmod.super_assembler": "Super Assembler",
   "conduit": "CONDUIT",
   "description.testmod.capacitron": "A machine that stores and provides energy to other machines. Useful for storing excess energy and providing power to machines and systems when needed.",
   "description.testmod.crusher": "A powerful machine designed to break down ores into finer materials, enabling the extraction of valuable resources. Essential for efficient ore processing and preparation in advanced manufacturing systems.",
@@ -75,6 +75,8 @@
   "push": "PUSH",
   "sounds.testmod.block.crusher": "Crusher crushes",
   "sounds.testmod.block.multiblock_form": "Multiblock forms",
+  "tooltip.testmod.show_description": "Press %s for a description",
+  "tooltip.testmod.show_info": "Press %s for more information",
   "widget.testmod.auto_eject.tooltip": "Auto eject: %s",
   "widget.testmod.auto_insert.tooltip": "Auto insert: %s",
   "widget.testmod.energy_bar": "Energy",

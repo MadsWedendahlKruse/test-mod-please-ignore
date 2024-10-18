@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import mwk.testmod.TestMod;
 import mwk.testmod.common.block.conduit.ConduitBlock;
 import mwk.testmod.common.block.conduit.ConduitType;
+import mwk.testmod.common.block.entity.AssemblerBlockEntity;
 import mwk.testmod.common.block.entity.CapacitronBlockEntity;
 import mwk.testmod.common.block.entity.CrusherBlockEntity;
 import mwk.testmod.common.block.entity.GeothermalGeneratorBlockEntity;
@@ -74,9 +75,8 @@ public class TestModBlocks {
     // Machines
     public static final DeferredBlock<MultiBlockControllerBlock> INDUCTION_FURNACE = registerMultiBlockController(
             "induction_furnace", InductionFurnaceBlockEntity::new);
-    // TODO: Replace with the actual block entity
-    public static final DeferredBlock<MultiBlockControllerBlock> SUPER_ASSEMBLER = registerMultiBlockController(
-            "super_assembler", InductionFurnaceBlockEntity::new);
+    public static final DeferredBlock<MultiBlockControllerBlock> ASSEMBLER = registerMultiBlockController(
+            "assembler", AssemblerBlockEntity::new);
     public static final DeferredBlock<MultiBlockControllerBlock> CRUSHER = registerMultiBlockController(
             "crusher", CrusherBlockEntity::new);
     public static final DeferredBlock<MultiBlockControllerBlock> SEPARATOR = registerMultiBlockController(

@@ -1,11 +1,11 @@
 package mwk.testmod.client.gui.screen.base;
 
 import java.util.Locale;
-import mwk.testmod.client.gui.GuiUtils;
-import mwk.testmod.client.gui.GuiUtils.GuiTextElement;
+import mwk.testmod.client.utils.GuiUtils;
+import mwk.testmod.client.utils.GuiUtils.GuiTextElement;
 import mwk.testmod.client.gui.screen.config.GuiConfig;
 import mwk.testmod.common.block.inventory.base.ProcessingMenu;
-import mwk.testmod.common.util.ColorUtils;
+import mwk.testmod.client.utils.ColorUtils;
 import mwk.testmod.datagen.TestModLanguageProvider;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;

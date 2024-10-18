@@ -1,11 +1,15 @@
 package mwk.testmod.common.block.multiblock;
 
+import java.util.List;
 import java.util.function.BiFunction;
 import mwk.testmod.TestMod;
 import mwk.testmod.client.render.hologram.HologramRenderer;
 import mwk.testmod.client.render.hologram.events.ClearIfCurrentEvent;
 import mwk.testmod.client.render.hologram.events.WrenchEvent;
+import mwk.testmod.client.utils.ColorUtils;
+import mwk.testmod.client.utils.TooltipUtils;
 import mwk.testmod.common.block.entity.base.MachineBlockEntity;
+import mwk.testmod.common.block.interfaces.IDescribable;
 import mwk.testmod.common.block.interfaces.ITickable;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockBlueprint;
 import mwk.testmod.common.block.multiblock.blueprint.MultiBlockUtils;
@@ -21,7 +25,9 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -321,5 +327,22 @@ public class MultiBlockControllerBlock extends MultiBlockPartBlock {
                     ? ItemInteractionResult.SUCCESS : ItemInteractionResult.FAIL;
         }
         return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context,
+            List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        BlockEntity blockEntity = blockEntityFactory.apply(BlockPos.ZERO, defaultBlockState());
+        if (tooltipFlag.hasControlDown()) {
+            if (blockEntity instanceof IDescribable describable) {
+                tooltipComponents.add(Component.translatable(describable.getDescriptionKey())
+                        .withColor(ColorUtils.TEXT_GRAY));
+                return;
+            }
+        }
+        // TODO: Use a keybind manager to get the keybind.
+        tooltipComponents.add(
+                Component.translatable(TestModLanguageProvider.KEY_TOOLTIP_SHOW_DESCRIPTION,
+                        TooltipUtils.getKeybindComponent("Ctrl")).withColor(ColorUtils.TEXT_GRAY));
     }
 }

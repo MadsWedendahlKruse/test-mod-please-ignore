@@ -56,7 +56,7 @@ public class TestModBlockStateProvider extends BlockStateProvider {
         registerMultiBlockPart(TestModBlocks.ENERGY_CUBE, CubeModel.CUBE_COLUMN);
 
         registerMultiBlockController(TestModBlocks.INDUCTION_FURNACE, ControllerType.MACHINE);
-        registerMultiBlockController(TestModBlocks.SUPER_ASSEMBLER, ControllerType.MACHINE);
+//        registerMultiBlockController(TestModBlocks.ASSEMBLER, ControllerType.MACHINE);
         registerMultiBlockController(TestModBlocks.CRUSHER, ControllerType.MACHINE);
         registerMultiBlockController(TestModBlocks.SEPARATOR, ControllerType.MACHINE);
         registerMultiBlockController(TestModBlocks.STAMPING_PRESS, ControllerType.MACHINE);

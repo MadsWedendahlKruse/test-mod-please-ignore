@@ -1,7 +1,7 @@
 package mwk.testmod.client.gui.widgets;
 
 import mwk.testmod.TestMod;
-import mwk.testmod.client.gui.GuiUtils;
+import mwk.testmod.client.utils.GuiUtils;
 import mwk.testmod.common.block.inventory.base.EnergyMenu;
 import mwk.testmod.datagen.TestModLanguageProvider;
 import net.minecraft.client.Minecraft;

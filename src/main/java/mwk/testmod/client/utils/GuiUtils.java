@@ -1,4 +1,4 @@
-package mwk.testmod.client.gui;
+package mwk.testmod.client.utils;
 
 import com.ibm.icu.text.NumberFormat;
 import com.mojang.blaze3d.systems.RenderSystem;

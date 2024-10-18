@@ -1,7 +1,7 @@
 package mwk.testmod.client.gui.widgets.buttons;
 
 import mwk.testmod.TestMod;
-import mwk.testmod.common.util.ColorUtils;
+import mwk.testmod.client.utils.ColorUtils;
 import mwk.testmod.datagen.TestModLanguageProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

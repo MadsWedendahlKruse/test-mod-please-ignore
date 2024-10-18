@@ -1,9 +1,10 @@
-package mwk.testmod.common.util;
+package mwk.testmod.client.utils;
 
 public class ColorUtils {
 
     public static final int TEXT_BLACK = getTextColor(0, 0, 0);
     public static final int TEXT_WHITE = getTextColor(255, 255, 255);
+    public static final int TEXT_GRAY = getTextColor(170, 170, 170);
     public static final int TEXT_RED = getTextColor(255, 0, 0);
     public static final int TEXT_GREEN = getTextColor(0, 255, 0);
     public static final int TEXT_BLUE = getTextColor(0, 0, 255);

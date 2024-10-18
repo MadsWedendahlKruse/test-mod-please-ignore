@@ -4,6 +4,7 @@ import mwk.testmod.TestMod;
 import mwk.testmod.common.block.conduit.EnergyConduitBlockEntity;
 import mwk.testmod.common.block.conduit.FluidConduitBlockEntity;
 import mwk.testmod.common.block.conduit.ItemConduitBlockEntity;
+import mwk.testmod.common.block.entity.AssemblerBlockEntity;
 import mwk.testmod.common.block.entity.CapacitronBlockEntity;
 import mwk.testmod.common.block.entity.CrusherBlockEntity;
 import mwk.testmod.common.block.entity.GeothermalGeneratorBlockEntity;
@@ -65,6 +66,8 @@ public class TestModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<InductionFurnaceBlockEntity>> INDUCTION_FURNACE_ENTITY_TYPE =
             registerSimpleBlockEntity(TestModBlocks.INDUCTION_FURNACE,
                     InductionFurnaceBlockEntity::new);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AssemblerBlockEntity>> ASSEMBLER_ENTITY_TYPE =
+            registerSimpleBlockEntity(TestModBlocks.ASSEMBLER, AssemblerBlockEntity::new);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CrusherBlockEntity>> CRUSHER_ENTITY_TYPE =
             registerSimpleBlockEntity(TestModBlocks.CRUSHER, CrusherBlockEntity::new);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SeparatorBlockEntity>> SEPARATOR_ENTITY_TYPE =

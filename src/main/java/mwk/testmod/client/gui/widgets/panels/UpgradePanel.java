@@ -1,10 +1,10 @@
 package mwk.testmod.client.gui.widgets.panels;
 
 import mwk.testmod.TestMod;
-import mwk.testmod.client.gui.GuiUtils;
+import mwk.testmod.client.utils.GuiUtils;
 import mwk.testmod.client.gui.widgets.panels.base.MachinePanel;
 import mwk.testmod.common.block.inventory.base.MachineMenu;
-import mwk.testmod.common.util.inventory.ItemSlotGridHelper;
+import mwk.testmod.client.utils.ItemSlotGridHelper;
 import mwk.testmod.datagen.TestModLanguageProvider;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;

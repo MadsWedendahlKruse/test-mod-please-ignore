@@ -1,7 +1,7 @@
 package mwk.testmod.common.block.inventory;
 
 import mwk.testmod.common.block.inventory.base.ProcessingMenu;
-import mwk.testmod.common.util.inventory.ItemSlotGridHelper;
+import mwk.testmod.client.utils.ItemSlotGridHelper;
 import mwk.testmod.common.util.inventory.handler.InputItemHandler;
 import mwk.testmod.init.registries.TestModMenus;
 import net.minecraft.core.BlockPos;

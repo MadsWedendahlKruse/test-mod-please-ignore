@@ -1,8 +1,8 @@
 package mwk.testmod.client.gui.widgets;
 
 import mwk.testmod.TestMod;
-import mwk.testmod.client.gui.GuiUtils;
-import mwk.testmod.client.gui.GuiUtils.TilingDirection;
+import mwk.testmod.client.utils.GuiUtils;
+import mwk.testmod.client.utils.GuiUtils.TilingDirection;
 import mwk.testmod.client.render.RenderUtils;
 import mwk.testmod.datagen.TestModLanguageProvider;
 import net.minecraft.client.Minecraft;

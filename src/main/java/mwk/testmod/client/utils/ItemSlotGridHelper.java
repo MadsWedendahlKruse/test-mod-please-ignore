@@ -1,4 +1,4 @@
-package mwk.testmod.common.util.inventory;
+package mwk.testmod.client.utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.List;
 public class ItemSlotGridHelper {
 
     public record SlotPosition(int x, int y) {
+
     }
 
     public static final int SLOT_SIZE = 18;

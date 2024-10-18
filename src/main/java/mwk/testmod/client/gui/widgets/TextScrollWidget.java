@@ -1,7 +1,7 @@
 package mwk.testmod.client.gui.widgets;
 
 import java.util.List;
-import mwk.testmod.common.util.ColorUtils;
+import mwk.testmod.client.utils.ColorUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;

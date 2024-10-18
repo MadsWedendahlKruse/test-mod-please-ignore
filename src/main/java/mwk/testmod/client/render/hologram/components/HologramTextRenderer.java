@@ -2,7 +2,7 @@ package mwk.testmod.client.render.hologram.components;
 
 import org.joml.Quaternionf;
 import com.mojang.blaze3d.vertex.PoseStack;
-import mwk.testmod.common.util.ColorUtils;
+import mwk.testmod.client.utils.ColorUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Font.DisplayMode;
 import net.minecraft.client.renderer.LightTexture;

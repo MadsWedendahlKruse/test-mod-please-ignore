@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "testmod:super_assembler"
+          "name": "testmod:assembler"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "testmod:blocks/super_assembler"
+  "random_sequence": "testmod:blocks/assembler"
 }

@@ -3,7 +3,7 @@ package mwk.testmod.client.gui.widgets.panels.base;
 import mwk.testmod.TestMod;
 import mwk.testmod.client.animations.FixedAnimationFloat;
 import mwk.testmod.client.animations.base.FixedAnimation.Function;
-import mwk.testmod.common.util.ColorUtils;
+import mwk.testmod.client.utils.ColorUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;

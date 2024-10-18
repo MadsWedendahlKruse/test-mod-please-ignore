@@ -2,7 +2,7 @@ package mwk.testmod.compat.jei.recipe_categories;
 
 import java.util.List;
 import mezz.jei.api.helpers.IGuiHelper;
-import mwk.testmod.client.gui.GuiUtils;
+import mwk.testmod.client.utils.GuiUtils;
 import mwk.testmod.client.gui.widgets.EnergyBar;
 import mwk.testmod.client.gui.widgets.progress.ProgressArrow1To3;
 import mwk.testmod.common.recipe.SeparationRecipe;

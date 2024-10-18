@@ -7,7 +7,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintBlockInfo;
 import mwk.testmod.common.block.multiblock.blueprint.BlueprintState;
-import mwk.testmod.common.util.ColorUtils;
+import mwk.testmod.client.utils.ColorUtils;
 import mwk.testmod.datagen.TestModLanguageProvider;
 import mwk.testmod.init.registries.TestModItems;
 import net.minecraft.client.renderer.LightTexture;
@@ -25,7 +25,7 @@ public class HologramItemRenderer {
     private static final float HOLOGRAM_ITEM_SPACING = 0.05F;
     private static final float LIST_ELEMENT_HEIGHT = HOLOGRAM_ITEM_SCALE + HOLOGRAM_ITEM_SPACING;
 
-    private static final float[] HOLOGRAM_COLOR_WHITE = new float[] {1, 1, 1};
+    private static final float[] HOLOGRAM_COLOR_WHITE = new float[]{1, 1, 1};
 
     private ItemRenderer itemRenderer;
     private BufferSource bufferSource;
@@ -164,11 +164,11 @@ public class HologramItemRenderer {
                                 true);
             }
         } else {
-            textRenderer.renderTextList(poseStack, new Component[] {
-                    Component.translatable(
-                            TestModLanguageProvider.KEY_INFO_CONTROLLER_HOLOGRAM_COMPLETE),
-                    Component.translatable(
-                            TestModLanguageProvider.KEY_INFO_CONTROLLER_HOLOGRAM_RIGHT_CLICK_ME)},
+            textRenderer.renderTextList(poseStack, new Component[]{
+                            Component.translatable(
+                                    TestModLanguageProvider.KEY_INFO_CONTROLLER_HOLOGRAM_COMPLETE),
+                            Component.translatable(
+                                    TestModLanguageProvider.KEY_INFO_CONTROLLER_HOLOGRAM_RIGHT_CLICK_ME)},
                     0, height, 0, LIST_ELEMENT_HEIGHT);
             // Delay popping until after all text is rendered
             poseStack.popPose();

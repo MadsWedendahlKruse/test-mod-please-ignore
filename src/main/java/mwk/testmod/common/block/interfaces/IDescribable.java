@@ -3,7 +3,7 @@ package mwk.testmod.common.block.interfaces;
 /**
  * Interface for blocks/items that have a description.
  */
-public interface IDescripable {
+public interface IDescribable {
 
     /**
      * @return The translation key for the description.

@@ -2,7 +2,7 @@ package mwk.testmod.common.block.inventory.base;
 
 import mwk.testmod.common.block.entity.base.MachineBlockEntity;
 import mwk.testmod.common.network.MachineIOPacket;
-import mwk.testmod.common.util.inventory.ItemSlotGridHelper;
+import mwk.testmod.client.utils.ItemSlotGridHelper;
 import mwk.testmod.common.util.inventory.container_data.MachineIOContainerData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
