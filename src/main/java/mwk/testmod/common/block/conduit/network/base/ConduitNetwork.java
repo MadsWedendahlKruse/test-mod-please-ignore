@@ -193,7 +193,8 @@ public abstract class ConduitNetwork<C, T> implements INBTSerializable<CompoundT
         visited.add(start);
 
         // The source of the payload
-        C source = level.getCapability(type.getCapability(), start, sourceDir);
+        C source = level.getCapability(type.getCapability(), start.relative(sourceDir),
+                sourceDir.getOpposite());
 
         while (!queue.isEmpty() && !isPayloadEmpty(payload)) {
             BlockPos current = queue.poll();

@@ -1,7 +1,7 @@
 package mwk.testmod.common.block.multiblock;
 
 import mwk.testmod.common.block.interfaces.ITickable;
-import mwk.testmod.common.block.multiblock.entity.MultiBlockIOPortBlockEntity;
+import mwk.testmod.common.block.multiblock.entity.ports.MultiBlockIOPortBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -42,6 +42,7 @@ public class MultiBlockIOPortBlock extends MultiBlockPartBlock {
 
     @FunctionalInterface
     public interface MultiBlockPortBlockEntityFactory {
+
         MultiBlockIOPortBlockEntity create(BlockPos pos, BlockState state, boolean input);
     }
 }

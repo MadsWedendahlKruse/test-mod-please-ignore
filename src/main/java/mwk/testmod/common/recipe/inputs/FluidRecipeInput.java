@@ -19,4 +19,9 @@ public record FluidRecipeInput(FluidStack input) implements RecipeInput {
     public FluidStack getFluid(int i) {
         return input;
     }
+
+    @Override
+    public boolean isEmpty() {
+        return input.isEmpty();
+    }
 }

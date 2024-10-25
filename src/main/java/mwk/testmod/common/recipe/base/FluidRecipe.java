@@ -16,6 +16,7 @@ public abstract class FluidRecipe implements Recipe<FluidRecipeInput> {
         return true;
     }
 
+
     @Override
     public boolean matches(FluidRecipeInput input, Level level) {
 

@@ -23,4 +23,10 @@ public class NetworkCapabilityProvider<T extends ConduitNetwork<?, ?>> {
         this.pos = pos;
         this.direction = direction;
     }
+
+    @Override
+    public String toString() {
+        return "NetworkCapabilityProvider{" + "level=" + level + ", network=" + network + ", pos="
+                + pos + ", direction=" + direction + '}';
+    }
 }

@@ -1,9 +1,10 @@
-package mwk.testmod.common.block.multiblock.entity;
+package mwk.testmod.common.block.multiblock.entity.ports;
 
 import mwk.testmod.common.block.entity.CapacitronBlockEntity;
 import mwk.testmod.common.block.entity.base.EnergyBlockEntity;
 import mwk.testmod.common.block.entity.base.generator.GeneratorBlockEntity;
 import mwk.testmod.common.block.interfaces.ITickable;
+import mwk.testmod.common.block.multiblock.entity.MultiBlockPartBlockEntity;
 import mwk.testmod.init.registries.TestModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

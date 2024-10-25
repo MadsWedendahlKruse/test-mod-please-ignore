@@ -95,9 +95,9 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
                 if (upgradeItemHandler.isSlotValid(slot)) {
                     return upgradeItemHandler.getSlotLimit(slot);
                 }
-                return super.getSlotLimit(slot);
+                return 64;
                 // TODO: For some reason this doesn't work
-                // return combinedInventory.get().getSlotLimit(slot);
+//                return combinedInventory.get().getSlotLimit(slot);
             }
         };
         inputItemHandlerPlayer =

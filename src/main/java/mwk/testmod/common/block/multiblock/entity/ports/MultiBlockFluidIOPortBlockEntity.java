@@ -1,4 +1,4 @@
-package mwk.testmod.common.block.multiblock.entity;
+package mwk.testmod.common.block.multiblock.entity.ports;
 
 import mwk.testmod.common.block.entity.base.MachineBlockEntity;
 import mwk.testmod.common.util.inventory.IOUtils;

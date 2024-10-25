@@ -70,12 +70,14 @@ public abstract class ConduitBlockEntity<T> extends BlockEntity implements ITick
 
     @Override
     public void tick() {
-        // This is probably not going to happen, but just in case
-        // TODO: Remove this check if it's not needed
-        // I've seen this once, so it's better to keep it for now
+        // This happens once in a while, think it might happen if the world is loaded
+        // after the game crashed
         if (network == null) {
-            if (level.getServer().getTickCount() % 20 == 0) {
-                TestMod.LOGGER.error("ConduitBlockEntity at {} has no network", worldPosition);
+            TestMod.LOGGER.error("ConduitBlockEntity at {} has no network", worldPosition);
+            // We can just make this error fix itself by connecting to the network
+            if (level instanceof ServerLevel serverLevel) {
+                ConduitNetworkManager.getInstance()
+                        .connectToNetwork(serverLevel, worldPosition, getBlockState());
             }
             return;
         }

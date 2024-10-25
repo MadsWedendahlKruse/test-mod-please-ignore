@@ -60,6 +60,7 @@ public class EnergyBlockEntity extends BlockEntity {
         if (getEnergyStored() == 0) {
             return;
         }
+//        TestMod.LOGGER.debug("Energy stored in " + this.worldPosition + ": " + getEnergyStored());
         for (Direction direction : Direction.values()) {
             // TODO: Capability cache
             IEnergyStorage receiver = level.getCapability(Capabilities.EnergyStorage.BLOCK,
@@ -72,7 +73,7 @@ public class EnergyBlockEntity extends BlockEntity {
             // end up with a full buffer that never gets emptied
             int maxTransfer = Math.min(getEnergyStored(), energyPerTick);
             int received = receiver.receiveEnergy(maxTransfer, false);
-            energyStorage.extractEnergy(received, false);
+            int extracted = energyStorage.extractEnergy(received, false);
         }
     }
 

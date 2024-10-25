@@ -1,7 +1,8 @@
-package mwk.testmod.common.block.multiblock.entity;
+package mwk.testmod.common.block.multiblock.entity.ports;
 
 import mwk.testmod.common.block.entity.base.MachineBlockEntity;
 import mwk.testmod.common.block.interfaces.ITickable;
+import mwk.testmod.common.block.multiblock.entity.MultiBlockPartBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;

@@ -22,6 +22,7 @@ public class StampingPressBlockEntityRenderer extends
     public static final float[] CONVEYOR_OFFSET = {0.5F, 1.0F, 1.5F};
     public static final float CONVEYOR_MAX_POSITION = 1.5F;
     public static final Quaternionf ROT_X_90 = new Quaternionf().rotationX((float) Math.PI / 2);
+    public static final Quaternionf ROT_Y_180 = new Quaternionf().rotationY((float) Math.PI);
     private final ItemRenderer itemRenderer;
 
     public StampingPressBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
@@ -88,12 +89,13 @@ public class StampingPressBlockEntityRenderer extends
             // Basically I don't want the item to just blink out of existence when it's at the end of the
             // conveyor, so once it moves past a certain point (1 block), it starts to shrink
             // The math is so that the item is at 0.5 scale when it's 0.5 blocks past the "end"
-            float scale =
-                    (CONVEYOR_MAX_POSITION - Math.abs(conveyorPosition)) /
-                            (CONVEYOR_MAX_POSITION - 1);
+            float scale = (CONVEYOR_MAX_POSITION - Math.abs(conveyorPosition)) /
+                    (CONVEYOR_MAX_POSITION - 1);
             poseStack.scale(scale, scale, scale);
         }
-        itemRenderer.renderStatic(item, ItemDisplayContext.NONE, combinedLight, combinedOverlay,
+        poseStack.mulPose(ROT_Y_180);
+        itemRenderer.renderStatic(item, ItemDisplayContext.NONE, combinedLight,
+                combinedOverlay,
                 poseStack, multiBufferSource, null, 0);
         poseStack.popPose();
     }

@@ -49,8 +49,6 @@ public class EnergyBar extends AbstractWidget {
             guiGraphics.blitSprite(SPRITE_EMPTY, getX(), getY(), this.width, this.height);
         }
         int barHeight = energy * this.height / maxEnergy;
-        // Reverse engineered from AbstractFurnaceScreen#renderBg. Not completely sure
-        // how it works, some of the args are obfuscated names.
         guiGraphics.blitSprite(SPRITE_FULL, this.width, this.height, 0, this.height - barHeight,
                 getX(), getY() + this.height - barHeight, this.width, barHeight);
         if (isMouseOver(mouseX, mouseY)) {
