@@ -4,6 +4,10 @@ import mwk.testmod.TestModConfig;
 import mwk.testmod.client.animations.base.FixedAnimation.Function;
 import mwk.testmod.client.animations.base.KeyframeManager;
 import mwk.testmod.common.block.entity.base.crafter.SingleCrafterBlockEntity;
+import mwk.testmod.common.block.entity.modules.AutoIOModule;
+import mwk.testmod.common.block.entity.modules.EnergyModule;
+import mwk.testmod.common.block.entity.modules.EnergyModule.EnergyType;
+import mwk.testmod.common.block.entity.modules.InventoryModule;
 import mwk.testmod.common.block.inventory.StampingPressMenu;
 import mwk.testmod.common.item.misc.StampingDieItem;
 import mwk.testmod.common.recipe.StampingRecipe;
@@ -55,11 +59,16 @@ public class StampingPressBlockEntity extends
 
     public StampingPressBlockEntity(BlockPos pos, BlockState state) {
         super(TestModBlockEntities.STAMPING_PRESS_ENTITY_TYPE.get(), pos, state,
-                TestModConfig.MACHINE_ENERGY_CAPACITY_DEFAULT.get(), 20, 2, 1, 6, EMPTY_TANKS,
-                EMPTY_TANKS, DEFAULT_MAX_PROGRESS, TestModRecipeTypes.STAMPING.get(),
+                128, DEFAULT_MAX_PROGRESS,
+                TestModRecipeTypes.STAMPING.get(),
                 TestModSounds.STAMPING_PRESS.get(), TestModSounds.STAMPING_PRESS_DURATION);
-        // One animation for the piston, and one for the item being stamped
-        stampingAnimation = new KeyframeManager(new float[]{0, -CONVEYOR_CENTER_OFFSET});
+        addModule(new EnergyModule(this, TestModConfig.MACHINE_ENERGY_CAPACITY_DEFAULT.get(),
+                EnergyType.CONSUMER));
+        addModule(new InventoryModule(this, 2, 1, 6, this::onInventoryChanged,
+                this::isInputItemValid));
+        addModule(new AutoIOModule());
+        // Two initial values, one for the animation for the piston, and one for the item being stamped
+        stampingAnimation = new KeyframeManager(0, -CONVEYOR_CENTER_OFFSET);
         final float duration = DEFAULT_MAX_PROGRESS / 20.0F;
         // Item being stamped
         // We can the use the center as a reference point for when to swap the rendered item from
@@ -100,7 +109,12 @@ public class StampingPressBlockEntity extends
 
     @Override
     protected CatalystRecipeInput getRecipeInput() {
-        return new CatalystRecipeInput(inventory.getStackInSlot(0), inventory.getStackInSlot(1));
+        if (inventory().isPresent()) {
+            InventoryModule inventory = inventory().get();
+            return new CatalystRecipeInput(inventory.getStackInSlot(0),
+                    inventory.getStackInSlot(1));
+        }
+        return new CatalystRecipeInput(ItemStack.EMPTY, ItemStack.EMPTY);
     }
 
     @Override
@@ -108,12 +122,22 @@ public class StampingPressBlockEntity extends
         if (recipe == null) {
             return false;
         }
-        ItemStack output = recipe.getOutputItem();
-        return canInsertItemIntoSlot(inputSlots, output.getItem(), output.getCount());
+        if (inventory().isPresent()) {
+            InventoryModule inventory = inventory().get();
+            ItemStack output = recipe.getOutputItem();
+            int inputSlots = inventory.getInputSlots();
+            return canInsertItemIntoSlot(inputSlots, output.getItem(), output.getCount());
+        }
+        return false;
     }
 
     @Override
     protected void processRecipe(StampingRecipe recipe) {
+        if (inventory().isEmpty()) {
+            return;
+        }
+        InventoryModule inventory = inventory().get();
+        int inputSlots = inventory.getInputSlots();
         ItemStack output = recipe.getOutputItem();
         // Slot 0 is the stamping die (which isn't consumed)
         inventory.extractItem(1, 1, false);
@@ -124,8 +148,12 @@ public class StampingPressBlockEntity extends
     @Override
     protected void onInventoryChanged(int slot) {
         super.onInventoryChanged(slot);
+        if (inventory().isEmpty()) {
+            return;
+        }
+        InventoryModule inventory = inventory().get();
         // Reset animation if the inputs change
-        if (slot < inputSlots && inventory.getStackInSlot(slot).isEmpty()) {
+        if (slot < inventory.getInputSlots() && inventory.getStackInSlot(slot).isEmpty()) {
             stampingAnimation.start();
         }
     }
@@ -171,6 +199,10 @@ public class StampingPressBlockEntity extends
     public void handleUpdateTag(CompoundTag tag, Provider registries) {
         // Note to self: This is used on LevelChunk load
         super.handleUpdateTag(tag, registries);
+        if (inventory().isEmpty()) {
+            return;
+        }
+        InventoryModule inventory = inventory().get();
         if (tag.contains(NBT_TAG_DIE)) {
             inventory.setStackInSlot(0,
                     ItemStack.parse(registries, tag.getCompound(NBT_TAG_DIE)).get());
@@ -189,7 +221,7 @@ public class StampingPressBlockEntity extends
     }
 
     public ItemStack getStampingDie() {
-        return inventory.getStackInSlot(0);
+        return inventory().map(inventory -> inventory.getStackInSlot(0)).orElse(ItemStack.EMPTY);
     }
 
     public ItemStack getInput() {

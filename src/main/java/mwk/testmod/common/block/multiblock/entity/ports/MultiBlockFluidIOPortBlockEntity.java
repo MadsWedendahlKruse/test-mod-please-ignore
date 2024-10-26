@@ -1,6 +1,7 @@
 package mwk.testmod.common.block.multiblock.entity.ports;
 
 import mwk.testmod.common.block.entity.base.MachineBlockEntity;
+import mwk.testmod.common.block.entity.modules.FluidTankModule;
 import mwk.testmod.common.util.inventory.IOUtils;
 import mwk.testmod.common.util.inventory.handler.InputFluidHandler;
 import mwk.testmod.common.util.inventory.handler.OutputFluidHandler;
@@ -24,9 +25,11 @@ public class MultiBlockFluidIOPortBlockEntity extends MultiBlockIOPortBlockEntit
     public IFluidHandler getFluidHandler(Direction direction) {
         if (isFormed()) {
             BlockEntity controllerEntity = level.getBlockEntity(controllerPos);
-            if (controllerEntity instanceof MachineBlockEntity machine) {
-                IFluidHandler handler = input ? machine.getInputFluidHandler(direction)
-                        : machine.getOutputFluidHandler(direction);
+            if (controllerEntity instanceof MachineBlockEntity machine
+                    && machine.fluidTanks().isPresent()) {
+                FluidTankModule fluidTanks = machine.fluidTanks().get();
+                IFluidHandler handler = input ? fluidTanks.getInputFluidHandler(direction)
+                        : fluidTanks.getOutputFluidHandler(direction);
                 return handler;
             }
         }
@@ -35,14 +38,22 @@ public class MultiBlockFluidIOPortBlockEntity extends MultiBlockIOPortBlockEntit
 
     @Override
     protected void pullInput(Level level, MachineBlockEntity machine, BlockPos pos) {
-        InputFluidHandler inputHandler = machine.getInputFluidHandler(null);
+        if (machine.fluidTanks().isEmpty()) {
+            return;
+        }
+        FluidTankModule fluidTanks = machine.fluidTanks().get();
+        InputFluidHandler inputHandler = fluidTanks.getInputFluidHandler(null);
         IOUtils.pullFluidInput(level, inputHandler, pos, inputHandler.getStartTank(),
                 inputHandler.getEndTank(), 1000);
     }
 
     @Override
     protected void pushOutput(Level level, MachineBlockEntity machine, BlockPos pos) {
-        OutputFluidHandler outputHandler = machine.getOutputFluidHandler(null);
+        if (machine.fluidTanks().isEmpty()) {
+            return;
+        }
+        FluidTankModule fluidTanks = machine.fluidTanks().get();
+        OutputFluidHandler outputHandler = fluidTanks.getOutputFluidHandler(null);
         IOUtils.pushFluidOutput(level, outputHandler, pos, outputHandler.getStartTank(),
                 outputHandler.getEndTank(), 1000);
     }

@@ -129,7 +129,6 @@ public class TestModLanguageProvider extends LanguageProvider {
         add(TestModBlocks.MACHINE_ENERGY_PORT.get(), "Machine Energy Port");
         add(TestModBlocks.COPPER_COIL.get(), "Copper Coil");
         add(TestModBlocks.ENERGY_CUBE.get(), "Energy Cube");
-        add(TestModBlocks.ASSEMBLER.get(), "Super Assembler");
         add(TestModBlocks.INDUCTION_FURNACE.get(), "Induction Furnace");
         add(TestModBlocks.CRUSHER.get(), "Crusher");
         add(TestModBlocks.SEPARATOR.get(), "Separator");

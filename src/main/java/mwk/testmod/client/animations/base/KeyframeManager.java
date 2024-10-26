@@ -23,7 +23,7 @@ public class KeyframeManager {
         currentIndices = new int[numTracks];
     }
 
-    public KeyframeManager(float[] initialValues) {
+    public KeyframeManager(float... initialValues) {
         tracks = new ArrayList[initialValues.length];
         for (int i = 0; i < initialValues.length; i++) {
             tracks[i] = new ArrayList<>();

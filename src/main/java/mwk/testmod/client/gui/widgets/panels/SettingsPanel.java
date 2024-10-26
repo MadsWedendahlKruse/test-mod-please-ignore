@@ -6,6 +6,7 @@ import mwk.testmod.TestMod;
 import mwk.testmod.client.gui.widgets.buttons.OnOffButton;
 import mwk.testmod.client.gui.widgets.panels.base.MachinePanel;
 import mwk.testmod.client.gui.widgets.panels.base.PanelSide;
+import mwk.testmod.common.block.entity.base.MachineBlockEntity;
 import mwk.testmod.common.block.inventory.base.MachineMenu;
 import mwk.testmod.datagen.TestModLanguageProvider;
 import net.minecraft.client.gui.GuiGraphics;
@@ -41,7 +42,9 @@ public class SettingsPanel extends MachinePanel {
             menu.setAutoInsert(!menu.isAutoInsert());
         }, "auto_insert_on", "auto_insert_off",
                 TestModLanguageProvider.KEY_WIDGET_AUTO_INSERT_TOOLTIP);
-        if (menu.getBlockEntity().getOutputSlots() > 0) {
+        // TODO: Bit of a hack?
+        MachineBlockEntity machine = menu.getBlockEntity();
+        if (machine.inventory().isPresent() && machine.inventory().get().getOutputSlots() > 0) {
             buttons.add(autoEjectButton);
         }
         buttons.add(autoInsertButton);

@@ -2,6 +2,10 @@ package mwk.testmod.common.block.entity;
 
 import mwk.testmod.TestModConfig;
 import mwk.testmod.common.block.entity.base.crafter.ParallelCrafterBlockEntity;
+import mwk.testmod.common.block.entity.modules.AutoIOModule;
+import mwk.testmod.common.block.entity.modules.EnergyModule;
+import mwk.testmod.common.block.entity.modules.EnergyModule.EnergyType;
+import mwk.testmod.common.block.entity.modules.InventoryModule;
 import mwk.testmod.common.block.inventory.InductionFurnaceMenu;
 import mwk.testmod.datagen.TestModLanguageProvider;
 import mwk.testmod.init.registries.TestModBlockEntities;
@@ -22,9 +26,14 @@ public class InductionFurnaceBlockEntity extends ParallelCrafterBlockEntity<Blas
 
     public InductionFurnaceBlockEntity(BlockPos pos, BlockState state) {
         super(TestModBlockEntities.INDUCTION_FURNACE_ENTITY_TYPE.get(), pos, state,
-                TestModConfig.MACHINE_ENERGY_CAPACITY_DEFAULT.get(), 20, INPUT_OUTPUT_SLOTS, 6, 40,
+                128, 40,
                 RecipeType.BLASTING, TestModSounds.INDUCTION_FURNACE.get(),
                 TestModSounds.INDUCTION_FURNACE_DURATION);
+        addModule(new EnergyModule(this, TestModConfig.MACHINE_ENERGY_CAPACITY_DEFAULT.get(),
+                EnergyType.CONSUMER));
+        addModule(new InventoryModule(this, 9, 9, 6, this::onInventoryChanged,
+                this::isInputItemValid));
+        addModule(new AutoIOModule());
     }
 
     @Override

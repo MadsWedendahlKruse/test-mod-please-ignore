@@ -19,12 +19,9 @@ public abstract class GeneratorBlockEntity<I extends RecipeInput, T extends Reci
     public static final String NBT_TAG_MAX_PROGRESS = "maxProgress";
 
     protected GeneratorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
-            int maxEnergy, int energyGeneratedPerTick, int inputSlots, int outputSlots,
-            int upgradeSlots, int[] inputTankCapacities, int[] outputTankCapacities,
-            RecipeType<T> recipeType, SoundEvent sound, int soundDuration) {
-        super(type, pos, state, maxEnergy, energyGeneratedPerTick, EnergyType.PRODUCER, inputSlots,
-                outputSlots, upgradeSlots, inputTankCapacities, outputTankCapacities,
-                Integer.MAX_VALUE, recipeType, sound, soundDuration);
+            int energyGeneratedPerTick, RecipeType<T> recipeType,
+            SoundEvent sound, int soundDuration) {
+        super(type, pos, state, energyGeneratedPerTick, 0, recipeType, sound, soundDuration);
     }
 
     @Override
@@ -62,11 +59,13 @@ public abstract class GeneratorBlockEntity<I extends RecipeInput, T extends Reci
     }
 
     protected boolean canGenerateEnergy() {
-        return getEnergyStored() + energyPerTick < getMaxEnergyStored();
+        return energy().map(energyModule -> energyModule.getEnergyStored() + energyPerTick
+                < energyModule.getMaxEnergyStored()).orElse(false);
     }
 
     protected void generateEnergy() {
-        energyStorage.receiveEnergy(energyPerTick, false);
+        energy().ifPresent(energyModule -> energyModule.getEnergyStorage()
+                .receiveEnergy(energyPerTick, false));
     }
 
     @Override

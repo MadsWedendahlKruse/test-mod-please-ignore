@@ -2,6 +2,7 @@ package mwk.testmod.common.block.entity.base.crafter;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import mwk.testmod.common.block.entity.modules.InventoryModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
@@ -21,10 +22,11 @@ public abstract class ParallelCrafterBlockEntity<T extends Recipe<SingleRecipeIn
         extends CrafterBlockEntity<SingleRecipeInput, T> {
 
     protected ParallelCrafterBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
-            int maxEnergy, int energyPerTick, int itemSlots, int upgradeSlots, int maxProgress,
-            RecipeType<T> recipeType, SoundEvent sound, int soundDuration) {
-        super(type, pos, state, maxEnergy, energyPerTick, itemSlots, itemSlots, upgradeSlots,
-                EMPTY_TANKS, EMPTY_TANKS, maxProgress, recipeType, sound, soundDuration);
+            int energyPerTick, int maxProgress, RecipeType<T> recipeType,
+            SoundEvent sound, int soundDuration) {
+        super(type, pos, state,
+                energyPerTick, maxProgress,
+                recipeType, sound, soundDuration);
     }
 
     public final void tick() {
@@ -35,6 +37,10 @@ public abstract class ParallelCrafterBlockEntity<T extends Recipe<SingleRecipeIn
         boolean increaseProgress = true;
         boolean recipeValid = false;
         boolean progressFinished = false;
+        if (inventory().isEmpty()) {
+            return;
+        }
+        int inputSlots = inventory().get().getInputSlots();
         for (int i = 0, recipesFound = 0; i < inputSlots * inputSlots
                 && recipesFound < inputSlots; i++) {
             int slot = i % inputSlots;
@@ -84,8 +90,10 @@ public abstract class ParallelCrafterBlockEntity<T extends Recipe<SingleRecipeIn
      * @return The current recipe that can be crafted.
      */
     protected Optional<RecipeHolder<T>> getCurrentRecipe(int slot) {
-        return this.level.getRecipeManager().getRecipeFor(this.recipeType,
-                new SingleRecipeInput(inventory.getStackInSlot(slot)), this.level);
+        ItemStack stack = inventory().map(inventory -> inventory.getStackInSlot(slot))
+                .orElse(ItemStack.EMPTY);
+        return this.level.getRecipeManager()
+                .getRecipeFor(this.recipeType, new SingleRecipeInput(stack), this.level);
     }
 
     /**
@@ -98,7 +106,9 @@ public abstract class ParallelCrafterBlockEntity<T extends Recipe<SingleRecipeIn
      * each slot.
      */
     protected ArrayList<Pair<Integer, Integer>> getOutputSlots(Optional<RecipeHolder<T>> recipe) {
-        if (!recipe.isEmpty()) {
+        if (!recipe.isEmpty() && inventory().isPresent()) {
+            InventoryModule inventory = inventory().get();
+            int inputSlots = inventory.getInputSlots();
             ArrayList<Pair<Integer, Integer>> outputSlots = new ArrayList<>();
             ItemStack result = recipe.get().value().getResultItem(null);
             int recipeCount = result.getCount();
@@ -135,12 +145,16 @@ public abstract class ParallelCrafterBlockEntity<T extends Recipe<SingleRecipeIn
      */
     protected void craftItem(int inputSlot, ArrayList<Pair<Integer, Integer>> outputSlots,
             Optional<RecipeHolder<T>> recipe) {
+        if (inventory().isEmpty()) {
+            return;
+        }
+        InventoryModule inventory = inventory().get();
         ItemStack result = recipe.get().value().getResultItem(null);
-        this.inventory.extractItem(inputSlot, 1, false);
+        inventory.extractItem(inputSlot, 1, false);
         for (Pair<Integer, Integer> outputSlot : outputSlots) {
             int newSize = inventory.getStackInSlot(outputSlot.getLeft()).getCount()
                     + outputSlot.getRight();
-            this.inventory.setStackInSlot(outputSlot.getLeft(),
+            inventory.setStackInSlot(outputSlot.getLeft(),
                     new ItemStack(result.getItem(), newSize));
         }
     }

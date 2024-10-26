@@ -1,6 +1,7 @@
 package mwk.testmod.common.block.multiblock.entity.ports;
 
 import mwk.testmod.common.block.entity.base.MachineBlockEntity;
+import mwk.testmod.common.block.entity.modules.AutoIOModule;
 import mwk.testmod.common.block.interfaces.ITickable;
 import mwk.testmod.common.block.multiblock.entity.MultiBlockPartBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -30,12 +31,16 @@ public abstract class MultiBlockIOPortBlockEntity extends MultiBlockPartBlockEnt
         }
         BlockEntity controllerEntity = level.getBlockEntity(controllerPos);
         if (controllerEntity instanceof MachineBlockEntity machine) {
+            if (machine.autoIO().isEmpty()) {
+                return;
+            }
+            AutoIOModule autoIOModule = machine.autoIO().get();
             if (input) {
-                if (machine.isAutoPull()) {
+                if (autoIOModule.isAutoPull()) {
                     pullInput(level, machine, this.worldPosition);
                 }
             } else {
-                if (machine.isAutoPush()) {
+                if (autoIOModule.isAutoPush()) {
                     pushOutput(level, machine, this.worldPosition);
                 }
             }

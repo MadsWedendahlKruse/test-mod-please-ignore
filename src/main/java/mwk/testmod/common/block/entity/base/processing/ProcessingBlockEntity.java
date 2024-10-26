@@ -2,6 +2,8 @@ package mwk.testmod.common.block.entity.base.processing;
 
 import mwk.testmod.TestMod;
 import mwk.testmod.common.block.entity.base.MachineBlockEntity;
+import mwk.testmod.common.block.entity.modules.FluidTankModule;
+import mwk.testmod.common.block.entity.modules.InventoryModule;
 import mwk.testmod.common.block.interfaces.ITickable;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.item.upgrades.SpeedUpgradeItem;
@@ -9,14 +11,12 @@ import mwk.testmod.common.item.upgrades.base.UpgradeItem;
 import mwk.testmod.common.recipe.base.FluidRecipe;
 import mwk.testmod.common.util.inventory.SimpleFluidContainer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -26,10 +26,8 @@ import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
-import net.neoforged.neoforge.items.IItemHandler;
 
 /**
  * A block entity that can process items in some way, e.g. a furnace or a generator.
@@ -59,12 +57,9 @@ public abstract class ProcessingBlockEntity<I extends RecipeInput, T extends Rec
     private long soundStart; // in ticks
 
     protected ProcessingBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
-            int maxEnergy, int energyPerTick, EnergyType energyType, int inputSlots,
-            int outputSlots, int upgradeSlots, int[] inputTankCapacities,
-            int[] outputTankCapacities, int maxProgress, RecipeType<T> recipeType, SoundEvent sound,
-            int soundDuration) {
-        super(type, pos, state, maxEnergy, energyType, inputSlots, outputSlots, upgradeSlots,
-                inputTankCapacities, outputTankCapacities);
+            int energyPerTick, int maxProgress, RecipeType<T> recipeType,
+            SoundEvent sound, int soundDuration) {
+        super(type, pos, state);
         this.recipeType = recipeType;
         this.progress = 0;
         this.maxProgress = maxProgress;
@@ -86,7 +81,8 @@ public abstract class ProcessingBlockEntity<I extends RecipeInput, T extends Rec
     }
 
     protected void consumeEnergy() {
-        energyStorage.extractEnergy(energyPerTick, false);
+        energy().ifPresent(
+                energy -> energy.getEnergyStorage().extractEnergy(energyPerTick, false));
     }
 
     protected boolean hasProgressFinished() {
@@ -94,20 +90,19 @@ public abstract class ProcessingBlockEntity<I extends RecipeInput, T extends Rec
     }
 
     protected boolean hasEnergy() {
-        return energyStorage.getEnergyStored() >= energyPerTick;
+        return energy().map(
+                        energy -> energy.getEnergyStorage().getEnergyStored() >= energyPerTick)
+                .orElse(false);
     }
 
     protected boolean canInsertItemIntoSlot(int slot, Item item, int count) {
-        return inventory.getStackInSlot(slot).isEmpty() || (inventory.getStackInSlot(slot).is(item)
-                && inventory.getStackInSlot(slot).getCount() + count <= inventory
-                .getSlotLimit(slot));
+        return inventory().map(inventory -> inventory.canInsertItemIntoSlot(slot, item, count))
+                .orElse(false);
     }
 
     protected boolean canInsertFluidIntoTank(int tank, FluidStack fluid) {
-        return fluidTanks.getFluidInTank(tank).isEmpty()
-                || FluidStack.isSameFluid(fluidTanks.getFluidInTank(tank), fluid)
-                && fluidTanks.getFluidInTank(tank).getAmount()
-                + fluid.getAmount() <= fluidTanks.getTankCapacity(tank);
+        return fluidTanks().map(fluidTanks -> fluidTanks.canInsertFluidIntoTank(tank, fluid))
+                .orElse(false);
     }
 
     protected void playSound() {
@@ -125,61 +120,49 @@ public abstract class ProcessingBlockEntity<I extends RecipeInput, T extends Rec
         }
     }
 
-    private SimpleContainer createItemContainer() {
-        SimpleContainer itemContainer = new SimpleContainer(this.inputSlots);
-        for (int i = 0; i < this.inputSlots; i++) {
-            itemContainer.setItem(i, this.inventory.getStackInSlot(i));
-        }
-        return itemContainer;
+    private Container createItemContainer() {
+        return inventory().map(inventory -> inventory.getInputs()).orElse(null);
     }
 
     private SimpleFluidContainer createFluidContainer(boolean copy) {
-        SimpleFluidContainer fluidContainer = new SimpleFluidContainer(this.inputTanks);
-        for (int i = 0; i < this.inputTanks; i++) {
-            if (copy) {
-                fluidContainer.setFluid(i, this.fluidTanks.getFluidInTank(i).copy());
-            } else {
-                fluidContainer.setFluid(i, this.fluidTanks.getFluidInTank(i));
-            }
-        }
-        return fluidContainer;
+        return fluidTanks().map(fluidTanks -> fluidTanks.getInputs(copy)).orElse(null);
     }
 
-    private boolean itemInputsChanged(SimpleContainer itemContainer) {
-        if (latestItemInputs == null) {
-            return true;
-        }
-        for (int i = 0; i < this.inputSlots; i++) {
-            ItemStack containerItem = itemContainer.getItem(i);
-            ItemStack latestItem = latestItemInputs.getItem(i);
-            if (!containerItem.is(latestItem.getItem())) {
-                return true;
-            }
-            // TODO: We need something like this to handle recipes where the count of the input
-            // items matters
-            // if (containerItem.getCount() != latestItem.getCount()) {
-            // return true;
-            // }
-        }
-        return false;
-    }
+//    private boolean itemInputsChanged(Container itemContainer) {
+//        if (latestItemInputs == null) {
+//            return true;
+//        }
+//        for (int i = 0; i < this.inputSlots; i++) {
+//            ItemStack containerItem = itemContainer.getItem(i);
+//            ItemStack latestItem = latestItemInputs.getItem(i);
+//            if (!containerItem.is(latestItem.getItem())) {
+//                return true;
+//            }
+//            // TODO: We need something like this to handle recipes where the count of the input
+//            // items matters
+//            // if (containerItem.getCount() != latestItem.getCount()) {
+//            // return true;
+//            // }
+//        }
+//        return false;
+//    }
 
-    private boolean fluidInputsChanged(SimpleFluidContainer fluidContainer) {
-        if (latestFluidInputs == null) {
-            return true;
-        }
-        for (int i = 0; i < fluidContainer.getSize(); i++) {
-            FluidStack containerFluid = fluidContainer.getFluid(i);
-            FluidStack latestFluid = latestFluidInputs.getFluid(i);
-            if (!FluidStack.isSameFluid(containerFluid, latestFluid)) {
-                return true;
-            }
-            if (containerFluid.getAmount() != latestFluid.getAmount()) {
-                return true;
-            }
-        }
-        return false;
-    }
+//    private boolean fluidInputsChanged(SimpleFluidContainer fluidContainer) {
+//        if (latestFluidInputs == null) {
+//            return true;
+//        }
+//        for (int i = 0; i < fluidContainer.getSize(); i++) {
+//            FluidStack containerFluid = fluidContainer.getFluid(i);
+//            FluidStack latestFluid = latestFluidInputs.getFluid(i);
+//            if (!FluidStack.isSameFluid(containerFluid, latestFluid)) {
+//                return true;
+//            }
+//            if (containerFluid.getAmount() != latestFluid.getAmount()) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
     /**
      * This method should return the recipe input that can be used to look up the recipe in the
@@ -196,10 +179,22 @@ public abstract class ProcessingBlockEntity<I extends RecipeInput, T extends Rec
      * @return The current recipe that can be crafted.
      */
     protected T getCurrentRecipe() {
-        SimpleContainer itemContainer = createItemContainer();
+        // Check if the input items or fluids have changed or if the latest recipe is still valid
+        boolean latestRecipeValid = true;
+        Container itemContainer = createItemContainer();
+        if (itemContainer != null) {
+            if (latestItemInputs == null || inventory().get().inputsChanged(latestItemInputs)) {
+                latestRecipeValid = false;
+            }
+        }
         SimpleFluidContainer fluidContainer = createFluidContainer(false);
-        // Check if the input items or fluids have changed
-        if (!(itemInputsChanged(itemContainer) || fluidInputsChanged(fluidContainer))) {
+        if (fluidContainer != null) {
+            if (latestFluidInputs == null || fluidTanks().get()
+                    .inputsChanged(latestFluidInputs)) {
+                latestRecipeValid = false;
+            }
+        }
+        if (latestRecipeValid) {
             return latestRecipe;
         }
         // Check if the input items and fluids match the latest recipe
@@ -231,14 +226,20 @@ public abstract class ProcessingBlockEntity<I extends RecipeInput, T extends Rec
         if (recipe == null) {
             return false;
         }
-        ItemStack itemResult = recipe.getResultItem(null);
-        boolean canInsertItem = itemResult.isEmpty()
-                || canInsertItemIntoSlot(outputSlots, itemResult.getItem(), itemResult.getCount());
+        boolean canInsertItem = true;
+        if (inventory().isPresent()) {
+            InventoryModule inventory = inventory().get();
+            ItemStack itemResult = recipe.getResultItem(null);
+            canInsertItem = itemResult.isEmpty() ||
+                    inventory.canInsertItemIntoSlot(inventory.getOutputSlots(),
+                            itemResult.getItem(), itemResult.getCount());
+        }
         boolean canInsertFluid = true;
-        if (recipe instanceof FluidRecipe fluidRecipe) {
+        if (fluidTanks().isPresent() && recipe instanceof FluidRecipe fluidRecipe) {
+            FluidTankModule fluidTanks = fluidTanks().get();
             FluidStack fluidResult = fluidRecipe.getFluidResult();
-            canInsertFluid =
-                    fluidResult.isEmpty() || canInsertFluidIntoTank(outputTanks, fluidResult);
+            canInsertFluid = fluidResult.isEmpty() ||
+                    fluidTanks.canInsertFluidIntoTank(fluidTanks.getOutputTanks(), fluidResult);
         }
         return canInsertItem && canInsertFluid;
     }
@@ -250,39 +251,50 @@ public abstract class ProcessingBlockEntity<I extends RecipeInput, T extends Rec
      * @param recipe The recipe to craft.
      */
     protected void processRecipe(T recipe) {
-        NonNullList<Ingredient> ingredients = recipe.getIngredients();
-        for (int i = 0; i < ingredients.size(); i++) {
-            // TODO: Ingredients can have multiple items???
-            ItemStack ingredient = ingredients.get(i).getItems()[0];
-            this.inventory.extractItem(i, ingredient.getCount(), false);
+        if (inventory().isPresent()) {
+            InventoryModule inventory = inventory().get();
+            NonNullList<Ingredient> ingredients = recipe.getIngredients();
+            for (int i = 0; i < ingredients.size(); i++) {
+                // TODO: Ingredients can have multiple items???
+                ItemStack ingredient = ingredients.get(i).getItems()[0];
+                inventory.extractItem(i, ingredient.getCount(), false);
+            }
+            ItemStack result = recipe.getResultItem(null);
+            if (!result.isEmpty()) {
+                int inputSlots = inventory.getInputSlots();
+                int newCount = inventory.getStackInSlot(inputSlots).getCount() + result.getCount();
+                inventory.setStackInSlot(inputSlots, new ItemStack(result.getItem(), newCount));
+            }
+
         }
-        ItemStack result = recipe.getResultItem(null);
-        if (!result.isEmpty()) {
-            this.inventory.setStackInSlot(inputSlots, new ItemStack(result.getItem(),
-                    this.inventory.getStackInSlot(inputSlots).getCount() + result.getCount()));
-        }
-        if (recipe instanceof FluidRecipe fluidRecipe) {
+        if (fluidTanks().isPresent() && recipe instanceof FluidRecipe fluidRecipe) {
+            FluidTankModule fluidTanks = fluidTanks().get();
             NonNullList<FluidStack> fluidIngredients = fluidRecipe.getFluidIngredients();
+            int inputTanks = fluidTanks.getInputTanks();
             for (int i = 0; i < inputTanks; i++) {
-                this.fluidTanks.drain(i, fluidIngredients.get(i), FluidAction.EXECUTE);
+                fluidTanks.drain(i, fluidIngredients.get(i), FluidAction.EXECUTE);
             }
             FluidStack fluidResult = fluidRecipe.getFluidResult();
             if (!fluidResult.isEmpty()) {
-                this.fluidTanks.fill(inputTanks, fluidResult, FluidAction.EXECUTE);
+                fluidTanks.fill(inputTanks, fluidResult, FluidAction.EXECUTE);
             }
         }
     }
 
     @Override
     protected void onInventoryChanged(int slot) {
-        if (slot < inputSlots) {
+        // TODO: This should only be called by the inventory module, thus it should always be
+        // present
+        if (slot < inventory().get().getInputSlots()) {
             latestItemInputs = null;
         }
     }
 
     @Override
     protected boolean isInputItemValid(int slot, ItemStack stack) {
-        if (slot >= inputSlots) {
+        // TODO: This should only be called by the inventory module, thus it should always be
+        // present
+        if (slot >= inventory().get().getInputSlots()) {
             return false;
         }
         // TODO: Can we cache this?
@@ -344,32 +356,5 @@ public abstract class ProcessingBlockEntity<I extends RecipeInput, T extends Rec
             return true;
         }
         return false;
-    }
-
-    public boolean isFormed() {
-        // We're going all in on multiblocks
-        if (level != null) {
-            BlockState state = getBlockState();
-            if (state.getBlock() instanceof MultiBlockControllerBlock) {
-                return state.getValue(MultiBlockControllerBlock.FORMED);
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public IItemHandler getItemHandler(Direction direction) {
-        if (isFormed()) {
-            return super.getItemHandler(direction);
-        }
-        return null;
-    }
-
-    @Override
-    public IEnergyStorage getEnergyStorage(Direction direction) {
-        if (isFormed()) {
-            return energyWrapper.get();
-        }
-        return null;
     }
 }

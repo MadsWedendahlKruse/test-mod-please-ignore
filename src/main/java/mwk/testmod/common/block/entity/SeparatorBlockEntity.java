@@ -3,6 +3,10 @@ package mwk.testmod.common.block.entity;
 import mwk.testmod.TestModConfig;
 import mwk.testmod.client.animations.AnimationClock;
 import mwk.testmod.common.block.entity.base.crafter.OneToManyCrafterBlockEntity;
+import mwk.testmod.common.block.entity.modules.AutoIOModule;
+import mwk.testmod.common.block.entity.modules.EnergyModule;
+import mwk.testmod.common.block.entity.modules.EnergyModule.EnergyType;
+import mwk.testmod.common.block.entity.modules.InventoryModule;
 import mwk.testmod.common.block.inventory.SeparatorMenu;
 import mwk.testmod.common.recipe.SeparationRecipe;
 import mwk.testmod.datagen.TestModLanguageProvider;
@@ -24,9 +28,15 @@ public class SeparatorBlockEntity extends OneToManyCrafterBlockEntity<Separation
 
     public SeparatorBlockEntity(BlockPos pos, BlockState state) {
         super(TestModBlockEntities.SEPARATOR_ENTITY_TYPE.get(), pos, state,
-                TestModConfig.MACHINE_ENERGY_CAPACITY_DEFAULT.get(), 20, 1, 3, 6, 20,
+                128, 40,
                 TestModRecipeTypes.SEPARATION.get(), TestModSounds.CRUSHER.get(),
                 TestModSounds.CRUSHER_DURATION);
+        addModule(new EnergyModule(this, TestModConfig.MACHINE_ENERGY_CAPACITY_DEFAULT.get(),
+                EnergyType.CONSUMER));
+        // TODO: Could probably automatically determine input/output slots based on recipe
+        addModule(new InventoryModule(this, 1, 3, 6, this::onInventoryChanged,
+                this::isInputItemValid));
+        addModule(new AutoIOModule());
     }
 
     @Override

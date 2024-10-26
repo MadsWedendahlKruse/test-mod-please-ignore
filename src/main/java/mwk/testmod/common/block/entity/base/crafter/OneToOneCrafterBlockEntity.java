@@ -1,5 +1,6 @@
 package mwk.testmod.common.block.entity.base.crafter;
 
+import mwk.testmod.common.block.entity.modules.InventoryModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
@@ -16,10 +17,11 @@ public abstract class OneToOneCrafterBlockEntity<T extends Recipe<SingleRecipeIn
     private static final int OUTPUT_SLOT_INDEX = 1;
 
     protected OneToOneCrafterBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
-            int maxEnergy, int energyPerTick, int maxProgress, RecipeType<T> recipeType,
+            int energyPerTick, int maxProgress, RecipeType<T> recipeType,
             SoundEvent sound, int soundDuration) {
-        super(type, pos, state, maxEnergy, energyPerTick, 1, 1, 6, EMPTY_TANKS, EMPTY_TANKS,
-                maxProgress, recipeType, sound, soundDuration);
+        super(type, pos, state,
+                energyPerTick, maxProgress,
+                recipeType, sound, soundDuration);
     }
 
     @Override
@@ -33,14 +35,19 @@ public abstract class OneToOneCrafterBlockEntity<T extends Recipe<SingleRecipeIn
 
     @Override
     protected void processRecipe(T recipe) {
-        ItemStack result = recipe.getResultItem(null);
-        this.inventory.extractItem(INPUT_SLOT_INDEX, 1, false);
-        this.inventory.setStackInSlot(OUTPUT_SLOT_INDEX, new ItemStack(result.getItem(),
-                this.inventory.getStackInSlot(OUTPUT_SLOT_INDEX).getCount() + result.getCount()));
+        if (inventory().isPresent()) {
+            InventoryModule inventory = inventory().get();
+            ItemStack result = recipe.getResultItem(null);
+            inventory.extractItem(INPUT_SLOT_INDEX, 1, false);
+            inventory.setStackInSlot(OUTPUT_SLOT_INDEX, new ItemStack(result.getItem(),
+                    inventory.getStackInSlot(OUTPUT_SLOT_INDEX).getCount() + result.getCount()));
+        }
     }
 
     @Override
     protected SingleRecipeInput getRecipeInput() {
-        return new SingleRecipeInput(this.inventory.getStackInSlot(INPUT_SLOT_INDEX));
+        return inventory().map(
+                        inventory -> new SingleRecipeInput(inventory.getStackInSlot(INPUT_SLOT_INDEX)))
+                .orElse(new SingleRecipeInput(ItemStack.EMPTY));
     }
 }

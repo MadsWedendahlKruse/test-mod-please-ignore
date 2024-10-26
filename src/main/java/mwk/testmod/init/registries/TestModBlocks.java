@@ -5,7 +5,6 @@ import java.util.function.Supplier;
 import mwk.testmod.TestMod;
 import mwk.testmod.common.block.conduit.ConduitBlock;
 import mwk.testmod.common.block.conduit.ConduitType;
-import mwk.testmod.common.block.entity.AssemblerBlockEntity;
 import mwk.testmod.common.block.entity.CapacitronBlockEntity;
 import mwk.testmod.common.block.entity.CrusherBlockEntity;
 import mwk.testmod.common.block.entity.GeothermalGeneratorBlockEntity;
@@ -14,7 +13,6 @@ import mwk.testmod.common.block.entity.RedstoneGeneratorBlockEntity;
 import mwk.testmod.common.block.entity.SeparatorBlockEntity;
 import mwk.testmod.common.block.entity.StampingPressBlockEntity;
 import mwk.testmod.common.block.entity.StirlingGeneratorBlockEntity;
-import mwk.testmod.common.block.entity.TeleporterBlockEntity;
 import mwk.testmod.common.block.multiblock.HologramBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockEnergyPortBlock;
@@ -75,16 +73,12 @@ public class TestModBlocks {
     // Machines
     public static final DeferredBlock<MultiBlockControllerBlock> INDUCTION_FURNACE = registerMultiBlockController(
             "induction_furnace", InductionFurnaceBlockEntity::new);
-    public static final DeferredBlock<MultiBlockControllerBlock> ASSEMBLER = registerMultiBlockController(
-            "assembler", AssemblerBlockEntity::new);
     public static final DeferredBlock<MultiBlockControllerBlock> CRUSHER = registerMultiBlockController(
             "crusher", CrusherBlockEntity::new);
     public static final DeferredBlock<MultiBlockControllerBlock> SEPARATOR = registerMultiBlockController(
             "separator", SeparatorBlockEntity::new);
     public static final DeferredBlock<MultiBlockControllerBlock> STAMPING_PRESS = registerMultiBlockController(
             "stamping_press", StampingPressBlockEntity::new);
-    public static final DeferredBlock<MultiBlockControllerBlock> TELEPORTER = registerMultiBlockController(
-            "teleporter", TeleporterBlockEntity::new);
 
     // Generators
     public static final DeferredBlock<MultiBlockControllerBlock> REDSTONE_GENERATOR = registerMultiBlockController(

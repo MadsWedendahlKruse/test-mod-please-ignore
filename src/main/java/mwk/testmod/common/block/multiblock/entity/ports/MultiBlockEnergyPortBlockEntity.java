@@ -1,13 +1,15 @@
 package mwk.testmod.common.block.multiblock.entity.ports;
 
 import mwk.testmod.common.block.entity.CapacitronBlockEntity;
-import mwk.testmod.common.block.entity.base.EnergyBlockEntity;
+import mwk.testmod.common.block.entity.base.MachineBlockEntity;
 import mwk.testmod.common.block.entity.base.generator.GeneratorBlockEntity;
+import mwk.testmod.common.block.entity.modules.EnergyModule;
 import mwk.testmod.common.block.interfaces.ITickable;
 import mwk.testmod.common.block.multiblock.entity.MultiBlockPartBlockEntity;
 import mwk.testmod.init.registries.TestModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.energy.IEnergyStorage;
@@ -23,8 +25,9 @@ public class MultiBlockEnergyPortBlockEntity extends MultiBlockPartBlockEntity
     public IEnergyStorage getEnergyHandler(Direction direction) {
         if (isFormed()) {
             BlockEntity controllerEntity = level.getBlockEntity(controllerPos);
-            if (controllerEntity instanceof EnergyBlockEntity energyEntity) {
-                return energyEntity.getEnergyStorage(direction);
+            if (controllerEntity instanceof MachineBlockEntity machine &&
+                    machine.energy().isPresent()) {
+                return machine.energy().get().getEnergyStorage(direction);
             }
         }
         return null;
@@ -36,13 +39,22 @@ public class MultiBlockEnergyPortBlockEntity extends MultiBlockPartBlockEntity
             return;
         }
         BlockEntity controllerEntity = level.getBlockEntity(controllerPos);
-        if (controllerEntity instanceof GeneratorBlockEntity<?, ?> generator) {
-            // Generator can push twice the energy per tick it generates
-            generator.pushEnergy(this.worldPosition, 2 * generator.getEnergyPerTick());
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
         }
-        if (controllerEntity instanceof CapacitronBlockEntity capacitron) {
-            // TODO: Push as much as possible?
-            capacitron.pushEnergy(this.worldPosition, Integer.MAX_VALUE);
+        if (controllerEntity instanceof MachineBlockEntity machine &&
+                machine.energy().isPresent()) {
+            EnergyModule energyModule = machine.energy().get();
+            if (controllerEntity instanceof GeneratorBlockEntity<?, ?> generator) {
+                // Generator can push twice the energy per tick it generates
+                energyModule.pushEnergy(serverLevel, this.worldPosition,
+                        2 * generator.getEnergyPerTick());
+            }
+            if (controllerEntity instanceof CapacitronBlockEntity capacitron) {
+                // TODO: Push as much as possible?
+                energyModule.pushEnergy(serverLevel, this.worldPosition, Integer.MAX_VALUE);
+            }
         }
+
     }
 }

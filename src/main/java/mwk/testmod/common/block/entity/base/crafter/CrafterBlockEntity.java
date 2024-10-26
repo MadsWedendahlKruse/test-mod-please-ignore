@@ -15,12 +15,9 @@ public abstract class CrafterBlockEntity<I extends RecipeInput, T extends Recipe
         extends ProcessingBlockEntity<I, T> {
 
     protected CrafterBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
-            int maxEnergy, int energyPerTick, int inputSlots, int outputSlots, int upgradeSlots,
-            int[] inputTankCapacities, int[] outputTankCapacities, int maxProgress,
-            RecipeType<T> recipeType, SoundEvent sound, int soundDuration) {
-        super(type, pos, state, maxEnergy, energyPerTick, EnergyType.CONSUMER, inputSlots,
-                outputSlots, upgradeSlots, inputTankCapacities, outputTankCapacities, maxProgress,
-                recipeType, sound, soundDuration);
+            int energyPerTick, int maxProgress, RecipeType<T> recipeType,
+            SoundEvent sound, int soundDuration) {
+        super(type, pos, state, energyPerTick, maxProgress, recipeType, sound, soundDuration);
     }
 
     @Override
