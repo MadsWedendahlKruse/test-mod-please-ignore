@@ -170,9 +170,6 @@ public class ConduitBlock extends Block
         BlockState state = calculateState(level, pos, defaultBlockState()).setValue(
                 BlockStateProperties.WATERLOGGED,
                 level.getFluidState(pos).getType() == Fluids.WATER);
-        if (level instanceof ServerLevel serverLevel) {
-            ConduitNetworkManager.getInstance().connectToNetwork(serverLevel, pos, state);
-        }
         return state;
     }
 

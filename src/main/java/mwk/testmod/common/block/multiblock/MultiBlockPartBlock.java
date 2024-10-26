@@ -236,11 +236,15 @@ public class MultiBlockPartBlock extends Block implements EntityBlock, IWrenchab
                 controller.setMultiblockFormed(level, pos, state, false, false);
             } else {
                 // If it's not, we have to find the controller and unform it
-                propagateToController(level, pos, (controller, controllerPos) -> {
-                    controller.setMultiblockFormed(level, controllerPos,
-                            level.getBlockState(controllerPos), false, false);
-                    return null;
-                }, null);
+                // (This doesn't work with propagateToController for some reason)
+                BlockPos controllerPos = getControllerPos(level, pos);
+                if (controllerPos != null) {
+                    BlockState controllerState = level.getBlockState(controllerPos);
+                    if (controllerState.getBlock() instanceof MultiBlockControllerBlock controller) {
+                        controller.setMultiblockFormed(level, controllerPos, controllerState, false,
+                                false);
+                    }
+                }
             }
         }
         super.onRemove(state, level, pos, newState, movedByPiston);

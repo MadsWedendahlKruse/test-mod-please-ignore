@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import mwk.testmod.TestMod;
 import mwk.testmod.common.block.conduit.ConduitBlock;
 import mwk.testmod.common.block.conduit.ConduitType;
 import net.minecraft.core.BlockPos;
@@ -33,14 +32,10 @@ public abstract class ConduitNetwork<C, T> implements INBTSerializable<CompoundT
     public static final String NBT_TAG_SIZE = "size";
     public static final String NBT_TAG_POS = "pos";
 
-    // This is primarily used for accessing the correct data structure in the
-    // network manager
+    // The type of the conduit network
     protected final ConduitType type;
     // Graph representation of the network. The key is the position of the conduit
     protected final Map<BlockPos, ArrayList<BlockPos>> graph;
-    // The master position is the position of the conduit that is in charge of
-    // serializing the network data and saving it to disk
-    protected BlockPos masterPos;
 
     protected ConduitNetwork(ConduitType type) {
         this.type = type;
@@ -78,32 +73,6 @@ public abstract class ConduitNetwork<C, T> implements INBTSerializable<CompoundT
 
     public Set<BlockPos> getPositions() {
         return graph.keySet();
-    }
-
-    // public void merge(ConduitNetwork other) {
-    // for (BlockPos pos : other.getPositions().keySet()) {
-    // add(pos);
-    // }
-    // }
-
-    public void setMasterPos(BlockPos masterPos) {
-        this.masterPos = masterPos;
-        TestMod.LOGGER.info("Conduit at " + masterPos + " is now the master of " + this);
-    }
-
-    public BlockPos getMasterPos() {
-        return masterPos;
-    }
-
-    public boolean isMasterPos(BlockPos conduit) {
-        return masterPos.equals(conduit);
-    }
-
-    public void clearMasterPos() {
-        // TODO: Unncecessary to remove the masterPos from the graph?
-        // When this is called from the manager I think it's already removed
-        graph.remove(masterPos);
-        masterPos = null;
     }
 
     public ConduitType getType() {

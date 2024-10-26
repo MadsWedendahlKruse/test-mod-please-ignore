@@ -60,7 +60,6 @@ public class EnergyBlockEntity extends BlockEntity {
         if (getEnergyStored() == 0) {
             return;
         }
-//        TestMod.LOGGER.debug("Energy stored in " + this.worldPosition + ": " + getEnergyStored());
         for (Direction direction : Direction.values()) {
             // TODO: Capability cache
             IEnergyStorage receiver = level.getCapability(Capabilities.EnergyStorage.BLOCK,

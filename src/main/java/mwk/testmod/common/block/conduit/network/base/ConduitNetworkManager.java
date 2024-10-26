@@ -18,8 +18,6 @@ import mwk.testmod.common.block.conduit.ConduitConnectionType;
 import mwk.testmod.common.block.conduit.ConduitType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -147,7 +145,6 @@ public class ConduitNetworkManager {
     private void createNetwork(ServerLevel level, BlockPos pos, ConduitType type) {
         ConduitNetwork<?, ?> network = type.createNetwork();
         TestMod.LOGGER.debug("Creating new network " + network + " at " + pos);
-        network.setMasterPos(pos);
         addConduitToNetwork(level, pos, network);
     }
 
@@ -164,7 +161,7 @@ public class ConduitNetworkManager {
         if (network == null) {
             return;
         }
-        TestMod.LOGGER.debug("Adding conduit at " + pos + " to network " + network);
+        TestMod.LOGGER.debug("Adding conduit at {} to network {}", pos, network);
         networkMap.put(pos, network);
         network.add(pos);
         BlockEntity blockEntity = level.getBlockEntity(pos);
@@ -187,13 +184,6 @@ public class ConduitNetworkManager {
         }
         TestMod.LOGGER.debug("Removing conduit at " + pos + " from network " + network);
         network.remove(pos);
-        // Find a new master if the current one is removed
-        if (network.isMasterPos(pos)) {
-            network.clearMasterPos();
-            if (network.getSize() > 0) {
-                network.setMasterPos(network.getPositions().iterator().next());
-            }
-        }
     }
 
     /**
@@ -289,23 +279,5 @@ public class ConduitNetworkManager {
             }
         }
         return neighbors;
-    }
-
-    public void serializeNetworkNBT(HolderLookup.Provider registries, BlockPos pos,
-            CompoundTag tag) {
-        ConduitNetwork<?, ?> network = networkMap.get(pos);
-        if (network != null) {
-            tag.put("network", network.serializeNBT(registries));
-        }
-    }
-
-    public void deserializeNetworkNBT(HolderLookup.Provider registries, BlockPos pos,
-            CompoundTag tag, ConduitType type) {
-        ConduitNetwork<?, ?> network = type.createNetwork();
-        network.deserializeNBT(registries, tag.getCompound("network"));
-        for (BlockPos position : network.getPositions()) {
-            networkMap.put(position, network);
-        }
-        network.setMasterPos(pos);
     }
 }

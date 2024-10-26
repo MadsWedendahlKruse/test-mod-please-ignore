@@ -8,8 +8,6 @@ import mwk.testmod.common.block.conduit.network.capabilites.NetworkCapabilityPro
 import mwk.testmod.common.block.interfaces.ITickable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup.Provider;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -17,25 +15,26 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
 
-public abstract class ConduitBlockEntity<T> extends BlockEntity implements ITickable {
-
-    public static final String NBT_TAG_MASTER = "isMaster";
-    public static final String NBT_TAG_CONDUIT_TYPE = "conduitType";
+/**
+ * Base class for all conduit block entities.
+ *
+ * @param <C> The type of capability that the conduit will be using, e.g. IEnergyStorage for energy
+ *            conduits, IFluidHandler for fluid conduits, IItemHandler for item conduits.
+ */
+public abstract class ConduitBlockEntity<C> extends BlockEntity implements ITickable {
 
     // Cache for the capabilities of the neighboring blocks
-    private final BlockCapabilityCache<T, Direction>[] connections;
+    private final BlockCapabilityCache<C, Direction>[] connections;
     private boolean capsInvalidated;
     // The network this conduit is part of
-    protected ConduitNetwork<T, ?> network;
+    protected ConduitNetwork<C, ?> network;
     protected ConduitType conduitType;
-    // One conduit is in charge of serializing the network data
-    private boolean isMaster;
     // Whether this conduit has connections to blocks other than conduits
     private boolean hasConnections;
     // If caps are invalidated the conduit might gain or lose connections
     private boolean hasConnectionsValid;
     // Capabilities exposed by this conduit
-    protected final HashMap<Direction, T> capabilities;
+    protected final HashMap<Direction, C> capabilities;
 
     public ConduitBlockEntity(BlockEntityType<?> type, ConduitType conduitType, BlockPos pos,
             BlockState blockState) {
@@ -48,16 +47,9 @@ public abstract class ConduitBlockEntity<T> extends BlockEntity implements ITick
     @Override
     public void onLoad() {
         super.onLoad();
-        ConduitNetwork<?, ?> network =
-                ConduitNetworkManager.getInstance().getNetwork(worldPosition);
-        if (network != null) {
-            setNetwork(network);
-            BlockPos masterPos = network.getMasterPos();
-            if (masterPos != null && masterPos.equals(worldPosition)) {
-                isMaster = true;
-            }
-        }
         if (level instanceof ServerLevel serverLevel) {
+            ConduitNetworkManager.getInstance()
+                    .connectToNetwork(serverLevel, worldPosition, getBlockState());
             for (Direction direction : Direction.values()) {
                 BlockPos neigborPos = worldPosition.relative(direction);
                 Direction neighborFace = direction.getOpposite();
@@ -79,12 +71,12 @@ public abstract class ConduitBlockEntity<T> extends BlockEntity implements ITick
                 ConduitNetworkManager.getInstance()
                         .connectToNetwork(serverLevel, worldPosition, getBlockState());
             }
-            return;
+//            return;
         }
         BlockState state = this.getBlockState();
-        for (BlockCapabilityCache<T, Direction> connection : connections) {
+        for (BlockCapabilityCache<C, Direction> connection : connections) {
             // We need to query the capability to trigger the invalidation callback
-            T cap = connection.getCapability();
+            C cap = connection.getCapability();
             // Skip neighbors that are conduits
             if (cap instanceof NetworkCapabilityProvider<?>) {
                 continue;
@@ -123,18 +115,9 @@ public abstract class ConduitBlockEntity<T> extends BlockEntity implements ITick
         }
     }
 
-    public boolean setMaster(boolean isMaster) {
-        if (this.isMaster == isMaster) {
-            return false;
-        }
-        this.isMaster = isMaster;
-        setChanged();
-        return true;
-    }
-
     public void setNetwork(ConduitNetwork<?, ?> network) {
-        this.network = (ConduitNetwork<T, ?>) network;
-        this.conduitType = network.getType();
+        this.network = (ConduitNetwork<C, ?>) network;
+//        this.conduitType = network.getType();
     }
 
     public boolean hasConnections() {
@@ -153,35 +136,9 @@ public abstract class ConduitBlockEntity<T> extends BlockEntity implements ITick
         return hasConnections;
     }
 
-    public T getCapability(Direction direction) {
+    public C getCapability(Direction direction) {
         return capabilities.computeIfAbsent(direction, this::createNewCapability);
     }
 
-    protected abstract T createNewCapability(Direction direction);
-
-    @Override
-    protected void saveAdditional(CompoundTag tag, Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.putBoolean(NBT_TAG_MASTER, isMaster);
-        if (isMaster) {
-            ConduitNetworkManager.getInstance().serializeNetworkNBT(registries, worldPosition, tag);
-        }
-        tag.putInt(NBT_TAG_CONDUIT_TYPE, conduitType.ordinal());
-    }
-
-    @Override
-    public void loadAdditional(CompoundTag tag, Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.contains(NBT_TAG_CONDUIT_TYPE)) {
-            conduitType = ConduitType.values()[tag.getInt(NBT_TAG_CONDUIT_TYPE)];
-        }
-        if (tag.contains(NBT_TAG_MASTER)) {
-            isMaster = tag.getBoolean(NBT_TAG_MASTER);
-            if (isMaster && conduitType != null) {
-                ConduitNetworkManager.getInstance()
-                        .deserializeNetworkNBT(registries, worldPosition, tag,
-                                conduitType);
-            }
-        }
-    }
+    protected abstract C createNewCapability(Direction direction);
 }
