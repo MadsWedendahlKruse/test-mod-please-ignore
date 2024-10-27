@@ -4,7 +4,6 @@ import mwk.testmod.TestMod;
 import mwk.testmod.common.block.conduit.EnergyConduitBlockEntity;
 import mwk.testmod.common.block.conduit.FluidConduitBlockEntity;
 import mwk.testmod.common.block.conduit.ItemConduitBlockEntity;
-import mwk.testmod.common.block.entity.AssemblerBlockEntity;
 import mwk.testmod.common.block.entity.CapacitronBlockEntity;
 import mwk.testmod.common.block.entity.CrusherBlockEntity;
 import mwk.testmod.common.block.entity.GeothermalGeneratorBlockEntity;
@@ -13,7 +12,6 @@ import mwk.testmod.common.block.entity.RedstoneGeneratorBlockEntity;
 import mwk.testmod.common.block.entity.SeparatorBlockEntity;
 import mwk.testmod.common.block.entity.StampingPressBlockEntity;
 import mwk.testmod.common.block.entity.StirlingGeneratorBlockEntity;
-import mwk.testmod.common.block.entity.TeleporterBlockEntity;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import mwk.testmod.common.block.multiblock.entity.MultiBlockPartBlockEntity;
 import mwk.testmod.common.block.multiblock.entity.ports.MultiBlockEnergyPortBlockEntity;
@@ -66,16 +64,12 @@ public class TestModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<InductionFurnaceBlockEntity>> INDUCTION_FURNACE_ENTITY_TYPE =
             registerSimpleBlockEntity(TestModBlocks.INDUCTION_FURNACE,
                     InductionFurnaceBlockEntity::new);
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AssemblerBlockEntity>> ASSEMBLER_ENTITY_TYPE =
-            registerSimpleBlockEntity(TestModBlocks.ASSEMBLER, AssemblerBlockEntity::new);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CrusherBlockEntity>> CRUSHER_ENTITY_TYPE =
             registerSimpleBlockEntity(TestModBlocks.CRUSHER, CrusherBlockEntity::new);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SeparatorBlockEntity>> SEPARATOR_ENTITY_TYPE =
             registerSimpleBlockEntity(TestModBlocks.SEPARATOR, SeparatorBlockEntity::new);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StampingPressBlockEntity>> STAMPING_PRESS_ENTITY_TYPE =
             registerSimpleBlockEntity(TestModBlocks.STAMPING_PRESS, StampingPressBlockEntity::new);
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TeleporterBlockEntity>> TELEPORTER_ENTITY_TYPE =
-            registerSimpleBlockEntity(TestModBlocks.TELEPORTER, TeleporterBlockEntity::new);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RedstoneGeneratorBlockEntity>> REDSTONE_GENERATOR_ENTITY_TYPE =
             registerSimpleBlockEntity(TestModBlocks.REDSTONE_GENERATOR,

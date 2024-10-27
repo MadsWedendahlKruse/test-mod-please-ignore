@@ -1,17 +1,16 @@
 package mwk.testmod.common.block.entity.base;
 
-import mwk.testmod.TestModConfig;
+import java.util.Optional;
+import mwk.testmod.common.block.entity.modules.AutoIOModule;
+import mwk.testmod.common.block.entity.modules.EnergyModule;
+import mwk.testmod.common.block.entity.modules.FluidTankModule;
+import mwk.testmod.common.block.entity.modules.InventoryModule;
+import mwk.testmod.common.block.entity.modules.MachineModule;
+import mwk.testmod.common.block.entity.modules.SoundModule;
 import mwk.testmod.common.block.interfaces.IDescribable;
 import mwk.testmod.common.block.interfaces.IUpgradable;
-import mwk.testmod.common.item.upgrades.base.UpgradeItem;
-import mwk.testmod.common.util.inventory.handler.FluidStackHandler;
-import mwk.testmod.common.util.inventory.handler.InputFluidHandler;
-import mwk.testmod.common.util.inventory.handler.InputItemHandler;
-import mwk.testmod.common.util.inventory.handler.OutputFluidHandler;
-import mwk.testmod.common.util.inventory.handler.OutputItemHandler;
-import mwk.testmod.common.util.inventory.handler.UpgradeItemHandler;
+import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -22,150 +21,111 @@ import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemStackHandler;
-import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 
 /**
  * A block entity that stores energy and also has an inventory.
  */
-public abstract class MachineBlockEntity extends EnergyBlockEntity
+public abstract class MachineBlockEntity extends BlockEntity
         implements MenuProvider, IUpgradable, IDescribable {
 
-    public static final String NBT_TAG_INVENTORY = "inventory";
-    public static final String NBT_TAG_FLUID_TANKS = "fluidTanks";
-    public static final String NBT_TAG_AUTO_PULL = "autoPull";
-    public static final String NBT_TAG_AUTO_PUSH = "autoPush";
+    private Optional<EnergyModule> energy;
+    private Optional<InventoryModule> inventory;
+    private Optional<FluidTankModule> fluidTanks;
+    private Optional<AutoIOModule> autoIO;
+    private Optional<SoundModule> sound;
 
-    public static final int ITEM_IO_SPEED = TestModConfig.MACHINE_ITEM_IO_SPEED_DEFAULT.get(); // [items/tick]
-    public static final int FLUID_IO_SPEED = TestModConfig.MACHINE_FLUID_IO_SPEED_DEFAULT.get(); // [mB/tick]
+    public MachineBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
+        energy = Optional.empty();
+        inventory = Optional.empty();
+        fluidTanks = Optional.empty();
+        autoIO = Optional.empty();
+        sound = Optional.empty();
+    }
 
-    protected final int inputSlots;
-    protected final int outputSlots;
-    protected final int upgradeSlots;
-    protected final int inventorySize;
+    protected void addModule(MachineModule module) {
+        if (module instanceof EnergyModule) {
+            energy = Optional.of((EnergyModule) module);
+        } else if (module instanceof InventoryModule) {
+            inventory = Optional.of((InventoryModule) module);
+        } else if (module instanceof FluidTankModule) {
+            fluidTanks = Optional.of((FluidTankModule) module);
+        } else if (module instanceof AutoIOModule) {
+            autoIO = Optional.of((AutoIOModule) module);
+        } else if (module instanceof SoundModule) {
+            sound = Optional.of((SoundModule) module);
+        }
+    }
 
-    protected final ItemStackHandler inventory;
-    protected final InputItemHandler inputItemHandlerPlayer;
-    protected final InputItemHandler inputItemHandlerAutomation;
-    protected final OutputItemHandler outputItemHandler;
-    protected final UpgradeItemHandler upgradeItemHandler;
-    protected final Lazy<CombinedInvWrapper> combinedInventory;
+    protected void addModules(MachineModule... modules) {
+        for (MachineModule module : modules) {
+            addModule(module);
+        }
+    }
 
-    protected static final int[] EMPTY_TANKS = new int[0];
 
-    protected final int inputTanks;
-    protected final int outputTanks;
-
-    protected final FluidStackHandler fluidTanks;
-    protected final InputFluidHandler inputFluidHandler;
-    protected final OutputFluidHandler outputFluidHandler;
-
-    private boolean autoPull;
-    private boolean autoPush;
-
-    public MachineBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
-            int maxEnergy, EnergyType energyType, int inputSlots, int outputSlots, int upgradeSlots,
-            int[] inputTankCapacities, int[] outputTankCapacities) {
-        super(type, pos, state, maxEnergy, energyType);
-        this.inputSlots = inputSlots;
-        this.outputSlots = outputSlots;
-        this.upgradeSlots = upgradeSlots;
-        inventorySize = inputSlots + outputSlots + upgradeSlots;
-        inventory = new ItemStackHandler(inventorySize) {
-            @Override
-            protected void onContentsChanged(int slot) {
-                setChanged();
-                onInventoryChanged(slot);
+    public boolean isFormed() {
+        // We're going all in on multiblocks
+        if (level != null) {
+            BlockState state = getBlockState();
+            if (state.getBlock() instanceof MultiBlockControllerBlock) {
+                return state.getValue(MultiBlockControllerBlock.FORMED);
             }
+        }
+        return false;
+    }
 
-            @Override
-            public int getSlotLimit(int slot) {
-//                if (inputItemHandlerPlayer.isSlotValid(slot)) {
-//                    return inputItemHandlerPlayer.getSlotLimit(slot);
-//                }
-//                if (outputItemHandler.isSlotValid(slot)) {
-//                    return outputItemHandler.getSlotLimit(slot);
-//                }
-                if (upgradeItemHandler.isSlotValid(slot)) {
-                    return upgradeItemHandler.getSlotLimit(slot);
-                }
-                return 64;
-                // TODO: For some reason this doesn't work
-//                return combinedInventory.get().getSlotLimit(slot);
-            }
-        };
-        inputItemHandlerPlayer =
-                new InputItemHandler(inventory, 0, inputSlots, this::isInputItemValid, true);
-        inputItemHandlerAutomation =
-                new InputItemHandler(inventory, 0, inputSlots, this::isInputItemValid, false);
-        outputItemHandler = new OutputItemHandler(inventory, inputSlots, outputSlots);
-        upgradeItemHandler =
-                new UpgradeItemHandler(inventory, inputSlots + outputSlots, upgradeSlots, this);
-        combinedInventory = Lazy.of(() -> new CombinedInvWrapper(inputItemHandlerPlayer,
-                outputItemHandler, upgradeItemHandler));
+    public void setWorking(boolean working) {
+        // TODO: Right now this only works if the block entity is attached to a
+        // multiblock
+        // controller. This should be changed to work with any block entity?
+        if (level != null && getBlockState().getBlock() instanceof MultiBlockControllerBlock) {
+            level.setBlockAndUpdate(worldPosition,
+                    getBlockState().setValue(MultiBlockControllerBlock.WORKING, working));
+        }
+        if (!working) {
+            sound().ifPresent(soundModule -> soundModule.setSoundStart(0));
+        }
+    }
 
-        inputTanks = inputTankCapacities.length;
-        outputTanks = outputTankCapacities.length;
-        int[] tankCapacities = new int[inputTanks + outputTanks];
-        System.arraycopy(inputTankCapacities, 0, tankCapacities, 0, inputTanks);
-        System.arraycopy(outputTankCapacities, 0, tankCapacities, inputTanks, outputTanks);
-        fluidTanks = new FluidStackHandler(tankCapacities) {
-            @Override
-            protected void onContentsChanged(int tank) {
-                setChanged();
-                // TODO: This works, but for most cases the tank contents can only be seen in the
-                // GUI, so most of these syncs are unnecessary
-                level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(),
-                        Block.UPDATE_CLIENTS);
-            }
-        };
-        inputFluidHandler =
-                new InputFluidHandler(fluidTanks, 0, inputTanks, this::isInputFluidValid);
-        outputFluidHandler = new OutputFluidHandler(fluidTanks, inputTanks, outputTanks);
-
-        this.autoPush = true;
-        this.autoPull = true;
+    public boolean isWorking() {
+        // TODO: Same as for setWorking
+        if (getBlockState().getBlock() instanceof MultiBlockControllerBlock) {
+            return getBlockState().getValue(MultiBlockControllerBlock.WORKING);
+        }
+        return false;
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag, Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.put(NBT_TAG_INVENTORY, inventory.serializeNBT(registries));
-        tag.put(NBT_TAG_FLUID_TANKS, fluidTanks.serializeNBT(registries));
-        tag.putBoolean(NBT_TAG_AUTO_PULL, autoPull);
-        tag.putBoolean(NBT_TAG_AUTO_PUSH, autoPush);
+        energy.ifPresent(energyModule -> energyModule.saveAdditional(tag, registries));
+        inventory.ifPresent(inventoryModule -> inventoryModule.saveAdditional(tag, registries));
+        fluidTanks.ifPresent(fluidTankModule -> fluidTankModule.saveAdditional(tag, registries));
+        autoIO.ifPresent(autoIOModule -> autoIOModule.saveAdditional(tag, registries));
     }
 
     @Override
     public void loadAdditional(CompoundTag tag, Provider registries) {
         super.loadAdditional(tag, registries);
-        if (tag.contains(NBT_TAG_INVENTORY)) {
-            inventory.deserializeNBT(registries, tag.getCompound(NBT_TAG_INVENTORY));
+        energy.ifPresent(energyModule -> energyModule.loadAdditional(tag, registries));
+        inventory.ifPresent(inventoryModule -> inventoryModule.loadAdditional(tag, registries));
+        fluidTanks.ifPresent(fluidTankModule -> fluidTankModule.loadAdditional(tag, registries));
+        autoIO.ifPresent(autoIOModule -> autoIOModule.loadAdditional(tag, registries));
+        if (inventory.isPresent()) {
+            InventoryModule inventory = inventory().get();
+            inventory.getUpgradeItemHandler(null).applyUpgrades();
         }
-        if (tag.contains(NBT_TAG_FLUID_TANKS)) {
-            fluidTanks.deserializeNBT(registries, tag.getCompound(NBT_TAG_FLUID_TANKS));
-        }
-        if (tag.contains(NBT_TAG_AUTO_PULL)) {
-            autoPull = tag.getBoolean(NBT_TAG_AUTO_PULL);
-        }
-        if (tag.contains(NBT_TAG_AUTO_PUSH)) {
-            autoPush = tag.getBoolean(NBT_TAG_AUTO_PUSH);
-        }
-        applyUpgrades();
     }
 
     @Override
     public CompoundTag getUpdateTag(Provider registries) {
         CompoundTag tag = super.getUpdateTag(registries);
-        if (inputTanks + outputTanks > 0) {
-            tag.put(NBT_TAG_FLUID_TANKS, fluidTanks.serializeNBT(registries));
-        }
+        fluidTanks.ifPresent(fluidTankModule -> fluidTankModule.getUpdateTag(tag, registries));
         return tag;
     }
 
@@ -183,9 +143,11 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
         if (tag == null) {
             return;
         }
-        if (tag.contains(NBT_TAG_FLUID_TANKS)) {
-            fluidTanks.deserializeNBT(registries, tag.getCompound(NBT_TAG_FLUID_TANKS));
-        }
+        fluidTanks.ifPresent(fluidTankModule -> fluidTankModule.onDataPacket(net, pkt, registries));
+    }
+
+    public Optional<EnergyModule> energy() {
+        return energy;
     }
 
     /**
@@ -210,36 +172,8 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
         return true;
     }
 
-    public IItemHandler getItemHandler(Direction direction) {
-        return combinedInventory.get();
-    }
-
-    public InputItemHandler getInputItemHandler(Direction direction, boolean player) {
-        return player ? inputItemHandlerPlayer : inputItemHandlerAutomation;
-    }
-
-    public OutputItemHandler getOutputItemHandler(Direction direction) {
-        return outputItemHandler;
-    }
-
-    public UpgradeItemHandler getUpgradeItemHandler(Direction direction) {
-        return upgradeItemHandler;
-    }
-
-    public int getInputSlots() {
-        return inputSlots;
-    }
-
-    public int getOutputSlots() {
-        return outputSlots;
-    }
-
-    public int getUpgradeSlots() {
-        return upgradeSlots;
-    }
-
-    public int getInventorySize() {
-        return inventorySize;
+    public Optional<InventoryModule> inventory() {
+        return inventory;
     }
 
     /**
@@ -255,20 +189,8 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
         return true;
     }
 
-    public InputFluidHandler getInputFluidHandler(Direction direction) {
-        return inputFluidHandler;
-    }
-
-    public OutputFluidHandler getOutputFluidHandler(Direction direction) {
-        return outputFluidHandler;
-    }
-
-    public int getInputTanks() {
-        return inputTanks;
-    }
-
-    public int getOutputTanks() {
-        return outputTanks;
+    public Optional<FluidTankModule> fluidTanks() {
+        return fluidTanks;
     }
 
     /**
@@ -276,57 +198,29 @@ public abstract class MachineBlockEntity extends EnergyBlockEntity
      * broken. TODO: Not sure if this is the best way to do this.
      */
     public Container getDrops() {
-        SimpleContainer inventory = new SimpleContainer(inventorySize);
-        for (int i = 0; i < inventorySize; i++) {
-            inventory.setItem(i, this.inventory.getStackInSlot(i));
-        }
-        return inventory;
+        return inventory.map(InventoryModule::getDrops).orElse(new SimpleContainer(0));
     }
-
-    /**
-     * Reset whatever values the upgrades have changed to their default values.
-     */
-    abstract protected void resetUpgrades();
-
-    /**
-     * Install the given upgrade to the block entity. This should check the type of the upgrade and
-     * modify the block entity accordingly.
-     *
-     * @param upgrade the upgrade to install
-     */
-    abstract protected void installUpgrade(UpgradeItem upgrade);
 
     /**
      * Apply the upgrades to the block entity. This should be called whenever the upgrades are
      * changed.
      */
-    @Override
-    public final void applyUpgrades() {
-        if (level != null && level.isClientSide()) {
-            return;
-        }
-        resetUpgrades();
-        for (int i = 0; i < upgradeItemHandler.getSlots(); i++) {
-            ItemStack stack = upgradeItemHandler.getStackInSlot(i);
-            if (stack.getItem() instanceof UpgradeItem upgrade) {
-                installUpgrade(upgrade);
-            }
-        }
+//    public final void applyUpgrades() {
+//        if (level != null && level.isClientSide()) {
+//            return;
+//        }
+//        if (inventory.isPresent()) {
+//            resetUpgrades();
+//            for (UpgradeItem upgrade : inventory.get().getUpgrades()) {
+//                installUpgrade(upgrade);
+//            }
+//        }
+//    }
+    public Optional<AutoIOModule> autoIO() {
+        return autoIO;
     }
 
-    public boolean isAutoPush() {
-        return autoPush;
-    }
-
-    public void setAutoPush(boolean autoPush) {
-        this.autoPush = autoPush;
-    }
-
-    public boolean isAutoPull() {
-        return autoPull;
-    }
-
-    public void setAutoPull(boolean autoPull) {
-        this.autoPull = autoPull;
+    public Optional<SoundModule> sound() {
+        return sound;
     }
 }

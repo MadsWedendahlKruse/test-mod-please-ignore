@@ -1,6 +1,8 @@
 package mwk.testmod.common.block.entity;
 
 import mwk.testmod.common.block.entity.base.MachineBlockEntity;
+import mwk.testmod.common.block.entity.modules.EnergyModule;
+import mwk.testmod.common.block.entity.modules.EnergyModule.EnergyType;
 import mwk.testmod.common.block.inventory.CapacitronMenu;
 import mwk.testmod.common.item.upgrades.base.UpgradeItem;
 import mwk.testmod.datagen.TestModLanguageProvider;
@@ -17,8 +19,8 @@ public class CapacitronBlockEntity extends MachineBlockEntity {
 
     public CapacitronBlockEntity(BlockPos pos, BlockState state) {
         // TODO: Different tiers of capacitrons?
-        super(TestModBlockEntities.CAPACITRON_ENTITY_TYPE.get(), pos, state, 1048576,
-                EnergyType.STORAGE, 0, 0, 0, EMPTY_TANKS, EMPTY_TANKS);
+        super(TestModBlockEntities.CAPACITRON_ENTITY_TYPE.get(), pos, state);
+        addModule(new EnergyModule(this, 1048576, EnergyType.STORAGE));
     }
 
     @Override
@@ -38,13 +40,13 @@ public class CapacitronBlockEntity extends MachineBlockEntity {
     }
 
     @Override
-    protected void resetUpgrades() {
-
+    public void resetUpgrades() {
+        // Do nothing
     }
 
     @Override
-    protected void installUpgrade(UpgradeItem upgrade) {
-
+    public void installUpgrade(UpgradeItem upgrade) {
+        // Do nothing
     }
 
     @Override

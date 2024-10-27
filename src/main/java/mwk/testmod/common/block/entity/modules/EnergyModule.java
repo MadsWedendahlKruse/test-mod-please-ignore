@@ -1,5 +1,6 @@
-package mwk.testmod.common.block.entity.base;
+package mwk.testmod.common.block.entity.modules;
 
+import mwk.testmod.common.block.entity.base.MachineBlockEntity;
 import mwk.testmod.common.util.energy.EnergyStorageConsumer;
 import mwk.testmod.common.util.energy.EnergyStorageProducer;
 import mwk.testmod.common.util.energy.EnergyStorageWrapper;
@@ -8,55 +9,49 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.energy.EnergyStorage;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 
-/**
- * A block entity that stores energy and provides an energy handler.
- */
-public class EnergyBlockEntity extends BlockEntity {
+public class EnergyModule implements MachineModule {
 
     public static final String NBT_TAG_ENERGY = "energy";
-
-    protected final EnergyStorage energyStorage;
-    protected final Lazy<IEnergyStorage> energyWrapper;
 
     // TODO: Overengineered?
     public enum EnergyType {
         STORAGE, CONSUMER, PRODUCER
     }
 
-    public EnergyBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
-            int maxEnergy, EnergyType energyType) {
-        super(type, pos, state);
+    private final EnergyStorage energyStorage;
+    private final Lazy<IEnergyStorage> energyWrapper;
+    private final EnergyType energyType;
+
+    public EnergyModule(MachineBlockEntity machine, int maxEnergy,
+            EnergyType energyType) {
         this.energyStorage = new EnergyStorage(maxEnergy);
         this.energyWrapper = switch (energyType) {
-            case STORAGE -> Lazy.of(() -> new EnergyStorageWrapper(this.energyStorage, this));
-            case CONSUMER -> Lazy.of(() -> new EnergyStorageConsumer(this.energyStorage, this));
-            case PRODUCER -> Lazy.of(() -> new EnergyStorageProducer(this.energyStorage, this));
+            case STORAGE -> Lazy.of(() -> new EnergyStorageWrapper(this.energyStorage, machine));
+            case CONSUMER -> Lazy.of(() -> new EnergyStorageConsumer(this.energyStorage, machine));
+            case PRODUCER -> Lazy.of(() -> new EnergyStorageProducer(this.energyStorage, machine));
         };
+        this.energyType = energyType;
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, Provider registries) {
-        super.saveAdditional(tag, registries);
+    public void saveAdditional(CompoundTag tag, Provider registries) {
         tag.put(NBT_TAG_ENERGY, energyStorage.serializeNBT(registries));
     }
 
     @Override
     public void loadAdditional(CompoundTag tag, Provider registries) {
-        super.loadAdditional(tag, registries);
         if (tag.contains(NBT_TAG_ENERGY)) {
             energyStorage.deserializeNBT(registries, IntTag.valueOf(tag.getInt(NBT_TAG_ENERGY)));
         }
     }
 
-    public void pushEnergy(BlockPos pos, int energyPerTick) {
+    public void pushEnergy(ServerLevel level, BlockPos pos, int energyPerTick) {
         if (getEnergyStored() == 0) {
             return;
         }
@@ -86,5 +81,17 @@ public class EnergyBlockEntity extends BlockEntity {
 
     public IEnergyStorage getEnergyStorage(Direction direction) {
         return energyWrapper.get();
+    }
+
+    public IEnergyStorage getEnergyStorage() {
+        return getEnergyStorage(null);
+    }
+
+    public int receiveEnergy(int maxReceive, boolean simulate) {
+        return energyStorage.receiveEnergy(maxReceive, simulate);
+    }
+
+    public int extractEnergy(int maxExtract, boolean simulate) {
+        return energyStorage.extractEnergy(maxExtract, simulate);
     }
 }

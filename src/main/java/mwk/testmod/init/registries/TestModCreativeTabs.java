@@ -58,7 +58,6 @@ public class TestModCreativeTabs {
             event.accept(TestModBlocks.MACHINE_ENERGY_PORT.get());
             event.accept(TestModBlocks.COPPER_COIL.get());
             event.accept(TestModBlocks.INDUCTION_FURNACE.get());
-            event.accept(TestModBlocks.ASSEMBLER.get());
             event.accept(TestModBlocks.CRUSHER.get());
             event.accept(TestModBlocks.SEPARATOR.get());
         }

@@ -2,6 +2,7 @@ package mwk.testmod.common.network;
 
 import mwk.testmod.TestMod;
 import mwk.testmod.common.block.entity.base.MachineBlockEntity;
+import mwk.testmod.common.block.entity.modules.AutoIOModule;
 import mwk.testmod.common.block.inventory.base.MachineMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -44,11 +45,13 @@ public record MachineIOPacket(boolean input, boolean value, BlockPos blockPos) i
         }
         context.enqueueWork(() -> {
             BlockEntity blockEntity = player.level().getBlockEntity(packet.blockPos());
-            if (blockEntity instanceof MachineBlockEntity machineBlockEntity) {
+            if (blockEntity instanceof MachineBlockEntity machineBlockEntity
+                    && machineBlockEntity.autoIO().isPresent()) {
+                AutoIOModule autoIOModule = machineBlockEntity.autoIO().get();
                 if (packet.input()) {
-                    machineBlockEntity.setAutoPull(packet.value());
+                    autoIOModule.setAutoPull(packet.value());
                 } else {
-                    machineBlockEntity.setAutoPush(packet.value());
+                    autoIOModule.setAutoPush(packet.value());
                 }
             }
         });

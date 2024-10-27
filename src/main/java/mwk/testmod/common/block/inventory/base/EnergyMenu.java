@@ -1,6 +1,7 @@
 package mwk.testmod.common.block.inventory.base;
 
-import mwk.testmod.common.block.entity.base.EnergyBlockEntity;
+import mwk.testmod.common.block.entity.base.MachineBlockEntity;
+import mwk.testmod.common.block.entity.modules.EnergyModule;
 import mwk.testmod.common.util.inventory.container_data.EnergyContainerData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
@@ -24,10 +25,12 @@ public abstract class EnergyMenu extends AbstractContainerMenu {
         super(menuType, containerId);
         this.pos = pos;
         this.block = player.level().getBlockState(pos).getBlock();
-        if (player.level().getBlockEntity(pos) instanceof EnergyBlockEntity blockEntity) {
-            this.energy = blockEntity.getEnergyStored();
-            this.maxEnergy = blockEntity.getMaxEnergyStored();
-            addDataSlots(new EnergyContainerData(blockEntity, this));
+        if (player.level().getBlockEntity(pos) instanceof MachineBlockEntity machine
+                && machine.energy().isPresent()) {
+            EnergyModule energyModule = machine.energy().get();
+            this.energy = energyModule.getEnergyStored();
+            this.maxEnergy = energyModule.getMaxEnergyStored();
+            addDataSlots(new EnergyContainerData(energyModule, this));
         } else {
             // TODO: Not sure what to do here
             throw new IllegalArgumentException(
@@ -46,7 +49,7 @@ public abstract class EnergyMenu extends AbstractContainerMenu {
     public int getMaxEnergy() {
         return maxEnergy;
     }
-    
+
     @Override
     public boolean stillValid(Player player) {
         return stillValid(ContainerLevelAccess.create(player.level(), pos), player, block);
