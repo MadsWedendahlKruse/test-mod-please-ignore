@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class HologramGeometryRenderer {
 
@@ -114,6 +115,10 @@ public class HologramGeometryRenderer {
     public void drawAABB(PoseStack poseStack, AABB aabb, float[] color, float alpha) {
         Vec3[] vertices = getBoxCorners(aabb);
         drawBox(poseStack, vertices, color[0], color[1], color[2], alpha);
+    }
+
+    public void drawShape(PoseStack poseStack, VoxelShape shape, float[] color, float alpha) {
+        drawAABB(poseStack, shape.bounds(), color, alpha);
     }
 
     public void drawTriangle(PoseStack poseStack, Vec3 v1, Vec3 v2, Vec3 v3, float[] color1,

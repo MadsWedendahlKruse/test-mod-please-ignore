@@ -52,6 +52,9 @@ public abstract class GeneratorBlockEntity<I extends RecipeInput, T extends Reci
         }
         processing.increaseProgress();
         generateEnergy();
+        if (!isWorking()) {
+            setWorking(true);
+        }
         setChanged();
         if (sound().isPresent()) {
             sound().get().playSound();

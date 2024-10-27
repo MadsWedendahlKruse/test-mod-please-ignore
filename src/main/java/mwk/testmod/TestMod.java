@@ -13,6 +13,7 @@ import mwk.testmod.client.render.block_entity.CrusherBlockEntityRenderer;
 import mwk.testmod.client.render.block_entity.SeparatorBlockEntityRenderer;
 import mwk.testmod.client.render.block_entity.StampingPressBlockEntityRenderer;
 import mwk.testmod.client.render.block_entity.StirlingGeneratorBlockEntityRenderer;
+import mwk.testmod.client.render.conduit.ConduitBlockEntityRenderer;
 import mwk.testmod.client.render.conduit.FluidConduitBlockEntityRenderer;
 import mwk.testmod.client.render.hologram.HologramRenderer;
 import mwk.testmod.common.block.conduit.ConduitBlockEntity;
@@ -201,17 +202,21 @@ public class TestMod {
         @SubscribeEvent
         public static void onRegisterRenderersEvent(RegisterRenderers event) {
             event.registerBlockEntityRenderer(TestModBlockEntities.CRUSHER_ENTITY_TYPE.get(),
-                    (context) -> new CrusherBlockEntityRenderer(context));
+                    CrusherBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(TestModBlockEntities.SEPARATOR_ENTITY_TYPE.get(),
-                    (context) -> new SeparatorBlockEntityRenderer(context));
+                    SeparatorBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(
                     TestModBlockEntities.STIRLING_GENERATOR_ENTITY_TYPE.get(),
-                    (context) -> new StirlingGeneratorBlockEntityRenderer(context));
+                    StirlingGeneratorBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(TestModBlockEntities.STAMPING_PRESS_ENTITY_TYPE.get(),
-                    (context) -> new StampingPressBlockEntityRenderer(context));
+                    StampingPressBlockEntityRenderer::new);
 
             event.registerBlockEntityRenderer(TestModBlockEntities.CONDUIT_FLUID_ENTITY_TYPE.get(),
-                    (context) -> new FluidConduitBlockEntityRenderer(context));
+                    FluidConduitBlockEntityRenderer::new);
+            event.registerBlockEntityRenderer(TestModBlockEntities.CONDUIT_ENERGY_ENTITY_TYPE.get(),
+                    ConduitBlockEntityRenderer::new);
+            event.registerBlockEntityRenderer(TestModBlockEntities.CONDUIT_ITEM_ENTITY_TYPE.get(),
+                    ConduitBlockEntityRenderer::new);
         }
 
         @SubscribeEvent

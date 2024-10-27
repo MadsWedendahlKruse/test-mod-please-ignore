@@ -10,7 +10,6 @@ import mwk.testmod.common.block.conduit.FluidConduitBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -21,7 +20,7 @@ import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtension
 import net.neoforged.neoforge.fluids.FluidStack;
 
 public class FluidConduitBlockEntityRenderer
-        implements BlockEntityRenderer<FluidConduitBlockEntity> {
+        extends ConduitBlockEntityRenderer<FluidConduitBlockEntity> {
 
     // Offset fluid vertices to avoid z-fighting with the conduit block
     private static final float FLUID_OFFSET = 0.01F;
@@ -81,12 +80,15 @@ public class FluidConduitBlockEntityRenderer
             {FLUID_VERTICES_DOWN_UP, FLUID_VERTICES_NORTH_SOUTH, FLUID_VERTICES_WEST_EAST};
 
     public FluidConduitBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
+        super(context);
     }
 
     @Override
     public void render(FluidConduitBlockEntity conduitEntity, float partialTick,
             PoseStack poseStack, MultiBufferSource multiBufferSource, int combinedLight,
             int combinedOverlay) {
+        super.render(conduitEntity, partialTick, poseStack, multiBufferSource, combinedLight,
+                combinedOverlay);
         // TODO: Make the conduit emit light based on the fluid (e.g. lava emits light)
         FluidStack fluidStack = conduitEntity.getFluidStack();
         // TODO: Would be cool if the fluid was animated
