@@ -31,6 +31,15 @@ public class UpgradeItemHandler extends ItemHandlerWrapper {
     @Override
     public void setStackInSlot(int slot, ItemStack stack) {
         super.setStackInSlot(slot, stack);
-        upgradable.applyUpgrades();
+        applyUpgrades();
+    }
+
+    public void applyUpgrades() {
+        upgradable.resetUpgrades();
+        for (int i = 0; i < getSlots(); i++) {
+            if (getStackInSlot(i).getItem() instanceof UpgradeItem upgrade) {
+                upgradable.installUpgrade(upgrade);
+            }
+        }
     }
 }

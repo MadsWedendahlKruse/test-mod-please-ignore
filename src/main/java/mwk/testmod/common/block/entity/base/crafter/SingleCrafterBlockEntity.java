@@ -1,7 +1,7 @@
 package mwk.testmod.common.block.entity.base.crafter;
 
+import mwk.testmod.common.block.entity.modules.ProcessingModule;
 import net.minecraft.core.BlockPos;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -12,30 +12,35 @@ public abstract class SingleCrafterBlockEntity<I extends RecipeInput, T extends 
         extends CrafterBlockEntity<I, T> {
 
     protected SingleCrafterBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
-            int energyPerTick, int maxProgress, RecipeType<T> recipeType,
-            SoundEvent sound, int soundDuration) {
-        super(type, pos, state, energyPerTick, maxProgress, recipeType, sound, soundDuration);
+            RecipeType<T> recipeType, int maxProgress, int energyPerTick) {
+        super(type, pos, state, recipeType, maxProgress, energyPerTick);
     }
 
     @Override
     public final void tick() {
-        if (!hasEnergy()) {
+        if (processing().isEmpty()) {
+            return;
+        }
+        ProcessingModule<I, T> processing = processing().get();
+        if (!processing.hasResource()) {
             setWorking(false);
             return;
         }
-        T recipe = getCurrentRecipe();
+        T recipe = processing.getCurrentRecipe();
         if (canProcessRecipe(recipe)) {
-            increaseProgress();
-            consumeEnergy();
+            processing.increaseProgress();
+            processing.consumeResource();
             setWorking(true);
             setChanged();
-            if (hasProgressFinished()) {
+            if (processing.hasProgressFinished()) {
                 processRecipe(recipe);
-                resetProgress();
+                processing.resetProgress();
             }
-            playSound();
+            if (sound().isPresent()) {
+                sound().get().playSound();
+            }
         } else {
-            resetProgress();
+            processing.resetProgress();
             setWorking(false);
         }
     }

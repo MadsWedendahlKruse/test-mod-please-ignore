@@ -1,6 +1,7 @@
 package mwk.testmod.common.block.inventory.base;
 
 import mwk.testmod.common.block.entity.base.processing.ProcessingBlockEntity;
+import mwk.testmod.common.block.entity.modules.ProcessingModule;
 import mwk.testmod.common.util.inventory.container_data.ProcessingContainerData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
@@ -20,12 +21,13 @@ public class ProcessingMenu extends MachineMenu {
         super(menuType, containerId, player, pos, playerInventoryX, playerInventoryY, inputSlotsX,
                 inputSlotsY, outputSlotsX, outputSlotsY);
         if (player.level().getBlockEntity(pos) instanceof ProcessingBlockEntity<?, ?> blockEntity) {
-            this.progress = blockEntity.getProgress();
-            this.maxProgress = blockEntity.getMaxProgress();
-            this.maxProgressBase = blockEntity.maxProgressBase;
-            this.energyPerTick = blockEntity.getEnergyPerTick();
-            this.energyPerTickBase = blockEntity.energyPerTickBase;
-            addDataSlots(new ProcessingContainerData(blockEntity, this));
+            ProcessingModule<?, ?> processing = blockEntity.processing().get();
+            this.progress = processing.getProgress();
+            this.maxProgress = processing.getMaxProgress();
+            this.maxProgressBase = processing.maxProgressBase;
+            this.energyPerTick = processing.getResourcePerTick();
+            this.energyPerTickBase = processing.resourcePerTickBase;
+            addDataSlots(new ProcessingContainerData(processing, this));
         } else {
             // TODO: Not sure what to do here
             throw new IllegalArgumentException(

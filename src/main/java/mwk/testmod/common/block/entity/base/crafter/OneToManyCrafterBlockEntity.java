@@ -4,7 +4,6 @@ import java.util.List;
 import mwk.testmod.common.block.entity.modules.InventoryModule;
 import mwk.testmod.common.recipe.base.crafter.OneToManyItemStackRecipe;
 import net.minecraft.core.BlockPos;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
@@ -15,11 +14,8 @@ public abstract class OneToManyCrafterBlockEntity<T extends OneToManyItemStackRe
         extends SingleCrafterBlockEntity<SingleRecipeInput, T> {
 
     protected OneToManyCrafterBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
-            int energyPerTick, int maxProgress, RecipeType<T> recipeType,
-            SoundEvent sound, int soundDuration) {
-        super(type, pos, state,
-                energyPerTick, maxProgress,
-                recipeType, sound, soundDuration);
+            RecipeType<T> recipeType, int maxProgress, int energyPerTick) {
+        super(type, pos, state, recipeType, maxProgress, energyPerTick);
     }
 
     @Override
@@ -27,11 +23,15 @@ public abstract class OneToManyCrafterBlockEntity<T extends OneToManyItemStackRe
         if (recipe == null) {
             return false;
         }
+        if (inventory().isEmpty()) {
+            return false;
+        }
+        InventoryModule inventory = inventory().get();
         List<ItemStack> results = recipe.getOutputs();
         for (int i = 0; i < results.size(); i++) {
             ItemStack result = results.get(i);
             // Index 0 is the input slot, so we start at index 1
-            if (!canInsertItemIntoSlot(i + 1, result.getItem(), result.getCount())) {
+            if (!inventory.canInsertItemIntoSlot(i + 1, result.getItem(), result.getCount())) {
                 return false;
             }
         }
@@ -58,5 +58,10 @@ public abstract class OneToManyCrafterBlockEntity<T extends OneToManyItemStackRe
     protected SingleRecipeInput getRecipeInput() {
         return inventory().map(inventory -> new SingleRecipeInput(inventory.getStackInSlot(0)))
                 .orElse(new SingleRecipeInput(ItemStack.EMPTY));
+    }
+
+    @Override
+    protected boolean isSameInput(SingleRecipeInput input1, SingleRecipeInput input2) {
+        return ItemStack.matches(input1.getItem(0), input2.getItem(0));
     }
 }

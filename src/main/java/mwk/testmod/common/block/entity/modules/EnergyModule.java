@@ -87,7 +87,11 @@ public class EnergyModule implements MachineModule {
         return getEnergyStorage(null);
     }
 
-    public EnergyType getEnergyType() {
-        return energyType;
+    public int receiveEnergy(int maxReceive, boolean simulate) {
+        return energyStorage.receiveEnergy(maxReceive, simulate);
+    }
+
+    public int extractEnergy(int maxExtract, boolean simulate) {
+        return energyStorage.extractEnergy(maxExtract, simulate);
     }
 }

@@ -73,7 +73,9 @@ public class MachineMenu extends EnergyMenu {
             addInputSlots();
             addOutputSlots();
             addUpgradeSlots(0, 0);
-            addDataSlots(new MachineIOContainerData(machineBlockEntity, this));
+            if (machineBlockEntity.autoIO().isPresent()) {
+                addDataSlots(new MachineIOContainerData(machineBlockEntity.autoIO().get(), this));
+            }
         } else {
             // TODO: Not sure what to do here
             throw new IllegalArgumentException(

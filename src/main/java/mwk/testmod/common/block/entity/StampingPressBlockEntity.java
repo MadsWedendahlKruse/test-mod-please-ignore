@@ -8,6 +8,8 @@ import mwk.testmod.common.block.entity.modules.AutoIOModule;
 import mwk.testmod.common.block.entity.modules.EnergyModule;
 import mwk.testmod.common.block.entity.modules.EnergyModule.EnergyType;
 import mwk.testmod.common.block.entity.modules.InventoryModule;
+import mwk.testmod.common.block.entity.modules.ProcessingModule;
+import mwk.testmod.common.block.entity.modules.SoundModule;
 import mwk.testmod.common.block.inventory.StampingPressMenu;
 import mwk.testmod.common.item.misc.StampingDieItem;
 import mwk.testmod.common.recipe.StampingRecipe;
@@ -59,14 +61,14 @@ public class StampingPressBlockEntity extends
 
     public StampingPressBlockEntity(BlockPos pos, BlockState state) {
         super(TestModBlockEntities.STAMPING_PRESS_ENTITY_TYPE.get(), pos, state,
-                128, DEFAULT_MAX_PROGRESS,
-                TestModRecipeTypes.STAMPING.get(),
-                TestModSounds.STAMPING_PRESS.get(), TestModSounds.STAMPING_PRESS_DURATION);
+                TestModRecipeTypes.STAMPING.get(), DEFAULT_MAX_PROGRESS, 128);
         addModule(new EnergyModule(this, TestModConfig.MACHINE_ENERGY_CAPACITY_DEFAULT.get(),
                 EnergyType.CONSUMER));
         addModule(new InventoryModule(this, 2, 1, 6, this::onInventoryChanged,
                 this::isInputItemValid));
         addModule(new AutoIOModule());
+        addModule(new SoundModule(this, TestModSounds.STAMPING_PRESS.get(),
+                TestModSounds.STAMPING_PRESS_DURATION));
         // Two initial values, one for the animation for the piston, and one for the item being stamped
         stampingAnimation = new KeyframeManager(0, -CONVEYOR_CENTER_OFFSET);
         final float duration = DEFAULT_MAX_PROGRESS / 20.0F;
@@ -118,6 +120,16 @@ public class StampingPressBlockEntity extends
     }
 
     @Override
+    protected boolean isSameInput(CatalystRecipeInput input1, CatalystRecipeInput input2) {
+        for (int i = 0; i < input1.size(); i++) {
+            if (!ItemStack.matches(input1.getItem(i), input2.getItem(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
     protected boolean canProcessRecipe(StampingRecipe recipe) {
         if (recipe == null) {
             return false;
@@ -126,7 +138,7 @@ public class StampingPressBlockEntity extends
             InventoryModule inventory = inventory().get();
             ItemStack output = recipe.getOutputItem();
             int inputSlots = inventory.getInputSlots();
-            return canInsertItemIntoSlot(inputSlots, output.getItem(), output.getCount());
+            return inventory.canInsertItemIntoSlot(inputSlots, output.getItem(), output.getCount());
         }
         return false;
     }
@@ -170,9 +182,13 @@ public class StampingPressBlockEntity extends
         if (!input.isEmpty()) {
             tag.put(NBT_TAG_INPUT, input.save(registries, new CompoundTag()));
         }
-        if (latestRecipe != null) {
-            tag.put(NBT_TAG_OUTPUT,
-                    latestRecipe.getOutputItem().save(registries, new CompoundTag()));
+        if (processing().isPresent()) {
+            ProcessingModule<CatalystRecipeInput, StampingRecipe> processing = processing().get();
+            StampingRecipe recipe = processing.getLastRecipe();
+            if (recipe != null) {
+                tag.put(NBT_TAG_OUTPUT,
+                        recipe.getOutputItem().save(registries, new CompoundTag()));
+            }
         }
         return tag;
     }
@@ -186,12 +202,13 @@ public class StampingPressBlockEntity extends
         if (tag == null) {
             return;
         }
-        if (tag.contains(NBT_TAG_OUTPUT)) {
-            latestRecipe = new StampingRecipe(
+        if (tag.contains(NBT_TAG_OUTPUT) && processing().isPresent()) {
+            ProcessingModule<CatalystRecipeInput, StampingRecipe> processing = processing().get();
+            processing.setLastRecipe(new StampingRecipe(
                     Ingredient.of(ItemStack.parse(registries, tag.getCompound(NBT_TAG_DIE)).get()),
                     Ingredient.of(
                             ItemStack.parse(registries, tag.getCompound(NBT_TAG_INPUT)).get()),
-                    ItemStack.parse(registries, tag.getCompound(NBT_TAG_OUTPUT)).get());
+                    ItemStack.parse(registries, tag.getCompound(NBT_TAG_OUTPUT)).get()));
         }
     }
 
@@ -211,12 +228,13 @@ public class StampingPressBlockEntity extends
             inventory.setStackInSlot(1,
                     ItemStack.parse(registries, tag.getCompound(NBT_TAG_INPUT)).get());
         }
-        if (tag.contains(NBT_TAG_OUTPUT)) {
-            latestRecipe = new StampingRecipe(
+        if (tag.contains(NBT_TAG_OUTPUT) && processing().isPresent()) {
+            ProcessingModule<CatalystRecipeInput, StampingRecipe> processing = processing().get();
+            processing.setLastRecipe(new StampingRecipe(
                     Ingredient.of(ItemStack.parse(registries, tag.getCompound(NBT_TAG_DIE)).get()),
                     Ingredient.of(
                             ItemStack.parse(registries, tag.getCompound(NBT_TAG_INPUT)).get()),
-                    ItemStack.parse(registries, tag.getCompound(NBT_TAG_OUTPUT)).get());
+                    ItemStack.parse(registries, tag.getCompound(NBT_TAG_OUTPUT)).get()));
         }
     }
 
@@ -225,11 +243,23 @@ public class StampingPressBlockEntity extends
     }
 
     public ItemStack getInput() {
-        return latestRecipe != null ? latestRecipe.getInputItem().getItems()[0] : ItemStack.EMPTY;
+        if (processing().isPresent()) {
+            ProcessingModule<CatalystRecipeInput, StampingRecipe> processing = processing().get();
+            if (processing.getLastRecipe() != null) {
+                return processing.getLastRecipe().getInputItem().getItems()[0];
+            }
+        }
+        return ItemStack.EMPTY;
     }
 
     public ItemStack getOutput() {
-        return latestRecipe != null ? latestRecipe.getOutputItem() : ItemStack.EMPTY;
+        if (processing().isPresent()) {
+            ProcessingModule<CatalystRecipeInput, StampingRecipe> processing = processing().get();
+            if (processing.getLastRecipe() != null) {
+                return processing.getLastRecipe().getOutputItem();
+            }
+        }
+        return ItemStack.EMPTY;
     }
 
     @Override

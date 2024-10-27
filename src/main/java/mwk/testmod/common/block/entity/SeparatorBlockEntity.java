@@ -13,7 +13,6 @@ import mwk.testmod.datagen.TestModLanguageProvider;
 import mwk.testmod.init.registries.TestModBlockEntities;
 import mwk.testmod.init.registries.TestModBlocks;
 import mwk.testmod.init.registries.TestModRecipeTypes;
-import mwk.testmod.init.registries.TestModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -28,9 +27,7 @@ public class SeparatorBlockEntity extends OneToManyCrafterBlockEntity<Separation
 
     public SeparatorBlockEntity(BlockPos pos, BlockState state) {
         super(TestModBlockEntities.SEPARATOR_ENTITY_TYPE.get(), pos, state,
-                128, 40,
-                TestModRecipeTypes.SEPARATION.get(), TestModSounds.CRUSHER.get(),
-                TestModSounds.CRUSHER_DURATION);
+                TestModRecipeTypes.SEPARATION.get(), 40, 128);
         addModule(new EnergyModule(this, TestModConfig.MACHINE_ENERGY_CAPACITY_DEFAULT.get(),
                 EnergyType.CONSUMER));
         // TODO: Could probably automatically determine input/output slots based on recipe

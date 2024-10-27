@@ -4,6 +4,7 @@ import mwk.testmod.common.block.entity.CapacitronBlockEntity;
 import mwk.testmod.common.block.entity.base.MachineBlockEntity;
 import mwk.testmod.common.block.entity.base.generator.GeneratorBlockEntity;
 import mwk.testmod.common.block.entity.modules.EnergyModule;
+import mwk.testmod.common.block.entity.modules.ProcessingModule;
 import mwk.testmod.common.block.interfaces.ITickable;
 import mwk.testmod.common.block.multiblock.entity.MultiBlockPartBlockEntity;
 import mwk.testmod.init.registries.TestModBlockEntities;
@@ -45,10 +46,12 @@ public class MultiBlockEnergyPortBlockEntity extends MultiBlockPartBlockEntity
         if (controllerEntity instanceof MachineBlockEntity machine &&
                 machine.energy().isPresent()) {
             EnergyModule energyModule = machine.energy().get();
-            if (controllerEntity instanceof GeneratorBlockEntity<?, ?> generator) {
+            if (controllerEntity instanceof GeneratorBlockEntity<?, ?> generator &&
+                    generator.processing().isPresent()) {
                 // Generator can push twice the energy per tick it generates
+                ProcessingModule<?, ?> processing = generator.processing().get();
                 energyModule.pushEnergy(serverLevel, this.worldPosition,
-                        2 * generator.getEnergyPerTick());
+                        2 * processing.getResourcePerTick());
             }
             if (controllerEntity instanceof CapacitronBlockEntity capacitron) {
                 // TODO: Push as much as possible?

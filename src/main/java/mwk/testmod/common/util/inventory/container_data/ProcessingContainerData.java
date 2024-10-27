@@ -1,16 +1,16 @@
 package mwk.testmod.common.util.inventory.container_data;
 
-import mwk.testmod.common.block.entity.base.processing.ProcessingBlockEntity;
+import mwk.testmod.common.block.entity.modules.ProcessingModule;
 import mwk.testmod.common.block.inventory.base.ProcessingMenu;
 import net.minecraft.world.inventory.ContainerData;
 
 public class ProcessingContainerData implements ContainerData {
 
-    private final ProcessingBlockEntity<?, ?> blockEntity;
+    private final ProcessingModule<?, ?> processingModule;
     private final ProcessingMenu menu;
 
-    public ProcessingContainerData(ProcessingBlockEntity<?, ?> blockEntity, ProcessingMenu menu) {
-        this.blockEntity = blockEntity;
+    public ProcessingContainerData(ProcessingModule<?, ?> processingModule, ProcessingMenu menu) {
+        this.processingModule = processingModule;
         this.menu = menu;
     }
 
@@ -22,12 +22,12 @@ public class ProcessingContainerData implements ContainerData {
     @Override
     public int get(int index) {
         return switch (index) {
-            case 0 -> blockEntity.getProgress();
-            case 1 -> blockEntity.getMaxProgress();
+            case 0 -> processingModule.getProgress();
+            case 1 -> processingModule.getMaxProgress();
             // TODO: EnergyPerTick is currently technically limited to a short, but we should
             // probably change it to an int. On the other hand that's some serious power creep
             // if it can use more than 32k RF/tick
-            case 2 -> blockEntity.getEnergyPerTick();
+            case 2 -> processingModule.getResourcePerTick();
             default -> 0;
         };
     }

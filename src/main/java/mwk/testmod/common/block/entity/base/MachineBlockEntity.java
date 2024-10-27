@@ -6,10 +6,10 @@ import mwk.testmod.common.block.entity.modules.EnergyModule;
 import mwk.testmod.common.block.entity.modules.FluidTankModule;
 import mwk.testmod.common.block.entity.modules.InventoryModule;
 import mwk.testmod.common.block.entity.modules.MachineModule;
+import mwk.testmod.common.block.entity.modules.SoundModule;
 import mwk.testmod.common.block.interfaces.IDescribable;
 import mwk.testmod.common.block.interfaces.IUpgradable;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
-import mwk.testmod.common.item.upgrades.base.UpgradeItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.nbt.CompoundTag;
@@ -36,6 +36,7 @@ public abstract class MachineBlockEntity extends BlockEntity
     private Optional<InventoryModule> inventory;
     private Optional<FluidTankModule> fluidTanks;
     private Optional<AutoIOModule> autoIO;
+    private Optional<SoundModule> sound;
 
     public MachineBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -43,9 +44,10 @@ public abstract class MachineBlockEntity extends BlockEntity
         inventory = Optional.empty();
         fluidTanks = Optional.empty();
         autoIO = Optional.empty();
+        sound = Optional.empty();
     }
 
-    public void addModule(MachineModule module) {
+    protected void addModule(MachineModule module) {
         if (module instanceof EnergyModule) {
             energy = Optional.of((EnergyModule) module);
         } else if (module instanceof InventoryModule) {
@@ -54,14 +56,17 @@ public abstract class MachineBlockEntity extends BlockEntity
             fluidTanks = Optional.of((FluidTankModule) module);
         } else if (module instanceof AutoIOModule) {
             autoIO = Optional.of((AutoIOModule) module);
+        } else if (module instanceof SoundModule) {
+            sound = Optional.of((SoundModule) module);
         }
     }
 
-    public void addModules(MachineModule... modules) {
+    protected void addModules(MachineModule... modules) {
         for (MachineModule module : modules) {
             addModule(module);
         }
     }
+
 
     public boolean isFormed() {
         // We're going all in on multiblocks
@@ -70,6 +75,27 @@ public abstract class MachineBlockEntity extends BlockEntity
             if (state.getBlock() instanceof MultiBlockControllerBlock) {
                 return state.getValue(MultiBlockControllerBlock.FORMED);
             }
+        }
+        return false;
+    }
+
+    public void setWorking(boolean working) {
+        // TODO: Right now this only works if the block entity is attached to a
+        // multiblock
+        // controller. This should be changed to work with any block entity?
+        if (level != null && getBlockState().getBlock() instanceof MultiBlockControllerBlock) {
+            level.setBlockAndUpdate(worldPosition,
+                    getBlockState().setValue(MultiBlockControllerBlock.WORKING, working));
+        }
+        if (!working) {
+            sound().ifPresent(soundModule -> soundModule.setSoundStart(0));
+        }
+    }
+
+    public boolean isWorking() {
+        // TODO: Same as for setWorking
+        if (getBlockState().getBlock() instanceof MultiBlockControllerBlock) {
+            return getBlockState().getValue(MultiBlockControllerBlock.WORKING);
         }
         return false;
     }
@@ -90,7 +116,10 @@ public abstract class MachineBlockEntity extends BlockEntity
         inventory.ifPresent(inventoryModule -> inventoryModule.loadAdditional(tag, registries));
         fluidTanks.ifPresent(fluidTankModule -> fluidTankModule.loadAdditional(tag, registries));
         autoIO.ifPresent(autoIOModule -> autoIOModule.loadAdditional(tag, registries));
-        applyUpgrades();
+        if (inventory.isPresent()) {
+            InventoryModule inventory = inventory().get();
+            inventory.getUpgradeItemHandler(null).applyUpgrades();
+        }
     }
 
     @Override
@@ -173,36 +202,25 @@ public abstract class MachineBlockEntity extends BlockEntity
     }
 
     /**
-     * Reset whatever values the upgrades have changed to their default values.
-     */
-    abstract protected void resetUpgrades();
-
-    /**
-     * Install the given upgrade to the block entity. This should check the type of the upgrade and
-     * modify the block entity accordingly.
-     *
-     * @param upgrade the upgrade to install
-     */
-    abstract protected void installUpgrade(UpgradeItem upgrade);
-
-    /**
      * Apply the upgrades to the block entity. This should be called whenever the upgrades are
      * changed.
      */
-    @Override
-    public final void applyUpgrades() {
-        if (level != null && level.isClientSide()) {
-            return;
-        }
-        if (inventory.isPresent()) {
-            resetUpgrades();
-            for (UpgradeItem upgrade : inventory.get().getUpgrades()) {
-                installUpgrade(upgrade);
-            }
-        }
-    }
-
+//    public final void applyUpgrades() {
+//        if (level != null && level.isClientSide()) {
+//            return;
+//        }
+//        if (inventory.isPresent()) {
+//            resetUpgrades();
+//            for (UpgradeItem upgrade : inventory.get().getUpgrades()) {
+//                installUpgrade(upgrade);
+//            }
+//        }
+//    }
     public Optional<AutoIOModule> autoIO() {
         return autoIO;
+    }
+
+    public Optional<SoundModule> sound() {
+        return sound;
     }
 }

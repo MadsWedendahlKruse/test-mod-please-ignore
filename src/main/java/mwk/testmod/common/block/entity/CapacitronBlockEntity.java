@@ -40,13 +40,13 @@ public class CapacitronBlockEntity extends MachineBlockEntity {
     }
 
     @Override
-    protected void resetUpgrades() {
-
+    public void resetUpgrades() {
+        // Do nothing
     }
 
     @Override
-    protected void installUpgrade(UpgradeItem upgrade) {
-
+    public void installUpgrade(UpgradeItem upgrade) {
+        // Do nothing
     }
 
     @Override

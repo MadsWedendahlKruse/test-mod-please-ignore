@@ -2,7 +2,6 @@ package mwk.testmod.common.block.entity.base.crafter;
 
 import mwk.testmod.common.block.entity.modules.InventoryModule;
 import net.minecraft.core.BlockPos;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -17,11 +16,8 @@ public abstract class OneToOneCrafterBlockEntity<T extends Recipe<SingleRecipeIn
     private static final int OUTPUT_SLOT_INDEX = 1;
 
     protected OneToOneCrafterBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
-            int energyPerTick, int maxProgress, RecipeType<T> recipeType,
-            SoundEvent sound, int soundDuration) {
-        super(type, pos, state,
-                energyPerTick, maxProgress,
-                recipeType, sound, soundDuration);
+            RecipeType<T> recipeType, int maxProgress, int energyPerTick) {
+        super(type, pos, state, recipeType, maxProgress, energyPerTick);
     }
 
     @Override
@@ -29,8 +25,13 @@ public abstract class OneToOneCrafterBlockEntity<T extends Recipe<SingleRecipeIn
         if (recipe == null) {
             return false;
         }
+        if (inventory().isEmpty()) {
+            return false;
+        }
+        InventoryModule inventory = inventory().get();
         ItemStack result = recipe.getResultItem(null);
-        return canInsertItemIntoSlot(OUTPUT_SLOT_INDEX, result.getItem(), result.getCount());
+        return inventory.canInsertItemIntoSlot(OUTPUT_SLOT_INDEX, result.getItem(),
+                result.getCount());
     }
 
     @Override
@@ -49,5 +50,10 @@ public abstract class OneToOneCrafterBlockEntity<T extends Recipe<SingleRecipeIn
         return inventory().map(
                         inventory -> new SingleRecipeInput(inventory.getStackInSlot(INPUT_SLOT_INDEX)))
                 .orElse(new SingleRecipeInput(ItemStack.EMPTY));
+    }
+
+    @Override
+    protected boolean isSameInput(SingleRecipeInput input1, SingleRecipeInput input2) {
+        return ItemStack.matches(input1.getItem(0), input2.getItem(0));
     }
 }
