@@ -46,7 +46,7 @@ public class ItemConduitNetwork extends ConduitNetwork<IItemHandler, ItemStack> 
         // I guess we have to attempt to insert into all slots?
         ItemStack remaining = payload.copy();
         for (int i = 0; i < receiver.getSlots(); i++) {
-            remaining = receiver.insertItem(i, payload, simulate);
+            remaining = receiver.insertItem(i, remaining, simulate);
             if (remaining.isEmpty()) {
                 return ItemStack.EMPTY;
             }
