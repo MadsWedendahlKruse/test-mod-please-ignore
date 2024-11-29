@@ -4,6 +4,7 @@ import mwk.testmod.TestMod;
 import mwk.testmod.common.block.conduit.EnergyConduitBlockEntity;
 import mwk.testmod.common.block.conduit.FluidConduitBlockEntity;
 import mwk.testmod.common.block.conduit.ItemConduitBlockEntity;
+import mwk.testmod.common.block.conduit.TemporalConduitBlockEntity;
 import mwk.testmod.common.block.entity.CapacitronBlockEntity;
 import mwk.testmod.common.block.entity.CrusherBlockEntity;
 import mwk.testmod.common.block.entity.GeothermalGeneratorBlockEntity;
@@ -12,12 +13,14 @@ import mwk.testmod.common.block.entity.RedstoneGeneratorBlockEntity;
 import mwk.testmod.common.block.entity.SeparatorBlockEntity;
 import mwk.testmod.common.block.entity.StampingPressBlockEntity;
 import mwk.testmod.common.block.entity.StirlingGeneratorBlockEntity;
+import mwk.testmod.common.block.entity.TemporalSieveBlockEntity;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import mwk.testmod.common.block.multiblock.entity.MultiBlockPartBlockEntity;
 import mwk.testmod.common.block.multiblock.entity.ports.MultiBlockEnergyPortBlockEntity;
 import mwk.testmod.common.block.multiblock.entity.ports.MultiBlockFluidIOPortBlockEntity;
 import mwk.testmod.common.block.multiblock.entity.ports.MultiBlockIOPortBlockEntity;
 import mwk.testmod.common.block.multiblock.entity.ports.MultiBlockItemIOPortBlockEntity;
+import mwk.testmod.common.block.multiblock.entity.ports.MultiBlockTemporalFluxPortBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.Block;
@@ -48,6 +51,9 @@ public class TestModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MultiBlockEnergyPortBlockEntity>> MULTI_ENERGY_PORT_ENTITY_TYPE =
             registerSimpleBlockEntity(TestModBlocks.MACHINE_ENERGY_PORT,
                     MultiBlockEnergyPortBlockEntity::new);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MultiBlockTemporalFluxPortBlockEntity>> MULTI_TEMPORAL_FLUX_PORT_ENTITY_TYPE =
+            registerSimpleBlockEntity(TestModBlocks.MACHINE_TEMPORAL_FLUX_PORT,
+                    MultiBlockTemporalFluxPortBlockEntity::new);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MultiBlockItemIOPortBlockEntity>> MULTI_ITEM_INPUT_PORT_ENTITY_TYPE =
             registerIOPortBlockEntity(TestModBlocks.MACHINE_ITEM_INPUT_PORT,
                     MultiBlockItemIOPortBlockEntity::new, true);
@@ -80,6 +86,8 @@ public class TestModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StirlingGeneratorBlockEntity>> STIRLING_GENERATOR_ENTITY_TYPE =
             registerSimpleBlockEntity(TestModBlocks.STIRLING_GENERATOR,
                     StirlingGeneratorBlockEntity::new);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TemporalSieveBlockEntity>> TEMPORAL_SIEVE_ENTITY_TYPE =
+            registerSimpleBlockEntity(TestModBlocks.TEMPORAL_SIEVE, TemporalSieveBlockEntity::new);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CapacitronBlockEntity>> CAPACITRON_ENTITY_TYPE =
             registerSimpleBlockEntity(TestModBlocks.CAPACITRON, CapacitronBlockEntity::new);
@@ -90,6 +98,9 @@ public class TestModBlockEntities {
             registerSimpleBlockEntity(TestModBlocks.CONDUIT_ENERGY, EnergyConduitBlockEntity::new);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FluidConduitBlockEntity>> CONDUIT_FLUID_ENTITY_TYPE =
             registerSimpleBlockEntity(TestModBlocks.CONDUIT_FLUID, FluidConduitBlockEntity::new);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TemporalConduitBlockEntity>> CONDUIT_TEMPORAL_ENTITY_TYPE =
+            registerSimpleBlockEntity(TestModBlocks.CONDUIT_TEMPORAL,
+                    TemporalConduitBlockEntity::new);
 
     public static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> registerSimpleBlockEntity(
             DeferredBlock<? extends Block> block,

@@ -13,12 +13,14 @@ import mwk.testmod.common.block.entity.RedstoneGeneratorBlockEntity;
 import mwk.testmod.common.block.entity.SeparatorBlockEntity;
 import mwk.testmod.common.block.entity.StampingPressBlockEntity;
 import mwk.testmod.common.block.entity.StirlingGeneratorBlockEntity;
+import mwk.testmod.common.block.entity.TemporalSieveBlockEntity;
 import mwk.testmod.common.block.multiblock.HologramBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockEnergyPortBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockIOPortBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockIOPortBlock.MultiBlockPortBlockEntityFactory;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
+import mwk.testmod.common.block.multiblock.MultiBlockTemporalFluxPortBlock;
 import mwk.testmod.common.block.multiblock.entity.ports.MultiBlockFluidIOPortBlockEntity;
 import mwk.testmod.common.block.multiblock.entity.ports.MultiBlockItemIOPortBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -64,6 +66,9 @@ public class TestModBlocks {
             "machine_fluid_output_port", false, MultiBlockFluidIOPortBlockEntity::new);
     public static final DeferredBlock<MultiBlockEnergyPortBlock> MACHINE_ENERGY_PORT = registerBlockWithItem(
             "machine_energy_port", () -> new MultiBlockEnergyPortBlock(getMachineProperties()));
+    public static final DeferredBlock<MultiBlockPartBlock> MACHINE_TEMPORAL_FLUX_PORT = registerBlockWithItem(
+            "machine_temporal_flux_port",
+            () -> new MultiBlockTemporalFluxPortBlock(getMachineProperties()));
     public static final DeferredBlock<MultiBlockPartBlock> COPPER_COIL = registerMultiBlockPart(
             "copper_coil");
     public static final DeferredBlock<MultiBlockPartBlock> ENERGY_CUBE = registerMultiBlockPart(
@@ -87,6 +92,8 @@ public class TestModBlocks {
             "geothermal_generator", GeothermalGeneratorBlockEntity::new);
     public static final DeferredBlock<MultiBlockControllerBlock> STIRLING_GENERATOR = registerMultiBlockController(
             "stirling_generator", StirlingGeneratorBlockEntity::new);
+    public static final DeferredBlock<MultiBlockControllerBlock> TEMPORAL_SIEVE = registerMultiBlockController(
+            "temporal_sieve", TemporalSieveBlockEntity::new);
 
     // Energy storage
     public static final DeferredBlock<MultiBlockControllerBlock> CAPACITRON = registerMultiBlockController(
@@ -106,6 +113,9 @@ public class TestModBlocks {
     public static final DeferredBlock<ConduitBlock> CONDUIT_ENERGY =
             registerBlockWithItem("conduit_energy",
                     () -> new ConduitBlock(BlockBehaviour.Properties.of(), ConduitType.ENERGY));
+    public static final DeferredBlock<ConduitBlock> CONDUIT_TEMPORAL =
+            registerBlockWithItem("conduit_temporal",
+                    () -> new ConduitBlock(BlockBehaviour.Properties.of(), ConduitType.TEMPORAL));
 
     public static BlockBehaviour.Properties getMachineProperties() {
         return BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL)

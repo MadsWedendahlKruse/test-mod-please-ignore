@@ -12,12 +12,12 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import mwk.testmod.client.animations.LoopingAnimationFloat;
 import mwk.testmod.client.animations.base.FixedAnimation.Function;
-import mwk.testmod.client.utils.GuiUtils;
 import mwk.testmod.client.gui.widgets.EnergyBar;
 import mwk.testmod.client.gui.widgets.progress.ProgressArrow;
 import mwk.testmod.client.gui.widgets.progress.ProgressIcon;
-import mwk.testmod.common.block.inventory.base.ProcessingMenu;
+import mwk.testmod.client.utils.GuiUtils;
 import mwk.testmod.client.utils.ItemSlotGridHelper;
+import mwk.testmod.common.block.inventory.base.ProcessingMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
@@ -30,10 +30,8 @@ public abstract class BaseRecipeCategory<T extends Recipe<?>> implements IRecipe
 
     public static final int PADDING = 4;
     public static final int MAX_PROGRESS = 18;
-    public static final LoopingAnimationFloat PROGRESS_ANIMATION =
-            new LoopingAnimationFloat(1.5F, Function.LINEAR, 0.0F, (float) MAX_PROGRESS);
-    public static final LoopingAnimationFloat POWER_ANIMATION =
-            new LoopingAnimationFloat(15.0F, Function.LINEAR, 0.0F, 1.0F);
+    public static final float PROGRESS_ANIMATION_DURATION = 1.5F;
+    public static final float POWER_ANIMATION_DURATION = 15.0F;
 
     private final Block crafter;
     private final RecipeType<T> recipeType;
@@ -49,6 +47,8 @@ public abstract class BaseRecipeCategory<T extends Recipe<?>> implements IRecipe
 
     private final ProgressArrow progressArrow;
     private final ProgressIcon progressIcon;
+    private final LoopingAnimationFloat progressAnimation;
+    private final LoopingAnimationFloat powerAnimation;
 
     private final int contentsHeight;
 
@@ -67,6 +67,10 @@ public abstract class BaseRecipeCategory<T extends Recipe<?>> implements IRecipe
         this.progressArrow = arrowFactory.create(null, arrowX, arrowY);
         this.progressIcon =
                 new ProgressIcon(ProgressIcon.createSprites(iconName), null, iconX, iconY);
+        this.progressAnimation = new LoopingAnimationFloat(PROGRESS_ANIMATION_DURATION,
+                Function.LINEAR, 0.0F, (float) MAX_PROGRESS);
+        this.powerAnimation = new LoopingAnimationFloat(POWER_ANIMATION_DURATION, Function.LINEAR,
+                0.0F, 1.0F);
         // Find the largest y-coordinate of the elements in the category
         int[] elementsYMax = {inputY + ItemSlotGridHelper.ROWS_3.getHeight(inputSlots),
                 outputY + ItemSlotGridHelper.ROWS_3.getHeight(outputSlots),
@@ -104,8 +108,13 @@ public abstract class BaseRecipeCategory<T extends Recipe<?>> implements IRecipe
     }
 
     @Override
-    public IDrawable getBackground() {
-        return background;
+    public int getWidth() {
+        return background.getWidth();
+    }
+
+    @Override
+    public int getHeight() {
+        return background.getHeight();
     }
 
     @Override
@@ -135,24 +144,29 @@ public abstract class BaseRecipeCategory<T extends Recipe<?>> implements IRecipe
 
     private void drawEnergyBar(GuiGraphics guiGraphics) {
         // -2 to account for the border
-        int fullBarHeight = Math.min(contentsHeight, EnergyBar.HEIGHT) - 2;
-        int barHeight = (int) ((1.0F - POWER_ANIMATION.getValue()) * fullBarHeight);
+        int fullBarHeight = Math.min(contentsHeight, EnergyBar.DEFAULT_HEIGHT) - 2;
+        int barHeight = (int) ((1.0F - powerAnimation.getValue()) * fullBarHeight);
         int barX = PADDING;
         int barY = PADDING + 1;
         // Render item slot border around the energy bar
-        GuiUtils.renderItemSlot(guiGraphics, barX, barY, EnergyBar.WIDTH + 2, fullBarHeight + 2);
-        guiGraphics.blitSprite(EnergyBar.SPRITE_EMPTY, EnergyBar.WIDTH, EnergyBar.HEIGHT, 0,
-                EnergyBar.HEIGHT - fullBarHeight, barX, barY, EnergyBar.WIDTH, fullBarHeight);
-        guiGraphics.blitSprite(EnergyBar.SPRITE_FULL, EnergyBar.WIDTH, EnergyBar.HEIGHT, 0,
-                EnergyBar.HEIGHT - barHeight, barX, barY + fullBarHeight - barHeight,
-                EnergyBar.WIDTH, barHeight);
+        GuiUtils.renderItemSlot(guiGraphics, barX, barY, EnergyBar.DEFAULT_WIDTH + 2,
+                fullBarHeight + 2);
+        guiGraphics.blitSprite(EnergyBar.SPRITE_EMPTY, EnergyBar.DEFAULT_WIDTH,
+                EnergyBar.DEFAULT_HEIGHT, 0,
+                EnergyBar.DEFAULT_HEIGHT - fullBarHeight, barX, barY, EnergyBar.DEFAULT_WIDTH,
+                fullBarHeight);
+        guiGraphics.blitSprite(EnergyBar.SPRITE_FULL, EnergyBar.DEFAULT_WIDTH,
+                EnergyBar.DEFAULT_HEIGHT, 0,
+                EnergyBar.DEFAULT_HEIGHT - barHeight, barX, barY + fullBarHeight - barHeight,
+                EnergyBar.DEFAULT_WIDTH, barHeight);
     }
 
     @Override
     public void draw(T recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics,
             double mouseX, double mouseY) {
-        PROGRESS_ANIMATION.update();
-        POWER_ANIMATION.update();
+        progressAnimation.update();
+        powerAnimation.update();
+        background.draw(guiGraphics);
         drawEnergyBar(guiGraphics);
         for (int i = 0; i < inputSlots; i++) {
             ItemSlotGridHelper.SlotPosition slotPosition =
@@ -164,7 +178,7 @@ public abstract class BaseRecipeCategory<T extends Recipe<?>> implements IRecipe
                     ItemSlotGridHelper.ROWS_3.getSlotPosition(outputX, outputY, i);
             GuiUtils.renderItemSlot(guiGraphics, slotPosition.x(), slotPosition.y());
         }
-        int progress = PROGRESS_ANIMATION.getValue().intValue();
+        int progress = progressAnimation.getValue().intValue();
         progressArrow.render(guiGraphics, progress, MAX_PROGRESS);
         progressIcon.render(guiGraphics, progress, MAX_PROGRESS);
     }

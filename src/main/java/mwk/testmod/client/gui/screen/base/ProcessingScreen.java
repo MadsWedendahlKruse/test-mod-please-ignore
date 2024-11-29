@@ -10,6 +10,7 @@ import mwk.testmod.client.gui.widgets.progress.ProgressArrowFactory;
 import mwk.testmod.client.gui.widgets.progress.ProgressArrowFactory.ArrowType;
 import mwk.testmod.client.gui.widgets.progress.ProgressIcon;
 import mwk.testmod.client.gui.widgets.progress.ProgressSprite;
+import mwk.testmod.common.block.entity.base.MachineBlockEntity;
 import mwk.testmod.common.block.inventory.base.ProcessingMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
@@ -58,8 +59,12 @@ public abstract class ProcessingScreen<T extends ProcessingMenu> extends Machine
 
     @Override
     protected void addMachinePanels() {
-        addMachinePanel(new InfoPanel(menu.getBlockEntity()), PanelSide.LEFT);
-        addMachinePanel(new UpgradePanel(menu), PanelSide.RIGHT);
+        MachineBlockEntity machine = menu.getBlockEntity();
+        addMachinePanel(new InfoPanel(machine), PanelSide.LEFT);
+        if (machine.inventory().isPresent()) {
+            addMachinePanel(new UpgradePanel(menu, machine.inventory().get().getUpgradeSlots()),
+                    PanelSide.RIGHT);
+        }
         addMachinePanel(new SettingsPanel(menu), PanelSide.RIGHT);
     }
 

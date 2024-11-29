@@ -7,16 +7,16 @@ import net.neoforged.neoforge.fluids.FluidStack;
 public abstract class GeneratorFluidRecipe extends FluidRecipe implements GeneratorRecipe {
 
     private final FluidStack input;
-    private final int energy;
+    private final int generatedAmount;
 
-    public GeneratorFluidRecipe(FluidStack input, int energy) {
+    public GeneratorFluidRecipe(FluidStack input, int generatedAmount) {
         this.input = input;
-        this.energy = energy;
+        this.generatedAmount = generatedAmount;
     }
 
     @Override
-    public int getEnergy() {
-        return energy;
+    public int getGeneratedAmount() {
+        return generatedAmount;
     }
 
     @Override

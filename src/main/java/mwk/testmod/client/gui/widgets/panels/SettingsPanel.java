@@ -35,11 +35,11 @@ public class SettingsPanel extends MachinePanel {
                 ICON);
         this.menu = menu;
         autoEjectButton = new OnOffButton(BUTTON_SIZE, (button) -> {
-            menu.setAutoEject(!menu.isAutoEject());
+            menu.setAutoPush(!menu.isAutoPush());
         }, "auto_eject_on", "auto_eject_off",
                 TestModLanguageProvider.KEY_WIDGET_AUTO_EJECT_TOOLTIP);
         autoInsertButton = new OnOffButton(BUTTON_SIZE, (button) -> {
-            menu.setAutoInsert(!menu.isAutoInsert());
+            menu.setAutoPull(!menu.isAutoPull());
         }, "auto_insert_on", "auto_insert_off",
                 TestModLanguageProvider.KEY_WIDGET_AUTO_INSERT_TOOLTIP);
         // TODO: Bit of a hack?
@@ -69,11 +69,11 @@ public class SettingsPanel extends MachinePanel {
         // There's something going on with the synching. I think the auto eject/insert values are
         // being sent after the constructor is called, so we somehow need to set them again at
         // another point in time. This is a temporary fix.
-        if (menu.isAutoEject() != autoEjectButton.isOn()) {
-            autoEjectButton.setOn(menu.isAutoEject());
+        if (menu.isAutoPush() != autoEjectButton.isOn()) {
+            autoEjectButton.setOn(menu.isAutoPush());
         }
-        if (menu.isAutoInsert() != autoInsertButton.isOn()) {
-            autoInsertButton.setOn(menu.isAutoInsert());
+        if (menu.isAutoPull() != autoInsertButton.isOn()) {
+            autoInsertButton.setOn(menu.isAutoPull());
         }
     }
 

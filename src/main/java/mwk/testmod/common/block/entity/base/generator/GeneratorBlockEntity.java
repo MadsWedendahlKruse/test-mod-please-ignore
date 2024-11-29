@@ -25,7 +25,7 @@ public abstract class GeneratorBlockEntity<I extends RecipeInput, T extends Reci
 
     @Override
     public final void tick() {
-        if (!canGenerateEnergy()) {
+        if (!canGenerateResource()) {
             setWorking(false);
             return;
         }
@@ -42,7 +42,7 @@ public abstract class GeneratorBlockEntity<I extends RecipeInput, T extends Reci
             if (canProcessRecipe(recipe)) {
                 setWorking(true);
                 // TODO: What if they're not multiples of each other?
-                processing.setMaxProgress(((GeneratorRecipe) recipe).getEnergy()
+                processing.setMaxProgress(((GeneratorRecipe) recipe).getGeneratedAmount()
                         / processing.getResourcePerTick());
                 processRecipe(recipe);
             } else {
@@ -51,7 +51,7 @@ public abstract class GeneratorBlockEntity<I extends RecipeInput, T extends Reci
             }
         }
         processing.increaseProgress();
-        generateEnergy();
+        generateResource();
         if (!isWorking()) {
             setWorking(true);
         }
@@ -78,17 +78,31 @@ public abstract class GeneratorBlockEntity<I extends RecipeInput, T extends Reci
         // Do nothing
     }
 
-    private int getEnergyPerTick() {
+    private int getResourcePerTick() {
         return processing().map(ProcessingModule::getResourcePerTick).orElse(0);
     }
 
-    protected boolean canGenerateEnergy() {
-        return energy().map(energyModule -> energyModule.getEnergyStored() + getEnergyPerTick()
-                < energyModule.getMaxEnergyStored()).orElse(false);
+    protected boolean canGenerateResource() {
+        // TODO: Instead of guessing, should we specify the resource type?
+        if (energy().isPresent()) {
+            return energy().get().getEnergyStored() + getResourcePerTick()
+                    < energy().get().getMaxEnergyStored();
+        }
+        if (temporalFlux().isPresent()) {
+            return temporalFlux().get().getTemporalFluxStored() + getResourcePerTick()
+                    < temporalFlux().get().getMaxTemporalFluxStored();
+        }
+        return false;
     }
 
-    protected void generateEnergy() {
-        energy().ifPresent(energyModule -> energyModule.receiveEnergy(getEnergyPerTick(), false));
+    protected void generateResource() {
+        // TODO: Instead of guessing, should we specify the resource type?
+        if (temporalFlux().isPresent()) {
+            temporalFlux().get().recieveTemporalFlux(getResourcePerTick(), false);
+        }
+        if (energy().isPresent()) {
+            energy().get().receiveEnergy(getResourcePerTick(), false);
+        }
     }
 
     @Override

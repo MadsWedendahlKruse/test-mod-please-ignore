@@ -1,0 +1,7 @@
+{
+  "type": "testmod:temporal_sieve",
+  "energy": 100,
+  "input": {
+    "item": "minecraft:red_sand"
+  }
+}

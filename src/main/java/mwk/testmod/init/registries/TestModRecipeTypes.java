@@ -7,6 +7,7 @@ import mwk.testmod.common.recipe.RedstoneGeneratorRecipe;
 import mwk.testmod.common.recipe.SeparationRecipe;
 import mwk.testmod.common.recipe.StampingRecipe;
 import mwk.testmod.common.recipe.StirlingGeneratorRecipe;
+import mwk.testmod.common.recipe.TemporalSieveRecipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.neoforged.bus.api.IEventBus;
@@ -44,6 +45,10 @@ public class TestModRecipeTypes {
     public static final DeferredHolder<RecipeType<?>, RecipeType<StirlingGeneratorRecipe>> STIRLING_GENERATOR =
             RECIPE_TYPES.register("stirling_generator",
                     () -> new RecipeType<StirlingGeneratorRecipe>() {
+                    });
+    public static final DeferredHolder<RecipeType<?>, RecipeType<TemporalSieveRecipe>> TEMPORAL_SIEVE =
+            RECIPE_TYPES.register("temporal_sieve",
+                    () -> new RecipeType<TemporalSieveRecipe>() {
                     });
 
     public static void register(IEventBus modEventBus) {

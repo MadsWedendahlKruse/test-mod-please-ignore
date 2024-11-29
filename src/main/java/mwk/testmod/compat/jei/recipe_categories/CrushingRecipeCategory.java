@@ -3,9 +3,9 @@ package mwk.testmod.compat.jei.recipe_categories;
 import java.util.ArrayList;
 import java.util.List;
 import mezz.jei.api.helpers.IGuiHelper;
-import mwk.testmod.client.utils.GuiUtils;
 import mwk.testmod.client.gui.widgets.EnergyBar;
 import mwk.testmod.client.gui.widgets.progress.ProgressArrowSingle;
+import mwk.testmod.client.utils.GuiUtils;
 import mwk.testmod.common.recipe.CrushingRecipe;
 import mwk.testmod.compat.jei.JEITestModRecipeTypes;
 import mwk.testmod.compat.jei.recipe_categories.base.BaseRecipeCategory;
@@ -16,7 +16,7 @@ public class CrushingRecipeCategory extends BaseRecipeCategory<CrushingRecipe> {
 
     public static final int INPUT_SLOTS = 1;
     public static final int OUTPUT_SLOTS = 1;
-    public static final int INPUT_X = 2 * PADDING + EnergyBar.WIDTH + 1;
+    public static final int INPUT_X = 2 * PADDING + EnergyBar.DEFAULT_WIDTH + 1;
     public static final int INPUT_Y = PADDING + 1;
     public static final int ARROW_X = (INPUT_X - 1) + PADDING + GuiUtils.ITEM_SLOT_SIZE;
     public static final int ARROW_Y = INPUT_Y + 2;

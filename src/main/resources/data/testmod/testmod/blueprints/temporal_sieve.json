@@ -1,0 +1,18 @@
+{
+	"layers": [
+		[
+			"Xb",
+			"Tb"
+		],
+		[
+			"bb",
+			"Ib"
+		]
+	],
+	"key": {
+		"X": "testmod:temporal_sieve",
+		"I": "testmod:machine_item_input_port",
+		"T": "testmod:machine_temporal_flux_port",
+		"b": "testmod:machine_frame_basic"
+	}
+}

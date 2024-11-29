@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "formed=false": {
+      "model": "testmod:block/machine_temporal_flux_port"
+    },
+    "formed=true": {
+      "model": "testmod:block/empty"
+    }
+  }
+}

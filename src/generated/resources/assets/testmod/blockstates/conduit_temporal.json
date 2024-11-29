@@ -1,0 +1,221 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "testmod:block/conduit_base_temporal"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_side_temporal"
+      },
+      "when": {
+        "north": "conduit"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_side_temporal",
+        "y": 90
+      },
+      "when": {
+        "east": "conduit"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_side_temporal",
+        "y": 180
+      },
+      "when": {
+        "south": "conduit"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_side_temporal",
+        "y": 270
+      },
+      "when": {
+        "west": "conduit"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_side_temporal",
+        "x": 270
+      },
+      "when": {
+        "up": "conduit"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_side_temporal",
+        "x": 90
+      },
+      "when": {
+        "down": "conduit"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_pull_temporal"
+      },
+      "when": {
+        "north": "pull"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_pull_temporal",
+        "y": 90
+      },
+      "when": {
+        "east": "pull"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_pull_temporal",
+        "y": 180
+      },
+      "when": {
+        "south": "pull"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_pull_temporal",
+        "y": 270
+      },
+      "when": {
+        "west": "pull"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_pull_temporal",
+        "x": 270
+      },
+      "when": {
+        "up": "pull"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_pull_temporal",
+        "x": 90
+      },
+      "when": {
+        "down": "pull"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_bidirectional_temporal"
+      },
+      "when": {
+        "north": "bidirectional"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_bidirectional_temporal",
+        "y": 90
+      },
+      "when": {
+        "east": "bidirectional"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_bidirectional_temporal",
+        "y": 180
+      },
+      "when": {
+        "south": "bidirectional"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_bidirectional_temporal",
+        "y": 270
+      },
+      "when": {
+        "west": "bidirectional"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_bidirectional_temporal",
+        "x": 270
+      },
+      "when": {
+        "up": "bidirectional"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_bidirectional_temporal",
+        "x": 90
+      },
+      "when": {
+        "down": "bidirectional"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_push_temporal"
+      },
+      "when": {
+        "north": "push"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_push_temporal",
+        "y": 90
+      },
+      "when": {
+        "east": "push"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_push_temporal",
+        "y": 180
+      },
+      "when": {
+        "south": "push"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_push_temporal",
+        "y": 270
+      },
+      "when": {
+        "west": "push"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_push_temporal",
+        "x": 270
+      },
+      "when": {
+        "up": "push"
+      }
+    },
+    {
+      "apply": {
+        "model": "testmod:block/conduit_connector_push_temporal",
+        "x": 90
+      },
+      "when": {
+        "down": "push"
+      }
+    }
+  ]
+}

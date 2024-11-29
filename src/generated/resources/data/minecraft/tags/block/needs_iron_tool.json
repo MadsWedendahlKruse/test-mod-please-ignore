@@ -8,17 +8,17 @@
     "testmod:machine_fluid_input_port",
     "testmod:machine_fluid_output_port",
     "testmod:machine_energy_port",
+    "testmod:machine_temporal_flux_port",
     "testmod:copper_coil",
     "testmod:energy_cube",
     "testmod:induction_furnace",
-    "testmod:assembler",
     "testmod:crusher",
     "testmod:separator",
     "testmod:stamping_press",
-    "testmod:teleporter",
     "testmod:redstone_generator",
     "testmod:geothermal_generator",
     "testmod:stirling_generator",
+    "testmod:temporal_sieve",
     "testmod:capacitron"
   ]
 }

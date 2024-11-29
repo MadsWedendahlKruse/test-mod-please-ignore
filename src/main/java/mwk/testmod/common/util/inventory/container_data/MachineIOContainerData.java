@@ -33,8 +33,8 @@ public class MachineIOContainerData implements ContainerData {
     public void set(int index, int value) {
         boolean newValue = value > 0;
         switch (index) {
-            case 0 -> menu.setAutoEject(newValue);
-            case 1 -> menu.setAutoInsert(newValue);
+            case 0 -> menu.setAutoPush(newValue);
+            case 1 -> menu.setAutoPull(newValue);
         }
     }
 

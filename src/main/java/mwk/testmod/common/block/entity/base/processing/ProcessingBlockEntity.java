@@ -53,6 +53,9 @@ public abstract class ProcessingBlockEntity<I extends RecipeInput, T extends Rec
         if (energy().isPresent()) {
             return energy().get().getEnergyStored() >= resourcePerTick;
         }
+        if (temporalFlux().isPresent()) {
+            return temporalFlux().get().getTemporalFluxStored() >= resourcePerTick;
+        }
         return false;
     }
 
@@ -63,6 +66,9 @@ public abstract class ProcessingBlockEntity<I extends RecipeInput, T extends Rec
         int resourcePerTick = processing().get().getResourcePerTick();
         if (energy().isPresent()) {
             energy().get().extractEnergy(resourcePerTick, false);
+        }
+        if (temporalFlux().isPresent()) {
+            temporalFlux().get().extractTemporalFlux(resourcePerTick, false);
         }
     }
 

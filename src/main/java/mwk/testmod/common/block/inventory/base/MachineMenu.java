@@ -3,83 +3,94 @@ package mwk.testmod.common.block.inventory.base;
 import java.util.Optional;
 import mwk.testmod.client.utils.ItemSlotGridHelper;
 import mwk.testmod.common.block.entity.base.MachineBlockEntity;
+import mwk.testmod.common.block.entity.modules.AutoIOModule;
+import mwk.testmod.common.block.entity.modules.EnergyModule;
 import mwk.testmod.common.block.entity.modules.FluidTankModule;
 import mwk.testmod.common.block.entity.modules.InventoryModule;
+import mwk.testmod.common.block.entity.modules.TemporalFluxModule;
 import mwk.testmod.common.network.MachineIOPacket;
+import mwk.testmod.common.util.inventory.container_data.EnergyContainerData;
 import mwk.testmod.common.util.inventory.container_data.MachineIOContainerData;
+import mwk.testmod.common.util.inventory.container_data.TemporalFluxContainerData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-public class MachineMenu extends EnergyMenu {
+public class MachineMenu extends AbstractContainerMenu {
 
-    public static final int SLOT_SIZE = 16;
-    public static final int SLOT_SPACING = 2;
-    public static final int SLOT_DX = SLOT_SIZE + SLOT_SPACING;
-    public static final int SLOT_DY = SLOT_SIZE + SLOT_SPACING;
     public static final int DEFAULT_PLAYER_INVENTORY_X = 8;
     public static final int DEFAULT_PLAYER_INVENTORY_Y = 111;
 
     protected final MachineBlockEntity blockEntity;
-
-    public final int inputSlots;
-    public final int outputSlots;
-    public final int upgradeSlots;
-    public final int machineInventorySize;
-    public final int inputTanks;
-    public final int outputTanks;
-    private boolean upgradesVisible = true;
-    private boolean autoEject;
-    private boolean autoInsert;
+    protected final BlockPos pos;
+    protected final Block block;
 
     public final int playerInventoryX;
     public final int playerInventoryY;
-    public final int inputSlotsX;
-    public final int inputSlotsY;
-    public final int outputSlotsX;
-    public final int outputSlotsY;
     private int upgradeSlotsX;
     private int upgradeSlotsY;
+
+    private boolean upgradesVisible = true;
+
+    // TODO: Do we need to store these as fields? Can't we just get/set them from the block entity?
+    private boolean autoPush;
+    private boolean autoPull;
+    private int energy;
+    private int maxEnergy;
+    private int temporalFlux;
+    private int maxTemporalFlux;
 
     protected MachineMenu(MenuType<?> menuType, int containerId, Player player, BlockPos pos,
             int playerInventoryX, int playerInventoryY, int inputSlotsX, int inputSlotsY,
             int outputSlotsX, int outputSlotsY) {
-        super(menuType, containerId, player, pos);
+        super(menuType, containerId);
+        this.pos = pos;
+        this.block = player.level().getBlockState(pos).getBlock();
         BlockEntity blockEntity = player.level().getBlockEntity(pos);
-        if (blockEntity instanceof MachineBlockEntity machineBlockEntity) {
-            this.blockEntity = machineBlockEntity;
+        if (blockEntity instanceof MachineBlockEntity machine) {
+            this.blockEntity = machine;
+            if (machine.energy().isPresent()) {
+                EnergyModule energyModule = machine.energy().get();
+                this.energy = energyModule.getEnergyStored();
+                this.maxEnergy = energyModule.getMaxEnergyStored();
+                addDataSlots(new EnergyContainerData(energyModule, this));
+            }
+            if (machine.temporalFlux().isPresent()) {
+                TemporalFluxModule temporalFluxModule = machine.temporalFlux().get();
+                this.temporalFlux = temporalFluxModule.getTemporalFluxStored();
+                this.maxTemporalFlux = temporalFluxModule.getMaxTemporalFluxStored();
+                addDataSlots(new TemporalFluxContainerData(temporalFluxModule, this));
+            }
             this.playerInventoryX = playerInventoryX;
             this.playerInventoryY = playerInventoryY;
             addPlayerSlots(player.getInventory());
-            Optional<InventoryModule> inventoryModule = machineBlockEntity.inventory();
-            this.inputSlots = inventoryModule.map(InventoryModule::getInputSlots).orElse(0);
-            this.outputSlots = inventoryModule.map(InventoryModule::getOutputSlots).orElse(0);
-            this.upgradeSlots = inventoryModule.map(InventoryModule::getUpgradeSlots).orElse(0);
-            this.machineInventorySize = inputSlots + outputSlots + upgradeSlots;
-            Optional<FluidTankModule> fluidTankModule = machineBlockEntity.fluidTanks();
-            this.inputTanks = fluidTankModule.map(FluidTankModule::getInputTanks).orElse(0);
-            this.outputTanks = fluidTankModule.map(FluidTankModule::getOutputTanks).orElse(0);
-            this.inputSlotsX = inputSlotsX;
-            this.inputSlotsY = inputSlotsY;
-            this.outputSlotsX = outputSlotsX;
-            this.outputSlotsY = outputSlotsY;
-            addInputSlots();
-            addOutputSlots();
-            addUpgradeSlots(0, 0);
-            if (machineBlockEntity.autoIO().isPresent()) {
-                addDataSlots(new MachineIOContainerData(machineBlockEntity.autoIO().get(), this));
+            if (machine.inventory().isPresent()) {
+                InventoryModule inventory = machine.inventory().get();
+                addInputSlots(inventory, inputSlotsX, inputSlotsY);
+                addOutputSlots(inventory, outputSlotsX, outputSlotsY);
+                addUpgradeSlots(inventory, 0, 0);
+            }
+            Optional<FluidTankModule> fluidTankModule = machine.fluidTanks();
+            if (machine.autoIO().isPresent()) {
+                AutoIOModule autoIOModule = machine.autoIO().get();
+                this.autoPush = autoIOModule.isAutoPush();
+                this.autoPull = autoIOModule.isAutoPull();
+                addDataSlots(new MachineIOContainerData(autoIOModule, this));
             }
         } else {
             // TODO: Not sure what to do here
             throw new IllegalArgumentException(
-                    "Block entity is not an instance of BaseMachineBlockEntity");
+                    "Block entity is not an instance of MachineBlockEntity");
         }
     }
 
@@ -104,28 +115,21 @@ public class MachineMenu extends EnergyMenu {
         addItemHandlerSlots(itemHandler, slots, startIndex, slotsX, slotsY, slotGridHelper, null);
     }
 
-    protected void addInputSlots() {
-        if (blockEntity.inventory().isPresent()) {
-            addItemHandlerSlots(blockEntity.inventory().get().getInputItemHandler(null, true),
-                    inputSlots, 0, inputSlotsX, inputSlotsY, ItemSlotGridHelper.ROWS_3);
-        }
+    protected void addInputSlots(InventoryModule inventory, int inputSlotsX, int inputSlotsY) {
+        addItemHandlerSlots(inventory.getInputItemHandler(null, true),
+                inventory.getInputSlots(), 0, inputSlotsX, inputSlotsY, ItemSlotGridHelper.ROWS_3);
     }
 
-    protected void addOutputSlots() {
-        if (blockEntity.inventory().isPresent()) {
-            addItemHandlerSlots(blockEntity.inventory().get().getOutputItemHandler(null),
-                    outputSlots, inputSlots, outputSlotsX, outputSlotsY, ItemSlotGridHelper.ROWS_3);
-        }
+    protected void addOutputSlots(InventoryModule inventory, int outputSlotsX, int outputSlotsY) {
+        addItemHandlerSlots(inventory.getOutputItemHandler(null),
+                inventory.getOutputSlots(), inventory.getInputSlots(), outputSlotsX, outputSlotsY,
+                ItemSlotGridHelper.ROWS_3);
     }
 
-    protected void addUpgradeSlots(int upgradeX, int upgradeY) {
-        if (blockEntity.inventory().isPresent()) {
-            addItemHandlerSlots(blockEntity.inventory().get().getUpgradeItemHandler(null),
-                    upgradeSlots, inputSlots + outputSlots, upgradeX, upgradeY,
-                    ItemSlotGridHelper.ROWS_2, () -> upgradesVisible);
-        }
-
-
+    protected void addUpgradeSlots(InventoryModule inventory, int upgradeX, int upgradeY) {
+        addItemHandlerSlots(inventory.getUpgradeItemHandler(null), inventory.getUpgradeSlots(),
+                inventory.getInputSlots() + inventory.getOutputSlots(), upgradeX, upgradeY,
+                ItemSlotGridHelper.ROWS_2, () -> upgradesVisible);
     }
 
     private int addSlotRange(Container playerInventory, int index, int x, int y, int slots,
@@ -184,6 +188,9 @@ public class MachineMenu extends EnergyMenu {
         ItemStack sourceStack = sourceSlot.getItem();
         ItemStack copyOfSourceStack = sourceStack.copy();
 
+        int machineInventorySize = blockEntity.inventory().map(InventoryModule::getInventorySize)
+                .orElse(0);
+
         // Check if the slot clicked is one of the vanilla container slots
         if (pIndex < VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT) {
             // This is a vanilla container slot so merge the stack into the tile inventory
@@ -232,12 +239,16 @@ public class MachineMenu extends EnergyMenu {
         // make a lot more sense if that was controlled from the screen.
 
         // Remove old upgrade slots
-        for (int i = 0; i < upgradeSlots; i++) {
+        if (blockEntity.inventory().isEmpty()) {
+            return;
+        }
+        InventoryModule inventory = blockEntity.inventory().get();
+        for (int i = 0; i < inventory.getUpgradeSlots(); i++) {
             slots.remove(slots.size() - 1);
         }
         this.upgradeSlotsX = x;
         this.upgradeSlotsY = y;
-        addUpgradeSlots(this.upgradeSlotsX, this.upgradeSlotsY);
+        addUpgradeSlots(inventory, this.upgradeSlotsX, this.upgradeSlotsY);
     }
 
     @FunctionalInterface
@@ -246,25 +257,57 @@ public class MachineMenu extends EnergyMenu {
         boolean isVisible();
     }
 
-    public boolean isAutoEject() {
-        return autoEject;
+    public boolean isAutoPush() {
+        return autoPush;
+//        return blockEntity.autoIO().map(AutoIOModule::isAutoPush).orElse(false);
     }
 
-    public void setAutoEject(boolean autoEject) {
-        this.autoEject = autoEject;
-        PacketDistributor.sendToServer(new MachineIOPacket(false, autoEject, pos));
+
+    public void setAutoPush(boolean autoPush) {
+        this.autoPush = autoPush;
+        PacketDistributor.sendToServer(new MachineIOPacket(false, autoPush, pos));
     }
 
-    public boolean isAutoInsert() {
-        return autoInsert;
+    public boolean isAutoPull() {
+        return autoPull;
+//        return blockEntity.autoIO().map(AutoIOModule::isAutoPull).orElse(false);
     }
 
-    public void setAutoInsert(boolean autoInsert) {
-        this.autoInsert = autoInsert;
-        PacketDistributor.sendToServer(new MachineIOPacket(true, autoInsert, pos));
+    public void setAutoPull(boolean autoPull) {
+        this.autoPull = autoPull;
+        PacketDistributor.sendToServer(new MachineIOPacket(true, autoPull, pos));
+    }
+
+    public int getEnergy() {
+        return energy;
+    }
+
+    public void setEnergy(int energy) {
+        this.energy = energy;
+    }
+
+    public int getMaxEnergy() {
+        return maxEnergy;
+    }
+
+    public int getTemporalFlux() {
+        return temporalFlux;
+    }
+
+    public void setTemporalFlux(int temporalFlux) {
+        this.temporalFlux = temporalFlux;
+    }
+
+    public int getMaxTemporalFlux() {
+        return maxTemporalFlux;
     }
 
     public MachineBlockEntity getBlockEntity() {
         return blockEntity;
+    }
+
+    @Override
+    public boolean stillValid(Player player) {
+        return stillValid(ContainerLevelAccess.create(player.level(), pos), player, block);
     }
 }

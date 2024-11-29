@@ -26,6 +26,8 @@ public class TestModLanguageProvider extends LanguageProvider {
             "description.testmod.geothermal_generator";
     public static final String KEY_DESCRIPTION_STIRLING_GENERATOR =
             "description.testmod.stirling_generator";
+    public static final String KEY_DESCRIPTION_TEMPORAL_SIEVE =
+            "description.testmod.temporal_sieve";
     public static final String KEY_DESCRIPTION_CAPACITRON = "description.testmod.capacitron";
     // Creative tabs
     public static final String KEY_CREATIVE_TAB = "itemGroup.testmod";
@@ -67,6 +69,8 @@ public class TestModLanguageProvider extends LanguageProvider {
     public static final String KEY_WIDGET_FLUID_BAR = "widget.testmod.fluid_bar";
     public static final String KEY_WIDGET_FLUID_BAR_TOOLTIP = "widget.testmod.fluid_bar.tooltip";
     public static final String KEY_WIDGET_FLUID_EMPTY = "widget.testmod.fluid.empty";
+    public static final String KEY_WIDGET_TEMPORAL_FLUX_BAR = "widget.testmod.temporal_flux_bar";
+    public static final String KEY_WIDGET_TEMPORAL_FLUX_BAR_TOOLTIP = "widget.testmod.temporal_flux_bar.tooltip";
     public static final String KEY_WIDGET_PANEL_INFO = "widget.testmod.panel.info";
     public static final String KEY_WIDGET_PANEL_ENERGY = "widget.testmod.panel.energy";
     public static final String KEY_WIDGET_PANEL_ENERGY_USAGE_TITLE =
@@ -90,14 +94,20 @@ public class TestModLanguageProvider extends LanguageProvider {
     public static final String KEY_WIDGET_TOOLTIP_OFF = "widget.testmod.tooltip.off";
     public static final String KEY_WIDGET_MISSING_STAMPING_DIE = "widget.testmod.missing_stamping_die";
     // TODO: Not sure where to put this
+    public static final String KEY_WIDGET_GENERATOR_TITLE_ENERGY =
+            "widget.testmod.generator.output_title_energy";
+    public static final String KEY_WIDGET_GENERATOR_TEXT_ENERGY =
+            "widget.testmod.generator.output_text_energy";
+    public static final String KEY_WIDGET_GENERATOR_TITLE_TEMPORAL_FLUX =
+            "widget.testmod.generator.output_title_temporal_flux";
+    public static final String KEY_WIDGET_GENERATOR_TEXT_TEMPORAL_FLUX =
+            "widget.testmod.generator.output_text_temporal_flux";
     public static final String KEY_WIDGET_GENERATOR_GENERATING_TITLE =
             "widget.testmod.generator.generating_title";
-    public static final String KEY_WIDGET_GENERATOR_GENERATING_TEXT =
-            "widget.testmod.generator.generating_text";
-    public static final String KEY_WIDGET_GENERATOR_ENERGY_TITLE =
-            "widget.testmod.generator.output_title";
-    public static final String KEY_WIDGET_GENERATOR_ENERGY_TEXT =
-            "widget.testmod.generator.output_text";
+    public static final String KEY_WIDGET_GENERATOR_GENERATING_TEXT_ENERGY =
+            "widget.testmod.generator.generating_text_energy";
+    public static final String KEY_WIDGET_GENERATOR_GENERATING_TEXT_TEMPORAL_FLUX =
+            "widget.testmod.generator.generating_text_temporal_flux";
     public static final String KEY_WIDGET_GENERATOR_DURATION_TITLE =
             "widget.testmod.generator.duration_title";
     public static final String KEY_WIDGET_GENERATOR_DURATION_TEXT =
@@ -127,6 +137,7 @@ public class TestModLanguageProvider extends LanguageProvider {
         add(TestModBlocks.MACHINE_FLUID_INPUT_PORT.get(), "Machine Fluid Input Port");
         add(TestModBlocks.MACHINE_FLUID_OUTPUT_PORT.get(), "Machine Fluid Output Port");
         add(TestModBlocks.MACHINE_ENERGY_PORT.get(), "Machine Energy Port");
+        add(TestModBlocks.MACHINE_TEMPORAL_FLUX_PORT.get(), "Machine Temporal Flux Port");
         add(TestModBlocks.COPPER_COIL.get(), "Copper Coil");
         add(TestModBlocks.ENERGY_CUBE.get(), "Energy Cube");
         add(TestModBlocks.INDUCTION_FURNACE.get(), "Induction Furnace");
@@ -136,10 +147,12 @@ public class TestModLanguageProvider extends LanguageProvider {
         add(TestModBlocks.REDSTONE_GENERATOR.get(), "Redstone Generator");
         add(TestModBlocks.GEOTHERMAL_GENERATOR.get(), "Geothermal Generator");
         add(TestModBlocks.STIRLING_GENERATOR.get(), "Stirling Generator");
+        add(TestModBlocks.TEMPORAL_SIEVE.get(), "Temporal Sieve");
         add(TestModBlocks.CAPACITRON.get(), "Capacitron");
         add(TestModBlocks.CONDUIT_ITEM.get(), "Item Conduit");
         add(TestModBlocks.CONDUIT_FLUID.get(), "Fluid Conduit");
         add(TestModBlocks.CONDUIT_ENERGY.get(), "Energy Conduit");
+        add(TestModBlocks.CONDUIT_TEMPORAL.get(), "Temporal Conduit");
         // Descriptions/tooltips
         add(KEY_TOOLTIP_SHOW_INFO, "Press %s for more information");
         add(KEY_TOOLTIP_SHOW_DESCRIPTION, "Press %s for a description");
@@ -159,7 +172,9 @@ public class TestModLanguageProvider extends LanguageProvider {
         add(KEY_DESCRIPTION_GEOTHERMAL_GENERATOR,
                 "A machine that generates energy from the heat of lava. Useful for providing power to machines and systems in remote locations or where other power sources are unavailable.");
         add(KEY_DESCRIPTION_STIRLING_GENERATOR,
-                "A machine that generates energy from solid fuels. Useful as an intial power source for the early stages of industrial development.");
+                "A machine that generates energy from solid fuels. Useful as an initial power source for the early stages of industrial development.");
+        add(KEY_DESCRIPTION_TEMPORAL_SIEVE,
+                "A simple machine generates small quantities of temporal flux by sifting sand through it like an hourglass. Where does the sand go?");
         add(KEY_DESCRIPTION_CAPACITRON,
                 "A machine that stores and provides energy to other machines. Useful for storing excess energy and providing power to machines and systems when needed.");
         // Items
@@ -209,6 +224,8 @@ public class TestModLanguageProvider extends LanguageProvider {
         add(KEY_WIDGET_FLUID_BAR, "Fluid");
         add(KEY_WIDGET_FLUID_BAR_TOOLTIP, "%s: %s/%s mB");
         add(KEY_WIDGET_FLUID_EMPTY, "Empty");
+        add(KEY_WIDGET_TEMPORAL_FLUX_BAR, "Temporal Flux");
+        add(KEY_WIDGET_TEMPORAL_FLUX_BAR_TOOLTIP, "%s/%s TF");
         add(KEY_WIDGET_PANEL_INFO, "Info");
         add(KEY_WIDGET_PANEL_ENERGY, "Energy");
         add(KEY_WIDGET_PANEL_ENERGY_USAGE_TITLE, "Usage");
@@ -224,10 +241,13 @@ public class TestModLanguageProvider extends LanguageProvider {
         add(KEY_WIDGET_TOOLTIP_ON, "ON");
         add(KEY_WIDGET_TOOLTIP_OFF, "OFF");
         add(KEY_WIDGET_MISSING_STAMPING_DIE, "Missing stamping die");
-        add(KEY_WIDGET_GENERATOR_ENERGY_TITLE, "Energy");
-        add(KEY_WIDGET_GENERATOR_ENERGY_TEXT, "  %s FE");
+        add(KEY_WIDGET_GENERATOR_TITLE_ENERGY, "Energy");
+        add(KEY_WIDGET_GENERATOR_TEXT_ENERGY, "  %s FE");
+        add(KEY_WIDGET_GENERATOR_TITLE_TEMPORAL_FLUX, "Temporal Flux");
+        add(KEY_WIDGET_GENERATOR_TEXT_TEMPORAL_FLUX, "  %s TF");
         add(KEY_WIDGET_GENERATOR_GENERATING_TITLE, "Generating");
-        add(KEY_WIDGET_GENERATOR_GENERATING_TEXT, "  %s FE/t");
+        add(KEY_WIDGET_GENERATOR_GENERATING_TEXT_ENERGY, "  %s FE/t");
+        add(KEY_WIDGET_GENERATOR_GENERATING_TEXT_TEMPORAL_FLUX, "  %s TF/t");
         add(KEY_WIDGET_GENERATOR_DURATION_TITLE, "Duration");
         add(KEY_WIDGET_GENERATOR_DURATION_TEXT, "  %s");
         add(KEY_WIDGET_BLUEPRINT_ICON_PICK_BLUEPRINT, "Pick a blueprint to see more information");

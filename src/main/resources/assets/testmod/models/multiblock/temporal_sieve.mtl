@@ -1,0 +1,6 @@
+# Made in Blockbench 4.11.2
+newmtl m_d6b796cc-2b2d-543f-0bd4-6755182cd1ad
+map_Kd #base
+newmtl m_0b4ffd32-9962-4ce9-31ea-af8956929279
+map_Kd #working
+newmtl none

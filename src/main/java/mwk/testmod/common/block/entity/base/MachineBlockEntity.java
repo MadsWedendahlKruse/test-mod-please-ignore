@@ -7,6 +7,7 @@ import mwk.testmod.common.block.entity.modules.FluidTankModule;
 import mwk.testmod.common.block.entity.modules.InventoryModule;
 import mwk.testmod.common.block.entity.modules.MachineModule;
 import mwk.testmod.common.block.entity.modules.SoundModule;
+import mwk.testmod.common.block.entity.modules.TemporalFluxModule;
 import mwk.testmod.common.block.interfaces.IDescribable;
 import mwk.testmod.common.block.interfaces.IUpgradable;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
@@ -33,6 +34,7 @@ public abstract class MachineBlockEntity extends BlockEntity
         implements MenuProvider, IUpgradable, IDescribable {
 
     private Optional<EnergyModule> energy;
+    private Optional<TemporalFluxModule> temporalFlux;
     private Optional<InventoryModule> inventory;
     private Optional<FluidTankModule> fluidTanks;
     private Optional<AutoIOModule> autoIO;
@@ -41,6 +43,7 @@ public abstract class MachineBlockEntity extends BlockEntity
     public MachineBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         energy = Optional.empty();
+        temporalFlux = Optional.empty();
         inventory = Optional.empty();
         fluidTanks = Optional.empty();
         autoIO = Optional.empty();
@@ -50,6 +53,8 @@ public abstract class MachineBlockEntity extends BlockEntity
     protected void addModule(MachineModule module) {
         if (module instanceof EnergyModule) {
             energy = Optional.of((EnergyModule) module);
+        } else if (module instanceof TemporalFluxModule) {
+            temporalFlux = Optional.of((TemporalFluxModule) module);
         } else if (module instanceof InventoryModule) {
             inventory = Optional.of((InventoryModule) module);
         } else if (module instanceof FluidTankModule) {
@@ -67,7 +72,6 @@ public abstract class MachineBlockEntity extends BlockEntity
         }
     }
 
-
     public boolean isFormed() {
         // We're going all in on multiblocks
         if (level != null) {
@@ -81,8 +85,7 @@ public abstract class MachineBlockEntity extends BlockEntity
 
     public void setWorking(boolean working) {
         // TODO: Right now this only works if the block entity is attached to a
-        // multiblock
-        // controller. This should be changed to work with any block entity?
+        // multiblock controller. This should be changed to work with any block entity?
         if (level != null && getBlockState().getBlock() instanceof MultiBlockControllerBlock) {
             level.setBlockAndUpdate(worldPosition,
                     getBlockState().setValue(MultiBlockControllerBlock.WORKING, working));
@@ -104,6 +107,8 @@ public abstract class MachineBlockEntity extends BlockEntity
     protected void saveAdditional(CompoundTag tag, Provider registries) {
         super.saveAdditional(tag, registries);
         energy.ifPresent(energyModule -> energyModule.saveAdditional(tag, registries));
+        temporalFlux.ifPresent(
+                temporalFluxModule -> temporalFluxModule.saveAdditional(tag, registries));
         inventory.ifPresent(inventoryModule -> inventoryModule.saveAdditional(tag, registries));
         fluidTanks.ifPresent(fluidTankModule -> fluidTankModule.saveAdditional(tag, registries));
         autoIO.ifPresent(autoIOModule -> autoIOModule.saveAdditional(tag, registries));
@@ -113,13 +118,15 @@ public abstract class MachineBlockEntity extends BlockEntity
     public void loadAdditional(CompoundTag tag, Provider registries) {
         super.loadAdditional(tag, registries);
         energy.ifPresent(energyModule -> energyModule.loadAdditional(tag, registries));
-        inventory.ifPresent(inventoryModule -> inventoryModule.loadAdditional(tag, registries));
-        fluidTanks.ifPresent(fluidTankModule -> fluidTankModule.loadAdditional(tag, registries));
-        autoIO.ifPresent(autoIOModule -> autoIOModule.loadAdditional(tag, registries));
+        temporalFlux.ifPresent(
+                temporalFluxModule -> temporalFluxModule.loadAdditional(tag, registries));
         if (inventory.isPresent()) {
             InventoryModule inventory = inventory().get();
+            inventory.loadAdditional(tag, registries);
             inventory.getUpgradeItemHandler(null).applyUpgrades();
         }
+        fluidTanks.ifPresent(fluidTankModule -> fluidTankModule.loadAdditional(tag, registries));
+        autoIO.ifPresent(autoIOModule -> autoIOModule.loadAdditional(tag, registries));
     }
 
     @Override
@@ -148,6 +155,10 @@ public abstract class MachineBlockEntity extends BlockEntity
 
     public Optional<EnergyModule> energy() {
         return energy;
+    }
+
+    public Optional<TemporalFluxModule> temporalFlux() {
+        return temporalFlux;
     }
 
     /**

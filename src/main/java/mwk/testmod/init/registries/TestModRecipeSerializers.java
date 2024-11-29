@@ -7,6 +7,7 @@ import mwk.testmod.common.recipe.RedstoneGeneratorRecipe;
 import mwk.testmod.common.recipe.SeparationRecipe;
 import mwk.testmod.common.recipe.StampingRecipe;
 import mwk.testmod.common.recipe.StirlingGeneratorRecipe;
+import mwk.testmod.common.recipe.TemporalSieveRecipe;
 import mwk.testmod.common.recipe.serializers.CatalystItemStackRecipeSerializer;
 import mwk.testmod.common.recipe.serializers.GeneratorFluidRecipeSerializer;
 import mwk.testmod.common.recipe.serializers.GeneratorItemRecipeSerializer;
@@ -47,6 +48,9 @@ public class TestModRecipeSerializers {
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> STIRLING_GENERATOR_RECIPE_SERIALIZER =
             RECIPE_SERIALIZERS.register("stirling_generator",
                     () -> new GeneratorItemRecipeSerializer<>(StirlingGeneratorRecipe::new));
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> TEMPORAL_SIEVE_RECIPE_SERIALIZER =
+            RECIPE_SERIALIZERS.register("temporal_sieve",
+                    () -> new GeneratorItemRecipeSerializer<>(TemporalSieveRecipe::new));
 
     public static void register(IEventBus modEventBus) {
         RECIPE_SERIALIZERS.register(modEventBus);

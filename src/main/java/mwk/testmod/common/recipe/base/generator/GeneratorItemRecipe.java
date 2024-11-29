@@ -9,15 +9,15 @@ import net.minecraft.world.item.crafting.SingleRecipeInput;
 public abstract class GeneratorItemRecipe extends OneInputItemStackRecipe implements
         GeneratorRecipe {
 
-    private final int energy;
+    private final int generatedAmount;
 
-    public GeneratorItemRecipe(Ingredient input, int energy) {
+    public GeneratorItemRecipe(Ingredient input, int generatedAmount) {
         super(input);
-        this.energy = energy;
+        this.generatedAmount = generatedAmount;
     }
 
-    public int getEnergy() {
-        return energy;
+    public int getGeneratedAmount() {
+        return generatedAmount;
     }
 
     @Override

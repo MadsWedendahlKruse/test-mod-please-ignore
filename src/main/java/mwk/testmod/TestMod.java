@@ -9,6 +9,7 @@ import mwk.testmod.client.gui.screen.RedstoneGeneratorScreen;
 import mwk.testmod.client.gui.screen.SeparatorScreen;
 import mwk.testmod.client.gui.screen.StampingPressScreen;
 import mwk.testmod.client.gui.screen.StirlingGeneratorScreen;
+import mwk.testmod.client.gui.screen.TemporalSieveScreen;
 import mwk.testmod.client.render.block_entity.CrusherBlockEntityRenderer;
 import mwk.testmod.client.render.block_entity.SeparatorBlockEntityRenderer;
 import mwk.testmod.client.render.block_entity.StampingPressBlockEntityRenderer;
@@ -21,10 +22,12 @@ import mwk.testmod.common.block.multiblock.HologramBlockColor;
 import mwk.testmod.common.block.multiblock.entity.ports.MultiBlockEnergyPortBlockEntity;
 import mwk.testmod.common.block.multiblock.entity.ports.MultiBlockFluidIOPortBlockEntity;
 import mwk.testmod.common.block.multiblock.entity.ports.MultiBlockItemIOPortBlockEntity;
+import mwk.testmod.common.block.multiblock.entity.ports.MultiBlockTemporalFluxPortBlockEntity;
 import mwk.testmod.common.network.BuildMultiBlockPacket;
 import mwk.testmod.common.network.MachineIOPacket;
 import mwk.testmod.init.registries.TestModBlockEntities;
 import mwk.testmod.init.registries.TestModBlocks;
+import mwk.testmod.init.registries.TestModCapabilities;
 import mwk.testmod.init.registries.TestModCreativeTabs;
 import mwk.testmod.init.registries.TestModItems;
 import mwk.testmod.init.registries.TestModMenus;
@@ -133,6 +136,9 @@ public class TestMod {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
                 TestModBlockEntities.MULTI_FLUID_OUTPUT_PORT_ENTITY_TYPE.get(),
                 MultiBlockFluidIOPortBlockEntity::getFluidHandler);
+        event.registerBlockEntity(TestModCapabilities.TemporalFluxHandler.BLOCK,
+                TestModBlockEntities.MULTI_TEMPORAL_FLUX_PORT_ENTITY_TYPE.get(),
+                MultiBlockTemporalFluxPortBlockEntity::getTemporalFluxHandler);
 
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
                 TestModBlockEntities.CONDUIT_ITEM_ENTITY_TYPE.get(),
@@ -143,7 +149,9 @@ public class TestMod {
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
                 TestModBlockEntities.CONDUIT_ENERGY_ENTITY_TYPE.get(),
                 ConduitBlockEntity::getCapability);
-
+        event.registerBlockEntity(TestModCapabilities.TemporalFluxHandler.BLOCK,
+                TestModBlockEntities.CONDUIT_TEMPORAL_ENTITY_TYPE.get(),
+                ConduitBlockEntity::getCapability);
     }
 
     private void onRegisterPayloadHandlers(RegisterPayloadHandlersEvent event) {
@@ -190,6 +198,7 @@ public class TestMod {
                     GeothermalGeneratorScreen::new);
             event.register(TestModMenus.STIRLING_GENERATOR_MENU.get(),
                     StirlingGeneratorScreen::new);
+            event.register(TestModMenus.TEMPORAL_SIEVE_MENU.get(), TemporalSieveScreen::new);
 
             event.register(TestModMenus.CAPACITRON_MENU.get(), CapacitronScreen::new);
         }
@@ -216,6 +225,9 @@ public class TestMod {
             event.registerBlockEntityRenderer(TestModBlockEntities.CONDUIT_ENERGY_ENTITY_TYPE.get(),
                     ConduitBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(TestModBlockEntities.CONDUIT_ITEM_ENTITY_TYPE.get(),
+                    ConduitBlockEntityRenderer::new);
+            event.registerBlockEntityRenderer(
+                    TestModBlockEntities.CONDUIT_TEMPORAL_ENTITY_TYPE.get(),
                     ConduitBlockEntityRenderer::new);
         }
 

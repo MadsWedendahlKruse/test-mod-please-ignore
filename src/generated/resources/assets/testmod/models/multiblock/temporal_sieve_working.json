@@ -1,0 +1,10 @@
+{
+  "flip_v": true,
+  "loader": "neoforge:obj",
+  "model": "testmod:models/multiblock/temporal_sieve.obj",
+  "textures": {
+    "base": "testmod:block/temporal_sieve",
+    "particle": "testmod:block/machine_frame_advanced",
+    "working": "testmod:block/temporal_sieve_working"
+  }
+}

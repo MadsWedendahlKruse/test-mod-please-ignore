@@ -1,7 +1,7 @@
 package mwk.testmod.common.util.inventory.container_data;
 
 import mwk.testmod.common.block.entity.modules.EnergyModule;
-import mwk.testmod.common.block.inventory.base.EnergyMenu;
+import mwk.testmod.common.block.inventory.base.MachineMenu;
 import net.minecraft.world.inventory.ContainerData;
 
 /**
@@ -14,9 +14,9 @@ public class EnergyContainerData implements ContainerData {
     private static final int LAST_16_BITS = 0xffff0000;
 
     private final EnergyModule energyModule;
-    private final EnergyMenu menu;
+    private final MachineMenu menu;
 
-    public EnergyContainerData(EnergyModule energyModule, EnergyMenu menu) {
+    public EnergyContainerData(EnergyModule energyModule, MachineMenu menu) {
         this.energyModule = energyModule;
         this.menu = menu;
     }

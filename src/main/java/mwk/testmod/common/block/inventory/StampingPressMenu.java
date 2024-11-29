@@ -1,8 +1,9 @@
 package mwk.testmod.common.block.inventory;
 
 import mwk.testmod.client.utils.ItemSlotGridHelper;
+import mwk.testmod.common.block.entity.modules.InventoryModule;
 import mwk.testmod.common.block.inventory.base.ProcessingMenu;
-import mwk.testmod.common.util.inventory.handler.InputItemHandler;
+import mwk.testmod.common.util.handlers.InputItemHandler;
 import mwk.testmod.init.registries.TestModMenus;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
@@ -16,16 +17,16 @@ public class StampingPressMenu extends ProcessingMenu {
     }
 
     @Override
-    protected void addInputSlots() {
+    protected void addInputSlots(InventoryModule inventoryModule, int inputSlotX, int inputSlotY) {
         if (blockEntity.inventory().isEmpty()) {
             return;
         }
         InputItemHandler inputHandler = blockEntity.inventory().get()
                 .getInputItemHandler(null, true);
         // Stamping die slot
-        addItemHandlerSlots(inputHandler, 1, 0, inputSlotsX, 27, ItemSlotGridHelper.ROWS_1);
+        addItemHandlerSlots(inputHandler, 1, 0, inputSlotX, 27, ItemSlotGridHelper.ROWS_1);
         // Input slot
-        addItemHandlerSlots(inputHandler, 1, 1, inputSlotsX, 63, ItemSlotGridHelper.ROWS_1);
+        addItemHandlerSlots(inputHandler, 1, 1, inputSlotX, 63, ItemSlotGridHelper.ROWS_1);
     }
 
     public ItemStack getStampingDie() {

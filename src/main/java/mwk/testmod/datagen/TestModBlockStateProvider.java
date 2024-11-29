@@ -52,6 +52,7 @@ public class TestModBlockStateProvider extends BlockStateProvider {
         registerMultiBlockPart(TestModBlocks.MACHINE_FLUID_INPUT_PORT, CubeModel.CUBE_ALL);
         registerMultiBlockPart(TestModBlocks.MACHINE_FLUID_OUTPUT_PORT, CubeModel.CUBE_ALL);
         registerMultiBlockPart(TestModBlocks.MACHINE_ENERGY_PORT, CubeModel.CUBE_ALL);
+        registerMultiBlockPart(TestModBlocks.MACHINE_TEMPORAL_FLUX_PORT, CubeModel.CUBE_ALL);
         registerMultiBlockPart(TestModBlocks.COPPER_COIL, CubeModel.CUBE_COLUMN);
         registerMultiBlockPart(TestModBlocks.ENERGY_CUBE, CubeModel.CUBE_COLUMN);
 
@@ -67,6 +68,7 @@ public class TestModBlockStateProvider extends BlockStateProvider {
                 true);
         registerMultiBlockController(TestModBlocks.STIRLING_GENERATOR, ControllerType.GENERATOR,
                 true);
+        registerMultiBlockController(TestModBlocks.TEMPORAL_SIEVE, ControllerType.GENERATOR, true);
 
         // TODO: Completely new ControllerType?
         registerMultiBlockController(TestModBlocks.CAPACITRON, ControllerType.CAPACITRON);
@@ -74,6 +76,7 @@ public class TestModBlockStateProvider extends BlockStateProvider {
         registerConduitBlock(TestModBlocks.CONDUIT_ITEM.get(), "minecraft:solid");
         registerConduitBlock(TestModBlocks.CONDUIT_FLUID.get(), "minecraft:cutout");
         registerConduitBlock(TestModBlocks.CONDUIT_ENERGY.get(), "minecraft:solid");
+        registerConduitBlock(TestModBlocks.CONDUIT_TEMPORAL.get(), "minecraft:solid");
     }
 
     private void createCubeAll(String modelPath) {

@@ -1,9 +1,9 @@
 package mwk.testmod.common.block.entity.modules;
 
 import mwk.testmod.common.block.entity.base.MachineBlockEntity;
-import mwk.testmod.common.util.energy.EnergyStorageConsumer;
-import mwk.testmod.common.util.energy.EnergyStorageProducer;
-import mwk.testmod.common.util.energy.EnergyStorageWrapper;
+import mwk.testmod.common.util.handlers.EnergyStorageConsumer;
+import mwk.testmod.common.util.handlers.EnergyStorageProducer;
+import mwk.testmod.common.util.handlers.EnergyStorageWrapper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup.Provider;

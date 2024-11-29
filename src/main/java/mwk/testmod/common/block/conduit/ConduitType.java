@@ -3,7 +3,10 @@ package mwk.testmod.common.block.conduit;
 import mwk.testmod.common.block.conduit.network.EnergyConduitNetwork;
 import mwk.testmod.common.block.conduit.network.FluidConduitNetwork;
 import mwk.testmod.common.block.conduit.network.ItemConduitNetwork;
+import mwk.testmod.common.block.conduit.network.TemporalConduitNetwork;
 import mwk.testmod.common.block.conduit.network.base.ConduitNetwork;
+import mwk.testmod.common.capabilities.ITemporalFluxHandler;
+import mwk.testmod.init.registries.TestModCapabilities.TemporalFluxHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
@@ -60,6 +63,22 @@ public enum ConduitType {
         @Override
         public BlockCapability<IEnergyStorage, Direction> getCapability() {
             return Capabilities.EnergyStorage.BLOCK;
+        }
+    },
+    TEMPORAL {
+        @Override
+        public TemporalConduitBlockEntity getBlockEntity(BlockPos pos, BlockState state) {
+            return new TemporalConduitBlockEntity(pos, state);
+        }
+
+        @Override
+        public TemporalConduitNetwork createNetwork() {
+            return new TemporalConduitNetwork();
+        }
+
+        @Override
+        public BlockCapability<ITemporalFluxHandler, Direction> getCapability() {
+            return TemporalFluxHandler.BLOCK;
         }
     };
 

@@ -19,8 +19,8 @@ import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Base class for all conduit networks. This class is responsible for managing the network data and
- * serializing it to disk.
+ * Base class for all conduit networks. Handles receiving payloads and finding receivers for the
+ * payloads.
  *
  * @param <C> The type of capability that the network will be using, e.g. IEnergyStorage for energy
  *            networks, IFluidHandler for fluid networks, IItemHandler for item networks.

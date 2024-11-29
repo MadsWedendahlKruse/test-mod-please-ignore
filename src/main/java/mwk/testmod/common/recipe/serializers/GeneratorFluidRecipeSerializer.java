@@ -27,7 +27,8 @@ public class GeneratorFluidRecipeSerializer<T extends GeneratorFluidRecipe>
             codec = RecordCodecBuilder.mapCodec(instance -> instance
                     .group(FluidStack.CODEC.fieldOf("input")
                                     .forGetter(GeneratorFluidRecipe::getInput),
-                            Codec.INT.fieldOf("energy").forGetter(GeneratorFluidRecipe::getEnergy))
+                            Codec.INT.fieldOf("energy")
+                                    .forGetter(GeneratorFluidRecipe::getGeneratedAmount))
                     .apply(instance, factory::create));
         }
         return codec;
@@ -38,7 +39,7 @@ public class GeneratorFluidRecipeSerializer<T extends GeneratorFluidRecipe>
         if (streamCodec == null) {
             streamCodec = StreamCodec.composite(
                     FluidStack.STREAM_CODEC, GeneratorFluidRecipe::getInput,
-                    ByteBufCodecs.INT, GeneratorFluidRecipe::getEnergy,
+                    ByteBufCodecs.INT, GeneratorFluidRecipe::getGeneratedAmount,
                     factory::create);
         }
         return streamCodec;

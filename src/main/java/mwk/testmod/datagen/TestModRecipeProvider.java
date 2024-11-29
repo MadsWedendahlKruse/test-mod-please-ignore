@@ -11,6 +11,7 @@ import mwk.testmod.common.recipe.RedstoneGeneratorRecipe;
 import mwk.testmod.common.recipe.SeparationRecipe;
 import mwk.testmod.common.recipe.StampingRecipe;
 import mwk.testmod.common.recipe.StirlingGeneratorRecipe;
+import mwk.testmod.common.recipe.TemporalSieveRecipe;
 import mwk.testmod.common.util.TestModTags;
 import mwk.testmod.init.registries.TestModBlocks;
 import mwk.testmod.init.registries.TestModItems;
@@ -55,6 +56,7 @@ public class TestModRecipeProvider extends RecipeProvider {
         registerRedstoneGeneratorRecipes(recipeOutput);
         registerGeothermalGeneratorRecipes(recipeOutput);
         registerStirlingGeneratorRecipes(recipeOutput);
+        registerTemporalSieveRecipes(recipeOutput);
     }
 
     private void registerShapelessRecipes(RecipeOutput recipeOutput) {
@@ -359,4 +361,18 @@ public class TestModRecipeProvider extends RecipeProvider {
         registerStirlingGeneratorRecipe(recipeOutput, (ItemLike) Blocks.MANGROVE_ROOTS, 300);
     }
 
+    private static final int TEMPORAL_FLUX_PER_SAND = 100;
+
+    private void registerTemporalSieveRecipe(RecipeOutput recipeOutput, String name,
+            Ingredient input, int temporalFlux) {
+        recipeOutput.accept(ResourceLocation.fromNamespaceAndPath(TestMod.MODID, name),
+                new TemporalSieveRecipe(input, temporalFlux), null);
+    }
+
+    private void registerTemporalSieveRecipes(RecipeOutput recipeOutput) {
+        registerTemporalSieveRecipe(recipeOutput, "temporal_flux_from_sand",
+                Ingredient.of(Blocks.SAND), TEMPORAL_FLUX_PER_SAND);
+        registerTemporalSieveRecipe(recipeOutput, "temporal_flux_from_red_sand",
+                Ingredient.of(Blocks.RED_SAND), TEMPORAL_FLUX_PER_SAND);
+    }
 }

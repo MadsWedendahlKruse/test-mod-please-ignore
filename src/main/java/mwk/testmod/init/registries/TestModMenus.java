@@ -10,6 +10,7 @@ import mwk.testmod.common.block.inventory.RedstoneGeneratorMenu;
 import mwk.testmod.common.block.inventory.SeparatorMenu;
 import mwk.testmod.common.block.inventory.StampingPressMenu;
 import mwk.testmod.common.block.inventory.StirlingGeneratorMenu;
+import mwk.testmod.common.block.inventory.TemporalSieveMenu;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -43,6 +44,8 @@ public class TestModMenus {
             TestModBlocks.GEOTHERMAL_GENERATOR, GeothermalGeneratorMenu::new);
     public static final Supplier<MenuType<StirlingGeneratorMenu>> STIRLING_GENERATOR_MENU = registerMultiBlockControllerMenu(
             TestModBlocks.STIRLING_GENERATOR, StirlingGeneratorMenu::new);
+    public static final Supplier<MenuType<TemporalSieveMenu>> TEMPORAL_SIEVE_MENU = registerMultiBlockControllerMenu(
+            TestModBlocks.TEMPORAL_SIEVE, TemporalSieveMenu::new);
     public static final Supplier<MenuType<CapacitronMenu>> CAPACITRON_MENU = registerMultiBlockControllerMenu(
             TestModBlocks.CAPACITRON, CapacitronMenu::new);
 

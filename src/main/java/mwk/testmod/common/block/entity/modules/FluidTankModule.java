@@ -2,9 +2,9 @@ package mwk.testmod.common.block.entity.modules;
 
 import mwk.testmod.common.block.entity.base.MachineBlockEntity;
 import mwk.testmod.common.util.inventory.SimpleFluidContainer;
-import mwk.testmod.common.util.inventory.handler.FluidStackHandler;
-import mwk.testmod.common.util.inventory.handler.InputFluidHandler;
-import mwk.testmod.common.util.inventory.handler.OutputFluidHandler;
+import mwk.testmod.common.util.handlers.FluidStackHandler;
+import mwk.testmod.common.util.handlers.InputFluidHandler;
+import mwk.testmod.common.util.handlers.OutputFluidHandler;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.nbt.CompoundTag;

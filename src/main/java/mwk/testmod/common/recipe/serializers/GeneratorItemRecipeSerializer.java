@@ -27,7 +27,8 @@ public class GeneratorItemRecipeSerializer<T extends GeneratorItemRecipe>
             codec = RecordCodecBuilder.mapCodec(instance -> instance
                     .group(Ingredient.CODEC.fieldOf("input")
                                     .forGetter(GeneratorItemRecipe::getInputItem),
-                            Codec.INT.fieldOf("energy").forGetter(GeneratorItemRecipe::getEnergy))
+                            Codec.INT.fieldOf("energy")
+                                    .forGetter(GeneratorItemRecipe::getGeneratedAmount))
                     .apply(instance, factory::create));
         }
         return codec;
@@ -38,7 +39,7 @@ public class GeneratorItemRecipeSerializer<T extends GeneratorItemRecipe>
         if (streamCodec == null) {
             streamCodec = StreamCodec.composite(
                     Ingredient.CONTENTS_STREAM_CODEC, GeneratorItemRecipe::getInputItem,
-                    ByteBufCodecs.INT, GeneratorItemRecipe::getEnergy,
+                    ByteBufCodecs.INT, GeneratorItemRecipe::getGeneratedAmount,
                     factory::create);
         }
         return streamCodec;
