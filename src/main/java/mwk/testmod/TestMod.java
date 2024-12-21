@@ -9,6 +9,7 @@ import mwk.testmod.client.gui.screen.RedstoneGeneratorScreen;
 import mwk.testmod.client.gui.screen.SeparatorScreen;
 import mwk.testmod.client.gui.screen.StampingPressScreen;
 import mwk.testmod.client.gui.screen.StirlingGeneratorScreen;
+import mwk.testmod.client.gui.screen.TemporalReservoirScreen;
 import mwk.testmod.client.gui.screen.TemporalSieveScreen;
 import mwk.testmod.client.render.block_entity.CrusherBlockEntityRenderer;
 import mwk.testmod.client.render.block_entity.SeparatorBlockEntityRenderer;
@@ -201,6 +202,8 @@ public class TestMod {
             event.register(TestModMenus.TEMPORAL_SIEVE_MENU.get(), TemporalSieveScreen::new);
 
             event.register(TestModMenus.CAPACITRON_MENU.get(), CapacitronScreen::new);
+            event.register(TestModMenus.TEMPORAL_RESERVOIR_MENU.get(),
+                    TemporalReservoirScreen::new);
         }
 
         @SubscribeEvent

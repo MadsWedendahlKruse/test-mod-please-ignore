@@ -29,6 +29,7 @@ public class TestModLanguageProvider extends LanguageProvider {
     public static final String KEY_DESCRIPTION_TEMPORAL_SIEVE =
             "description.testmod.temporal_sieve";
     public static final String KEY_DESCRIPTION_CAPACITRON = "description.testmod.capacitron";
+    public static final String KEY_DESCRIPTION_CHRONO_CELL = "description.testmod.chrono_cell";
     // Creative tabs
     public static final String KEY_CREATIVE_TAB = "itemGroup.testmod";
     // Info
@@ -149,6 +150,7 @@ public class TestModLanguageProvider extends LanguageProvider {
         add(TestModBlocks.STIRLING_GENERATOR.get(), "Stirling Generator");
         add(TestModBlocks.TEMPORAL_SIEVE.get(), "Temporal Sieve");
         add(TestModBlocks.CAPACITRON.get(), "Capacitron");
+        add(TestModBlocks.TEMPORAL_RESERVOIR.get(), "Temporal Reservoir");
         add(TestModBlocks.CONDUIT_ITEM.get(), "Item Conduit");
         add(TestModBlocks.CONDUIT_FLUID.get(), "Fluid Conduit");
         add(TestModBlocks.CONDUIT_ENERGY.get(), "Energy Conduit");
@@ -174,9 +176,11 @@ public class TestModLanguageProvider extends LanguageProvider {
         add(KEY_DESCRIPTION_STIRLING_GENERATOR,
                 "A machine that generates energy from solid fuels. Useful as an initial power source for the early stages of industrial development.");
         add(KEY_DESCRIPTION_TEMPORAL_SIEVE,
-                "A simple machine generates small quantities of temporal flux by sifting sand through it like an hourglass. Where does the sand go?");
+                "A simple machine that generates small quantities of temporal flux by sifting sand through it like an hourglass. Where does the sand go?");
         add(KEY_DESCRIPTION_CAPACITRON,
                 "A machine that stores and provides energy to other machines. Useful for storing excess energy and providing power to machines and systems when needed.");
+        add(KEY_DESCRIPTION_CHRONO_CELL,
+                "A machine that stores and provides temporal flux to other machines. Useful for storing excess temporal flux and providing power to machines and systems when needed.");
         // Items
         add(TestModItems.WRENCH_ITEM.get(), "Wrench");
         add(TestModItems.HOLOGRAM_PROJECTOR_ITEM.get(), "Hologram Projector");

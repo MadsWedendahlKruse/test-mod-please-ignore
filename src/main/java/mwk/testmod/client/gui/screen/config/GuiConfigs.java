@@ -67,4 +67,10 @@ public class GuiConfigs {
             82, ENERGY_BAR_Y, IMAGE_WIDTH, IMAGE_HEIGHT, null, 0, 0,
             null, 0, 0, 0, 0);
 
+    public static final GuiConfig CHRONO_CELL = new GuiConfig(
+            ResourceLocation.fromNamespaceAndPath(TestMod.MODID,
+                    "textures/gui/container/chrono_cell.png"),
+            82, ENERGY_BAR_Y, IMAGE_WIDTH, IMAGE_HEIGHT, null, 0, 0,
+            null, 0, 0, 0, 0);
+
 }

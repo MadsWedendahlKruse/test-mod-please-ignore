@@ -1,0 +1,17 @@
+{
+	"layers": [
+		[
+			"XE",
+			"EE"
+		],
+		[
+			"bb",
+			"bb"
+		]
+	],
+	"key": {
+		"X": "testmod:temporal_reservoir",
+		"E": "testmod:machine_temporal_flux_port",
+		"b": "testmod:machine_frame_basic"
+	}
+}

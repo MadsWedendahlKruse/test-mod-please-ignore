@@ -4,10 +4,13 @@ import mwk.testmod.common.block.entity.base.MachineBlockEntity;
 import mwk.testmod.common.capabilities.ITemporalFluxHandler;
 import mwk.testmod.common.util.handlers.TemporalFluxHandler;
 import mwk.testmod.common.util.handlers.TemporalFluxWrapper;
+import mwk.testmod.init.registries.TestModCapabilities;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
+import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.common.util.Lazy;
 
 public class TemporalFluxModule implements MachineModule {
@@ -33,6 +36,28 @@ public class TemporalFluxModule implements MachineModule {
         if (tag.contains(NBT_TAG_FLUX)) {
             temporalFluxHandler.deserializeNBT(registries,
                     IntTag.valueOf(tag.getInt(NBT_TAG_FLUX)));
+        }
+    }
+
+    public void pushTemporalFlux(ServerLevel level, BlockPos pos, int temporalFluxPerTick) {
+        // TODO: This entire method is a copy of EnergyModule.pushEnergy
+        if (getTemporalFluxStored() == 0) {
+            return;
+        }
+        for (Direction direction : Direction.values()) {
+            // TODO: Capability cache
+            ITemporalFluxHandler receiver = level.getCapability(
+                    TestModCapabilities.TemporalFluxHandler.BLOCK,
+                    pos.relative(direction), direction.getOpposite());
+            if (receiver == null || receiver == this.getTemporalFluxHandler(direction)) {
+                continue;
+            }
+            // We don't want to transfer more energy than we have
+            // Generator can push twice as much energy as it can generate so we don't
+            // end up with a full buffer that never gets emptied
+            int maxTransfer = Math.min(getTemporalFluxStored(), temporalFluxPerTick);
+            int received = receiver.receiveTemporalFlux(maxTransfer, false);
+            int extracted = temporalFluxHandler.extractTemporalFlux(received, false);
         }
     }
 

@@ -13,6 +13,7 @@ import mwk.testmod.common.block.entity.RedstoneGeneratorBlockEntity;
 import mwk.testmod.common.block.entity.SeparatorBlockEntity;
 import mwk.testmod.common.block.entity.StampingPressBlockEntity;
 import mwk.testmod.common.block.entity.StirlingGeneratorBlockEntity;
+import mwk.testmod.common.block.entity.TemporalReservoirBlockEntity;
 import mwk.testmod.common.block.entity.TemporalSieveBlockEntity;
 import mwk.testmod.common.block.multiblock.HologramBlock;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
@@ -95,9 +96,11 @@ public class TestModBlocks {
     public static final DeferredBlock<MultiBlockControllerBlock> TEMPORAL_SIEVE = registerMultiBlockController(
             "temporal_sieve", TemporalSieveBlockEntity::new);
 
-    // Energy storage
+    // Resource storage
     public static final DeferredBlock<MultiBlockControllerBlock> CAPACITRON = registerMultiBlockController(
             "capacitron", CapacitronBlockEntity::new);
+    public static final DeferredBlock<MultiBlockControllerBlock> TEMPORAL_RESERVOIR = registerMultiBlockController(
+            "temporal_reservoir", TemporalReservoirBlockEntity::new);
     // ---
 
     public static final DeferredBlock<HologramBlock> HOLOGRAM =

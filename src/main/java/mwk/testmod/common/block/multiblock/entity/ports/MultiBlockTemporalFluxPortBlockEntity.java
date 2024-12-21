@@ -1,6 +1,9 @@
 package mwk.testmod.common.block.multiblock.entity.ports;
 
+import mwk.testmod.common.block.entity.CapacitronBlockEntity;
 import mwk.testmod.common.block.entity.base.MachineBlockEntity;
+import mwk.testmod.common.block.entity.base.generator.GeneratorBlockEntity;
+import mwk.testmod.common.block.entity.modules.ProcessingModule;
 import mwk.testmod.common.block.entity.modules.TemporalFluxModule;
 import mwk.testmod.common.block.interfaces.ITickable;
 import mwk.testmod.common.block.multiblock.entity.MultiBlockPartBlockEntity;
@@ -42,18 +45,18 @@ public class MultiBlockTemporalFluxPortBlockEntity extends MultiBlockPartBlockEn
         if (controllerEntity instanceof MachineBlockEntity machine &&
                 machine.temporalFlux().isPresent()) {
             TemporalFluxModule temporalFluxModule = machine.temporalFlux().get();
-            // TODO: Implement temporal flux pushing
-//            if (controllerEntity instanceof GeneratorBlockEntity<?, ?> generator &&
-//                    generator.processing().isPresent()) {
-//                // Generator can push twice the energy per tick it generates
-//                ProcessingModule<?, ?> processing = generator.processing().get();
-//                energyModule.pushEnergy(serverLevel, this.worldPosition,
-//                        2 * processing.getResourcePerTick());
-//            }
-//            if (controllerEntity instanceof CapacitronBlockEntity capacitron) {
-//                // TODO: Push as much as possible?
-//                energyModule.pushEnergy(serverLevel, this.worldPosition, Integer.MAX_VALUE);
-//            }
+            if (controllerEntity instanceof GeneratorBlockEntity<?, ?> generator &&
+                    generator.processing().isPresent()) {
+                // Generator can push twice the energy per tick it generates
+                ProcessingModule<?, ?> processing = generator.processing().get();
+                temporalFluxModule.pushTemporalFlux(serverLevel, this.worldPosition,
+                        2 * processing.getResourcePerTick());
+            }
+            if (controllerEntity instanceof CapacitronBlockEntity capacitron) {
+                // TODO: Push as much as possible?
+                temporalFluxModule.pushTemporalFlux(serverLevel, this.worldPosition,
+                        Integer.MAX_VALUE);
+            }
         }
     }
 }

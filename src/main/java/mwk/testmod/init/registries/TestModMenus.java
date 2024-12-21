@@ -10,6 +10,7 @@ import mwk.testmod.common.block.inventory.RedstoneGeneratorMenu;
 import mwk.testmod.common.block.inventory.SeparatorMenu;
 import mwk.testmod.common.block.inventory.StampingPressMenu;
 import mwk.testmod.common.block.inventory.StirlingGeneratorMenu;
+import mwk.testmod.common.block.inventory.TemporalReservoirMenu;
 import mwk.testmod.common.block.inventory.TemporalSieveMenu;
 import mwk.testmod.common.block.multiblock.MultiBlockControllerBlock;
 import net.minecraft.core.BlockPos;
@@ -48,6 +49,8 @@ public class TestModMenus {
             TestModBlocks.TEMPORAL_SIEVE, TemporalSieveMenu::new);
     public static final Supplier<MenuType<CapacitronMenu>> CAPACITRON_MENU = registerMultiBlockControllerMenu(
             TestModBlocks.CAPACITRON, CapacitronMenu::new);
+    public static final Supplier<MenuType<TemporalReservoirMenu>> TEMPORAL_RESERVOIR_MENU = registerMultiBlockControllerMenu(
+            TestModBlocks.TEMPORAL_RESERVOIR, TemporalReservoirMenu::new);
 
     @FunctionalInterface
     public interface MultiBlockControllerMenuFactory<T extends AbstractContainerMenu> {

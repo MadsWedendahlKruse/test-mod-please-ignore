@@ -13,6 +13,7 @@ import mwk.testmod.common.block.entity.RedstoneGeneratorBlockEntity;
 import mwk.testmod.common.block.entity.SeparatorBlockEntity;
 import mwk.testmod.common.block.entity.StampingPressBlockEntity;
 import mwk.testmod.common.block.entity.StirlingGeneratorBlockEntity;
+import mwk.testmod.common.block.entity.TemporalReservoirBlockEntity;
 import mwk.testmod.common.block.entity.TemporalSieveBlockEntity;
 import mwk.testmod.common.block.multiblock.MultiBlockPartBlock;
 import mwk.testmod.common.block.multiblock.entity.MultiBlockPartBlockEntity;
@@ -91,6 +92,9 @@ public class TestModBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CapacitronBlockEntity>> CAPACITRON_ENTITY_TYPE =
             registerSimpleBlockEntity(TestModBlocks.CAPACITRON, CapacitronBlockEntity::new);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TemporalReservoirBlockEntity>> CHRONO_CELL_ENTITY_TYPE =
+            registerSimpleBlockEntity(TestModBlocks.TEMPORAL_RESERVOIR,
+                    TemporalReservoirBlockEntity::new);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ItemConduitBlockEntity>> CONDUIT_ITEM_ENTITY_TYPE =
             registerSimpleBlockEntity(TestModBlocks.CONDUIT_ITEM, ItemConduitBlockEntity::new);

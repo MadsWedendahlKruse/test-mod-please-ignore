@@ -34,6 +34,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeManager;
+import org.jetbrains.annotations.NotNull;
 
 @JeiPlugin
 public class JEITestModPlugin implements IModPlugin {
@@ -109,9 +110,9 @@ public class JEITestModPlugin implements IModPlugin {
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
         registration.addGlobalGuiHandler(new IGlobalGuiHandler() {
             @Override
-            public Collection<Rect2i> getGuiExtraAreas() {
+            public @NotNull Collection<Rect2i> getGuiExtraAreas() {
                 Minecraft minecraft = Minecraft.getInstance();
-                if (minecraft.screen instanceof MachineScreen machineScreen) {
+                if (minecraft.screen instanceof MachineScreen<?> machineScreen) {
                     return machineScreen.getGuiExtraAreas();
                 }
                 return Collections.emptyList();

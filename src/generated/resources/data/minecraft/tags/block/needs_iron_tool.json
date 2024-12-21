@@ -19,6 +19,7 @@
     "testmod:geothermal_generator",
     "testmod:stirling_generator",
     "testmod:temporal_sieve",
-    "testmod:capacitron"
+    "testmod:capacitron",
+    "testmod:temporal_reservoir"
   ]
 }
