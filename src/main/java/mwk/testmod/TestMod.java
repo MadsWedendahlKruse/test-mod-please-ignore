@@ -3,6 +3,7 @@ package mwk.testmod;
 import com.mojang.logging.LogUtils;
 import mwk.testmod.client.gui.screen.CapacitronScreen;
 import mwk.testmod.client.gui.screen.CrusherScreen;
+import mwk.testmod.client.gui.screen.ElectricFurnaceScreen;
 import mwk.testmod.client.gui.screen.GeothermalGeneratorScreen;
 import mwk.testmod.client.gui.screen.InductionFurnaceScreen;
 import mwk.testmod.client.gui.screen.RedstoneGeneratorScreen;
@@ -178,6 +179,7 @@ public class TestMod {
 
         @SubscribeEvent
         public static void onRegisterScreens(RegisterMenuScreensEvent event) {
+            event.register(TestModMenus.ELECTRIC_FURNACE_MENU.get(), ElectricFurnaceScreen::new);
             event.register(TestModMenus.INDUCTION_FURNACE_MENU.get(), InductionFurnaceScreen::new);
             event.register(TestModMenus.CRUSHER_MENU.get(), CrusherScreen::new);
             event.register(TestModMenus.SEPARATOR_MENU.get(), SeparatorScreen::new);

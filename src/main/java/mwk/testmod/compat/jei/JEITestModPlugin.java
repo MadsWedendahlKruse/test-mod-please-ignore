@@ -69,6 +69,9 @@ public class JEITestModPlugin implements IModPlugin {
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
         registration.addRecipeCatalyst(
+                TestModBlocks.ELECTRIC_FURNACE.get().asItem().getDefaultInstance(),
+                RecipeTypes.SMELTING);
+        registration.addRecipeCatalyst(
                 TestModBlocks.INDUCTION_FURNACE.get().asItem().getDefaultInstance(),
                 RecipeTypes.BLASTING);
         registration.addRecipeCatalyst(TestModBlocks.CRUSHER.get().asItem().getDefaultInstance(),

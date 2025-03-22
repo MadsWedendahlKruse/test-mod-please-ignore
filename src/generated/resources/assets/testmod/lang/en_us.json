@@ -27,6 +27,7 @@
   "conduit": "CONDUIT",
   "description.testmod.capacitron": "A machine that stores and provides energy to other machines. Useful for storing excess energy and providing power to machines and systems when needed.",
   "description.testmod.crusher": "A powerful machine designed to break down ores into finer materials, enabling the extraction of valuable resources. Essential for efficient ore processing and preparation in advanced manufacturing systems.",
+  "description.testmod.electric_furnace": "A rudimentary electric alternative to the traditional furnace, which can be powered by a variety of energy sources.",
   "description.testmod.geothermal_generator": "A machine that generates energy from the heat of lava. Useful for providing power to machines and systems in remote locations or where other power sources are unavailable.",
   "description.testmod.induction_furnace": "A high-temperature furnace capable of smelting ores and processing materials at a faster rate than a standard furnace. Essential for efficient ore processing and preparation in advanced manufacturing systems.",
   "description.testmod.missing": "No description available.",

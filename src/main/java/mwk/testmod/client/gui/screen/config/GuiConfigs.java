@@ -13,6 +13,8 @@ public class GuiConfigs {
     private static final int ENERGY_BAR_Y = 27;
     private static final int PROGRESS_ICON_X = 81;
     private static final int PROGRESS_ICON_Y = 46;
+    // Parallel 2x2
+
     // Parallel 3x3
     private static final int IMAGE_WIDTH_3X3 = 188;
     private static final int PROGRESS_ICON_X_3X3 = 95;
@@ -20,6 +22,12 @@ public class GuiConfigs {
     private static final int PROGRESS_ARROW_X_3X3 = 93;
     private static final int PROGRESS_ARROW_Y_3X3 = 27;
     private static final int PROGRESS_ARROW_SPACING_3X3 = 40;
+
+    public static final GuiConfig ELECTRIC_FURNACE = new GuiConfig(
+            ResourceLocation.fromNamespaceAndPath(TestMod.MODID,
+                    "textures/gui/container/2x2_parallel.png"),
+            ENERGY_BAR_X, ENERGY_BAR_Y, IMAGE_WIDTH, IMAGE_HEIGHT, "smelting",
+            PROGRESS_ICON_X, PROGRESS_ICON_Y, ArrowType.SINGLE, 1, 70, 29, 0);
 
     public static final GuiConfig INDUCTION_FURNACE = new GuiConfig(
             ResourceLocation.fromNamespaceAndPath(TestMod.MODID,

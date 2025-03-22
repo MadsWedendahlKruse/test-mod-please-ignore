@@ -8,6 +8,7 @@ import mwk.testmod.common.block.conduit.ConduitType;
 import mwk.testmod.common.block.entity.AssemblerBlockEntity;
 import mwk.testmod.common.block.entity.CapacitronBlockEntity;
 import mwk.testmod.common.block.entity.CrusherBlockEntity;
+import mwk.testmod.common.block.entity.ElectricFurnaceBlockEntity;
 import mwk.testmod.common.block.entity.GeothermalGeneratorBlockEntity;
 import mwk.testmod.common.block.entity.InductionFurnaceBlockEntity;
 import mwk.testmod.common.block.entity.RedstoneGeneratorBlockEntity;
@@ -73,6 +74,8 @@ public class TestModBlocks {
 
     // --- Multiblock controllers ---
     // Machines
+    public static final DeferredBlock<MultiBlockControllerBlock> ELECTRIC_FURNACE = registerMultiBlockController(
+            "electric_furnace", ElectricFurnaceBlockEntity::new);
     public static final DeferredBlock<MultiBlockControllerBlock> INDUCTION_FURNACE = registerMultiBlockController(
             "induction_furnace", InductionFurnaceBlockEntity::new);
     public static final DeferredBlock<MultiBlockControllerBlock> ASSEMBLER = registerMultiBlockController(

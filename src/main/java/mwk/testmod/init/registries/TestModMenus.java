@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 import mwk.testmod.TestMod;
 import mwk.testmod.common.block.inventory.CapacitronMenu;
 import mwk.testmod.common.block.inventory.CrusherMenu;
+import mwk.testmod.common.block.inventory.ElectricFurnaceMenu;
 import mwk.testmod.common.block.inventory.GeothermalGeneratorMenu;
 import mwk.testmod.common.block.inventory.InductionFurnaceMenu;
 import mwk.testmod.common.block.inventory.RedstoneGeneratorMenu;
@@ -29,6 +30,8 @@ public class TestModMenus {
     public static final DeferredRegister<MenuType<?>> MENUS =
             DeferredRegister.create(BuiltInRegistries.MENU, TestMod.MODID);
 
+    public static final Supplier<MenuType<ElectricFurnaceMenu>> ELECTRIC_FURNACE_MENU = registerMultiBlockControllerMenu(
+            TestModBlocks.ELECTRIC_FURNACE, ElectricFurnaceMenu::new);
     public static final Supplier<MenuType<InductionFurnaceMenu>> INDUCTION_FURNACE_MENU = registerMultiBlockControllerMenu(
             TestModBlocks.INDUCTION_FURNACE, InductionFurnaceMenu::new);
     public static final Supplier<MenuType<CrusherMenu>> CRUSHER_MENU = registerMultiBlockControllerMenu(

@@ -15,6 +15,7 @@ public class TestModLanguageProvider extends LanguageProvider {
     public static final String KEY_DESCRIPTION_MISSING = "description.testmod.missing";
     public static final String KEY_DESCRIPTION_SUPER_ASSEMBLER =
             "description.testmod.super_assembler";
+    public static final String KEY_DESCRIPTION_ELECTRIC_FURNACE = "description.testmod.electric_furnace";
     public static final String KEY_DESCRIPTION_INDUCTION_FURNACE =
             "description.testmod.induction_furnace";
     public static final String KEY_DESCRIPTION_CRUSHER = "description.testmod.crusher";
@@ -147,6 +148,8 @@ public class TestModLanguageProvider extends LanguageProvider {
         add(KEY_DESCRIPTION_MISSING, "No description available.");
         add(KEY_DESCRIPTION_SUPER_ASSEMBLER,
                 "A powerful machine designed to automate the crafting of complex items. It can store multiple recipes and automatically craft items when provided with the necessary materials.");
+        add(KEY_DESCRIPTION_ELECTRIC_FURNACE,
+                "A rudimentary electric alternative to the traditional furnace, which can be powered by a variety of energy sources.");
         add(KEY_DESCRIPTION_INDUCTION_FURNACE,
                 "A high-temperature furnace capable of smelting ores and processing materials at a faster rate than a standard furnace. Essential for efficient ore processing and preparation in advanced manufacturing systems.");
         add(KEY_DESCRIPTION_CRUSHER,

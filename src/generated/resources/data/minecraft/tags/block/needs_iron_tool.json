@@ -10,6 +10,7 @@
     "testmod:machine_energy_port",
     "testmod:copper_coil",
     "testmod:energy_cube",
+    "testmod:electric_furnace",
     "testmod:induction_furnace",
     "testmod:assembler",
     "testmod:crusher",

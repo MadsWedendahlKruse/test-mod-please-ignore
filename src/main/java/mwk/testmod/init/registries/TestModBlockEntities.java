@@ -7,6 +7,7 @@ import mwk.testmod.common.block.conduit.ItemConduitBlockEntity;
 import mwk.testmod.common.block.entity.AssemblerBlockEntity;
 import mwk.testmod.common.block.entity.CapacitronBlockEntity;
 import mwk.testmod.common.block.entity.CrusherBlockEntity;
+import mwk.testmod.common.block.entity.ElectricFurnaceBlockEntity;
 import mwk.testmod.common.block.entity.GeothermalGeneratorBlockEntity;
 import mwk.testmod.common.block.entity.InductionFurnaceBlockEntity;
 import mwk.testmod.common.block.entity.RedstoneGeneratorBlockEntity;
@@ -63,6 +64,9 @@ public class TestModBlockEntities {
             registerIOPortBlockEntity(TestModBlocks.MACHINE_FLUID_OUTPUT_PORT,
                     MultiBlockFluidIOPortBlockEntity::new, false);
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectricFurnaceBlockEntity>> ELECTRIC_FURNACE_ENTITY_TYPE =
+            registerSimpleBlockEntity(TestModBlocks.ELECTRIC_FURNACE,
+                    ElectricFurnaceBlockEntity::new);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<InductionFurnaceBlockEntity>> INDUCTION_FURNACE_ENTITY_TYPE =
             registerSimpleBlockEntity(TestModBlocks.INDUCTION_FURNACE,
                     InductionFurnaceBlockEntity::new);
